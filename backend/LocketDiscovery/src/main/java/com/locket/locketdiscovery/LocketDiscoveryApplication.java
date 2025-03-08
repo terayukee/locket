@@ -1,4 +1,4 @@
-package com.ssafy.locket;
+package com.locket.locketdiscovery;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
