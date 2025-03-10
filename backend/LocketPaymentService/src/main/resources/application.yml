@@ -1,11 +1,9 @@
 server:
-  port: 0  # 랜덤 포트 사용 (Eureka 등록 후 로드밸런싱)
+  port: 0  # 랜덤 포트 사용
 
 spring:
   application:
     name: payment-service
-  config:
-    import: "classpath:/application-key.yml"
 
 eureka:
   client:
