@@ -37,6 +37,9 @@ dependencies {
     // Actuator & Monitoring
     implementation 'org.springframework.boot:spring-boot-starter-actuator' // Spring Actuator
     implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus 연동
+    
+    // Feign Client
+    implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok'
