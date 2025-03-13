@@ -12,6 +12,10 @@ import lombok.RequiredArgsConstructor;
 public class UserTestController {
     private final PaymentClient paymentClient;
 
+    public UserTestController(PaymentClient paymentClient) {
+        this.paymentClient = paymentClient;
+    }
+
     @GetMapping("/test")
     public String testUser() {
         return "User Service is Running!";
