@@ -1,0 +1,24 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: locket-api-gateway
+
+  cloud:
+    gateway:
+      routes:
+        - id: payment-service
+          uri: http://locket-payment-service:8081
+          predicates:
+            - Path=/api/payment/**
+
+        - id: user-service
+          uri: http://locket-user-service:8082
+          predicates:
+            - Path=/api/user/**
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://locket-discovery:8761/eureka/

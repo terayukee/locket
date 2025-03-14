@@ -73,3 +73,19 @@ jwt:
   secret: ${jwt_secret_key}
   access-exp: ${jwt_access_exp}
   refresh-exp: ${jwt_refresh_exp}
+
+springdoc:
+  api-docs:
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+  group-configs:
+    - group: "Locket APIs"
+      paths-to-match: "/api/**"
+      display-name: "Locket API Gateway"
+  swagger-ui-configs:
+    - urls:
+        - name: "Locket Payment Service"
+          url: "/payment-service/v3/api-docs"
+        - name: "Locket User Service"
+          url: "/user-service/v3/api-docs"
