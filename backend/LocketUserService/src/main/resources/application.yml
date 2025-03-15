@@ -1,11 +1,24 @@
 server:
-  port: 0  # 랜덤 포트 사용
+  port: 0  # ✅ 랜덤 포트 사용 (Eureka 등록 시 문제 방지)
 
 spring:
   application:
     name: user-service
 
+  kafka:
+    bootstrap-servers: kafka:9092
+    consumer:
+      group-id: user-service-group  # ✅ 유저 서비스 전용 컨슈머 그룹
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest  # ✅ 처음부터 읽기
+    listener:
+      ack-mode: manual  # ✅ 수동 커밋 설정 (필요 시 변경)
+
 eureka:
+  instance:
+    hostname: user-service  # ✅ Eureka 등록 시 서비스 이름으로 등록
+    prefer-ip-address: false  # ✅ hostname 기반 등록
   client:
     register-with-eureka: true
     fetch-registry: true
