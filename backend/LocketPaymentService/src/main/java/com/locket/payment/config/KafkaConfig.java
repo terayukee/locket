@@ -14,7 +14,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.locket.payment.event.PaymentSuccessEvent;
+import com.locket.kafka.event.PaymentSuccessEvent;
 
 @EnableKafka
 @Configuration
@@ -29,17 +29,22 @@ public class KafkaConfig {
     @Bean
     public Map<String, Object> producerConfig() {
         Map<String, Object> props = new HashMap<>();
-        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
-                env.getProperty("spring.kafka.bootstrap-servers"));
-
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);  // ✅ StringSerializer 지정
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);  // ✅ JsonSerializer 명시
+        props.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.bootstrap-servers"));
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class); // ✅ StringSerializer 지정
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class); // ✅ JsonSerializer 명시
         return props;
     }
 
     @Bean
     public ProducerFactory<String, PaymentSuccessEvent> producerFactory() {
-       return new DefaultKafkaProducerFactory<>(this.producerConfig());
+        JsonSerializer<PaymentSuccessEvent> jsonSerializer = new JsonSerializer<>();
+        jsonSerializer.setAddTypeInfo(false); // ✅ @class 정보 제거 (역직렬화 오류 방지)
+
+        return new DefaultKafkaProducerFactory<>(
+                this.producerConfig(),
+                new StringSerializer(),
+                jsonSerializer
+        );
     }
 
     @Bean

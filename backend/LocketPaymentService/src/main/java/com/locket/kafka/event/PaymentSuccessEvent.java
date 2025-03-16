@@ -1,4 +1,4 @@
-package com.locket.user.event;
+package com.locket.kafka.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

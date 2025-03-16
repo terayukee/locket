@@ -1,7 +1,7 @@
 package com.locket.user.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.locket.user.event.PaymentSuccessEvent;
+import com.locket.kafka.event.PaymentSuccessEvent;
 import com.locket.user.service.PaymentProcessingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

@@ -1,8 +1,9 @@
 package com.locket.user.service;
 
-import com.locket.user.event.PaymentSuccessEvent;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+
+import com.locket.kafka.event.PaymentSuccessEvent;
 
 @Slf4j
 @Service

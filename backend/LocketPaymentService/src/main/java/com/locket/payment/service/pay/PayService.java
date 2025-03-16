@@ -1,7 +1,7 @@
 package com.locket.payment.service.pay;
 
+import com.locket.kafka.event.PaymentSuccessEvent;
 import com.locket.payment.domain.pay.dto.QrPaymentRequest;
-import com.locket.payment.event.PaymentSuccessEvent;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

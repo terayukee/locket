@@ -1,10 +1,11 @@
 package com.locket.payment.infra.kafka;
 
-import com.locket.payment.event.PaymentSuccessEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import com.locket.kafka.event.PaymentSuccessEvent;
 
 @Slf4j
 @Service
