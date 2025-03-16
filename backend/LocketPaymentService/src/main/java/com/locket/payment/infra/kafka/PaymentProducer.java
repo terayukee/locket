@@ -1,22 +1,26 @@
 package com.locket.payment.infra.kafka;
 
-import com.locket.payment.domain.pay.dto.QrPaymentRequest;
+import com.locket.payment.event.PaymentSuccessEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PaymentProducer {
-    private final KafkaTemplate<String, String> kafkaTemplate;
 
-    public void sendPaymentSuccessEvent(String transactionId, QrPaymentRequest request) {
-        String message = String.format(
-                "{ \"transactionId\": \"%s\", \"accountId\": %d, \"buyerId\": %d, \"sellerId\": %d, \"category\": \"%s\", \"merchant\": \"%s\" }",
-                transactionId, request.getAccountId(), request.getBuyerId(), request.getSellerId(), request.getPaymentCategory(), request.getPaymentMerchant()
-        );
+    private final KafkaTemplate<String, PaymentSuccessEvent> kafkaTemplate;  // ✅ KafkaTemplate 타입 변경
 
-        kafkaTemplate.send("payment.success", message);
-        System.out.println("📢 Kafka Event Sent - payment.success: " + message);
+    public void sendPaymentSuccessEvent(PaymentSuccessEvent event) {
+        try {
+            // ✅ JSON 변환 없이 객체 그대로 전송
+            kafkaTemplate.send("payment.success", event);
+
+            log.info("✅ Sent PaymentSuccessEvent: {}", event);
+        } catch (Exception e) {
+            log.error("❌ Failed to send PaymentSuccessEvent", e);
+        }
     }
 }

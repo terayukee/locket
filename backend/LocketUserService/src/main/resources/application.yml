@@ -5,13 +5,15 @@ spring:
   application:
     name: user-service
 
-  kafka:
+  kafka:    
     bootstrap-servers: localhost:9092
     consumer:
       group-id: user-service-group  # ✅ 유저 서비스 전용 컨슈머 그룹
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
-      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest  # ✅ 처음부터 읽기
+      properties:
+        spring.json.trusted.packages: "*"  # ✅ JSON 변환 허용 패키지 지정
     listener:
       ack-mode: manual  # ✅ 수동 커밋 설정 (필요 시 변경)
 
