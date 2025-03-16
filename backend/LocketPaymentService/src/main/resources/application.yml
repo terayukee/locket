@@ -5,7 +5,7 @@ spring:
   application:
     name: payment-service
   kafka:
-    bootstrap-servers: kafka:9092  # 도커 네트워크에서 Kafka 컨테이너 이름으로 접근
+    bootstrap-servers: localhost:9092  # 도커 네트워크에서 Kafka 컨테이너 이름으로 접근
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.apache.kafka.common.serialization.StringSerializer

@@ -6,7 +6,7 @@ spring:
     name: user-service
 
   kafka:
-    bootstrap-servers: kafka:9092
+    bootstrap-servers: localhost:9092
     consumer:
       group-id: user-service-group  # ✅ 유저 서비스 전용 컨슈머 그룹
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer

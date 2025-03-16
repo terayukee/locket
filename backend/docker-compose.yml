@@ -18,10 +18,8 @@ services:
       - "9092:9092"
     environment:
       KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092
-      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092  # ✅ 로컬(호스트)에서 접근 가능하게 설정
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_BROKER_ID: 1
-      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
       KAFKA_LOG_RETENTION_HOURS: 168  # 로그 유지 기간 (7일)
       KAFKA_LOG_SEGMENT_BYTES: 1073741824 # 세그먼트 크기 설정 (1GB)
       KAFKA_HEAP_OPTS: "-Xmx512M -Xms512M" # Kafka JVM Heap 설정
@@ -37,6 +35,6 @@ services:
     ports:
       - "9000:9000"
     environment:
-      KAFKA_BROKERCONNECT: "kafka:9092"
+      KAFKA_BROKERCONNECT: "PLAINTEXT://localhost:9092"  # ✅ Kafdrop도 로컬에서 Kafka를 찾도록 변경
     depends_on:
       - kafka
