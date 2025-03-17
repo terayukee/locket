@@ -1,3 +1,6 @@
+**/application-key.yml
+**/application-key-*.yml
+
 /.metadata/
 
 HELP.md

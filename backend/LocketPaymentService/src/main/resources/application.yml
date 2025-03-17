@@ -4,8 +4,24 @@ server:
 spring:
   application:
     name: payment-service
+
+  profiles:
+    include: key  # application-key.yml 포함
+
+  datasource:
+    url: ${db.url}  # key 파일에서 가져옴
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update  # 필요에 따라 변경 가능
+    show-sql: true  # SQL 쿼리 로그 출력 여부
+
   kafka:
-    bootstrap-servers: localhost:19092,localhost:19093,localhost:19094
+    bootstrap-servers: ${kafka.bootstrap-servers}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
