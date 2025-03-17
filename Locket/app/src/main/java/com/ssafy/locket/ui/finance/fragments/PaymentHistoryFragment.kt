@@ -1,4 +1,4 @@
-package com.ssafy.locket.ui.finance
+package com.ssafy.locket.ui.finance.fragments
 
 import android.os.Bundle
 import android.view.View

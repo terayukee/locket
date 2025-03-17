@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.register_user_info.ConfirmPasswordFragment">
+    tools:context=".ui.home.receipt.ReceiptItemsListFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <TextView

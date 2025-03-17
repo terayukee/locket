@@ -1,4 +1,4 @@
-package com.ssafy.locket.ui.login
+package com.ssafy.locket.ui.login.register_user_info
 
 import android.os.Bundle
 import android.view.View

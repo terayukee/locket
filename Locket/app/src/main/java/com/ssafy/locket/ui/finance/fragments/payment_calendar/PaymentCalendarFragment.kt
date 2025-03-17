@@ -1,4 +1,4 @@
-package com.ssafy.locket.ui.finance
+package com.ssafy.locket.ui.finance.fragments.payment_calendar
 
 import android.os.Bundle
 import android.view.View
