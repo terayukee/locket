@@ -1,4 +1,4 @@
-package com.example.locket
+package com.ssafy.locket
 
 import android.util.Log
 import okhttp3.Interceptor

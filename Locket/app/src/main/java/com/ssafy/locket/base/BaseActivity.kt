@@ -1,4 +1,4 @@
-package com.example.locket
+package com.ssafy.locket
 
 import android.os.Bundle
 import android.view.LayoutInflater

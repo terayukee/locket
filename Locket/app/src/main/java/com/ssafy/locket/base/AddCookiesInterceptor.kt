@@ -1,4 +1,4 @@
-package com.example.locket
+package com.ssafy.locket
 
 import okhttp3.Interceptor
 import okhttp3.Request
