@@ -19,20 +19,17 @@ public class PaymentEventConsumer {
     private final ObjectMapper objectMapper;
 
     @KafkaListener(topics = "payment.success", groupId = "user-service-group")
-    public void listenPaymentSuccess(PaymentSuccessEvent paymentEvent, Acknowledgment ack) {
-    	System.out.println("✅ Received message: " + paymentEvent);
-    	try {
-            log.info("📥 Received Payment Success Event: {}", paymentEvent);
+    public void listenPaymentSuccess(ConsumerRecord<String, PaymentSuccessEvent> record, Acknowledgment ack) {
+        PaymentSuccessEvent paymentEvent = record.value();
+        log.info("📥 Received Payment Success Event: {}", paymentEvent);
 
-            // ✅ 결제 성공 후처리 (포인트 적립, 업적 업데이트 등)
+        try {
             paymentProcessingService.processPaymentSuccess(paymentEvent);
-
-            // ✅ 수동 커밋 (성공한 경우에만)
-            ack.acknowledge();
-
+            ack.acknowledge();  // ✅ 즉시 수동 커밋 수행
         } catch (Exception e) {
             log.error("❌ Error processing payment success event: {}", paymentEvent, e);
-            // ❗❗ 수동 커밋을 하지 않으면 Kafka가 재시도함.
+            // ❗ 예외 발생 시 ack.acknowledge()를 호출하지 않으면 Kafka가 자동 재시도
         }
     }
+
 }

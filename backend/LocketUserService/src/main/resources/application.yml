@@ -15,7 +15,7 @@ spring:
       properties:
         spring.json.trusted.packages: "*"  # ✅ JSON 변환 허용 패키지 지정
     listener:
-      ack-mode: manual  # ✅ 수동 커밋 설정 (필요 시 변경)
+      ack-mode: manual_immediate   # ✅ 수동 커밋 설정 (필요 시 변경)
 
 eureka:
   instance:

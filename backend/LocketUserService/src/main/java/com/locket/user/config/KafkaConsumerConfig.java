@@ -1,5 +1,6 @@
 package com.locket.user.config;
 
+import com.locket.kafka.event.PaymentSuccessEvent;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
@@ -9,9 +10,8 @@ import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.listener.ContainerProperties;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-
-import com.locket.kafka.event.PaymentSuccessEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -30,9 +30,10 @@ public class KafkaConsumerConfig {
 	public ConsumerFactory<String, PaymentSuccessEvent> consumerFactory() {
 		// ✅ JSON 역직렬화를 위한 JsonDeserializer 설정
 		JsonDeserializer<PaymentSuccessEvent> deserializer = new JsonDeserializer<>(PaymentSuccessEvent.class);
-		deserializer.addTrustedPackages("*");  // ✅ 모든 패키지 신뢰
-	    deserializer.setRemoveTypeHeaders(true);  // ✅ @class 정보 제거
-		deserializer.setUseTypeMapperForKey(false);  // ✅ Key는 기본적으로 String이므로 매핑 비활성화
+//		deserializer.addTrustedPackages("*");  // ✅ 모든 패키지 신뢰
+		deserializer.addTrustedPackages("com.locket.kafka.event");  // ✅ 특정 패키지만 허용
+		deserializer.setRemoveTypeHeaders(false);  // ✅ Type 정보를 유지하여 직렬화 오류 방지
+		deserializer.setUseTypeMapperForKey(false);
 
 		Map<String, Object> props = new HashMap<>();
 		props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, env.getProperty("spring.kafka.bootstrap-servers"));
@@ -49,6 +50,10 @@ public class KafkaConsumerConfig {
 		ConcurrentKafkaListenerContainerFactory<String, PaymentSuccessEvent> factory =
 				new ConcurrentKafkaListenerContainerFactory<>();
 		factory.setConsumerFactory(this.consumerFactory());
+
+		// ✅ ack-mode: manual_immediate 설정
+		factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
+
 		return factory;
 	}
 }
