@@ -69,9 +69,6 @@ dependencies {
     implementation 'org.mapstruct:mapstruct:1.5.5.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
 
-    // ✅ H2 Database (로컬 개발용)
-    runtimeOnly 'com.h2database:h2'
-
     // ✅ PostgreSQL (운영 DB)
     runtimeOnly 'org.postgresql:postgresql'
 

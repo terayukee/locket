@@ -9,7 +9,7 @@ spring:
     include: key  # application-key.yml 포함
 
   datasource:
-    url: ${db.url}  # key 파일에서 가져옴
+    url: ${db.url_payment}  # key 파일에서 가져옴
     username: ${db.username}
     password: ${db.password}
     driver-class-name: org.postgresql.Driver

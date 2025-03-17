@@ -58,8 +58,7 @@ dependencies {
 
     // JPA + H2 (임시 DB) or MySQL (실제 운영 DB)
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    runtimeOnly 'com.h2database:h2' // 로컬 개발용 (운영은 MySQL 사용)
-//    runtimeOnly 'mysql:mysql-connector-java' // MySQL 사용 시
+    runtimeOnly 'org.postgresql:postgresql' // PostgreSQL JDBC 드라이버 추가
 
     // Spring Boot Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
