@@ -1,26 +1,38 @@
 server:
-  port: 0  # ✅ 랜덤 포트 사용 (Eureka 등록 시 문제 방지)
+  port: 0  # 랜덤 포트 사용
 
 spring:
   application:
     name: user-service
 
-  kafka:    
-    bootstrap-servers: localhost:19092,localhost:19093,localhost:19094
+  profiles:
+    include: key  # application-key.yml 포함
+
+  datasource:
+    url: ${db.url_user}  # user-service용 DB URL
+    username: ${db.username}
+    password: ${db.password}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    hibernate:
+      ddl-auto: update  # 필요에 따라 변경 가능
+    show-sql: true  # SQL 쿼리 로그 출력 여부
+
+  kafka:
+    bootstrap-servers: ${kafka.bootstrap-servers}
     consumer:
-      group-id: user-service-group  # ✅ 유저 서비스 전용 컨슈머 그룹
+      group-id: user-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
-      auto-offset-reset: earliest  # ✅ 처음부터 읽기
+      auto-offset-reset: earliest
       properties:
-        spring.json.trusted.packages: "*"  # ✅ JSON 변환 허용 패키지 지정
+        spring.json.trusted.packages: "*"
     listener:
-      ack-mode: manual_immediate   # ✅ 수동 커밋 설정 (필요 시 변경)
+      ack-mode: manual_immediate
 
 eureka:
-  instance:
-    hostname: user-service  # ✅ Eureka 등록 시 서비스 이름으로 등록
-    prefer-ip-address: false  # ✅ hostname 기반 등록
   client:
     register-with-eureka: true
     fetch-registry: true
