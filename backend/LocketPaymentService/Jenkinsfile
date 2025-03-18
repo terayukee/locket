@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = credentials('DOCKER_IMAGE_PAYMENT')
-        DOCKER_CONTAINER = credentials('DOCKER_CONTAINER_PAYMENT')
+        DOCKER_IMAGE = 'spring-locket-payment-service'
+        DOCKER_CONTAINER = 'spring-locket-payment-service'
         DOCKER_PORT = 8081
         DOCKER_PATH = '/home/ubuntu/docker'  // EC2 서버의 Docker 저장 경로
 
