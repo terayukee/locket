@@ -9,9 +9,9 @@ spring:
     include: key  # application-key.yml 포함
 
   datasource:
-    url: ${db.url_payment}  # key 파일에서 가져옴
-    username: ${db.username}
-    password: ${db.password}
+    url: ${DB.URL_PAYMENT}  # key 파일에서 가져옴
+    username: ${DB.USERNAME}
+    password: ${DB.PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -21,7 +21,7 @@ spring:
     show-sql: true  # SQL 쿼리 로그 출력 여부
 
   kafka:
-    bootstrap-servers: ${kafka.bootstrap-servers}
+    bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
     producer:
       key-serializer: org.apache.kafka.common.serialization.StringSerializer
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
