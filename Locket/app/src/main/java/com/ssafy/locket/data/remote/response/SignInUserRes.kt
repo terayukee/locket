@@ -1,6 +1,7 @@
 package com.ssafy.locket.data.remote.response
 
-data class RegisterUserRes(
-    val user_id: Int,
+data class SignInUserRes(
     val message: String,
+    val token: String,
+    val user_id: Int
 )

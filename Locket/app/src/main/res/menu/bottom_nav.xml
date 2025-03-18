@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/navigation_mypage"
+        android:icon="@android:drawable/btn_star"
+        android:title="홈"
+        android:background="@android:color/transparent" />
+    <item
+        android:id="@+id/navigation_group_search"
+        android:icon="@android:drawable/editbox_dropdown_light_frame"
+        android:title="가계부"
+        android:background="@android:color/transparent" />
+
+    <item
+        android:id="@+id/my_payment_history"
+        android:icon="@android:drawable/editbox_dropdown_light_frame"
+        android:title=""
+        android:background="@android:color/transparent" />
+
+    <item
+        android:id="@+id/my_p"
+        android:icon="@android:drawable/editbox_dropdown_light_frame"
+        android:title="내역 조회"
+        android:background="@android:color/transparent" />
+</menu>
