@@ -1,0 +1,112 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'spring-locket-api-gateway'
+        DOCKER_CONTAINER = 'spring-locket-api-gateway'
+        DOCKER_PORT = 8080
+        DOCKER_PATH = '/home/ubuntu/docker'  // EC2 서버의 Docker 저장 경로
+
+        EC2_USER = credentials('EC2_USER')
+        EC2_IP = credentials('EC2_IP')
+        SSH_KEY = credentials('SSH_KEY')
+
+        EUREKA_SERVER = credentials('EUREKA_SERVER')
+
+        JAVA_HOME = '/opt/java/openjdk'
+        GRADLE_HOME = '/opt/gradle/gradle-8.5'
+        PATH = "${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"
+    }
+
+    tools {
+        jdk 'JDK17'
+        gradle 'Gradle 8.5'
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                echo '🔄 Cloning the repository...'
+                git branch: 'backend',
+                    url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git',
+                    credentialsId: 'GitLab-PAT'
+            }
+        }
+        stage('Build Application') {
+            steps {
+                echo '🔨 Building the API Gateway...'
+                dir('backend/LocketApiGateway') {
+                    sh 'gradle clean build -x test'
+                    sh 'ls -al $(pwd)/build/libs'
+                }
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                echo '🐳 Building the API Gateway Docker image...'
+                dir('backend/LocketApiGateway') {
+                    sh 'cp build/libs/LocketApiGateway-0.0.1-SNAPSHOT.jar .'
+                    sh 'docker build -t ${DOCKER_IMAGE}:latest .'
+                }
+            }
+        }
+        stage('Save and Transfer Docker Image') {
+            steps {
+                echo '📦 Saving and transferring Docker image to EC2...'
+                sh """
+                docker save ${DOCKER_IMAGE}:latest | gzip > LocketApiGateway-0.0.1-SNAPSHOT.tar.gz
+                """
+                sshPublisher(publishers: [
+                    sshPublisherDesc(
+                        configName: 'EC2-Server',
+                        transfers: [
+                            sshTransfer(
+                                sourceFiles: 'LocketApiGateway-0.0.1-SNAPSHOT.tar.gz',
+                                remoteDirectory: '${DOCKER_PATH}'
+                            )
+                        ]
+                    )
+                ])
+            }
+        }
+        stage('Deploy to EC2') {
+            steps {
+                echo '🚀 Deploying API Gateway on EC2...'
+                sshPublisher(publishers: [
+                    sshPublisherDesc(
+                        configName: 'EC2-Server',
+                        transfers: [
+                            sshTransfer(
+                                execCommand: """
+                                    mkdir -p ${DOCKER_PATH}
+                                    docker stop ${DOCKER_CONTAINER} || true
+                                    docker rm ${DOCKER_CONTAINER} || true
+                                    docker rmi ${DOCKER_IMAGE}:latest || true
+                                    docker load < ${DOCKER_PATH}/LocketApiGateway-0.0.1-SNAPSHOT.tar.gz
+                                    docker run -d --name ${DOCKER_CONTAINER} \
+                                      -p ${DOCKER_PORT}:${DOCKER_PORT} \
+                                      -e SERVER_PORT=${DOCKER_PORT} \
+                                      -e EUREKA_SERVER=${EUREKA_SERVER} \
+                                      ${DOCKER_IMAGE}:latest
+                                """.stripIndent()
+                            )
+                        ]
+                    )
+                ]])
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '🧹 Cleaning workspace...'
+            cleanWs()
+        }
+        success {
+            echo '✅ Deployment successful!'
+        }
+        failure {
+            echo '❌ Deployment failed.'
+        }
+    }
+}
