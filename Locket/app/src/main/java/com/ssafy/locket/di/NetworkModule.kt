@@ -15,7 +15,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val SERVER_URL = "https://i12d111.p.ssafy.io/"
+    private const val SERVER_URL = "https://i12d111.p.ssafy.io/api/"
 
     @Provides
     @Singleton
