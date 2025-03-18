@@ -20,9 +20,6 @@ pipeline {
         JAVA_HOME = '/opt/java/openjdk'
         GRADLE_HOME = '/opt/gradle/gradle-8.5'
         PATH = "${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"
-
-        PROJECT_ID = "951193"  // GitLab 프로젝트 ID
-        GITLAB_ACCESS_TOKEN = credentials('GitLab-PAT') // Jenkins Credentials에서 Access Token 불러오기
     }
 
     tools {
@@ -31,35 +28,6 @@ pipeline {
     }
 
     stages {
-        stage('Check Merge Status') {
-            steps {
-                script {
-                    def response = sh(script: """
-                        curl --silent --header "PRIVATE-TOKEN: $GITLAB_ACCESS_TOKEN" \\
-                        "https://lab.ssafy.com/api/v4/projects/$PROJECT_ID/merge_requests?state=merged" | \\
-                        jq -r '.[] | select(.target_branch=="backend")'
-                    """, returnStdout: true).trim()
-
-                    if (response == '') {
-                        error("🚨 Merge가 완료되지 않음. 빌드 중단!")
-                    } else {
-                        echo "✅ Merge가 완료됨. 빌드 진행!"
-                    }
-                }
-            }
-        }
-        stage('Checkout SCM') {
-            steps {
-                checkout([
-                    $class: 'GitSCM',
-                    branches: [[name: '*/backend']],
-                    userRemoteConfigs: [[
-                        url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git',
-                        credentialsId: 'GitLab-PAT'
-                    ]]
-                ])
-            }
-        }
         stage('Clone Repository') {
             steps {
                 echo '🔄 Cloning the repository...'
