@@ -13,4 +13,5 @@ public class QrPaymentRequest {
     private int sellerId;
     private String paymentCategory;
     private String paymentMerchant;
+    private double amount;
 }

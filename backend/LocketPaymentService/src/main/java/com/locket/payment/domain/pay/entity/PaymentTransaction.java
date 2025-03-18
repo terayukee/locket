@@ -3,15 +3,21 @@ package com.locket.payment.domain.pay.entity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Getter
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class PaymentTransaction {
+
     @Id
-    private String paymentTransactionId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long paymentTransactionId;
 
     private int accountId;
     private int buyerId;
@@ -24,5 +30,8 @@ public class PaymentTransaction {
     private String paymentMerchant;
 
     private LocalDateTime paymentTimestamp;
-}
 
+    public void updateStatus(PaymentStatus status) {
+        this.paymentTransactionStatus = status;
+    }
+}
