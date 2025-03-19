@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://j12d204.p.ssafy.io/eureka  # ✅ EC2 도메인 적용
+
+server:
+  port: 8080
+
+# ✅ 원격 서버에서 실행할 API 문서 경로
+springdoc:
+  swagger-ui:
+    urls:
+      - name: "Locket Payment Service"
+        url: http://j12d204.p.ssafy.io/api/payment/v3/api-docs
+      - name: "Locket User Service"
+        url: http://j12d204.p.ssafy.io/api/user/v3/api-docs
