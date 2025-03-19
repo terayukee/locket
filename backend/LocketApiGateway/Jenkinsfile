@@ -61,8 +61,7 @@ pipeline {
                         configName: 'EC2-Server',
                         transfers: [
                             sshTransfer(
-                                sourceFiles: 'LocketApiGateway-0.0.1-SNAPSHOT.tar.gz',
-                                remoteDirectory: "${DOCKER_PATH}"
+                                sourceFiles: 'LocketApiGateway-0.0.1-SNAPSHOT.tar.gz'
                             )
                         ]
                     )
