@@ -7,13 +7,16 @@ import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +28,7 @@ public class PayService {
     private final WalletTransactionRepository walletTransactionRepository;
     private final CardInfoRepository cardInfoRepository;
     private final PaymentProducer paymentProducer;
+    private final StringRedisTemplate redisTemplate; // ✅ Redis 추가
 
     @Transactional
     public ResponseEntity<QrPaymentResponse> processQrPayment(QrPaymentRequest request) {
@@ -43,9 +47,14 @@ public class PayService {
                     .build());
         }
 
+        // 2️⃣ Redis에서 사용자 정보 가져오기
+        String redisKey = "user:" + request.getBuyerId();
+        String birthDate = redisTemplate.opsForValue().get(redisKey + ":birthDate");
+        String userJob = redisTemplate.opsForValue().get(redisKey + ":userJob");
+
         // 3️⃣ 결제 트랜잭션 저장
         PaymentTransaction transaction = PaymentTransaction.builder()
-                .card(cardInfo) // ✅ 객체 참조로 변경
+                .card(cardInfo)
                 .buyerId(request.getBuyerId())
                 .sellerId(request.getSellerId())
                 .paymentTransactionStatus(PaymentStatus.EXECUTING)
@@ -57,23 +66,25 @@ public class PayService {
                 .build();
         paymentTransactionRepository.save(transaction);
 
-        // 4️⃣ 결제 주문 저장
-        PaymentOrder order = PaymentOrder.builder()
-                .paymentTransaction(transaction) // ✅ 객체 참조로 변경
-                .card(cardInfo) // ✅ 객체 참조로 변경
-                .amount(paymentAmount)
-                .paymentOrderStatus(PaymentStatus.EXECUTING)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        paymentOrderRepository.save(order);
+        // 4️⃣ 결제 주문 저장 (리스트 형태)
+        List<PaymentOrder> orders = List.of(
+                PaymentOrder.builder()
+                        .paymentTransaction(transaction)
+                        .card(cardInfo)
+                        .amount(paymentAmount)
+                        .paymentOrderStatus(PaymentStatus.EXECUTING)
+                        .createdAt(LocalDateTime.now())
+                        .updatedAt(LocalDateTime.now())
+                        .build()
+        );
+        paymentOrderRepository.saveAll(orders);
 
         // 5️⃣ 부트페이 API 호출 (실제 결제 진행)
         boolean isPaymentSuccess = callBootpayAPI(request);
 
         if (!isPaymentSuccess) {
             transaction.updateStatus(PaymentStatus.FAIL);
-            order.updateStatus(PaymentStatus.FAIL);
+            orders.forEach(order -> order.updateStatus(PaymentStatus.FAIL));
             return ResponseEntity.badRequest().body(QrPaymentResponse.builder()
                     .transactionId(transaction.getPaymentTransactionId().toString())
                     .status("FAIL")
@@ -87,11 +98,11 @@ public class PayService {
 
         // 7️⃣ 결제 상태 업데이트
         transaction.updateStatus(PaymentStatus.SUCCESS);
-        order.updateStatus(PaymentStatus.SUCCESS);
+        orders.forEach(order -> order.updateStatus(PaymentStatus.SUCCESS));
 
         // 8️⃣ 판매자 지갑에 금액 추가
         WalletTransaction walletTransaction = WalletTransaction.builder()
-                .walletId(request.getSellerId()) // 판매자 ID
+                .walletId(request.getSellerId())
                 .amount(paymentAmount)
                 .transactionType(TransactionType.DEPOSIT)
                 .status(WalletTransactionStatus.SUCCESS)
@@ -101,14 +112,29 @@ public class PayService {
         walletTransactionRepository.save(walletTransaction);
 
         // 9️⃣ Kafka 이벤트 발행 (결제 성공)
+        List<PaymentSuccessEvent.OrderDetail> orderDetails = orders.stream()
+                .map(order -> new PaymentSuccessEvent.OrderDetail(
+                        order.getPaymentOrderId().toString(),
+                        order.getCard().getCardNumber(),
+                        order.getAmount(),
+                        order.getPaymentOrderStatus().name()
+                )).collect(Collectors.toList());
+
         PaymentSuccessEvent event = new PaymentSuccessEvent(
                 UUID.randomUUID().toString(),
-                cardInfo.getBankAccountId(),
                 request.getBuyerId(),
                 request.getSellerId(),
+                userJob, // ✅ Redis에서 가져온 값 포함
+                birthDate, // ✅ Redis에서 가져온 값 포함
+                paymentAmount,
+                "KRW",
                 request.getPaymentCategory(),
-                request.getPaymentMerchant()
+                request.getPaymentMerchant(),
+                "SUCCESS",
+                LocalDateTime.now(),
+                orderDetails
         );
+
         paymentProducer.sendPaymentSuccessEvent(event);
 
         return ResponseEntity.ok(QrPaymentResponse.builder()
