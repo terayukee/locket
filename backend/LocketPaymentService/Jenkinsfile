@@ -18,13 +18,13 @@ pipeline {
         KAFKA_BOOTSTRAP_SERVERS = credentials('KAFKA_BOOTSTRAP_SERVERS')
 
         JAVA_HOME = '/opt/java/openjdk'
-        GRADLE_HOME = '/opt/gradle/gradle-8.5'
+        GRADLE_HOME = '/opt/gradle/gradle-8.7'
         PATH = "${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"
     }
 
     tools {
         jdk 'JDK17'
-        gradle 'Gradle 8.5'
+        gradle 'Gradle 8.7'
     }
 
     stages {
@@ -65,8 +65,7 @@ pipeline {
                         configName: 'EC2-Server',
                         transfers: [
                             sshTransfer(
-                                sourceFiles: 'LocketPaymentService-0.0.1-SNAPSHOT.tar.gz',
-                                remoteDirectory: '${DOCKER_PATH}'
+                                sourceFiles: 'LocketPaymentService-0.0.1-SNAPSHOT.tar.gz'
                             )
                         ]
                     )
