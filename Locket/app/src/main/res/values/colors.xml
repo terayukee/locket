@@ -2,4 +2,15 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
+    <color name="primary">#00CBBF</color>
+    <color name="secondary">#FFA84B</color>
+    <color name="text">#424242</color>
+    <color name="point_text">#3BB9B6</color>
+    <color name="hint_text">#C9C9C9</color>
+    <color name="gray_stroke">#818181</color>
+    <color name="category_stroke">#DADADA</color>
+    <color name="background">#F6F7F9</color>
+    <color name="disabled">#9E9E9E</color>
+
 </resources>
