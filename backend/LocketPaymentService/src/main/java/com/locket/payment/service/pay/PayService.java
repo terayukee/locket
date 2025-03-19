@@ -3,17 +3,15 @@ package com.locket.payment.service.pay;
 import com.locket.kafka.event.PaymentSuccessEvent;
 import com.locket.payment.domain.pay.dto.QrPaymentRequest;
 import com.locket.payment.domain.pay.dto.QrPaymentResponse;
-import com.locket.payment.domain.pay.entity.PaymentTransaction;
-import com.locket.payment.domain.pay.entity.PaymentOrder;
-import com.locket.payment.domain.pay.entity.PaymentStatus;
-import com.locket.payment.domain.pay.repository.PaymentTransactionRepository;
-import com.locket.payment.domain.pay.repository.PaymentOrderRepository;
+import com.locket.payment.domain.pay.entity.*;
+import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.http.ResponseEntity;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -23,31 +21,54 @@ public class PayService {
 
     private final PaymentTransactionRepository paymentTransactionRepository;
     private final PaymentOrderRepository paymentOrderRepository;
-    private final PaymentProducer paymentProducer; // ✅ Kafka 메시지 전송을 위한 추가
+    private final BankAccountRepository bankAccountRepository;
+    private final WalletTransactionRepository walletTransactionRepository;
+    private final CardInfoRepository cardInfoRepository;
+    private final PaymentProducer paymentProducer;
 
     @Transactional
     public ResponseEntity<QrPaymentResponse> processQrPayment(QrPaymentRequest request) {
-        // 1. 결제 트랜잭션 저장
+        // 1️⃣ 카드 정보 조회 (카드 번호 → 카드 ID & 은행 계좌 ID)
+        CardInfo cardInfo = cardInfoRepository.findByCardNumber(request.getCardNumber())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
+
+        BankAccount bankAccount = bankAccountRepository.findById(cardInfo.getBankAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 계좌입니다."));
+
+        BigDecimal paymentAmount = request.getAmount();
+        if (bankAccount.getBalance().compareTo(paymentAmount) < 0) {
+            return ResponseEntity.badRequest().body(QrPaymentResponse.builder()
+                    .status("FAIL")
+                    .message("잔액 부족")
+                    .build());
+        }
+
+        // 3️⃣ 결제 트랜잭션 저장
         PaymentTransaction transaction = PaymentTransaction.builder()
-                .accountId(request.getAccountId())
+                .card(cardInfo) // ✅ 객체 참조로 변경
                 .buyerId(request.getBuyerId())
                 .sellerId(request.getSellerId())
                 .paymentTransactionStatus(PaymentStatus.EXECUTING)
                 .paymentCategory(request.getPaymentCategory())
                 .paymentMerchant(request.getPaymentMerchant())
-                .paymentTimestamp(LocalDateTime.now())
+                .amount(paymentAmount)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         paymentTransactionRepository.save(transaction);
 
-        // 2. 결제 주문 저장
+        // 4️⃣ 결제 주문 저장
         PaymentOrder order = PaymentOrder.builder()
-                .paymentTransactionId(transaction.getPaymentTransactionId())
-                .amount(request.getAmount())
+                .paymentTransaction(transaction) // ✅ 객체 참조로 변경
+                .card(cardInfo) // ✅ 객체 참조로 변경
+                .amount(paymentAmount)
                 .paymentOrderStatus(PaymentStatus.EXECUTING)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
                 .build();
         paymentOrderRepository.save(order);
 
-        // 3. 외부 API (부트페이) 호출
+        // 5️⃣ 부트페이 API 호출 (실제 결제 진행)
         boolean isPaymentSuccess = callBootpayAPI(request);
 
         if (!isPaymentSuccess) {
@@ -60,14 +81,29 @@ public class PayService {
                     .build());
         }
 
-        // 4. 결제 성공 후 상태 업데이트
+        // 6️⃣ 결제 성공 → 계좌 잔액 차감 (동시성 문제 방지)
+        bankAccount.withdraw(paymentAmount);
+        bankAccountRepository.save(bankAccount);
+
+        // 7️⃣ 결제 상태 업데이트
         transaction.updateStatus(PaymentStatus.SUCCESS);
         order.updateStatus(PaymentStatus.SUCCESS);
 
-        // ✅ 5. 결제 성공 시 Kafka 메시지 전송
+        // 8️⃣ 판매자 지갑에 금액 추가
+        WalletTransaction walletTransaction = WalletTransaction.builder()
+                .walletId(request.getSellerId()) // 판매자 ID
+                .amount(paymentAmount)
+                .transactionType(TransactionType.DEPOSIT)
+                .status(WalletTransactionStatus.SUCCESS)
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        walletTransactionRepository.save(walletTransaction);
+
+        // 9️⃣ Kafka 이벤트 발행 (결제 성공)
         PaymentSuccessEvent event = new PaymentSuccessEvent(
-                UUID.randomUUID().toString(),  // 고유 Transaction ID 생성
-                request.getAccountId(),
+                UUID.randomUUID().toString(),
+                cardInfo.getBankAccountId(),
                 request.getBuyerId(),
                 request.getSellerId(),
                 request.getPaymentCategory(),
@@ -75,7 +111,6 @@ public class PayService {
         );
         paymentProducer.sendPaymentSuccessEvent(event);
 
-        // ✅ 6. 최종 응답 반환
         return ResponseEntity.ok(QrPaymentResponse.builder()
                 .transactionId(transaction.getPaymentTransactionId().toString())
                 .status("SUCCESS")
