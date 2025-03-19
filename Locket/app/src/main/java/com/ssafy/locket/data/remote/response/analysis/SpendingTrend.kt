@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.remote.response
+package com.ssafy.locket.data.remote.response.analysis
 
 data class SpendingTrend(
     val amount: Int,

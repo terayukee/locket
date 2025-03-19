@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.remote.response
+package com.ssafy.locket.data.remote.response.product
 
 data class RecommendedProduct(
     val category: String,

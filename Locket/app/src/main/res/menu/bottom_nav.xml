@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/navigation_mypage"
+        android:id="@+id/home"
         android:icon="@android:drawable/btn_star"
         android:title="홈"
         android:background="@android:color/transparent" />
     <item
-        android:id="@+id/navigation_group_search"
-        android:icon="@android:drawable/editbox_dropdown_light_frame"
+        android:id="@+id/household_account_book"
+        android:icon="@android:drawable/btn_star"
         android:title="가계부"
         android:background="@android:color/transparent" />
-
     <item
-        android:id="@+id/my_payment_history"
-        android:icon="@android:drawable/editbox_dropdown_light_frame"
-        android:title=""
+        android:id="@+id/lowest_price_graph"
+        android:icon="@android:drawable/btn_star"
+        android:title="최저가 그래프"
         android:background="@android:color/transparent" />
 
     <item
-        android:id="@+id/my_p"
-        android:icon="@android:drawable/editbox_dropdown_light_frame"
-        android:title="내역 조회"
+        android:id="@+id/payment"
+        android:icon="@android:drawable/btn_star"
+        android:title="결제"
         android:background="@android:color/transparent" />
 </menu>

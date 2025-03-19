@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.remote.response
+package com.ssafy.locket.data.remote.response.analysis
 
 data class AnalysisUserRes(
     val categories: List<Category>,
