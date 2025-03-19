@@ -85,6 +85,7 @@ pipeline {
                                     docker run -d --name ${DOCKER_CONTAINER} \
                                       -p ${DOCKER_PORT}:${DOCKER_PORT} \
                                       -e SERVER_PORT=${DOCKER_PORT} \
+                                      -e SPRING_PROFILES_ACTIVE=prod \
                                       -e EUREKA_SERVER=${EUREKA_SERVER} \
                                       ${DOCKER_IMAGE}:latest
                                 """.stripIndent()
