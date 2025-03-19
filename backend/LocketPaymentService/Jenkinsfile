@@ -88,6 +88,7 @@ pipeline {
                                     docker load < ${DOCKER_PATH}/LocketPaymentService-0.0.1-SNAPSHOT.tar.gz
                                     docker run -d --name ${DOCKER_CONTAINER} \
                                       -p ${DOCKER_PORT}:${DOCKER_PORT} \
+                                      -e SPRING_PROFILES_ACTIVE=prod \
                                       -e SERVER_PORT=${DOCKER_PORT} \
                                       -e DB_URL_PAYMENT=${DB_URL_PAYMENT} \
                                       -e DB_USERNAME=${DB_USERNAME} \
