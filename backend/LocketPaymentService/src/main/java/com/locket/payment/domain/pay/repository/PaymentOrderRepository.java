@@ -1,10 +1,10 @@
 package com.locket.payment.domain.pay.repository;
 
-import com.locket.payment.domain.pay.entity.PaymentTransaction;
+import com.locket.payment.domain.pay.entity.PaymentOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PaymentTransactionRepository extends JpaRepository<PaymentTransaction, Long> {
+public interface PaymentOrderRepository extends JpaRepository<PaymentOrder, Long> {
 }
 

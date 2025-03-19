@@ -2,7 +2,7 @@ package com.locket.user.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.locket.kafka.event.PaymentSuccessEvent;
-import com.locket.user.service.PaymentProcessingService;
+import com.locket.user.service.payment.PaymentProcessingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -20,16 +20,18 @@ public class PaymentEventConsumer {
 
     @KafkaListener(topics = "payment.success", groupId = "user-service-group")
     public void listenPaymentSuccess(ConsumerRecord<String, PaymentSuccessEvent> record, Acknowledgment ack) {
-        PaymentSuccessEvent paymentEvent = record.value();
-        log.info("📥 Received Payment Success Event: {}", paymentEvent);
-
         try {
+            PaymentSuccessEvent paymentEvent = record.value();
+            log.info("📥 Received Payment Success Event: {}", paymentEvent);
+
+            // ✅ 결제 성공 이벤트 처리 (DB 및 ElasticSearch 저장)
             paymentProcessingService.processPaymentSuccess(paymentEvent);
-            ack.acknowledge();  // ✅ 즉시 수동 커밋 수행
+
+            // ✅ Kafka 오프셋 커밋
+            ack.acknowledge();
         } catch (Exception e) {
-            log.error("❌ Error processing payment success event: {}", paymentEvent, e);
+            log.error("❌ Error processing payment success event: {}", record.value(), e);
             // ❗ 예외 발생 시 ack.acknowledge()를 호출하지 않으면 Kafka가 자동 재시도
         }
     }
-
 }

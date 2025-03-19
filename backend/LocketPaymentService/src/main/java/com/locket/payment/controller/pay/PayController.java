@@ -2,6 +2,7 @@ package com.locket.payment.controller.pay;
 
 import com.locket.payment.service.pay.PayService;
 import com.locket.payment.domain.pay.dto.QrPaymentRequest;
+import com.locket.payment.domain.pay.dto.QrPaymentResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -10,13 +11,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/api/payment")
 @RequiredArgsConstructor
 @Tag(name = "결제 API", description = "QR 코드 결제 관련 API")
 public class PayController {
+
     private final PayService payService;
 
     @PostMapping("/qr")
@@ -26,13 +26,19 @@ public class PayController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
-    public ResponseEntity<Map<String, Object>> processQrPayment(@RequestBody QrPaymentRequest request) {
+    public ResponseEntity<QrPaymentResponse> processQrPayment(@RequestBody QrPaymentRequest request) {
         return payService.processQrPayment(request);
     }
 
     @GetMapping("/test")
-    public ResponseEntity<Map<String, Object>> testPayment() {
-        Map<String, Object> response = Map.of("message", "Payment Service is Running!");
+    @Operation(summary = "결제 서비스 테스트", description = "결제 서비스가 정상 작동하는지 테스트합니다.")
+    @ApiResponse(responseCode = "200", description = "서비스 정상 작동")
+    public ResponseEntity<QrPaymentResponse> testPayment() {
+        QrPaymentResponse response = QrPaymentResponse.builder()
+                .transactionId("test-transaction-id")
+                .status("SUCCESS")
+                .message("Payment Service is Running!")
+                .build();
         return ResponseEntity.ok(response);
     }
 }

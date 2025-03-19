@@ -11,34 +11,26 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentTransaction {
+public class PaymentOrder {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long paymentTransactionId;
+    private Long paymentOrderId;
+
+    @ManyToOne
+    @JoinColumn(name = "payment_transaction_id", nullable = false)
+    private PaymentTransaction paymentTransaction; // ✅ 관계 설정
 
     @ManyToOne
     @JoinColumn(name = "card_id", nullable = false)
-    private CardInfo card; // ✅ 카드 엔티티와 관계 설정
+    private CardInfo card; // ✅ 카드 정보 참조 추가
 
-    @Column(nullable = false)
-    private Integer buyerId;
-
-    @Column(nullable = false)
-    private Integer sellerId;
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal amount; // ✅ BigDecimal로 변경
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private PaymentStatus paymentTransactionStatus;
-
-    @Column(nullable = false)
-    private String paymentCategory;
-
-    @Column(nullable = false)
-    private String paymentMerchant;
-
-    @Column(nullable = false, precision = 15, scale = 2)
-    private BigDecimal amount; // ✅ 결제 금액 (BigDecimal로 변경)
+    private PaymentStatus paymentOrderStatus;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -57,9 +49,8 @@ public class PaymentTransaction {
         this.updatedAt = LocalDateTime.now();
     }
 
-    // ✅ 상태 업데이트 시 updatedAt도 변경
     public void updateStatus(PaymentStatus status) {
-        this.paymentTransactionStatus = status;
+        this.paymentOrderStatus = status;
         this.updatedAt = LocalDateTime.now();
     }
 }
