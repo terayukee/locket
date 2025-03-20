@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.graph.RecommandProductListFragment"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.graph.LikeProductListFragment"
     android:paddingTop="16dp"
     android:background="@color/white"
     android:paddingHorizontal="24dp">
@@ -24,14 +24,14 @@
         android:layout_marginTop="2dp"
         android:letterSpacing="-0.02"
         android:textSize="14sp"
-        android:text="내 주문목록 기반 추천 상품"
+        android:text="관심목록"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_recommand_list"
+        android:id="@+id/rv_like_list"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="4dp"
@@ -42,6 +42,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_product_title" />
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

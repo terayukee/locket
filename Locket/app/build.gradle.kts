@@ -62,6 +62,8 @@ dependencies {
     //nav바 이동
     implementation("androidx.navigation:navigation-fragment:2.8.9")
     implementation("androidx.navigation:navigation-ui:2.8.9")
+    //chart 생성
+    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 }
 
 kapt {

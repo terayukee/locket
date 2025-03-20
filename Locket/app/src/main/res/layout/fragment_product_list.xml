@@ -26,7 +26,7 @@
                 android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/logo_graph_locket"
+                    android:id="@+id/logo_locket"
                     android:layout_width="108dp"
                     android:layout_height="34dp"
                     android:src="@drawable/logo_home_locket"
@@ -34,7 +34,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageView
-                    android:id="@+id/iv_graph_heart"
+                    android:id="@+id/iv_heart"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:src="@drawable/ic_graph_heart"
@@ -45,7 +45,7 @@
                     app:layout_constraintWidth_percent="0.1" />
 
                 <com.google.android.material.card.MaterialCardView
-                    android:id="@+id/cv_graph_search_bar"
+                    android:id="@+id/cv_search_bar"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginStart="5dp"
@@ -59,7 +59,7 @@
                     app:layout_constraintDimensionRatio="8:1"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/logo_graph_locket"
+                    app:layout_constraintTop_toBottomOf="@+id/logo_locket"
                     app:layout_constraintWidth_percent="0.98">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
@@ -67,7 +67,7 @@
                         android:layout_height="match_parent">
 
                         <ImageView
-                            android:id="@+id/iv_graph_search"
+                            android:id="@+id/iv_search"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
@@ -80,19 +80,20 @@
                             app:layout_constraintWidth_percent="0.1" />
 
                         <EditText
-                            android:id="@+id/et_graph_product_search"
+                            android:id="@+id/et_product_search"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="2dp"
                             android:textColor="#888888"
                             android:textSize="14sp"
+                            android:letterSpacing="-0.02"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintEnd_toStartOf="@+id/iv_graph_clear"
-                            app:layout_constraintStart_toEndOf="@+id/iv_graph_search"
+                            app:layout_constraintEnd_toStartOf="@+id/iv_clear"
+                            app:layout_constraintStart_toEndOf="@+id/iv_search"
                             app:layout_constraintTop_toTopOf="parent" />
 
                         <ImageView
-                            android:id="@+id/iv_graph_clear"
+                            android:id="@+id/iv_clear"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="10dp"
@@ -127,6 +128,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_interior_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_interior"
@@ -137,6 +139,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:letterSpacing="-0.02"
                         android:text="홈인테리어"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -164,6 +167,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:letterSpacing="-0.02"
                         android:text="식품"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -191,6 +195,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:letterSpacing="-0.02"
                         android:text="생활용품"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -218,6 +223,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:letterSpacing="-0.02"
                         android:text="문구/오피스"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -245,6 +251,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
+                        android:letterSpacing="-0.02"
                         android:text="가전/디지털"
                         android:textSize="12sp" />
                 </LinearLayout>
@@ -284,6 +291,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="주방용품"
+                        android:letterSpacing="-0.02"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -311,6 +319,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="출산/유아동"
+                        android:letterSpacing="-0.02"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -338,6 +347,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="반려동물"
+                        android:letterSpacing="-0.02"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -365,6 +375,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="완구/취미"
+                        android:letterSpacing="-0.02"
                         android:textSize="12sp" />
                 </LinearLayout>
 
@@ -392,6 +403,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="8dp"
                         android:text="헬스/건강"
+                        android:letterSpacing="-0.02"
                         android:textSize="12sp" />
                 </LinearLayout>
             </LinearLayout>
@@ -417,6 +429,7 @@
                     android:layout_marginTop="16dp"
                     android:textStyle="bold"
                     android:text="내 주문목록 기반 추천목록"
+                    android:letterSpacing="-0.02"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/view" />
 
@@ -432,7 +445,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview_recommanditem_list"
+                    android:id="@+id/rv_recommanditem_list"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     android:layout_marginTop="16dp"
@@ -449,7 +462,7 @@
                     android:layout_height="4dp"
                     android:layout_marginTop="16dp"
                     android:background="#EFEFEF"
-                    app:layout_constraintTop_toBottomOf="@+id/recyclerview_recommanditem_list" />
+                    app:layout_constraintTop_toBottomOf="@+id/rv_recommanditem_list" />
 
                 <TextView
                     android:id="@+id/tv_money_happy"
@@ -458,6 +471,7 @@
                     android:layout_marginTop="16dp"
                     android:textStyle="bold"
                     android:text="만원의 행복"
+                    android:letterSpacing="-0.02"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/v_underline_1" />
 
@@ -466,13 +480,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="16dp"
-                    android:textStyle="bold"
                     android:text="만원으로 구매 가능한 상품을 알아보세요"
+                    android:letterSpacing="-0.02"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/tv_money_happy" />
 
                 <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerview_money_happy_list"
+                    android:id="@+id/rv_money_happy_list"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintBottom_toBottomOf="parent"

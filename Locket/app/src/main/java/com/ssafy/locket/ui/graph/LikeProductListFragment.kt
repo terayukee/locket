@@ -5,11 +5,11 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
-import com.ssafy.locket.databinding.FragmentCategoryProductListBinding
+import com.ssafy.locket.databinding.FragmentLikeProductListBinding
 
-class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBinding>(
-    FragmentCategoryProductListBinding::bind,
-    R.layout.fragment_category_product_list
+class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
+    FragmentLikeProductListBinding::bind,
+    R.layout.fragment_like_product_list
 ) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
