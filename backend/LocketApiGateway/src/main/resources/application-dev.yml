@@ -1,0 +1,23 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+server:
+  port: 8080
+
+# ✅ 로컬 환경에서 실행할 API 문서 경로
+springdoc:
+  swagger-ui:
+    urls:
+      - name: "Locket Payment Service"
+        url: http://localhost:8080/api/payment/v3/api-docs
+      - name: "Locket User Service"
+        url: http://localhost:8080/api/user/v3/api-docs

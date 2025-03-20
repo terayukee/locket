@@ -1,0 +1,16 @@
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  jpa:
+    hibernate:
+      ddl-auto: validate  # 배포 환경에서는 스키마 자동 변경 방지
+    show-sql: false  # SQL 로그 비활성화 (성능 최적화)
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://j12d204.p.ssafy.io/eureka  # EC2의 Eureka 서버 사용

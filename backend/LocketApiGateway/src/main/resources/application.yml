@@ -1,37 +1,6 @@
 spring:
   profiles:
-    active: dev # 로컬(dev) / 프로덕션(prod)
-
----
-# ✅ 1️⃣ 로컬(dev) 환경 설정
-spring:
-  config:
-    activate:
-      on-profile: dev
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka
-
----
-# ✅ 2️⃣ 프로덕션(prod) 환경 설정
-# spring:
-#   config:
-#     activate:
-#       on-profile: prod
-# eureka:
-#   client:
-#     register-with-eureka: true
-#     fetch-registry: true
-#     service-url:
-#       defaultZone: http://locket-discovery:8761/eureka
-
----
-# ✅ 3️⃣ 공통 설정
-spring:
+    active: dev  # 기본값을 'dev'로 설정 (로컬에서는 자동 적용됨)
   application:
     name: locket-api-gateway
 
@@ -39,12 +8,12 @@ spring:
     gateway:
       routes:
         - id: payment-service
-          uri: lb://payment-service  # 🔥 Eureka 기반으로 수정
+          uri: lb://payment-service  # 🔥 Eureka 기반
           predicates:
             - Path=/api/payment/**
 
         - id: user-service
-          uri: lb://user-service  # 🔥 Eureka 기반으로 수정
+          uri: lb://user-service  # 🔥 Eureka 기반
           predicates:
             - Path=/api/user/**
 
@@ -79,8 +48,6 @@ jwt:
   access-exp: ${jwt_access_exp}
   refresh-exp: ${jwt_refresh_exp}
 
----
-# ✅ 4️⃣ Swagger 설정 추가
 springdoc:
   api-docs:
     enabled: true
@@ -93,3 +60,4 @@ springdoc:
         url: http://localhost:8080/api/payment/v3/api-docs
       - name: "Locket User Service"
         url: http://localhost:8080/api/user/v3/api-docs
+
