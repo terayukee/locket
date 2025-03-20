@@ -106,10 +106,10 @@
         android:layout_height="0dp"
         android:layout_marginStart="24dp"
         android:background="@drawable/bg_home_icon"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_payment_card_bg"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintHeight_percent="0.057"
         app:layout_constraintVertical_bias="0.4"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_payment_card_bg"
         app:layout_constraintStart_toStartOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
@@ -368,5 +368,12 @@
         app:layout_constraintBottom_toBottomOf="@+id/iv_character_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_character_icon"
         app:layout_constraintEnd_toEndOf="@+id/iv_character_icon"/>
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_receipt"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content"
+        app:constraint_referenced_ids="iv_receipt_bg, iv_receipt_icon, tv_receipt" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

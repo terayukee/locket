@@ -9,7 +9,11 @@
         android:id="@+id/homeFragment"
         android:name="com.ssafy.locket.ui.home.HomeFragment"
         android:label="fragment_home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_homeFragment_to_characterFragment"
+            app:destination="@id/characterFragment" />
+    </fragment>
     <fragment
         android:id="@+id/financeFragment"
         android:name="com.ssafy.locket.ui.finance.FinanceFragment"
@@ -25,4 +29,18 @@
         android:name="com.ssafy.locket.ui.graph.ProductListFragment"
         android:label="fragment_product_list"
         tools:layout="@layout/fragment_product_list" />
+    <fragment
+        android:id="@+id/characterFragment"
+        android:name="com.ssafy.locket.ui.home.character.CharacterInitialFragment"
+        android:label="fragment_character"
+        tools:layout="@layout/fragment_character_initial" >
+        <action
+            android:id="@+id/action_characterFragment_to_characterGrowthFragment"
+            app:destination="@id/characterGrowthFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/characterGrowthFragment"
+        android:name="com.ssafy.locket.ui.home.character.CharacterGrowthFragment"
+        android:label="fragment_character_growth"
+        tools:layout="@layout/fragment_character_growth" />
 </navigation>
