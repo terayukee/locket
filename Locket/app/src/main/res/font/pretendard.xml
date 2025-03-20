@@ -11,6 +11,14 @@
         app:fontStyle="normal"
         app:fontWeight="400"
         tools:ignore="UnusedAttribute" />
+    <font
+        android:font="@font/pretendard_medium"
+        android:fontStyle="normal"
+        android:fontWeight="500"
+        app:font="@font/pretendard_medium"
+        app:fontStyle="normal"
+        app:fontWeight="500"
+        tools:ignore="UnusedAttribute" />
     <!--bold-->
     <font
         android:font="@font/pretendard_bold"
@@ -19,5 +27,14 @@
         app:font="@font/pretendard_bold"
         app:fontStyle="normal"
         app:fontWeight="700"
+        tools:ignore="UnusedAttribute" />
+
+    <font
+        android:font="@font/pretendard_semi_bold"
+        android:fontStyle="normal"
+        android:fontWeight="600"
+        app:font="@font/pretendard_semi_bold"
+        app:fontStyle="normal"
+        app:fontWeight="600"
         tools:ignore="UnusedAttribute" />
 </font-family>
