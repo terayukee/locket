@@ -1,0 +1,33 @@
+spring:
+  profiles:
+    active: dev # 기본 실행 환경(dev)으로 설정
+  application:
+    name: LocketElasticSearchService  # 서비스명 (Eureka 등록 시 사용)
+
+  elasticsearch:
+    host: ${ELASTICSEARCH_HOST}  # 환경변수에서 설정
+    port: ${ELASTICSEARCH_PORT}
+
+  kafka:
+    bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
+
+  jpa:
+    hibernate:
+      ddl-auto: none  # ElasticSearch를 사용하므로 RDB 테이블 자동 생성 X
+    show-sql: false
+
+  redis:
+    host: ${REDIS_HOST}
+    port: ${REDIS_PORT}
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka  # 기본 Eureka 서버
+
+logging:
+  level:
+    root: INFO
+    com.locket: DEBUG

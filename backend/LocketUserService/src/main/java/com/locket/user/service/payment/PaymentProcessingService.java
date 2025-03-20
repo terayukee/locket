@@ -1,7 +1,6 @@
 package com.locket.user.service.payment;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
-import com.locket.user.service.payment.elastic.ElasticSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -11,17 +10,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class PaymentProcessingService {
 
-    private final ElasticSearchService elasticSearchService;
-
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
 
-        // ✅ ElasticSearch에 저장 (결제 패턴 분석을 위한 데이터)
-        saveToElasticSearch(event);
+        // ✅ Point, 미션 등 후속 처리할 로직 작성
+
     }
 
-    private void saveToElasticSearch(PaymentSuccessEvent event) {
-        log.info("📌 Storing Payment Data in ElasticSearch: {}", event);
-        elasticSearchService.indexPaymentEvent(event);
-    }
 }
