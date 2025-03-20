@@ -1,33 +1,40 @@
+server:
+  port: 0  # 랜덤 포트 사용
+
 spring:
-  profiles:
-    active: dev # 기본 실행 환경(dev)으로 설정
   application:
-    name: LocketElasticSearchService  # 서비스명 (Eureka 등록 시 사용)
+    name: elasticsearch-service
+
+  profiles:
+    active: dev  # 기본 실행 환경(dev)
+    include: key  # application-key.yml 포함 (DB, Kafka 정보)
 
   elasticsearch:
-    host: ${ELASTICSEARCH_HOST}  # 환경변수에서 설정
-    port: ${ELASTICSEARCH_PORT}
+    uris: ${ELASTICSEARCH.URIS}
+    username: ${ELASTICSEARCH.USERNAME}
+    password: ${ELASTICSEARCH.PASSWORD}
 
   kafka:
     bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
+    consumer:
+      group-id: elastic-search-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      ack-mode: manual_immediate
 
-  jpa:
-    hibernate:
-      ddl-auto: none  # ElasticSearch를 사용하므로 RDB 테이블 자동 생성 X
-    show-sql: false
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
 
-  redis:
-    host: ${REDIS_HOST}
-    port: ${REDIS_PORT}
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-    service-url:
-      defaultZone: http://localhost:8761/eureka  # 기본 Eureka 서버
-
-logging:
-  level:
-    root: INFO
-    com.locket: DEBUG
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api/user/v3/api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

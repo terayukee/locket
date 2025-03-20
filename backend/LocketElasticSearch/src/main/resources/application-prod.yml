@@ -3,26 +3,8 @@ spring:
     activate:
       on-profile: prod
 
-server:
-  port: 8082  # 배포용 포트 (고정)
-
-elasticsearch:
-  host: j12d204.p.ssafy.io
-  port: 9200  # ElasticSearch 도커 컨테이너 포트
-
-kafka:
-  bootstrap-servers: j12d204.p.ssafy.io:9092
-
-redis:
-  host: j12d204.p.ssafy.io
-  port: 6379
-
 eureka:
   client:
     service-url:
       defaultZone: http://j12d204.p.ssafy.io:8761/eureka
 
-logging:
-  level:
-    root: WARN
-    com.locket: INFO
