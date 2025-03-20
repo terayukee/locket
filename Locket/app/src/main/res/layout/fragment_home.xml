@@ -88,7 +88,7 @@
         app:layout_constraintTop_toTopOf="@+id/iv_payment_card_bg" />
 
     <ImageView
-        android:id="@+id/btn_payment_move"
+        android:id="@+id/btn_recommand_move"
         android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:paddingTop="20dp"
