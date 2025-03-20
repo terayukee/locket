@@ -1,8 +1,8 @@
 package com.locket.elasticsearch.consumer;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.locket.elasticsearch.service.payment.PaymentProcessingService;
 import com.locket.kafka.event.PaymentSuccessEvent;
-import com.locket.user.service.payment.PaymentProcessingService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
@@ -18,7 +18,7 @@ public class PaymentEventConsumer {
     private final PaymentProcessingService paymentProcessingService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "payment.success", groupId = "user-service-group")
+    @KafkaListener(topics = "payment.success", groupId = "elastic-search-group")
     public void listenPaymentSuccess(ConsumerRecord<String, PaymentSuccessEvent> record, Acknowledgment ack) {
         try {
             PaymentSuccessEvent paymentEvent = record.value();
