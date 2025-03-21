@@ -16,6 +16,9 @@
         <action
             android:id="@+id/action_homeFragment_to_receiptListFragment"
             app:destination="@id/receiptListFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_notificationFragment"
+            app:destination="@id/notificationFragment" />
     </fragment>
     <fragment
         android:id="@+id/financeFragment"
@@ -59,4 +62,9 @@
             android:id="@+id/action_receiptListFragment_to_receiptUploadDialog"
             app:destination="@id/receiptUploadDialog" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.ssafy.locket.ui.notification.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 </navigation>

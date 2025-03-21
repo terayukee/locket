@@ -21,5 +21,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.ivReceiptBg.setOnClickListener {
             findNavController().navigate(R.id.receiptListFragment)
         }
+
+        binding.icNotification.setOnClickListener {
+            findNavController().navigate(R.id.notificationFragment)
+        }
     }
 }
