@@ -2,15 +2,19 @@ package com.ssafy.locket.ui.graph.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.locket.R
 import com.ssafy.locket.data.remote.dto.Product
 import com.ssafy.locket.databinding.ItemMoneyHappyBinding
 import com.ssafy.locket.databinding.ItemProductBinding
 
-class MoneyHappyAdapter(var moneyHappyList: List<Product>) : RecyclerView.Adapter<MoneyHappyAdapter.MoneyHappyViewHolder>() {
+class MoneyHappyAdapter(var moneyHappyList: List<Product>,private val navController: NavController) : RecyclerView.Adapter<MoneyHappyAdapter.MoneyHappyViewHolder>() {
     inner class MoneyHappyViewHolder(private val binding: ItemMoneyHappyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
-
+            binding.cvProduct.setOnClickListener {
+                navController.navigate(R.id.action_productListFragment_to_productDetailFragment)
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoneyHappyViewHolder {

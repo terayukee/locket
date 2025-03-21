@@ -65,6 +65,7 @@
                 android:id="@+id/tv_review"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:letterSpacing="-0.02"
                 android:text="5.0(118)"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_star"
@@ -75,6 +76,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text="6개월간 최고가 24,900원"
+                android:letterSpacing="-0.02"
                 android:textColor="#818181"
                 android:textSize="12sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_product_title"
@@ -84,6 +86,7 @@
                 android:id="@+id/tv_discount"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:letterSpacing="-0.02"
                 android:text="50%"
                 android:textColor="#FF3433"
                 android:textSize="12sp"
@@ -95,6 +98,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="8dp"
+                android:letterSpacing="-0.02"
                 android:text="8,100원"
                 android:textSize="12sp"
                 app:layout_constraintStart_toEndOf="@+id/tv_discount"
@@ -122,11 +126,12 @@
                 android:id="@+id/tv_chart_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_rounded_beige_text"
+                android:background="@drawable/bg_product_rounded_beige"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:layout_marginTop="16sp"
                 android:text="가격별동 차트"
+                android:letterSpacing="-0.02"
                 android:textColor="#2B2B2B"
                 android:textSize="12sp"
                 android:textStyle="bold"
@@ -140,6 +145,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
+                android:letterSpacing="-0.02"
                 android:text="변화하는 쿠팡가를 확인해보세요"
                 android:textSize="14sp"
                 android:textStyle="bold"
@@ -151,13 +157,85 @@
                 android:id="@+id/chart_price_graph"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
+                android:layout_marginTop="12dp"
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_chart_description" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cv_notification_setting"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:elevation="4dp"
+                app:cardBackgroundColor="#00CBBF"
+                app:cardCornerRadius="16dp"
+                android:layout_marginLeft="24dp"
+                android:layout_marginRight="24dp"
+                android:layout_marginBottom="50dp"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintDimensionRatio="1"
-                app:layout_constraintTop_toBottomOf="@+id/tv_chart_description" />
+                app:layout_constraintTop_toBottomOf="@+id/chart_price_graph" >
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="16dp">
+
+                    <ImageView
+                        android:id="@+id/iv_bell"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_product_star"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:tint="@color/white" />
+
+                    <TextView
+                        android:id="@+id/tv_notification_text"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="12dp"
+                        android:text="원하는 가격 알림"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/tv_setting"
+                        app:layout_constraintStart_toEndOf="@+id/iv_bell"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/tv_setting"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="설정 안됨"
+                        android:letterSpacing="-0.02"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        app:layout_constraintHorizontal_bias="0.9"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/iv_setting"
+                        android:layout_width="16dp"
+                        android:layout_height="16dp"
+                        android:layout_marginStart="4dp"
+                        android:src="@drawable/ic_all_arrow"
+                        app:layout_constraintBottom_toBottomOf="@+id/tv_setting"
+                        app:layout_constraintStart_toEndOf="@+id/tv_setting"
+                        app:layout_constraintTop_toTopOf="@+id/tv_setting"
+                        app:tint="@color/white" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </androidx.cardview.widget.CardView>
+
+
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -43,8 +43,8 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
     fun initAdapter(){
         productList = mutableListOf()
         moneyHappyList = mutableListOf()
-        productAdapter = ProductAdapter(productList)
-        moneyHappyLisAdapter = MoneyHappyAdapter(moneyHappyList)
+        productAdapter = ProductAdapter(productList,findNavController(),R.id.action_productListFragment_to_productDetailFragment)
+        moneyHappyLisAdapter = MoneyHappyAdapter(moneyHappyList,findNavController())
         productList.add(Product(1000))
         productList.add(Product(2000))
         productList.add(Product(3000))

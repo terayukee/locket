@@ -38,27 +38,48 @@
             android:id="@+id/action_productListFragment_to_recommandProductListFragment"
             app:destination="@id/recommandProductListFragment" />
         <action
-            android:id="@+id/action_productListFragment_to_recommandProductListFragment2"
-            app:destination="@id/recommandProductListFragment" />
+            android:id="@+id/action_productListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/likeProductListFragment"
         android:name="com.ssafy.locket.ui.graph.LikeProductListFragment"
         android:label="fragment_like_product_list"
-        tools:layout="@layout/fragment_like_product_list" />
+        tools:layout="@layout/fragment_like_product_list" >
+        <action
+            android:id="@+id/action_likeProductListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/searchProductListFragment"
         android:name="com.ssafy.locket.ui.graph.SearchProductListFragment"
         android:label="fragment_search_product_list"
-        tools:layout="@layout/fragment_search_product_list" />
+        tools:layout="@layout/fragment_search_product_list" >
+        <action
+            android:id="@+id/action_searchProductListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/categoryProductListFragment"
         android:name="com.ssafy.locket.ui.graph.CategoryProductListFragment"
         android:label="fragment_category_product_list"
-        tools:layout="@layout/fragment_category_product_list" />
+        tools:layout="@layout/fragment_category_product_list" >
+        <action
+            android:id="@+id/action_categoryProductListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
     <fragment
         android:id="@+id/recommandProductListFragment"
         android:name="com.ssafy.locket.ui.graph.RecommandProductListFragment"
         android:label="fragment_recommand_product_list"
-        tools:layout="@layout/fragment_recommand_product_list" />
+        tools:layout="@layout/fragment_recommand_product_list" >
+        <action
+            android:id="@+id/action_recommandProductListFragment_to_productDetailFragment"
+            app:destination="@id/productDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/productDetailFragment"
+        android:name="com.ssafy.locket.ui.graph.ProductDetailFragment"
+        android:label="fragment_product_detail"
+        tools:layout="@layout/fragment_product_detail" />
 </navigation>
