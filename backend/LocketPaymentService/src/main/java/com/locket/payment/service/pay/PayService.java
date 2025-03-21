@@ -7,6 +7,7 @@ import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PayService {
@@ -47,9 +49,16 @@ public class PayService {
         }
 
         // 2️⃣ Redis에서 사용자 정보 가져오기
-        String redisKey = "user:" + request.getBuyerId();
-        String birthDate = redisTemplate.opsForValue().get(redisKey + ":birthDate");
-        String userJob = redisTemplate.opsForValue().get(redisKey + ":userJob");
+        String birthDate = "1998";
+        String userJob = "학생";
+
+        try {
+            String redisKey = "user:" + request.getBuyerId();
+            birthDate = redisTemplate.opsForValue().get(redisKey + ":birthDate");
+            userJob = redisTemplate.opsForValue().get(redisKey + ":userJob");
+        } catch (Exception e) {
+            log.warn("Redis 연결 실패, 기본값 사용");
+        }
 
         // 3️⃣ 결제 트랜잭션 저장
         PaymentTransaction transaction = PaymentTransaction.builder()
