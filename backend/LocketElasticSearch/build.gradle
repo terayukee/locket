@@ -61,6 +61,10 @@ dependencies {
 
 	// ✅ Elasticsearch (쿼리 전용 저장소)
 	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+//	implementation 'org.elasticsearch.client:elasticsearch-java:8.13.4'
+
+	// ✅ (선택) Jackson 연동을 위해 필요할 수 있음
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-smile'
 
 	// ✅ Resilience4j (서킷 브레이커, 재시도, 제한)
 	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'

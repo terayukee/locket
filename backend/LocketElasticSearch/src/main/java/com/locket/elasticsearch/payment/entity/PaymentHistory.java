@@ -2,7 +2,7 @@ package com.locket.elasticsearch.payment.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,22 +13,43 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(indexName = "payment_history") // ✅ Elasticsearch에 저장될 인덱스명
+@Document(indexName = "payment_history")
 public class PaymentHistory {
 
-    @Id  // ✅ Elasticsearch에서 반드시 필요한 ID 필드
+    @Id
     private String transactionId;
 
+    @Field(type = FieldType.Integer)
     private int buyerId;
+
+    @Field(type = FieldType.Integer)
     private int sellerId;
+
+    @Field(type = FieldType.Keyword)
     private String userJob;
+
+    @Field(type = FieldType.Keyword)
     private String birthDate;
+
+    @Field(type = FieldType.Double)
     private BigDecimal totalAmount;
+
+    @Field(type = FieldType.Keyword)
     private String currency;
+
+    @Field(type = FieldType.Keyword)
     private String paymentCategory;
+
+    @Field(type = FieldType.Keyword)
     private String paymentMerchant;
+
+    @Field(type = FieldType.Keyword)
     private String paymentStatus;
+
+    @Field(type = FieldType.Date, format = DateFormat.date_time)
     private LocalDateTime createdAt;
+
+    @Field(type = FieldType.Nested)
     private List<OrderDetail> orders;
 
     @Getter
@@ -37,9 +58,17 @@ public class PaymentHistory {
     @AllArgsConstructor
     @Builder
     public static class OrderDetail {
+
+        @Field(type = FieldType.Keyword)
         private String orderId;
+
+        @Field(type = FieldType.Keyword)
         private String cardNumber;
+
+        @Field(type = FieldType.Double)
         private BigDecimal amount;
+
+        @Field(type = FieldType.Keyword)
         private String paymentOrderStatus;
     }
 }

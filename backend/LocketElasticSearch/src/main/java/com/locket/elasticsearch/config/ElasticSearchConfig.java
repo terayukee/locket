@@ -1,22 +1,11 @@
 package com.locket.elasticsearch.config;
 
-import org.apache.http.HttpHost;
-import org.elasticsearch.client.RestClient;
-import org.elasticsearch.client.RestHighLevelClient;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.data.elasticsearch.config.AbstractElasticsearchConfiguration;
+import org.springframework.data.elasticsearch.repository.config.EnableElasticsearchRepositories;
 
 @Configuration
-public class ElasticSearchConfig extends AbstractElasticsearchConfiguration {
-
-    @Override
-    @Bean
-    public RestHighLevelClient elasticsearchClient() {
-        return new RestHighLevelClient(
-                RestClient.builder(
-                        new HttpHost("localhost", 9200, "http") // 🔥 ElasticSearch 서버 주소
-                )
-        );
-    }
+@EnableElasticsearchRepositories(basePackages = "com.locket.elasticsearch.payment.repository")
+public class ElasticSearchConfig {
+    // ✅ 별도의 클라이언트 설정은 필요하지 않음!
+    // Spring Boot가 application.yml을 기반으로 자동 구성함
 }
