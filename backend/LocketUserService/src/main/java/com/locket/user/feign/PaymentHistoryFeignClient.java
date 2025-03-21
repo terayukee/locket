@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "elasticsearch-service", url = "${feign.elasticsearch.url}") // application.yml에서 설정
+@FeignClient(name = "elasticsearch-service")
 public interface PaymentHistoryFeignClient {
 
     @GetMapping("/api/elasticsearch/payments")
