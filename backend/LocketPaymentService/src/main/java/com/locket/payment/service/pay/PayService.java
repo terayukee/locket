@@ -111,15 +111,18 @@ public class PayService {
         orders.forEach(order -> order.updateStatus(PaymentStatus.SUCCESS));
 
         // 8️⃣ 판매자 지갑에 금액 추가
-        WalletTransaction walletTransaction = WalletTransaction.builder()
-                .walletId(request.getSellerId())
-                .amount(paymentAmount)
-                .transactionType(TransactionType.DEPOSIT)
-                .status(WalletTransactionStatus.SUCCESS)
-                .createdAt(LocalDateTime.now())
-                .updatedAt(LocalDateTime.now())
-                .build();
-        walletTransactionRepository.save(walletTransaction);
+        orders.forEach(order -> {
+            WalletTransaction walletTransaction = WalletTransaction.builder()
+                    .walletId(request.getSellerId())
+                    .paymentOrder(order)
+                    .amount(paymentAmount)
+                    .transactionType(TransactionType.DEPOSIT)
+                    .status(WalletTransactionStatus.SUCCESS)
+                    .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
+                    .build();
+            walletTransactionRepository.save(walletTransaction);
+        });
 
         // 9️⃣ Kafka 이벤트 발행 (결제 성공)
         List<PaymentSuccessEvent.OrderDetail> orderDetails = orders.stream()
