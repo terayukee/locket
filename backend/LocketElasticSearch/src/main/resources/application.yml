@@ -35,6 +35,6 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /api/user/v3/api-docs
+    path: /api/elasticsearch/v3/api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
