@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -146,7 +148,7 @@ public class PayService {
                 request.getPaymentCategory(),
                 request.getPaymentMerchant(),
                 "SUCCESS",
-                LocalDateTime.now(),
+                OffsetDateTime.now(ZoneOffset.ofHours(9)),
                 orderDetails
         );
 

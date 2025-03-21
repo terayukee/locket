@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 /**
@@ -27,7 +27,7 @@ public class PaymentSuccessEvent {
     private String paymentCategory;
     private String paymentMerchant;
     private String paymentStatus;
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
     private List<OrderDetail> orders;
 
     @Getter

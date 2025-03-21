@@ -2,10 +2,13 @@ package com.locket.elasticsearch.payment.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.*;
+import org.springframework.data.elasticsearch.annotations.DateFormat;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 
 @Getter
@@ -47,7 +50,7 @@ public class PaymentHistory {
     private String paymentStatus;
 
     @Field(type = FieldType.Date, format = DateFormat.date_time)
-    private LocalDateTime createdAt;
+    private OffsetDateTime createdAt;
 
     @Field(type = FieldType.Nested)
     private List<OrderDetail> orders;
