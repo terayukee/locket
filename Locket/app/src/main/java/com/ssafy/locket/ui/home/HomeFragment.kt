@@ -17,5 +17,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.ivCharacterBg.setOnClickListener {
             findNavController().navigate(R.id.characterFragment)
         }
+
+        binding.ivReceiptBg.setOnClickListener {
+            findNavController().navigate(R.id.receiptListFragment)
+        }
     }
 }

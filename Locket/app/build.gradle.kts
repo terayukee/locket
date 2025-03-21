@@ -64,6 +64,8 @@ dependencies {
     //nav바 이동
     implementation("androidx.navigation:navigation-fragment:2.8.9")
     implementation("androidx.navigation:navigation-ui:2.8.9")
+
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
 }
 
 kapt {
