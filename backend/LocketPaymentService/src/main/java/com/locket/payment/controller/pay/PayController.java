@@ -1,15 +1,21 @@
 package com.locket.payment.controller.pay;
 
-import com.locket.payment.service.pay.PayService;
 import com.locket.payment.domain.pay.dto.QrPaymentRequest;
 import com.locket.payment.domain.pay.dto.QrPaymentResponse;
+import com.locket.payment.service.pay.PayService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -26,7 +32,28 @@ public class PayController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
-    public ResponseEntity<QrPaymentResponse> processQrPayment(@RequestBody QrPaymentRequest request) {
+    public ResponseEntity<QrPaymentResponse> processQrPayment(
+            @RequestBody(
+                    description = "QR 결제 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "QR 결제 예시",
+                                    summary = "기본 결제 요청 예시",
+                                    value = "{\n" +
+                                            "  \"cardNumber\": \"1234123412341234\",\n" +
+                                            "  \"buyerId\": 1,\n" +
+                                            "  \"sellerId\": 2,\n" +
+                                            "  \"paymentCategory\": \"카페\",\n" +
+                                            "  \"paymentMerchant\": \"아메리카노\",\n" +
+                                            "  \"amount\": 2000\n" +
+                                            "}"
+                            )
+                    )
+            )
+            @org.springframework.web.bind.annotation.RequestBody QrPaymentRequest request
+    )  {
         return payService.processQrPayment(request);
     }
 

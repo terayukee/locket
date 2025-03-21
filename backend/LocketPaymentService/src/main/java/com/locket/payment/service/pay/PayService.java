@@ -63,6 +63,7 @@ public class PayService {
         // 3️⃣ 결제 트랜잭션 저장
         PaymentTransaction transaction = PaymentTransaction.builder()
                 .card(cardInfo)
+                .account(bankAccount)
                 .buyerId(request.getBuyerId())
                 .sellerId(request.getSellerId())
                 .paymentTransactionStatus(PaymentStatus.EXECUTING)
@@ -79,6 +80,7 @@ public class PayService {
                 PaymentOrder.builder()
                         .paymentTransaction(transaction)
                         .card(cardInfo)
+                        .buyerAccount(bankAccount)
                         .amount(paymentAmount)
                         .paymentOrderStatus(PaymentStatus.EXECUTING)
                         .createdAt(LocalDateTime.now())

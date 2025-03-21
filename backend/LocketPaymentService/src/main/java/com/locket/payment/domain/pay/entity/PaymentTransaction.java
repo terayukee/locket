@@ -21,6 +21,10 @@ public class PaymentTransaction {
     @JoinColumn(name = "card_id", nullable = false)
     private CardInfo card; // ✅ 카드 엔티티와 관계 설정
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "account_id", nullable = false)
+    private BankAccount account;
+
     @Column(nullable = false)
     private Integer buyerId;
 
