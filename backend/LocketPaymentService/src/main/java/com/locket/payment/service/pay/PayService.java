@@ -36,8 +36,7 @@ public class PayService {
         CardInfo cardInfo = cardInfoRepository.findByCardNumber(request.getCardNumber())
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
 
-        BankAccount bankAccount = bankAccountRepository.findById(cardInfo.getBankAccountId())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 계좌입니다."));
+        BankAccount bankAccount = cardInfo.getBankAccount();
 
         BigDecimal paymentAmount = request.getAmount();
         if (bankAccount.getBalance().compareTo(paymentAmount) < 0) {

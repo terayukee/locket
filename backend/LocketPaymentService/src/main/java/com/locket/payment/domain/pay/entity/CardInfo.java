@@ -19,14 +19,15 @@ public class CardInfo {
     @Column(nullable = false)
     private Integer userId;
 
-    @Column(nullable = false)
-    private Integer bankAccountId; // 카드와 연결된 은행 계좌 ID
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "bank_account_id", nullable = false)
+    private BankAccount bankAccount; // ✅ 변경됨
 
     @Column(nullable = false, unique = true, length = 16)
     private String cardNumber;
 
     @Column(nullable = false)
-    private String cardExpiry; // MM/YY 형식
+    private String cardExpiry;
 
     @Column(nullable = false, length = 4)
     private String cardCvc;
@@ -37,3 +38,4 @@ public class CardInfo {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 }
+
