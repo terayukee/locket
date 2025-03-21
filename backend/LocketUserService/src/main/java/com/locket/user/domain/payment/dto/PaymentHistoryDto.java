@@ -1,8 +1,7 @@
-package com.locket.user.domain.payment.entity;
+package com.locket.user.domain.payment.dto;
 
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -12,12 +11,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Document(indexName = "payment_history") // ✅ Elasticsearch에 저장될 인덱스명
-public class PaymentHistory {
-
-    @Id  // ✅ Elasticsearch에서 반드시 필요한 ID 필드
+public class PaymentHistoryDto {
     private String transactionId;
-
     private int buyerId;
     private int sellerId;
     private String userJob;
@@ -28,14 +23,14 @@ public class PaymentHistory {
     private String paymentMerchant;
     private String paymentStatus;
     private LocalDateTime createdAt;
-    private List<OrderDetail> orders;
+    private List<OrderDetailDto> orders;
 
     @Getter
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
-    public static class OrderDetail {
+    public static class OrderDetailDto {
         private String orderId;
         private String cardNumber;
         private BigDecimal amount;

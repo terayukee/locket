@@ -12,7 +12,7 @@ import java.util.List;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/payment")
+@RequestMapping("/api/elasticsearch/payment")
 @RequiredArgsConstructor
 public class PaymentQueryController {
 

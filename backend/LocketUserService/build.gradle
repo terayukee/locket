@@ -59,9 +59,6 @@ dependencies {
     // ✅ Kafka Consumer (유저 서비스에서 결제 성공 이벤트 수신)
     implementation 'org.springframework.kafka:spring-kafka'
 
-    // ✅ Elasticsearch (쿼리 전용 저장소)
-    implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
-
     // ✅ Resilience4j (서킷 브레이커, 재시도, 제한)
     implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
 

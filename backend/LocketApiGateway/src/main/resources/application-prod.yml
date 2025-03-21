@@ -22,4 +22,4 @@ springdoc:
       - name: "Locket User Service"
         url: http://j12d204.p.ssafy.io/api/user/v3/api-docs
       - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch 추가
-        url: http://j12d204.p.ssafy.io/api/search/v3/api-docs
+        url: http://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs

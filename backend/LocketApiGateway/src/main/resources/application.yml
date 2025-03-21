@@ -20,7 +20,7 @@ spring:
         - id: elasticsearch-service  # ✅ Elasticsearch 서비스 추가
           uri: lb://elasticsearch-service
           predicates:
-            - Path=/api/search/**
+            - Path=/api/elasticsearch/**
 
         # 🔥 Swagger API 문서를 Gateway가 프록시하도록 추가
         - id: payment-service-docs
@@ -36,7 +36,7 @@ spring:
         - id: elasticsearch-service-docs  # ✅ Elasticsearch Swagger 추가
           uri: lb://elasticsearch-service
           predicates:
-            - Path=/api/search/v3/api-docs
+            - Path=/api/elasticsearch/v3/api-docs
 
 management:
   endpoints:
@@ -71,4 +71,4 @@ springdoc:
       - name: "Locket User Service"
         url: http://localhost:8080/api/user/v3/api-docs
       - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch API 추가
-        url: http://localhost:8080/api/search/v3/api-docs
+        url: http://localhost:8080/api/elasticsearch/v3/api-docs
