@@ -1,42 +1,37 @@
 package com.locket.payment.domain.pay.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "wallet")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class WalletTransaction {
+public class Wallet {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer transactionId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "wallet_id", nullable = false)
-    private Wallet wallet;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "payment_order_id", nullable = false)
-    private PaymentOrder paymentOrder; // ✅ 결제 주문과의 연관관계 추가 (NOT NULL)
+    private Integer walletId;
 
     @Column(nullable = false)
-    private BigDecimal amount; // 거래 금액
+    private Integer userId;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal balance = BigDecimal.ZERO;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private TransactionType transactionType; // 입금(Deposit), 출금(Withdrawal)
+    private Currency currency = Currency.KRW;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private WalletTransactionStatus status; // EXECUTING, SUCCESS, FAIL
-
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
@@ -51,5 +46,9 @@ public class WalletTransaction {
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+    }
+
+    public enum Currency {
+        KRW
     }
 }
