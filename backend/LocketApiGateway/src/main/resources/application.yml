@@ -7,6 +7,7 @@ spring:
   cloud:
     gateway:
       globalcors:
+        add-to-simple-url-handler-mapping: true  # ✅ 중요
         corsConfigurations:
           '[/**]':
             allowedOrigins: "*"
@@ -77,5 +78,5 @@ springdoc:
       - name: "Locket User Service"
         url: http://localhost:8080/api/user/v3/api-docs
       - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch API 추가
-        url: /api/elasticsearch/v3/api-docs
+        url: http://localhost:8080/api/elasticsearch/v3/api-docs
 

@@ -26,7 +26,7 @@ public class SwaggerConfig {
     @Bean
     public GroupedOpenApi elasticSearchApi() {
         return GroupedOpenApi.builder()
-                .group("Locket User Service")
+                .group("Locket ElasticSearch Service")
                 .pathsToMatch("/api/elasticsearch/**")
                 .build();
     }
