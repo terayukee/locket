@@ -2,7 +2,7 @@ package com.locket.elasticsearch.service.payment;
 
 import com.locket.elasticsearch.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.payment.entity.PaymentHistory.OrderDetail;
-import com.locket.elasticsearch.payment.repository.PaymentElasticRepository;
+import com.locket.elasticsearch.payment.repository.PaymentHistoryRepository;
 import com.locket.kafka.event.PaymentSuccessEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PaymentProcessingService {
 
-    private final PaymentElasticRepository paymentElasticRepository;
+    private final PaymentHistoryRepository paymentHistoryRepository;
 
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
@@ -37,7 +37,7 @@ public class PaymentProcessingService {
                 .orders(convertOrderDetails(event.getOrders()))
                 .build();
 
-        paymentElasticRepository.save(history);
+        paymentHistoryRepository.save(history);
         log.info("✅ Saved PaymentHistory to Elasticsearch with ID: {}", history.getTransactionId());
     }
 
