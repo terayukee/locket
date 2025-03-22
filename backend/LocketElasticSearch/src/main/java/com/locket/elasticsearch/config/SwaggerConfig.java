@@ -11,8 +11,8 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Locket Payment API")
+                        .title("Locket ElasticSearch API")
                         .version("1.0")
-                        .description("결제 관련 API 문서"));
+                        .description("ElasticSearch 관련 API 문서"));
     }
 }
