@@ -108,7 +108,7 @@
                 android:id="@+id/iv_like_btn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_product_empty_heart"
+                android:src="@drawable/ic_all_empty_heart"
                 app:layout_constraintEnd_toEndOf="@+id/tv_review"
                 app:layout_constraintTop_toBottomOf="@+id/tv_review" />
 
