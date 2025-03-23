@@ -16,7 +16,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
-        android:id="@+id/progressBar"
+        android:id="@+id/progress_bar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="0dp"
         android:layout_height="12dp"
@@ -43,88 +43,81 @@
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progressBar" />
+        app:layout_constraintTop_toBottomOf="@id/progress_bar" />
 
-    <!-- Fingerprint Icon Container -->
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/fingerprintContainer"
+    <ImageView
+        android:id="@+id/iv_fingerprint_img"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_login_fingerprint"
+        android:background="#00C2A8"
         app:layout_constraintWidth_percent="0.4"
-        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintVertical_bias="0.4"
+        app:layout_constraintDimensionRatio="1"
+        android:letterSpacing="-0.02"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_title">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:contentDescription="지문 등록" />
 
-        <ImageView
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:src="@drawable/ic_login_fingerprint"
-            android:background="#00C2A8"
-            app:layout_constraintWidth_percent="0.8"
-            app:layout_constraintHeight_percent="0.8"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            android:contentDescription="지문 등록" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <!-- Instructions Text -->
     <TextView
-        android:id="@+id/tvInstructions"
+        android:id="@+id/tv_instructions"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="40dp"
         android:layout_marginEnd="32dp"
+        android:letterSpacing="-0.02"
+        android:lineSpacingExtra="6dp"
         android:text="• 휴대폰에저장이 미리 등록되어 있어야 합니다.\n• 스마트 기기에 등록된 생체정보는 타인에게 유출\n  되지 않도록 주의하시기 바랍니다."
         android:textColor="#666666"
         android:textSize="14sp"
-        android:lineSpacingExtra="6dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintVertical_bias="0"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fingerprintContainer" />
-
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_fingerprint_img" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnLater"
+        android:id="@+id/btn_later"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:padding="12dp"
+        android:letterSpacing="-0.02"
         android:text="나중에"
         android:backgroundTint="#C9C9C9"
         android:textSize="16sp"
         app:cornerRadius="10dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/btnRegister"
+        app:layout_constraintEnd_toStartOf="@id/btn_register"
         app:layout_constraintHorizontal_bias="0.3"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tvInstructions"
+        app:layout_constraintTop_toBottomOf="@+id/tv_instructions"
         app:layout_constraintVertical_bias="0.5"
         app:layout_constraintHeight_percent="0.09"
         app:layout_constraintWidth_percent="0.44" />
 
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnRegister"
+        android:id="@+id/btn_register"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginStart="8dp"
         android:backgroundTint="#00C2A8"
         app:cornerRadius="10dp"
         android:padding="12dp"
+        android:letterSpacing="-0.02"
         android:text="등록하기"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btnLater"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_later"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.6"
         app:layout_constraintHeight_percent="0.09"
-        app:layout_constraintStart_toEndOf="@id/btnLater"
-        app:layout_constraintTop_toTopOf="@+id/btnLater"
+        app:layout_constraintStart_toEndOf="@id/btn_later"
+        app:layout_constraintTop_toTopOf="@+id/btn_later"
         app:layout_constraintWidth_percent="0.44" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
