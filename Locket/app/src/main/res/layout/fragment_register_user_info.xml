@@ -42,10 +42,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="98dp"
         android:layout_marginEnd="24dp"
         android:text="직업과 태어난 해를 입력해주세요"
-        android:textColor="#000000"
+        android:letterSpacing="-0.02"
         android:textSize="20sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,6 +60,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="24dp"
+        android:letterSpacing="-0.02"
         android:text="직업과 태어난 해를 입력해주세요"
         android:textColor="#555555"
         android:textSize="16sp"
@@ -154,7 +155,7 @@
 
     <!-- Next Button with Horizontal Bias -->
     <com.google.android.material.button.MaterialButton
-        android:id="@+id/nextButton"
+        android:id="@+id/btn_next"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
