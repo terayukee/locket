@@ -5,9 +5,12 @@ from decimal import Decimal
 class ReceiptItem(BaseModel):
     name: str
     quantity: int
-    price: Decimal
+    price: str
 
 class ReceiptResponse(BaseModel):
     payment_id: int
-    total_amount: Decimal
+    store_name: str
+    business_number: str
+    payment_date: str
+    total_amount: str
     items: List[ReceiptItem]
