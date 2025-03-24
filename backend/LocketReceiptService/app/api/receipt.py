@@ -1,11 +1,11 @@
-from fastapi import APIRouter, UploadFile, File, HTTPException
+from fastapi import APIRouter, UploadFile, File
 from ..services.ocr import OCRService
 from ..schemas.receipt import ReceiptResponse
 from ..utils.file_validator import FileValidator
+from ..exceptions.receipt_exceptions import FileValidationException, OCRProcessingException
+from ..constants.status import ErrorMessage
 import base64
 from io import BytesIO
-import json
-import requests
 from pdf2image import convert_from_bytes
 
 router = APIRouter()
@@ -19,9 +19,8 @@ async def process_receipt_from_camera(
     try:
         # 파일이 없는 경우 체크
         if not file:
-            raise HTTPException(
-                status_code=400,
-                detail="파일이 업로드되지 않았습니다."
+            raise FileValidationException(
+                message=ErrorMessage.FILE_NOT_FOUND
             )
 
         # 파일 검증
@@ -40,12 +39,12 @@ async def process_receipt_from_camera(
             total_amount=ocr_result['total_amount'],
             items=ocr_result['items']
         )
-    except HTTPException as he:
-        raise he
+    except (FileValidationException, OCRProcessingException) as e:
+        raise e
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"영수증 처리 중 오류가 발생했습니다: {str(e)}"
+        raise OCRProcessingException(
+            message=ErrorMessage.OCR_PROCESSING_ERROR,
+            detail=str(e)
         )
 
 @router.post("/pdf/{payment_id}", response_model=ReceiptResponse)
@@ -56,9 +55,8 @@ async def process_receipt_pdf(
     try:
         # 파일이 없는 경우 체크
         if not file:
-            raise HTTPException(
-                status_code=400,
-                detail="파일이 업로드되지 않았습니다."
+            raise FileValidationException(
+                message=ErrorMessage.FILE_NOT_FOUND
             )
 
         # PDF 파일 검증
@@ -67,37 +65,51 @@ async def process_receipt_pdf(
         # PDF 파일 읽기
         contents = await file.read()
 
-        # PDF를 이미지로 변환
-        images = convert_from_bytes(contents)
-        if not images:
-            raise Exception("PDF를 이미지로 변환할 수 없습니다.")
+        try:
+            # PDF를 이미지로 변환
+            images = convert_from_bytes(contents)
+            if not images:
+                raise OCRProcessingException(
+                    message=ErrorMessage.OCR_PROCESSING_ERROR,
+                    detail="PDF를 이미지로 변환할 수 없습니다."
+                )
 
-        # 첫 페이지만 처리 (일반적으로 영수증은 1페이지)
-        first_page = images[0]
+            # 첫 페이지만 처리
+            first_page = images[0]
 
-        # 이미지를 바이트로 변환
-        img_byte_arr = BytesIO()
-        first_page.save(img_byte_arr, format='JPEG')
-        img_byte_arr = img_byte_arr.getvalue()
+            # 이미지를 바이트로 변환
+            img_byte_arr = BytesIO()
+            first_page.save(img_byte_arr, format='JPEG')
+            img_byte_arr = img_byte_arr.getvalue()
 
-        # 이미지 데이터를 base64로 인코딩
-        image_data = base64.b64encode(img_byte_arr).decode('utf-8')
+            # 이미지 데이터를 base64로 인코딩
+            image_data = base64.b64encode(img_byte_arr).decode('utf-8')
 
-        # OCR 처리 (이미지 형식으로)
-        ocr_result = await ocr_service.extract_text(image_data)
+            # OCR 처리
+            ocr_result = await ocr_service.extract_text(image_data)
 
-        return ReceiptResponse(
-            payment_id=payment_id,
-            store_name=ocr_result['store_name'],
-            business_number=ocr_result['business_number'],
-            payment_date=ocr_result['payment_date'],
-            total_amount=ocr_result['total_amount'],
-            items=ocr_result['items']
-        )
-    except HTTPException as he:
-        raise he
+            return ReceiptResponse(
+                payment_id=payment_id,
+                store_name=ocr_result['store_name'],
+                business_number=ocr_result['business_number'],
+                payment_date=ocr_result['payment_date'],
+                total_amount=ocr_result['total_amount'],
+                items=ocr_result['items']
+            )
+        except OCRProcessingException:
+            raise
+        except Exception as e:
+            raise OCRProcessingException(
+                message=ErrorMessage.OCR_PROCESSING_ERROR,
+                detail=str(e)
+            )
+
+    except FileValidationException:
+        raise
+    except OCRProcessingException:
+        raise
     except Exception as e:
-        raise HTTPException(
-            status_code=400,
-            detail=f"영수증 처리 중 오류가 발생했습니다: {str(e)}"
+        raise OCRProcessingException(
+            message=ErrorMessage.OCR_PROCESSING_ERROR,
+            detail=str(e)
         )

@@ -4,6 +4,8 @@ import base64
 from typing import Dict
 from decimal import Decimal
 from ..config import settings
+from ..constants.status import ErrorMessage
+from ..exceptions.receipt_exceptions import OCRProcessingException
 
 class OCRService:
     def __init__(self):
@@ -18,7 +20,7 @@ class OCRService:
         request_json = {
             'images': [
                 {
-                    'format': file_format,  # 동적으로 format 설정
+                    'format': file_format,
                     'name': 'receipt',
                     'data': image_data
                 }
@@ -37,20 +39,28 @@ class OCRService:
             print(f"Response body: {json.dumps(result, indent=2)}")
 
             if response.status_code != 200:
-                raise Exception(f"OCR API Error: {result.get('error', {}).get('message')}")
+                raise OCRProcessingException(
+                    message=ErrorMessage.OCR_PROCESSING_ERROR,
+                    detail=f"OCR API Error: {result.get('error', {}).get('message')}"
+                )
 
             return self._parse_receipt_data(result)
 
+        except OCRProcessingException:
+            raise
         except Exception as e:
             print(f"Error occurred: {str(e)}")
-            raise Exception(f"OCR 처리 중 오류 발생: {str(e)}")
+            raise OCRProcessingException(
+                message=ErrorMessage.OCR_PROCESSING_ERROR,
+                detail=str(e)
+            )
 
     def _parse_receipt_data(self, ocr_result: Dict) -> Dict:
         """OCR 결과에서 영수증 데이터 파싱"""
         try:
-            print("전체 OCR 결과:", json.dumps(ocr_result, indent=2, ensure_ascii=False))  # 전체 응답 로깅
+            print("전체 OCR 결과:", json.dumps(ocr_result, indent=2, ensure_ascii=False))
             receipt_data = ocr_result['images'][0]['receipt']['result']
-            print("영수증 데이터:", json.dumps(receipt_data, indent=2, ensure_ascii=False))  # 영수증 데이터 로깅
+            print("영수증 데이터:", json.dumps(receipt_data, indent=2, ensure_ascii=False))
 
             # 상점 정보 추출
             store_info = receipt_data.get('storeInfo', {})
@@ -63,7 +73,6 @@ class OCRService:
             payment_info = receipt_data.get('paymentInfo', {})
             if payment_info:
                 date_info = payment_info.get('date', {}).get('text', '')
-                # 날짜가 없으면 다른 필드에서 찾아보기
                 if not date_info:
                     for field in receipt_data.get('subResults', []):
                         if 'date' in field:
@@ -94,6 +103,15 @@ class OCRService:
                 'items': items
             }
 
+        except KeyError as e:
+            print(f"Required field not found: {str(e)}")
+            raise OCRProcessingException(
+                message=ErrorMessage.OCR_PARSING_ERROR,
+                detail=f"필수 필드를 찾을 수 없습니다: {str(e)}"
+            )
         except Exception as e:
             print(f"Parsing error: {str(e)}")
-            raise Exception(f"영수증 데이터 파싱 중 오류 발생: {str(e)}")
+            raise OCRProcessingException(
+                message=ErrorMessage.OCR_PARSING_ERROR,
+                detail=str(e)
+            )
