@@ -46,7 +46,7 @@ public class PayController {
                                             "  \"sellerId\": 2,\n" +
                                             "  \"paymentCategory\": \"카페\",\n" +
                                             "  \"paymentMerchant\": \"아메리카노\",\n" +
-                                            "  \"amount\": 2000\n" +
+                                            "  \"amount\": 2000,\n" +
                                             "  \"storeName\": \"메가커피 구미인동점\"\n" +
                                             "}"
                             )
