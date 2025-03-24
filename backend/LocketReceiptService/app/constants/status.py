@@ -19,6 +19,7 @@ class StatusCode(Enum):
     # OCR 관련 에러
     OCR_PROCESSING_ERROR = 5001
     OCR_PARSING_ERROR = 5002
+    CLASSIFICATION_ERROR = 5003
 
 class ErrorMessage(Enum):
     # 파일 관련 메시지
@@ -30,3 +31,4 @@ class ErrorMessage(Enum):
     # OCR 관련 메시지
     OCR_PROCESSING_ERROR = "OCR 처리 중 오류가 발생했습니다."
     OCR_PARSING_ERROR = "영수증 데이터 파싱 중 오류가 발생했습니다."
+    CLASSIFICATION_ERROR = "품목 분류 중 오류가 발생했습니다."
