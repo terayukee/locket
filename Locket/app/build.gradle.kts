@@ -64,6 +64,8 @@ dependencies {
     implementation("androidx.navigation:navigation-ui:2.8.9")
     //chart 생성
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    //지문인식
+    implementation ("androidx.biometric:biometric:1.0.1")
 }
 
 kapt {

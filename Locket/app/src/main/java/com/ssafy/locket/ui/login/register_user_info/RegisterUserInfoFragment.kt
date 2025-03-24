@@ -50,6 +50,11 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
             override fun afterTextChanged(editable: Editable?) {
                 // 4자리 숫자가 입력되었는지 확인
                 isBirthValid = editable.toString().length == 4
+                if (isBirthValid) {
+                    binding.layoutBirthyear.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
+                } else {
+                    binding.layoutBirthyear.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
+                }
                 checkIfFormIsValid()  // 양식이 유효한지 확인하는 함수 호출
             }
         })
@@ -82,6 +87,11 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
 
     private fun checkIfJobSelected() {
         isJobSelected = binding.tvJoblabel.text.toString() != "직업을 선택해주세요"
+        if (isJobSelected) {
+            binding.layoutJobSelect.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
+        } else {
+            binding.layoutJobSelect.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
+        }
         checkIfFormIsValid()
     }
 
