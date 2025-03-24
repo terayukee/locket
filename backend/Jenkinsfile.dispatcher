@@ -17,7 +17,7 @@ pipeline {
                         // fetch로 origin/backend 업데이트
                         sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend:origin/backend"
 
-                        def changes = sh(script: "git diff --name-only origin/backend HEAD", returnStdout: true).trim().split('\n')
+                        def changes = sh(script: "git diff --name-only refs/remotes/origin/backend HEAD", returnStdout: true).trim().split('\n')
                         echo "Changed files: ${changes.join(', ')}"
 
                         if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
