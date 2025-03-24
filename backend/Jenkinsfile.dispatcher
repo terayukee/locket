@@ -14,11 +14,11 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'GitLab-USER-TOKEN', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     script {
-                        // 최신 브랜치 정보 fetch
-                        sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend:origin/backend"
+                        // fetch만 수행하여 refs/remotes/origin/backend 업데이트
+                        sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend"
 
-                        // origin/backend와 HEAD의 공통 조상 커밋을 기준으로 변경된 파일 추출
-                        def baseCommit = sh(script: "git merge-base origin/backend HEAD", returnStdout: true).trim()
+                        // 충돌 없이 정확히 지정
+                        def baseCommit = sh(script: "git merge-base refs/remotes/origin/backend HEAD", returnStdout: true).trim()
                         def currCommit = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
 
                         def changes = sh(script: "git diff --name-only ${baseCommit} ${currCommit}", returnStdout: true).trim().split('\n')
