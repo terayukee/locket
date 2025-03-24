@@ -91,8 +91,8 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 //        if (element != null) {
 //            viewModel.setSchedules(element)
 //            viewModel.setSelectedDate(element.eventDay)
-//            val dialog = CalendarBottomSheetFragment()
-//            dialog.show(supportFragmentManager, "schedule")
+            val dialog = PaymentCalendarBottomSheetFragment()
+            dialog.show(childFragmentManager, "payment")
 //        } else {
 //            viewModel.setSelectedDate(null)
 //        }
