@@ -20,5 +20,8 @@ class DeleteAccountFragment : BaseFragment<FragmentDeleteAccountBinding>(
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
+        binding.btnDelete.setOnClickListener {
+            findNavController().navigate(R.id.action_deleteAccountFragment_to_myPageFragment)
+        }
     }
 }

@@ -193,10 +193,18 @@
         android:id="@+id/deleteAccountFragment"
         android:name="com.ssafy.locket.ui.mypage.DeleteAccountFragment"
         android:label="fragment_delete_account"
-        tools:layout="@layout/fragment_delete_account" />
+        tools:layout="@layout/fragment_delete_account" >
+        <action
+            android:id="@+id/action_deleteAccountFragment_to_myPageFragment"
+            app:destination="@id/myPageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editUserInfoFragment"
         android:name="com.ssafy.locket.ui.mypage.EditUserInfoFragment"
         android:label="fragment_edit_user_info"
-        tools:layout="@layout/fragment_edit_user_info" />
+        tools:layout="@layout/fragment_edit_user_info" >
+        <action
+            android:id="@+id/action_editUserInfoFragment_to_myPageFragment"
+            app:destination="@id/myPageFragment" />
+    </fragment>
 </navigation>

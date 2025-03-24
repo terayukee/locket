@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
@@ -21,7 +22,13 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        inititlView()
         initEvent()
+    }
+
+    fun inititlView(){
+        binding.layoutJob.setBackgroundResource(R.drawable.bg_card_border_active)
+        binding.layoutAge.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
     }
 
     fun initEvent(){
@@ -32,16 +39,37 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
             showPopupMenu(it)
         }
         binding.editAge.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
+                checkIfFormIsValid()
+            }
 
             override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(editable: Editable?) {
                 // 4자리 숫자가 입력되었는지 확인
                 isBirthValid = editable.toString().length == 4
+                if (isBirthValid) {
+                    binding.layoutAge.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
+                } else {
+                    binding.layoutAge.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
+                }
                 checkIfFormIsValid()  // 양식이 유효한지 확인하는 함수 호출
             }
         })
+
+        binding.btnChange.setOnClickListener {
+            if (isBirthValid) {
+                if(binding.editAge.text.toString().toInt()<=1930||binding.editAge.text.toString().toInt()>=2026){
+                    isBirthValid = false
+                    binding.editAge.text.clear()
+                    Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 수정해 입력해주세요", Toast.LENGTH_LONG).show()
+                }
+                else{
+                    findNavController().navigate(R.id.action_editUserInfoFragment_to_myPageFragment)
+                    binding.editAge.text.clear()
+                }
+            }
+        }
     }
 
 

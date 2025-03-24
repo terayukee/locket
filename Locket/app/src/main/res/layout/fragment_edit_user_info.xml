@@ -123,6 +123,7 @@
                 android:id="@+id/layout_age"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/bg_login_input_round"
                 android:padding="12dp">
 
                 <ImageView
@@ -139,11 +140,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
-                    android:background="@null"
+                    android:inputType="number"
                     android:text="2000"
                     android:maxLength="4"
+                    android:paddingBottom="7dp"
                     android:letterSpacing="-0.02"
-                    android:textSize="14sp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toEndOf="@id/iv_heart_icon"
                     app:layout_constraintTop_toTopOf="parent" />
