@@ -15,8 +15,6 @@ class ConfirmPasswordFragment : BaseFragment<FragmentConfirmPasswordBinding>(
 ) {
     private lateinit var passwordInputHandler: PasswordInputHandler
     private var savedPassword: String? = null
-    //비밀번호 틀린 횟수
-    private var attemptsLeft = 3
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -27,7 +25,6 @@ class ConfirmPasswordFragment : BaseFragment<FragmentConfirmPasswordBinding>(
 
     private fun initEvent() {
         savedPassword = arguments?.getString("password")
-        attemptsLeft = 3
         passwordInputHandler = PasswordInputHandler(
             arrayOf(
                 binding.vPasswordDot1,
@@ -63,15 +60,9 @@ class ConfirmPasswordFragment : BaseFragment<FragmentConfirmPasswordBinding>(
             // 비밀번호가 맞으면 다음 화면으로 이동
             findNavController().navigate(R.id.action_confirmPasswordFragment_to_registerBiometricsFragment)
         } else {
-            // 비밀번호가 틀리면 기회 차감 및 안내
-            attemptsLeft--
-            if (attemptsLeft > 0) {
-                Toast.makeText(requireContext(), "비밀번호가 틀렸습니다. 남은 기회: $attemptsLeft", Toast.LENGTH_SHORT).show()
-                passwordInputHandler.clearPassword()
-            } else {
-                Toast.makeText(requireContext(), "다시 처음부터 비밀 번호를 입력하세요.", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack() // 비밀번호 틀리면 이전 페이지로 돌아가기
-            }
+            Toast.makeText(requireContext(), "다시 처음부터 비밀 번호를 입력하세요.", Toast.LENGTH_SHORT).show()
+            passwordInputHandler.clearPassword()
+            findNavController().popBackStack() // 비밀번호 틀리면 이전 페이지로 돌아가기
         }
     }
 

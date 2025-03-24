@@ -6,6 +6,7 @@ import android.text.TextWatcher
 import android.view.MenuItem
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
@@ -24,7 +25,13 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initializeVariable()
         initEvent()
+    }
+
+    fun initializeVariable(){
+        isJobSelected = false
+        isBirthValid = false
     }
 
     fun initEvent(){
@@ -49,7 +56,15 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
 
         binding.btnNext.setOnClickListener {
             if (isJobSelected && isBirthValid) {
-                findNavController().navigate(R.id.action_registerUserInfoFragment_to_registerPasswordFragment)
+                if(binding.etBirth.text.toString().toInt()<=1930||binding.etBirth.text.toString().toInt()>=2026){
+                    isBirthValid = false
+                    binding.etBirth.text.clear()
+                    Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 밑으로 입력해주세요",Toast.LENGTH_LONG).show()
+                }
+                else{
+                    findNavController().navigate(R.id.action_registerUserInfoFragment_to_registerPasswordFragment)
+                    binding.etBirth.text.clear()
+                }
             }
         }
     }
