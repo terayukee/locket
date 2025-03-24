@@ -12,14 +12,20 @@ pipeline {
 
         stage('Detect Changed Services') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'GitLab-PAT', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                withCredentials([usernamePassword(credentialsId: 'GitLab-USER-TOKEN', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                     script {
-                        // 인증 포함된 URL로 fetch
-                        sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend"
+                        // 최신 브랜치 정보 fetch
+                        sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend:origin/backend"
 
-                        def changes = sh(script: "git diff --name-only origin/backend HEAD", returnStdout: true).trim().split('\n')
+                        // 병합 커밋이든 일반 커밋이든 이전 커밋과 비교
+                        def prevCommit = sh(script: "git rev-parse HEAD^1", returnStdout: true).trim()
+                        def currCommit = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+
+                        // 변경된 파일 목록 추출
+                        def changes = sh(script: "git diff --name-only ${prevCommit} ${currCommit}", returnStdout: true).trim().split('\n')
                         echo "Changed files: ${changes.join(', ')}"
 
+                        // 서비스 변경 감지 및 하위 Job 트리거
                         if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
                             build job: 'backend-api-gateway'
                         }
