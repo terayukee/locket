@@ -1,0 +1,112 @@
+package com.locket.user.service.budget;
+
+import com.locket.user.domain.budget.dto.BudgetMonthlyStatusDto;
+import com.locket.user.domain.budget.dto.BudgetSetRequestDto;
+import com.locket.user.domain.budget.dto.BudgetSetResponseDto;
+import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
+import com.locket.user.domain.budget.entity.Goals;
+import com.locket.user.domain.budget.repository.GoalsRepository;
+import com.locket.user.domain.budget.repository.PaymentTransactionRepository;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+@Service
+@RequiredArgsConstructor
+@Slf4j
+public class BudgetService {
+
+    private final GoalsRepository goalsRepository;
+    private final PaymentTransactionRepository paymentTransactionRepository;
+
+    @Transactional
+    public BudgetSetResponseDto setMonthlyBudget(BudgetSetRequestDto requestDto) {
+
+        LocalDateTime now = LocalDateTime.now();
+        int currentYear = now.getYear();
+        int currentMonth = now.getMonthValue();
+
+        // userId로 가장 최근 goals 레코드 조회
+        Optional<Goals> latestGoal = goalsRepository.findTopByUserIdAndYearMonth(requestDto.getUserId(), currentYear, currentMonth);
+        Goals goalEntity;
+
+        if( latestGoal.isPresent() ){
+            // 이번 달에 이미 목표가 있으면, 목표금액만 변경
+            goalEntity = latestGoal.get();
+            goalEntity.setGoalAmount(requestDto.getAmount());
+//            log.info("이번 달 목표 업데이트: {}", goalEntity);
+
+        }else {
+            // 없으면 생성
+            goalEntity = Goals.builder()
+                    .userId(requestDto.getUserId())
+                    .goalAmount(requestDto.getAmount())
+                    .isAchieved(false)
+                    .createdAt(now)
+                    .build();
+//            log.info("이번 달 첫 목표 생성: {}", goalEntity);
+        }
+
+        // DB 저장
+        goalsRepository.save(goalEntity);
+//        log.info("목표 저장 완료: {}", goalEntity);
+
+        // ResponseDTO
+        return BudgetSetResponseDto.builder()
+                .userId(requestDto.getUserId())
+                .amount(requestDto.getAmount())
+                .build();
+    }
+
+
+    @Transactional(readOnly = true)
+    public BudgetStatusResponseDto getBudgetMonthlyStatus(int userId, int year, int month) {
+
+        // goals 테이블에서 목표 조회
+        Optional<Goals> goalOpt = goalsRepository.findTopByUserIdAndYearMonth(userId, year, month);
+        int target = goalOpt.map(Goals::getGoalAmount).orElse(0);
+
+        // 결제 거래 내역에서 사용 금액 합산
+        BigDecimal spent = paymentTransactionRepository.sumSuccessAmountByUserAndYearMonth(userId, year, month);
+
+        // 남은 예산 계산
+        BigDecimal remaining = BigDecimal.valueOf(target).subtract(spent);
+        if (remaining.compareTo(BigDecimal.ZERO) < 0) {
+            remaining = BigDecimal.ZERO;
+        }
+
+        // 진행률 계산 (target이 0이면 0)
+        BigDecimal progress = BigDecimal.ZERO;
+        if (target > 0) {
+            progress = spent.multiply(BigDecimal.valueOf(100))
+                    .divide(BigDecimal.valueOf(target), 2, RoundingMode.HALF_UP);
+        }
+
+        // BudgetMonthlyStatusDto
+        BudgetMonthlyStatusDto monthlyDto = BudgetMonthlyStatusDto.builder()
+                .year(year)
+                .month(month)
+                .target(target)
+                .spent(spent)
+                .remaining(remaining)
+                .progress(progress)
+                .build();
+
+        // 최종 응답 DTO
+        return BudgetStatusResponseDto.builder()
+                .userId(userId)
+                .budget(BudgetStatusResponseDto.BudgetData.builder()
+                        .monthly(monthlyDto)
+                        .build())
+                .build();
+
+    }
+
+
+}
