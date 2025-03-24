@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class QrPaymentResponse {
+public class PaymentResponse {
     private String transactionId;
     private String status;
     private String message;

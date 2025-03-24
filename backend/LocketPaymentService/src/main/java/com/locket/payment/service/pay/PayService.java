@@ -1,8 +1,8 @@
 package com.locket.payment.service.pay;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
-import com.locket.payment.domain.pay.dto.QrPaymentRequest;
-import com.locket.payment.domain.pay.dto.QrPaymentResponse;
+import com.locket.payment.domain.pay.dto.PaymentRequest;
+import com.locket.payment.domain.pay.dto.PaymentResponse;
 import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.infra.kafka.PaymentProducer;
@@ -37,7 +37,7 @@ public class PayService {
     private final StringRedisTemplate redisTemplate;
 
     @Transactional
-    public ResponseEntity<QrPaymentResponse> processQrPayment(QrPaymentRequest request) {
+    public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
         // 1️⃣ 카드 정보 조회
         CardInfo cardInfo = cardInfoRepository.findByCardNumber(request.getCardNumber())
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
@@ -45,7 +45,7 @@ public class PayService {
 
         BigDecimal paymentAmount = request.getAmount();
         if (bankAccount.getBalance().compareTo(paymentAmount) < 0) {
-            return ResponseEntity.badRequest().body(QrPaymentResponse.builder()
+            return ResponseEntity.badRequest().body(PaymentResponse.builder()
                     .status("FAIL")
                     .message("잔액 부족")
                     .build());
@@ -96,7 +96,7 @@ public class PayService {
         if (!isPaymentSuccess) {
             transaction.updateStatus(PaymentStatus.FAIL);
             orders.forEach(order -> order.updateStatus(PaymentStatus.FAIL));
-            return ResponseEntity.badRequest().body(QrPaymentResponse.builder()
+            return ResponseEntity.badRequest().body(PaymentResponse.builder()
                     .transactionId(transaction.getPaymentTransactionId().toString())
                     .status("FAIL")
                     .message("결제 실패")
@@ -137,31 +137,33 @@ public class PayService {
                         order.getPaymentOrderStatus().name()
                 )).collect(Collectors.toList());
 
-        PaymentSuccessEvent event = new PaymentSuccessEvent(
-                UUID.randomUUID().toString(),
-                request.getBuyerId(),
-                request.getSellerId(),
-                userJob,
-                birthDate,
-                paymentAmount,
-                "KRW",
-                request.getPaymentCategory(),
-                request.getPaymentMerchant(),
-                "SUCCESS",
-                OffsetDateTime.now(ZoneOffset.ofHours(9)),
-                orderDetails
-        );
+        PaymentSuccessEvent event = PaymentSuccessEvent.builder()
+                .transactionId(UUID.randomUUID().toString())
+                .buyerId(request.getBuyerId())
+                .sellerId(request.getSellerId())
+                .userJob(userJob)
+                .birthDate(birthDate)
+                .totalAmount(paymentAmount)
+                .currency("KRW")
+                .paymentCategory(request.getPaymentCategory())
+                .paymentMerchant(request.getPaymentMerchant())
+                .storeName(request.getStoreName())
+                .receiptUploaded(false) // 추후 true로 설정
+                .paymentStatus("SUCCESS")
+                .createdAt(OffsetDateTime.now(ZoneOffset.ofHours(9)))
+                .orders(orderDetails)
+                .build();
 
         paymentProducer.sendPaymentSuccessEvent(event);
 
-        return ResponseEntity.ok(QrPaymentResponse.builder()
+        return ResponseEntity.ok(PaymentResponse.builder()
                 .transactionId(transaction.getPaymentTransactionId().toString())
                 .status("SUCCESS")
                 .message("결제 성공 및 Kafka 메시지 전송 완료")
                 .build());
     }
 
-    private boolean callBootpayAPI(QrPaymentRequest request) {
+    private boolean callBootpayAPI(PaymentRequest request) {
         // TODO: 실제 부트페이 결제 API 연동 예정
         return true; // 현재는 무조건 성공 처리
     }
