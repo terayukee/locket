@@ -1,14 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.finance.fragments.budget.BudgetFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:id="@+id/textview1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_regular"
+        android:letterSpacing="-0.02"
+        android:text="한 달 예산"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</FrameLayout>
+    <TextView
+        android:id="@+id/tv_budget_left"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textview1"
+        app:layout_constraintTop_toBottomOf="@+id/textview1"
+        tools:text="0원 남음" />
+
+    <TextView
+        android:id="@+id/tv_budget_left_daily"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_regular"
+        android:letterSpacing="-0.02"
+        android:textColor="#A3A5AF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textview1"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget_left"
+        tools:text="하루 예산 0원" />
+
+    <TextView
+        android:id="@+id/tv_budget_left_no"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:letterSpacing="-0.02"
+        android:text="이번 달 예산을 설정 해주세요"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textview1"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget_left_daily" />
+<!--    visibility 조절하기-->
+
+</androidx.constraintlayout.widget.ConstraintLayout>
