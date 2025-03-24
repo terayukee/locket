@@ -68,6 +68,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     //chart 생성
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+    //지문인식
+    implementation ("androidx.biometric:biometric:1.0.1")
 }
 
 kapt {
