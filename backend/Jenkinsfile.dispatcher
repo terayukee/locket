@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'backend',
+                    url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git'
+            }
+        }
+
+        stage('Detect Changed Services') {
+            steps {
+                script {
+                    def changes = sh(script: "git diff --name-only HEAD~1", returnStdout: true).trim().split('\n')
+
+                    if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
+                        build job: 'backend-api-gateway'
+                    }
+                    if (changes.any { it.startsWith("backend/LocketDiscovery/") }) {
+                        build job: 'backend-discovery'
+                    }
+                    if (changes.any { it.startsWith("backend/LocketElasticSearch/") }) {
+                        build job: 'backend-elasticsearch'
+                    }
+                    if (changes.any { it.startsWith("backend/LocketPaymentService/") }) {
+                        build job: 'backend-payment'
+                    }
+                    if (changes.any { it.startsWith("backend/LocketUserService/") }) {
+                        build job: 'backend-user'
+                    }
+                }
+            }
+        }
+    }
+}
