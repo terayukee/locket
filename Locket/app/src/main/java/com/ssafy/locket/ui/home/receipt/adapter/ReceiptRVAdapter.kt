@@ -13,8 +13,8 @@ import com.ssafy.locket.R
 import com.ssafy.locket.data.model.dto.Receipt
 import com.ssafy.locket.databinding.ItemReceiptBinding
 
-class ReceiptListRVAdapter:
-    ListAdapter<Receipt, ReceiptListRVAdapter.CustomViewHolder>(CustomComparator) {
+class ReceiptRVAdapter(val type: String):
+    ListAdapter<Receipt, ReceiptRVAdapter.CustomViewHolder>(CustomComparator) {
     lateinit var itemClickListener: ItemClickListener
     private lateinit var context: Context
 
@@ -53,7 +53,7 @@ class ReceiptListRVAdapter:
             binding.tvReceiptCategory.text = context.getString(R.string.receipt_category_card, item.category, item.cardName)
             binding.tvReceiptPrice.text = context.getString(R.string.receipt_price, CommonUtils.makeComma(item.price))
             binding.root.setOnClickListener {
-                itemClickListener.onClick(it, item, adapterPosition)
+                if(type == "receipt") itemClickListener.onClick(it, item, adapterPosition)
             }
         }
     }

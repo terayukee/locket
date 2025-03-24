@@ -5,4 +5,9 @@
 
     <string name="receipt_category_card">%1$s | %2$s</string>
     <string name="receipt_price">-%s원</string>
+
+    <string name="finance_year_month">%1$d년 %2$d월</string>
+
+    <string name="finance_calendar_payment">-%s</string>
+
 </resources>

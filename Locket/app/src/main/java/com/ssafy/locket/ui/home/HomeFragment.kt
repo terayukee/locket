@@ -1,5 +1,6 @@
 package com.ssafy.locket.ui.home
 
+import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
@@ -12,6 +13,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind,
     R.layout.fragment_home
 ) {
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -26,5 +28,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.icNotification.setOnClickListener {
             findNavController().navigate(R.id.notificationFragment)
         }
+
+        (requireContext() as MainActivity).changeBackgroundColor(R.color.background)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
     }
 }

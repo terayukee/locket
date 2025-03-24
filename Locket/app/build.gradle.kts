@@ -68,6 +68,10 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.16.0")
     //chart 생성
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
+
+    // calendar
+    implementation("com.kizitonwose.calendar:view:2.5.4")
+
 }
 
 kapt {
