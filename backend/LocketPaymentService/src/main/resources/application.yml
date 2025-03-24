@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: payment-service
+  profiles:
+    active: dev
+    include: key  # application-key.yml 포함 (DB, Kafka 정보)
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect

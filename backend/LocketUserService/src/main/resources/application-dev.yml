@@ -1,11 +1,4 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
-
-  profiles:
-    include: key  # application-key.yml 포함 (DB, Kafka 정보)
-
   datasource:
     url: ${DB.URL_USER}  # user-service용 DB URL
     username: ${DB.USERNAME}

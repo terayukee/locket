@@ -4,6 +4,9 @@ server:
 spring:
   application:
     name: elasticsearch-service
+  profiles:
+    active: dev
+    include: key  # application-key.yml 포함 (DB, Kafka 정보)
 
   kafka:
     bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
