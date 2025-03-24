@@ -3,6 +3,11 @@ spring:
     activate:
       on-profile: prod
 
+  datasource:
+    url: ${DB_URL_PAYMENT}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: validate  # 배포 환경에서는 스키마 자동 변경 방지

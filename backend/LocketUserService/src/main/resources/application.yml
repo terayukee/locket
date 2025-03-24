@@ -5,15 +5,6 @@ spring:
   application:
     name: user-service
 
-  profiles:
-    include: key  # application-key.yml 포함 (DB, Kafka 정보)
-
-  datasource:
-    url: ${DB.URL_USER}  # user-service용 DB URL
-    username: ${DB.USERNAME}
-    password: ${DB.PASSWORD}
-    driver-class-name: org.postgresql.Driver
-
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
