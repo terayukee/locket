@@ -111,7 +111,7 @@ public class PayService {
         transaction.updateStatus(PaymentStatus.SUCCESS);
         orders.forEach(order -> order.updateStatus(PaymentStatus.SUCCESS));
 
-        // 8️⃣ 판매자 지갑에 입금 처리
+        // 8️⃣ 지갑 트랜잭션 저장 & 판매자 지갑에 입금 처리
         Wallet sellerWallet = walletRepository.findByUserId(request.getSellerId())
                 .orElseThrow(() -> new IllegalArgumentException("판매자의 지갑 정보를 찾을 수 없습니다."));
 
@@ -127,6 +127,9 @@ public class PayService {
                     .build();
             walletTransactionRepository.save(walletTransaction);
         });
+
+        sellerWallet.deposit(paymentAmount); // ✅ balance 증가
+        walletRepository.save(sellerWallet); // ✅ 저장
 
         // 9️⃣ Kafka 메시지 전송
         List<PaymentSuccessEvent.OrderDetail> orderDetails = orders.stream()
