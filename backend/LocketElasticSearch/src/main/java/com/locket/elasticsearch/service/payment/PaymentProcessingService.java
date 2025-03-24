@@ -32,6 +32,8 @@ public class PaymentProcessingService {
                 .currency(event.getCurrency())
                 .paymentCategory(event.getPaymentCategory())
                 .paymentMerchant(event.getPaymentMerchant())
+                .storeName(event.getStoreName())                  // ✅ 매장명
+                .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부
                 .paymentStatus(event.getPaymentStatus())
                 .createdAt(event.getCreatedAt())
                 .orders(convertOrderDetails(event.getOrders()))
