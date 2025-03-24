@@ -3,6 +3,11 @@ spring:
     activate:
       on-profile: prod
 
+  datasource:
+    url: ${DB_URL_PAYMENT}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
   jpa:
     hibernate:
       ddl-auto: validate  # 배포 환경에서는 스키마 자동 변경 방지
@@ -13,4 +18,4 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://j12d204.p.ssafy.io/eureka  # EC2의 Eureka 서버 사용
+      defaultZone: http://j12d204.p.ssafy.io:8761/eureka  # EC2의 Eureka 서버 사용
