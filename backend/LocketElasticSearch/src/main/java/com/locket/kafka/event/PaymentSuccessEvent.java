@@ -1,9 +1,6 @@
 package com.locket.kafka.event;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
@@ -16,16 +13,19 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Builder
 public class PaymentSuccessEvent {
     private String transactionId;
     private int buyerId;
     private int sellerId;
     private String userJob;
-    private String birthDate; // Redis에서 가져올 사용자 정보
+    private String birthDate;
     private BigDecimal totalAmount;
     private String currency;
     private String paymentCategory;
     private String paymentMerchant;
+    private String storeName;
+    private boolean receiptUploaded;
     private String paymentStatus;
     private OffsetDateTime createdAt;
     private List<OrderDetail> orders;
@@ -34,6 +34,7 @@ public class PaymentSuccessEvent {
     @NoArgsConstructor
     @AllArgsConstructor
     @ToString
+    @Builder
     public static class OrderDetail {
         private String orderId;
         private String cardNumber;
@@ -41,3 +42,4 @@ public class PaymentSuccessEvent {
         private String paymentOrderStatus;
     }
 }
+
