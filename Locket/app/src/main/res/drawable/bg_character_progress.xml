@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <vector
+            android:width="252dp"
+            android:height="16dp"
+            android:viewportWidth="252"
+            android:viewportHeight="16"
+            >
+            <group>
+                <clip-path
+                    android:pathData="M8 0H244C248.418 0 252 3.58172 252 8C252 12.4183 248.418 16 244 16H8C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0Z"
+                    />
+                <path
+                    android:pathData="M0 0V16H252V0"
+                    android:fillColor="#E6E6E6"
+                    />
+            </group>
+        </vector>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%">
+            <vector
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:aapt="http://schemas.android.com/aapt"
+                android:width="252dp"
+                android:height="16dp"
+                android:viewportWidth="252"
+                android:viewportHeight="16"
+                >
+                <group>
+                    <clip-path
+                        android:pathData="M8 0H244C248.418 0 252 3.58172 252 8C252 12.4183 248.418 16 244 16H8C3.58172 16 0 12.4183 0 8C0 3.58172 3.58172 0 8 0Z"
+                        />
+                    <path
+                        android:pathData="M0 0V16H252V0"
+                        android:fillColor="#00CBBF"
+                        />
+                </group>
+            </vector>
+        </scale>
+    </item>
+</layer-list>

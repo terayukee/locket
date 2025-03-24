@@ -3,27 +3,23 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
         android:id="@+id/home"
-        android:icon="@android:drawable/btn_star"
+        android:icon="@drawable/ic_navbar_home"
         android:title="홈"
-        app:showAsAction="always"
         android:background="@android:color/transparent" />
     <item
         android:id="@+id/household_account_book"
-        android:icon="@android:drawable/btn_star"
+        android:icon="@drawable/ic_navbar_finance"
         android:title="가계부"
-        app:showAsAction="always"
         android:background="@android:color/transparent" />
     <item
         android:id="@+id/lowest_price_graph"
-        android:icon="@android:drawable/btn_star"
+        android:icon="@drawable/ic_navbar_product"
         android:title="최저가 그래프"
-        app:showAsAction="always"
         android:background="@android:color/transparent" />
 
     <item
         android:id="@+id/payment"
-        android:icon="@android:drawable/btn_star"
+        android:icon="@drawable/ic_navbar_payment"
         android:title="결제"
-        app:showAsAction="always"
         android:background="@android:color/transparent" />
 </menu>
