@@ -13,7 +13,8 @@ pipeline {
         stage('Detect Changed Services') {
             steps {
                 script {
-                    def changes = sh(script: "git diff --name-only HEAD~1", returnStdout: true).trim().split('\n')
+                    def changes = sh(script: "git diff --name-only origin/backend HEAD", returnStdout: true).trim().split('\n')
+                    echo "Changed files: ${changes.join(', ')}"
 
                     if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
                         build job: 'backend-api-gateway'
