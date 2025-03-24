@@ -82,6 +82,7 @@ pipeline {
                                     docker load < ${DOCKER_PATH}/LocketDiscovery-0.0.1-SNAPSHOT.tar.gz
                                     docker run -d --name ${DOCKER_CONTAINER} \
                                       -p ${DOCKER_PORT}:${DOCKER_PORT} \
+                                      -e SPRING_PROFILES_ACTIVE=prod \
                                       ${DOCKER_IMAGE}:latest
                                 """.stripIndent()
                             )
