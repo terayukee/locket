@@ -47,6 +47,12 @@ public class PaymentHistory {
     private String paymentMerchant;
 
     @Field(type = FieldType.Keyword)
+    private String storeName;  // ✅ 매장명 필드 추가
+
+    @Field(type = FieldType.Boolean)
+    private boolean receiptUploaded;  // ✅ 영수증 업로드 여부 추가
+
+    @Field(type = FieldType.Keyword)
     private String paymentStatus;
 
     @Field(type = FieldType.Date, format = DateFormat.date_time)
