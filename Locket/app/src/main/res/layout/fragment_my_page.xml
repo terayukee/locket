@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="마이페이지"
-            android:textColor="#000000"
+            android:letterSpacing="-0.02"
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -76,9 +76,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="한아영"
-                android:textColor="#000000"
                 android:textSize="16sp"
                 android:textStyle="bold"
+                android:letterSpacing="-0.02"
                 app:layout_constraintEnd_toStartOf="@+id/iv_edit"
                 app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintStart_toEndOf="@id/iv_profile_img"
@@ -92,6 +92,7 @@
                 android:text="나이 25세"
                 android:textColor="#707070"
                 android:textSize="14sp"
+                android:letterSpacing="-0.02"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_profile_name"
                 app:layout_constraintVertical_bias="0.3" />
@@ -103,6 +104,7 @@
                 android:text="직업 학생/주부/무직"
                 android:textColor="#707070"
                 android:textSize="14sp"
+                android:letterSpacing="-0.02"
                 android:layout_marginTop="8dp"
                 app:layout_constraintStart_toStartOf="@+id/tv_profile_name"
                 app:layout_constraintTop_toBottomOf="@id/tv_profile_age" />
@@ -157,6 +159,7 @@
                 app:layout_constraintWidth_percent="0.7"
                 android:paddingVertical="16dp"
                 android:text="로그아웃"
+                android:letterSpacing="-0.02"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintHorizontal_bias="0.15"
@@ -187,7 +190,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
 
-            <!-- 회원탈퇴 -->
             <ImageView
                 android:id="@+id/iv_delete_account"
                 android:layout_width="0dp"
@@ -208,6 +210,7 @@
                 app:layout_constraintWidth_percent="0.7"
                 android:paddingVertical="16dp"
                 android:text="회원탈퇴"
+                android:letterSpacing="-0.02"
                 android:textColor="#000000"
                 android:textSize="16sp"
                 app:layout_constraintHorizontal_bias="0.15"

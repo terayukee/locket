@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#FFFFFF">
@@ -35,17 +36,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
+        android:layout_marginTop="98dp"
         android:layout_marginEnd="24dp"
         android:letterSpacing="-0.02"
         android:text="생체 정보를 등록해주세요."
         android:textColor="#000000"
         android:textSize="24sp"
         android:textStyle="bold"
-        app:layout_constraintVertical_bias="0.15"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/progress_bar" />
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_fingerprint_img"
@@ -74,7 +74,8 @@
         android:text="• 휴대폰에저장이 미리 등록되어 있어야 합니다.\n• 스마트 기기에 등록된 생체정보는 타인에게 유출\n  되지 않도록 주의하시기 바랍니다."
         android:textColor="#666666"
         android:textSize="14sp"
-        app:layout_constraintVertical_bias="0"
+        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintVertical_bias="0.05"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -83,7 +84,7 @@
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_later"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
         android:padding="12dp"
@@ -98,20 +99,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_instructions"
         app:layout_constraintVertical_bias="0.5"
-        app:layout_constraintHeight_percent="0.09"
         app:layout_constraintWidth_percent="0.44" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_register"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:backgroundTint="#00C2A8"
         app:cornerRadius="10dp"
         android:padding="12dp"
         android:letterSpacing="-0.02"
         android:text="등록하기"
-        android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/btn_later"
         app:layout_constraintEnd_toEndOf="parent"

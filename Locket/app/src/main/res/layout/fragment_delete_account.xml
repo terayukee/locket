@@ -19,7 +19,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Title -->
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="wrap_content"
@@ -34,7 +33,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@id/iv_back" />
 
-    <!-- Main Message -->
     <TextView
         android:id="@+id/tv_main_message"
         android:layout_width="0dp"
@@ -49,7 +47,6 @@
         app:layout_constraintTop_toBottomOf="@id/tv_title"
         app:layout_constraintWidth_percent="0.8" />
 
-    <!-- Section Title -->
     <TextView
         android:id="@+id/tv_section_title"
         android:layout_width="0dp"
@@ -64,7 +61,6 @@
         app:layout_constraintTop_toBottomOf="@id/tv_main_message"
         app:layout_constraintWidth_percent="0.8" />
 
-    <!-- Notice Text -->
     <TextView
         android:id="@+id/tv_notice"
         android:layout_width="0dp"
@@ -80,7 +76,6 @@
         app:layout_constraintTop_toBottomOf="@id/tv_section_title"
         app:layout_constraintWidth_percent="0.8" />
 
-    <!-- Character Image -->
     <ImageView
         android:id="@+id/iv_character"
         android:layout_width="0dp"
@@ -95,7 +90,6 @@
         app:layout_constraintHorizontal_bias="0.8"
         app:layout_constraintVertical_bias="0.9" />
 
-    <!-- 하단 버튼 영역 -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_delete"
         android:layout_width="0dp"
@@ -105,6 +99,7 @@
         android:textSize="16sp"
         android:textStyle="bold"
         app:cornerRadius="10dp"
+        android:letterSpacing="-0.02"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_percent="0.08"

@@ -43,13 +43,11 @@
         android:layout_marginEnd="24dp"
         android:text="직업과 태어난 해를 입력해주세요"
         android:letterSpacing="-0.02"
-        android:textSize="20sp"
+        android:textSize="24sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/progressBar" />
-
-    <!-- Subtitle Text -->
     <TextView
         android:id="@+id/subtitleText"
         android:layout_width="0dp"
@@ -72,7 +70,6 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="24dp"
-        app:cardBackgroundColor="@drawable/bg_login_input_round"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -116,7 +113,6 @@
         android:layout_marginEnd="24dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
-        app:cardBackgroundColor="@drawable/bg_login_input_round"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_job_select">
@@ -151,25 +147,25 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 
-    <!-- Next Button with Horizontal Bias -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btn_next"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="300dp"
         android:layout_marginEnd="24dp"
+        android:letterSpacing="-0.02"
         android:padding="16dp"
         android:text="다음"
-        android:letterSpacing="-0.02"
         android:textColor="#FFFFFF"
-        app:backgroundTint="#C9C9C9"
         android:textSize="16dp"
+        app:backgroundTint="#C9C9C9"
         app:cornerRadius="10dp"
+        app:layout_constraintVertical_bias="0.9"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/cv_birthyear"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
