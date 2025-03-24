@@ -49,3 +49,8 @@ backend/Goose/.gradle/
 # macOS 시스템 파일 무시
 .DS_Store
 **/.DS_Store
+
+# 인텔리제이 환경설정 무시 
+.idea/
+../idea/
+../.idea/
