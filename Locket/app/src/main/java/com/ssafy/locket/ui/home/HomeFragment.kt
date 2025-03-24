@@ -26,5 +26,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.icNotification.setOnClickListener {
             findNavController().navigate(R.id.notificationFragment)
         }
+        binding.icProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
+        }
     }
 }

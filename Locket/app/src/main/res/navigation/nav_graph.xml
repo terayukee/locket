@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_notificationFragment"
             app:destination="@id/notificationFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_myPageFragment"
+            app:destination="@id/myPageFragment" />
     </fragment>
     <fragment
         android:id="@+id/financeFragment"
@@ -158,7 +161,8 @@
     <dialog
         android:id="@+id/receiptUploadDialog"
         android:name="com.ssafy.locket.ui.home.receipt.ReceiptUploadDialog"
-        android:label="ReceiptUploadDialog" />
+        android:label="ReceiptUploadDialog"
+        tools:layout="@layout/dialog_receipt_upload"/>
     <fragment
         android:id="@+id/receiptListFragment"
         android:name="com.ssafy.locket.ui.home.receipt.ReceiptListFragment"
@@ -173,4 +177,26 @@
         android:name="com.ssafy.locket.ui.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/myPageFragment"
+        android:name="com.ssafy.locket.ui.mypage.MyPageFragment"
+        android:label="fragment_my_page"
+        tools:layout="@layout/fragment_my_page" >
+        <action
+            android:id="@+id/action_myPageFragment_to_deleteAccountFragment"
+            app:destination="@id/deleteAccountFragment" />
+        <action
+            android:id="@+id/action_myPageFragment_to_editUserInfoFragment"
+            app:destination="@id/editUserInfoFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deleteAccountFragment"
+        android:name="com.ssafy.locket.ui.mypage.DeleteAccountFragment"
+        android:label="fragment_delete_account"
+        tools:layout="@layout/fragment_delete_account" />
+    <fragment
+        android:id="@+id/editUserInfoFragment"
+        android:name="com.ssafy.locket.ui.mypage.EditUserInfoFragment"
+        android:label="fragment_edit_user_info"
+        tools:layout="@layout/fragment_edit_user_info" />
 </navigation>
