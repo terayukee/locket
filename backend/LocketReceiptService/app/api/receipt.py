@@ -1,8 +1,9 @@
 from fastapi import APIRouter, UploadFile, File
 from ..services.ocr import OCRService
+from ..services.classifier import ItemClassifier
 from ..schemas.receipt import ReceiptResponse
 from ..utils.file_validator import FileValidator
-from ..exceptions.receipt_exceptions import FileValidationException, OCRProcessingException
+from ..exceptions.receipt_exceptions import FileValidationException, OCRProcessingException, ClassificationException
 from ..constants.status import ErrorMessage
 import base64
 from io import BytesIO
@@ -10,6 +11,7 @@ from pdf2image import convert_from_bytes
 
 router = APIRouter()
 ocr_service = OCRService()
+classifier = ItemClassifier()
 
 @router.post("/camera/{payment_id}", response_model=ReceiptResponse)
 async def process_receipt_from_camera(
@@ -31,15 +33,25 @@ async def process_receipt_from_camera(
         image_data = base64.b64encode(contents).decode('utf-8')
         ocr_result = await ocr_service.extract_text(image_data)
 
+        # OCR 결과에 품목 분류 추가
+        try:
+            classified_result = await classifier.classify_receipt(ocr_result)
+        except Exception as e:
+            raise ClassificationException(
+                message=ErrorMessage.CLASSIFICATION_ERROR,
+                detail=str(e)
+            )
+
         return ReceiptResponse(
             payment_id=payment_id,
             store_name=ocr_result['store_name'],
             business_number=ocr_result['business_number'],
             payment_date=ocr_result['payment_date'],
             total_amount=ocr_result['total_amount'],
-            items=ocr_result['items']
+            items=classified_result['items'],
+            category_totals=classified_result.get('category_totals')
         )
-    except (FileValidationException, OCRProcessingException) as e:
+    except (FileValidationException, OCRProcessingException, ClassificationException) as e:
         raise e
     except Exception as e:
         raise OCRProcessingException(
@@ -88,13 +100,22 @@ async def process_receipt_pdf(
             # OCR 처리
             ocr_result = await ocr_service.extract_text(image_data)
 
+            try:
+                classified_result = await classifier.classify_receipt(ocr_result)
+            except Exception as e:
+                raise ClassificationException(
+                    message=ErrorMessage.CLASSIFICATION_ERROR,
+                    detail=str(e)
+                )
+
             return ReceiptResponse(
                 payment_id=payment_id,
                 store_name=ocr_result['store_name'],
                 business_number=ocr_result['business_number'],
                 payment_date=ocr_result['payment_date'],
                 total_amount=ocr_result['total_amount'],
-                items=ocr_result['items']
+                items=classified_result['items'],
+                category_totals=classified_result.get('category_totals')
             )
         except OCRProcessingException:
             raise
