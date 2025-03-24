@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'backend',
+                git credentialsId: 'GitLab-PAT',
+                    branch: 'backend',
                     url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git'
             }
         }
