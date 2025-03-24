@@ -12,29 +12,29 @@ pipeline {
 
         stage('Detect Changed Services') {
             steps {
-                script {
-                    // 원격 브랜치 최신 상태로 갱신
-                    sh 'git fetch origin backend'
+                withCredentials([usernamePassword(credentialsId: 'GitLab-PAT', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
+                    script {
+                        // 인증 포함된 URL로 fetch
+                        sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend"
 
-                    // 변경된 파일 목록 추출
-                    def changes = sh(script: "git diff --name-only origin/backend HEAD", returnStdout: true).trim().split('\n')
-                    echo "Changed files: ${changes.join(', ')}"
+                        def changes = sh(script: "git diff --name-only origin/backend HEAD", returnStdout: true).trim().split('\n')
+                        echo "Changed files: ${changes.join(', ')}"
 
-                    // 디렉토리별로 변경 감지 및 빌드 트리거
-                    if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
-                        build job: 'backend-api-gateway'
-                    }
-                    if (changes.any { it.startsWith("backend/LocketDiscovery/") }) {
-                        build job: 'backend-discovery'
-                    }
-                    if (changes.any { it.startsWith("backend/LocketElasticSearch/") }) {
-                        build job: 'backend-elasticsearch'
-                    }
-                    if (changes.any { it.startsWith("backend/LocketPaymentService/") }) {
-                        build job: 'backend-payment'
-                    }
-                    if (changes.any { it.startsWith("backend/LocketUserService/") }) {
-                        build job: 'backend-user'
+                        if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
+                            build job: 'backend-api-gateway'
+                        }
+                        if (changes.any { it.startsWith("backend/LocketDiscovery/") }) {
+                            build job: 'backend-discovery'
+                        }
+                        if (changes.any { it.startsWith("backend/LocketElasticSearch/") }) {
+                            build job: 'backend-elasticsearch'
+                        }
+                        if (changes.any { it.startsWith("backend/LocketPaymentService/") }) {
+                            build job: 'backend-payment'
+                        }
+                        if (changes.any { it.startsWith("backend/LocketUserService/") }) {
+                            build job: 'backend-user'
+                        }
                     }
                 }
             }
