@@ -6,16 +6,28 @@ spring:
 
   cloud:
     gateway:
+      globalcors:
+        add-to-simple-url-handler-mapping: true  # ✅ 중요
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: payment-service
-          uri: lb://payment-service  # 🔥 Eureka 기반
+          uri: lb://payment-service
           predicates:
             - Path=/api/payment/**
 
         - id: user-service
-          uri: lb://user-service  # 🔥 Eureka 기반
+          uri: lb://user-service
           predicates:
             - Path=/api/user/**
+
+        - id: elasticsearch-service  # ✅ Elasticsearch 서비스 추가
+          uri: lb://elasticsearch-service
+          predicates:
+            - Path=/api/elasticsearch/**
 
         # 🔥 Swagger API 문서를 Gateway가 프록시하도록 추가
         - id: payment-service-docs
@@ -27,6 +39,11 @@ spring:
           uri: lb://user-service
           predicates:
             - Path=/api/user/v3/api-docs
+
+        - id: elasticsearch-service-docs  # ✅ Elasticsearch Swagger 추가
+          uri: lb://elasticsearch-service
+          predicates:
+            - Path=/api/elasticsearch/v3/api-docs
 
 management:
   endpoints:
@@ -60,4 +77,6 @@ springdoc:
         url: http://localhost:8080/api/payment/v3/api-docs
       - name: "Locket User Service"
         url: http://localhost:8080/api/user/v3/api-docs
+      - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch API 추가
+        url: http://localhost:8080/api/elasticsearch/v3/api-docs
 

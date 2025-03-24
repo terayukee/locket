@@ -9,9 +9,9 @@ spring:
     include: key  # application-key.yml 포함 (DB, Kafka 정보)
 
   datasource:
-    url: ${db.url_user}  # user-service용 DB URL
-    username: ${db.username}
-    password: ${db.password}
+    url: ${DB.URL_USER}  # user-service용 DB URL
+    username: ${DB.USERNAME}
+    password: ${DB.PASSWORD}
     driver-class-name: org.postgresql.Driver
 
   jpa:
@@ -20,7 +20,7 @@ spring:
       ddl-auto: update  # 필요에 따라 변경 가능
 
   kafka:
-    bootstrap-servers: ${kafka.bootstrap-servers}
+    bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
     consumer:
       group-id: user-service-group
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
@@ -30,6 +30,21 @@ spring:
         spring.json.trusted.packages: "*"
     listener:
       ack-mode: manual_immediate
+
+  cloud:
+    openfeign:
+      client:
+        config:
+          default:
+            connect-timeout: 5000
+            read-timeout: 5000
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+  instance:
+    prefer-ip-address: true
 
 management:
   endpoints:

@@ -25,6 +25,10 @@ public class PaymentOrder {
     @JoinColumn(name = "card_id", nullable = false)
     private CardInfo card; // ✅ 카드 정보 참조 추가
 
+    @ManyToOne
+    @JoinColumn(name = "buyer_account", nullable = false)
+    private BankAccount buyerAccount;
+
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount; // ✅ BigDecimal로 변경
 

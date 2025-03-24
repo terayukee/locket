@@ -1,0 +1,40 @@
+server:
+  port: 0  # 랜덤 포트 사용
+
+spring:
+  application:
+    name: elasticsearch-service
+
+  profiles:
+    active: dev  # 기본 실행 환경(dev)
+    include: key  # application-key.yml 포함 (DB, Kafka 정보)
+
+  elasticsearch:
+    uris: ${ELASTICSEARCH.URIS}
+    username: ${ELASTICSEARCH.USERNAME}
+    password: ${ELASTICSEARCH.PASSWORD}
+
+  kafka:
+    bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
+    consumer:
+      group-id: elastic-search-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      auto-offset-reset: earliest
+      properties:
+        spring.json.trusted.packages: "*"
+    listener:
+      ack-mode: manual_immediate
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, prometheus
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api/elasticsearch/v3/api-docs
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

@@ -1,10 +1,14 @@
 package com.locket.payment.domain.pay.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -27,7 +31,7 @@ public class BankAccount {
     private BigDecimal balance;
 
     @Column(nullable = false)
-    private String currency; // KRW, USD 등
+    private String currency;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -35,7 +39,9 @@ public class BankAccount {
     @Column(nullable = false)
     private LocalDateTime updatedAt;
 
-    // 💰 계좌 잔액 차감 메서드 (잔액 부족 시 예외 발생)
+    @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)
+    private List<CardInfo> cardInfoList; // ✅ (선택) 연결된 카드들
+
     public void withdraw(BigDecimal amount) {
         if (this.balance.compareTo(amount) < 0) {
             throw new IllegalStateException("잔액이 부족합니다.");
@@ -44,3 +50,4 @@ public class BankAccount {
         this.updatedAt = LocalDateTime.now();
     }
 }
+

@@ -21,3 +21,5 @@ springdoc:
         url: http://localhost:8080/api/payment/v3/api-docs
       - name: "Locket User Service"
         url: http://localhost:8080/api/user/v3/api-docs
+      - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch API 추가
+        url: http://localhost:8080/api/elasticsearch/v3/api-docs

@@ -1,0 +1,85 @@
+plugins {
+	id 'java'
+	id 'org.springframework.boot' version '3.3.3'
+	id 'io.spring.dependency-management' version '1.1.7'
+}
+
+group = 'com.locket.elasticsearch'
+version = '0.0.1-SNAPSHOT'
+
+java {
+	toolchain {
+		languageVersion = JavaLanguageVersion.of(17)
+	}
+}
+
+repositories {
+	mavenCentral()
+}
+
+ext {
+	set('springCloudVersion', "2023.0.3")
+}
+
+dependencyManagement {
+	imports {
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+	}
+}
+
+dependencies {
+	// Spring Boot 기본 스타터
+	implementation 'org.springframework.boot:spring-boot-starter'
+
+	// Eureka Client (서비스 등록/탐색)
+	implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
+
+	// Spring Web
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// Spring Boot Actuator (모니터링)
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus' // Prometheus 연동
+
+	// Feign Client (마이크로서비스 간 통신)
+	implementation 'org.springframework.cloud:spring-cloud-starter-openfeign'
+
+	// Lombok (Getter, Setter, Builder 자동 생성)
+	compileOnly 'org.projectlombok:lombok'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	// OpenAPI (Swagger 문서화)
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0'
+
+	// JWT (Optional, 필요 시 사용)
+	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+	// ✅ Kafka Consumer (유저 서비스에서 결제 성공 이벤트 수신)
+	implementation 'org.springframework.kafka:spring-kafka'
+
+	// ✅ Elasticsearch (쿼리 전용 저장소)
+	implementation 'org.springframework.boot:spring-boot-starter-data-elasticsearch'
+//	implementation 'org.elasticsearch.client:elasticsearch-java:8.13.4'
+
+	// ✅ (선택) Jackson 연동을 위해 필요할 수 있음
+	implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-smile'
+
+	// ✅ Resilience4j (서킷 브레이커, 재시도, 제한)
+	implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'
+
+	// ✅ MapStruct (DTO 변환을 쉽게 처리)
+	implementation 'org.mapstruct:mapstruct:1.5.5.Final'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.5.5.Final'
+
+	// ✅ PostgreSQL (운영 DB)
+	runtimeOnly 'org.postgresql:postgresql'
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
