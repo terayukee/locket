@@ -14,11 +14,11 @@ class OCRService:
             'Content-Type': 'application/json'
         }
 
-    async def extract_text(self, image_data: str) -> Dict:
+    async def extract_text(self, image_data: str, file_format: str = 'jpg') -> Dict:
         request_json = {
             'images': [
                 {
-                    'format': 'jpg',
+                    'format': file_format,  # 동적으로 format 설정
                     'name': 'receipt',
                     'data': image_data
                 }
@@ -48,7 +48,9 @@ class OCRService:
     def _parse_receipt_data(self, ocr_result: Dict) -> Dict:
         """OCR 결과에서 영수증 데이터 파싱"""
         try:
+            print("전체 OCR 결과:", json.dumps(ocr_result, indent=2, ensure_ascii=False))  # 전체 응답 로깅
             receipt_data = ocr_result['images'][0]['receipt']['result']
+            print("영수증 데이터:", json.dumps(receipt_data, indent=2, ensure_ascii=False))  # 영수증 데이터 로깅
 
             # 상점 정보 추출
             store_info = receipt_data.get('storeInfo', {})
@@ -58,8 +60,18 @@ class OCRService:
             business_number = store_info.get('bizNum', {}).get('formatted', {}).get('value', '')
 
             # 결제 날짜 추출
-            payment_date = receipt_data.get('paymentInfo', {}).get('date', {}).get('formatted', {})
-            date_str = f"{payment_date.get('year', '')}/{payment_date.get('month', '')}/{payment_date.get('day', '')}"
+            payment_info = receipt_data.get('paymentInfo', {})
+            if payment_info:
+                date_info = payment_info.get('date', {}).get('text', '')
+                # 날짜가 없으면 다른 필드에서 찾아보기
+                if not date_info:
+                    for field in receipt_data.get('subResults', []):
+                        if 'date' in field:
+                            date_info = field['date'].get('text', '')
+                            break
+                payment_date = date_info
+            else:
+                payment_date = "날짜 정보 없음"
 
             # 상품 목록 추출
             items = []
@@ -77,7 +89,7 @@ class OCRService:
             return {
                 'store_name': store_name,
                 'business_number': business_number,
-                'payment_date': date_str,
+                'payment_date': payment_date,
                 'total_amount': total_amount,
                 'items': items
             }

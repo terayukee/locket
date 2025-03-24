@@ -1,14 +1,8 @@
-from pydantic_settings import BaseSettings
-from dotenv import load_dotenv
-import os
+from decouple import config
 
-load_dotenv()
-
-class Settings(BaseSettings):
-    CLOVA_OCR_URL: str
-    CLOVA_OCR_SECRET: str
-
-    class Config:
-        env_file = ".env"
+class Settings:
+    # config('환경변수명', default='기본값') 형태로 사용
+    CLOVA_OCR_URL: str = config('CLOVA_OCR_URL')
+    CLOVA_OCR_SECRET: str = config('CLOVA_OCR_SECRET')
 
 settings = Settings()
