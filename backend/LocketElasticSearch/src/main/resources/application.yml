@@ -5,15 +5,6 @@ spring:
   application:
     name: elasticsearch-service
 
-  profiles:
-    active: dev  # 기본 실행 환경(dev)
-    include: key  # application-key.yml 포함 (DB, Kafka 정보)
-
-  elasticsearch:
-    uris: ${ELASTICSEARCH.URIS}
-    username: ${ELASTICSEARCH.USERNAME}
-    password: ${ELASTICSEARCH.PASSWORD}
-
   kafka:
     bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
     consumer:
