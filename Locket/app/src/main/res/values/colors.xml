@@ -12,5 +12,7 @@
     <color name="category_stroke">#DADADA</color>
     <color name="background">#F6F7F9</color>
     <color name="disabled">#9E9E9E</color>
+    <color name="colorButtonActive">#00CBBF</color>
+    <color name="colorButtonInactive">#C9C9C9</color>
 
 </resources>
