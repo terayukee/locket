@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
@@ -36,7 +37,10 @@ class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
             ),
             maxPasswordLength = 6
         ) {
-            findNavController().navigate(R.id.action_paymentPasswordFragment_to_nfcPaymentFragment)
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.paymentPasswordFragment, true) // 현재 화면을 스택에서 제거
+                .build()
+            findNavController().navigate(R.id.action_paymentPasswordFragment_to_nfcPaymentFragment, null, navOptions)
         }
         setupNumberButtons()
         setupClearButton()

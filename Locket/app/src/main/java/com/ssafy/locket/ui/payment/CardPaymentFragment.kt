@@ -28,6 +28,9 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     //지문 관련
     private var biometricPrompt: BiometricPrompt? = null
     private var promptInfo: BiometricPrompt.PromptInfo? = null
+    //스크롤 가능
+    private var selectedPosition = 0
+    private var lastScrollX = 0
 
     val cards = listOf(
         Card(R.drawable.ic_payment_card_img, "국민행복 삼성카드 V2"),
@@ -46,6 +49,22 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         initialAdapter()
         initialView()
         initEvent()
+        savedInstanceState?.let {
+            selectedPosition = it.getInt("selectedPosition", 0)
+            lastScrollX = it.getInt("scrollPosition", 0)
+            binding.viewpager.setCurrentItem(selectedPosition, false) // 애니메이션 없이 복원
+            binding.dotIndicator.scrollTo(lastScrollX, 0) // ScrollView 복원
+        }
+        scrollToDotAtPosition(selectedPosition)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        // 현재 선택된 페이지 저장
+        outState.putInt("selectedPosition", selectedPosition)
+        // ScrollView의 스크롤 위치 저장
+        outState.putInt("scrollPosition", binding.dotIndicatorScroll.scrollX)
     }
 
     fun initialAdapter(){
@@ -77,6 +96,17 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             requireActivity().window.decorView.setBackgroundColor(Color.BLACK)
             findNavController().navigate(R.id.action_cardPaymentFragment_to_paymentPasswordFragment)
         }
+    }
+
+    private fun scrollToDotAtPosition(position: Int) {
+        val dotContainer = binding.dotIndicator
+        val dot = dotContainer.getChildAt(position)
+
+        val dotCenterX = dot.left + dot.width / 2
+        val scrollViewCenterX = binding.dotIndicatorScroll.width / 2
+
+        val scrollX = dotCenterX - scrollViewCenterX
+        binding.dotIndicatorScroll.smoothScrollTo(scrollX, 0)
     }
 
     private fun setupDotIndicator(count: Int) {
