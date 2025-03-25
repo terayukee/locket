@@ -18,7 +18,19 @@ class RegisterPasswordFragment : BaseFragment<FragmentRegisterPasswordBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initPassword()
+        initEvent()
+        setupNumberButtons()
+        setupClearButton()
+    }
 
+    private fun initEvent() {
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+    }
+
+    fun initPassword(){
         passwordInputHandler = PasswordInputHandler(
             arrayOf(
                 binding.vPasswordDot1,
@@ -33,15 +45,6 @@ class RegisterPasswordFragment : BaseFragment<FragmentRegisterPasswordBinding>(
             val password = passwordInputHandler.getPassword().toString()
             val bundle = Bundle().apply { putString("password", password) }
             findNavController().navigate(R.id.action_registerPasswordFragment_to_confirmPasswordFragment,bundle)
-        }
-        initEvent()
-        setupNumberButtons()
-        setupClearButton()
-    }
-
-    private fun initEvent() {
-        binding.ivBack.setOnClickListener {
-            findNavController().popBackStack()
         }
     }
 

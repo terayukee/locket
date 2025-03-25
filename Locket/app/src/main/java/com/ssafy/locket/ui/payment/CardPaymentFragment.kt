@@ -8,6 +8,7 @@ import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
@@ -68,7 +69,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             }
         }
         binding.btnPassword.setOnClickListener {
-
+            findNavController().navigate(R.id.action_cardPaymentFragment_to_paymentPasswordFragment)
         }
     }
 
