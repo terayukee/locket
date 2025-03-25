@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:aapt="http://schemas.android.com/aapt"
+            android:width="331dp"
+            android:height="30dp"
+            android:viewportWidth="331"
+            android:viewportHeight="30"
+            >
+            <group>
+                <clip-path
+                    android:pathData="M4 0H327C329.209 0 331 1.79086 331 4V26C331 28.2091 329.209 30 327 30H4C1.79086 30 0 28.2091 0 26V4C0 1.79086 1.79086 0 4 0Z"
+                    />
+                <path
+                    android:pathData="M0 0V30H331V0"
+                    android:fillColor="#F6F7F9"
+                    />
+            </group>
+        </vector>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%">
+            <shape>
+                <solid android:color="#4C8077"/>
+                <corners android:radius="10dp"/>
+            </shape>
+        </scale>
+    </item>
+</layer-list>

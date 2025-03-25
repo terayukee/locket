@@ -1,9 +1,18 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
 }
+val properties = Properties().apply {
+    load(rootProject.file("apikey.properties").inputStream())
+}
+
+val nativeApiKey: String = properties.getProperty("native_api_key") ?: ""
+val baseUrl: String = properties.getProperty("base_url") ?: ""
+val manifestNativeAppKey: String = properties.getProperty("manifest_native_app_key") ?: ""
 
 android {
     namespace = "com.ssafy.locket"
@@ -18,15 +27,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         renderscriptTargetApi = 18
         renderscriptSupportModeEnabled = true
+
+        buildConfigField("String", "NATIVE_API_KEY", nativeApiKey)
+        buildConfigField("String", "BASE_URL", baseUrl)
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
+            manifestPlaceholders["NATIVE_API_KEY"] = manifestNativeAppKey
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            isMinifyEnabled = false
+            manifestPlaceholders["NATIVE_API_KEY"] = manifestNativeAppKey
         }
     }
     compileOptions {
@@ -38,6 +55,9 @@ android {
     }
     viewBinding {
         enable = true
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -71,6 +91,8 @@ dependencies {
 
     // calendar
     implementation("com.kizitonwose.calendar:view:2.5.4")
+
+    implementation ("com.kakao.sdk:v2-user:2.20.1")
 
 }
 

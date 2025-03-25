@@ -3,19 +3,24 @@ package com.ssafy.locket
 import android.app.Application
 import retrofit2.Retrofit
 import android.Manifest
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
 import okhttp3.OkHttpClient
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 
+private const val TAG = "ApplicationClass"
 @HiltAndroidApp
 class ApplicationClass : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
+        KakaoSdk.init(this, BuildConfig.NATIVE_API_KEY)
     }
 
     companion object{

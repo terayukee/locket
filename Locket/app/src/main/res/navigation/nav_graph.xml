@@ -24,7 +24,11 @@
         android:id="@+id/financeFragment"
         android:name="com.ssafy.locket.ui.finance.FinanceFragment"
         android:label="fragment_finance"
-        tools:layout="@layout/fragment_finance" />
+        tools:layout="@layout/fragment_finance" >
+        <action
+            android:id="@+id/action_financeFragment_to_editBudgetFragment"
+            app:destination="@id/editBudgetFragment" />
+    </fragment>
     <fragment
         android:id="@+id/cardPaymentFragment"
         android:name="com.ssafy.locket.ui.payment.CardPaymentFragment"
@@ -173,4 +177,9 @@
         android:name="com.ssafy.locket.ui.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
+    <fragment
+        android:id="@+id/editBudgetFragment"
+        android:name="com.ssafy.locket.ui.finance.fragments.budget.EditBudgetFragment"
+        android:label="fragment_edit_budget"
+        tools:layout="@layout/fragment_edit_budget" />
 </navigation>
