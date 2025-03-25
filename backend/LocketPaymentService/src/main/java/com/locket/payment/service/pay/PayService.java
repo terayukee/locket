@@ -33,12 +33,13 @@ public class PayService {
     private final WalletTransactionRepository walletTransactionRepository;
     private final CardInfoRepository cardInfoRepository;
     private final WalletRepository walletRepository;
+    private final PaymentLedgerRepository paymentLedgerRepository;
     private final PaymentProducer paymentProducer;
     private final StringRedisTemplate redisTemplate;
 
     @Transactional
     public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
-        // 1️⃣ 카드 정보 조회
+        // 1️⃣ 카드 정보 + 잔액 조회
         CardInfo cardInfo = cardInfoRepository.findByCardNumber(request.getCardNumber())
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
         BankAccount bankAccount = cardInfo.getBankAccount();
@@ -91,7 +92,7 @@ public class PayService {
         );
         paymentOrderRepository.saveAll(orders);
 
-        // 5️⃣ 부트페이 API 호출 (모의)
+        // 5️⃣ 부트페이 API 호출 - 결제 검증하기 (모의)
         boolean isPaymentSuccess = callBootpayAPI(request);
         if (!isPaymentSuccess) {
             transaction.updateStatus(PaymentStatus.FAIL);
@@ -111,7 +112,7 @@ public class PayService {
         transaction.updateStatus(PaymentStatus.SUCCESS);
         orders.forEach(order -> order.updateStatus(PaymentStatus.SUCCESS));
 
-        // 8️⃣ 지갑 트랜잭션 저장 & 판매자 지갑에 입금 처리
+        // 8️⃣ 지갑 트랜잭션 저장 & 원장 기록 & 판매자 지갑에 입금 처리
         Wallet sellerWallet = walletRepository.findByUserId(request.getSellerId())
                 .orElseThrow(() -> new IllegalArgumentException("판매자의 지갑 정보를 찾을 수 없습니다."));
 
@@ -126,6 +127,16 @@ public class PayService {
                     .updatedAt(LocalDateTime.now())
                     .build();
             walletTransactionRepository.save(walletTransaction);
+
+            // ✅ 원장 기록 추가
+            PaymentLedger ledger = PaymentLedger.builder()
+                    .paymentOrder(order)  // 엔티티 직접 참조
+                    .amount(order.getAmount())
+                    .currency("KRW")
+                    .debitAccount(bankAccount.getAccountNumber())     // 출금 계좌 (구매자 계좌)
+                    .creditAccount(sellerWallet.getWalletId().toString()) // 입금 계좌 (지갑 ID)
+                    .build();
+            paymentLedgerRepository.save(ledger);
         });
 
         sellerWallet.deposit(paymentAmount); // ✅ balance 증가
