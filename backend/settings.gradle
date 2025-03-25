@@ -6,4 +6,5 @@ include 'LocketPaymentService'
 include 'LocketElasticSearch'
 include 'LocketDiscovery'
 include 'LocketCommon'
+include 'LocketCommon'
 

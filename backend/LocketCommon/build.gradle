@@ -1,11 +1,15 @@
 plugins {
     id 'java-library'
-    id 'org.springframework.boot' version '3.3.3'
     id 'io.spring.dependency-management' version '1.1.7'
 }
 
 group = 'com.locket.common'
 version = '0.0.1-SNAPSHOT'
+
+// jar 파일 생성 안함 (MSA 여러 프로젝트가 동시에 빌드할 때 충돌 방지)
+tasks.named('jar') {
+    enabled = false
+}
 
 java {
     toolchain {
@@ -22,9 +26,6 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // ✅ 스프링 기반으로 만들기
-    implementation 'org.springframework.boot:spring-boot-starter'
-
     // JWT (공통 JWT 유틸 작성 시 사용)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -33,6 +34,9 @@ dependencies {
     // JSON 직렬화용 Jackson
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
+
+    // ✅ Spring ComponentScan 등 최소한의 기능 사용
+    implementation 'org.springframework:spring-context'
 
     // 기타 공용 유틸 추가 가능
 
