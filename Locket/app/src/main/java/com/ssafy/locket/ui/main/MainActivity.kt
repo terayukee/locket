@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.navigation.NavController
+import androidx.navigation.NavOptions
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
@@ -35,11 +36,15 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
         bottomNavigationView.setOnItemSelectedListener { item ->
+            val navigateOptions = NavOptions.Builder()
+                .setLaunchSingleTop(true)  // Prevent multiple instances of the same destination
+                .setPopUpTo(navController.graph.startDestinationId, false)  // Clear the back stack up to the start destination
+                .build()
             when (item.itemId) {
-                R.id.home -> navController.navigate(R.id.homeFragment) // homeFragment로 이동
-                R.id.household_account_book -> navController.navigate(R.id.financeFragment) // financeFragment로 이동
-                R.id.lowest_price_graph -> navController.navigate(R.id.productListFragment) // productListFragment로 이동
-                R.id.payment -> navController.navigate(R.id.cardPaymentFragment) // cardPaymentFragment로 이동
+                R.id.home -> navController.navigate(R.id.homeFragment, null, navigateOptions)
+                R.id.household_account_book -> navController.navigate(R.id.financeFragment, null, navigateOptions)
+                R.id.lowest_price_graph -> navController.navigate(R.id.productListFragment, null, navigateOptions)
+                R.id.payment -> navController.navigate(R.id.cardPaymentFragment, null, navigateOptions)
                 else -> false
             }
             true

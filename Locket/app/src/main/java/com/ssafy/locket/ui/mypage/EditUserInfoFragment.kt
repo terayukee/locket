@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.PopupMenu
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
@@ -65,7 +66,15 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
                     Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 수정해 입력해주세요", Toast.LENGTH_LONG).show()
                 }
                 else{
-                    findNavController().navigate(R.id.action_editUserInfoFragment_to_myPageFragment)
+                    val navOptions = NavOptions.Builder()
+                        .setPopUpTo(R.id.editUserInfoFragment, true) // Remove current fragment from back stack
+                        .setLaunchSingleTop(true) // Ensure only one instance of the destination
+                        .build()
+                    findNavController().navigate(
+                        R.id.action_editUserInfoFragment_to_myPageFragment,
+                        null,
+                        navOptions
+                    )
                     binding.editAge.text.clear()
                 }
             }

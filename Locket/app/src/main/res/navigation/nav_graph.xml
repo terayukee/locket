@@ -199,8 +199,8 @@
         android:label="fragment_delete_account"
         tools:layout="@layout/fragment_delete_account" >
         <action
-            android:id="@+id/action_deleteAccountFragment_to_myPageFragment"
-            app:destination="@id/myPageFragment" />
+            android:id="@+id/action_deleteAccountFragment_to_signInFragment"
+            app:destination="@id/signInFragment" />
     </fragment>
     <fragment
         android:id="@+id/editUserInfoFragment"
