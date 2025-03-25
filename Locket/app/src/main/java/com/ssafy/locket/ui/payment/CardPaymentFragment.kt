@@ -1,6 +1,7 @@
 package com.ssafy.locket.ui.payment
 
 import android.content.res.Resources
+import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
@@ -43,6 +44,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialAdapter()
+        initialView()
         initEvent()
     }
 
@@ -52,6 +54,9 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         setupDotIndicator(cards.size)
     }
 
+    fun initialView(){
+        requireActivity().window.decorView.setBackgroundColor(Color.WHITE)
+    }
 
     fun initEvent(){
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
@@ -69,6 +74,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             }
         }
         binding.btnPassword.setOnClickListener {
+            requireActivity().window.decorView.setBackgroundColor(Color.BLACK)
             findNavController().navigate(R.id.action_cardPaymentFragment_to_paymentPasswordFragment)
         }
     }
