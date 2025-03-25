@@ -37,6 +37,26 @@ public class PayService {
     private final PaymentProducer paymentProducer;
     private final StringRedisTemplate redisTemplate;
 
+    /**
+     * 카드 유효성 및 잔액 확인
+     */
+    public ResponseEntity<String> validateCardAndBalance(String cardNumber, BigDecimal amount) {
+        try {
+            // 1️⃣ 카드 정보 조회
+            CardInfo cardInfo = cardInfoRepository.findByCardNumber(cardNumber)
+                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
+            BankAccount bankAccount = cardInfo.getBankAccount();
+
+            // 2️⃣ 잔액 확인
+            if (bankAccount.getBalance().compareTo(amount) < 0) {
+                return ResponseEntity.badRequest().body("잔액이 부족합니다.");
+            }
+            return ResponseEntity.ok("카드 유효 및 잔액 충분");
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
     @Transactional
     public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
         // 1️⃣ 카드 정보 + 잔액 조회
@@ -52,7 +72,7 @@ public class PayService {
                     .build());
         }
 
-        // 2️⃣ Redis에서 사용자 정보 가져오기
+        // 1️⃣Redis에서 사용자 정보 가져오기
         String birthDate = "1998";
         String userJob = "학생";
         try {
@@ -63,7 +83,7 @@ public class PayService {
             log.warn("Redis 연결 실패, 기본값 사용");
         }
 
-        // 3️⃣ 결제 트랜잭션 저장
+        // 2️⃣  결제 트랜잭션 저장
         PaymentTransaction transaction = PaymentTransaction.builder()
                 .card(cardInfo)
                 .account(bankAccount)
@@ -78,7 +98,7 @@ public class PayService {
                 .build();
         paymentTransactionRepository.save(transaction);
 
-        // 4️⃣ 결제 주문 저장
+        // 3️⃣ 결제 주문 저장
         List<PaymentOrder> orders = List.of(
                 PaymentOrder.builder()
                         .paymentTransaction(transaction)
@@ -92,7 +112,7 @@ public class PayService {
         );
         paymentOrderRepository.saveAll(orders);
 
-        // 5️⃣ 부트페이 API 호출 - 결제 검증하기 (모의)
+        // 4️⃣ 부트페이 API 호출 - 결제 검증하기 (모의)
         boolean isPaymentSuccess = callBootpayAPI(request);
         if (!isPaymentSuccess) {
             transaction.updateStatus(PaymentStatus.FAIL);
@@ -104,15 +124,15 @@ public class PayService {
                     .build());
         }
 
-        // 6️⃣ 계좌에서 금액 차감
+        // 5️⃣ 계좌에서 금액 차감
         bankAccount.withdraw(paymentAmount);
         bankAccountRepository.save(bankAccount);
 
-        // 7️⃣ 상태 업데이트
+        // 6️⃣ 상태 업데이트
         transaction.updateStatus(PaymentStatus.SUCCESS);
         orders.forEach(order -> order.updateStatus(PaymentStatus.SUCCESS));
 
-        // 8️⃣ 지갑 트랜잭션 저장 & 원장 기록 & 판매자 지갑에 입금 처리
+        // 7️⃣ 지갑 트랜잭션 저장 & 원장 기록 & 판매자 지갑에 입금 처리
         Wallet sellerWallet = walletRepository.findByUserId(request.getSellerId())
                 .orElseThrow(() -> new IllegalArgumentException("판매자의 지갑 정보를 찾을 수 없습니다."));
 
@@ -128,13 +148,13 @@ public class PayService {
                     .build();
             walletTransactionRepository.save(walletTransaction);
 
-            // ✅ 원장 기록 추가
+            // 8️⃣ 원장 기록 추가
             PaymentLedger ledger = PaymentLedger.builder()
-                    .paymentOrder(order)  // 엔티티 직접 참조
+                    .paymentOrder(order)
                     .amount(order.getAmount())
                     .currency("KRW")
-                    .debitAccount(bankAccount.getAccountNumber())     // 출금 계좌 (구매자 계좌)
-                    .creditAccount(sellerWallet.getWalletId().toString()) // 입금 계좌 (지갑 ID)
+                    .debitAccount(bankAccount.getAccountNumber())
+                    .creditAccount(sellerWallet.getWalletId().toString())
                     .build();
             paymentLedgerRepository.save(ledger);
         });
