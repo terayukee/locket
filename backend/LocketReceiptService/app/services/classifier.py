@@ -12,20 +12,35 @@ class ItemClassifier:
         self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
 
     async def classify_receipt(self, receipt_data: Dict) -> Dict:
-        """영수증 전체 데이터에서 품목들을 분류"""
         try:
             print("품목 분류 시작")
             # 품목 분류
             classified_items = await self._classify_items(receipt_data["items"])
-            print(f"분류된 품목: {json.dumps(classified_items, indent=2, ensure_ascii=False)}")
 
-            # 원본 영수증 데이터에 분류 결과 추가
+            # 할인금액 계산
+            total_sum = 0
+            biggest_price = 0
+            biggest_price_index = 0
+
+            # 가장 큰 price 찾기
+            for i, item in enumerate(classified_items):
+                price = float(item['price'])
+                total_sum += price
+                if price > biggest_price:
+                    biggest_price = price
+                    biggest_price_index = i
+
+            # 할인금액 계산
+            actual_total = float(receipt_data["total_amount"])
+            discount = total_sum - actual_total
+
+            # 할인금액이 있으면 가장 큰 price를 가진 품목에서 차감
+            if discount > 0:
+                biggest_price_item = classified_items[biggest_price_index]
+                biggest_price_item['price'] = str(int(float(biggest_price_item['price']) - discount))
+
             receipt_data["items"] = classified_items
-
-            # 카테고리별 합계 계산
-            category_totals = self._calculate_category_totals(classified_items)
-            receipt_data["category_totals"] = category_totals
-            print(f"카테고리별 합계: {json.dumps(category_totals, indent=2, ensure_ascii=False)}")
+            receipt_data["category_totals"] = self._calculate_category_totals(classified_items)
 
             return receipt_data
 
@@ -117,6 +132,6 @@ class ItemClassifier:
         totals = {}
         for item in items:
             category = item['category']
-            amount = float(item['price']) * item['quantity']
+            amount = float(item['price'])  # quantity 곱하지 않음
             totals[category] = totals.get(category, 0) + amount
         return totals

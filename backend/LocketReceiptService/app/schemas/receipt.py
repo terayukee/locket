@@ -31,3 +31,5 @@ class ReceiptResponse(BaseModel):
     total_amount: str
     items: List[ReceiptItem]
     category_totals: Optional[dict] = None
+
+
