@@ -18,7 +18,7 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
     R.layout.fragment_edit_user_info
 ) {
     //수정하기 위한 여부
-    var isBirthValid = false
+    var isBirthValid = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
