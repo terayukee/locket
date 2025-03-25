@@ -1,5 +1,6 @@
 package com.locket.payment.controller.pay;
 
+import com.locket.payment.domain.pay.dto.CardInfoDto;
 import com.locket.payment.domain.pay.dto.PaymentRequest;
 import com.locket.payment.domain.pay.dto.PaymentResponse;
 import com.locket.payment.service.pay.PayService;
@@ -10,11 +11,14 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -82,6 +86,17 @@ public class PayController {
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
         return payService.validateCardAndBalance(request.getCardNumber(), request.getAmount());
+    }
+
+    // PayController.java
+
+    @PostMapping("/my-cards")
+    @Operation(summary = "내 카드 목록 조회", description = "JWT를 기반으로 현재 사용자 ID에 연결된 카드 목록을 조회합니다.")
+    public ResponseEntity<List<CardInfoDto>> getMyCards(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        int userId = 0;
+//        userId = jwtUtil.extractUserId(token);
+        return ResponseEntity.ok(payService.getCardsByUserId(userId));
     }
 
 }

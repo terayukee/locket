@@ -1,6 +1,7 @@
 package com.locket.payment.service.pay;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
+import com.locket.payment.domain.pay.dto.CardInfoDto;
 import com.locket.payment.domain.pay.dto.PaymentRequest;
 import com.locket.payment.domain.pay.dto.PaymentResponse;
 import com.locket.payment.domain.pay.entity.*;
@@ -207,4 +208,19 @@ public class PayService {
         // TODO: 실제 부트페이 결제 API 연동 예정
         return true; // 현재는 무조건 성공 처리
     }
+
+    // PayService.java
+
+    public List<CardInfoDto> getCardsByUserId(int userId) {
+        List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
+        return cards.stream()
+                .map(card -> CardInfoDto.builder()
+                        .cardId(card.getCardId())
+                        .cardNumber(card.getCardNumber())
+                        .cardExpiry(card.getCardExpiry())
+                        .accountNumber(card.getBankAccount().getAccountNumber())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
 }
