@@ -12,5 +12,7 @@
     <color name="category_stroke">#DADADA</color>
     <color name="background">#F6F7F9</color>
     <color name="disabled">#9E9E9E</color>
+    <color name="background_home">#FFFDF8</color>
+    <color name="background_receipt">#EFF7F8</color>
 
 </resources>

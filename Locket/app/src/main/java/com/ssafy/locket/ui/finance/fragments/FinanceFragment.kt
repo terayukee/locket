@@ -33,6 +33,11 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             tab.text = if (position == 0) "내역" else if (position == 1) "달력" else "예산"
         }.attach()
 
+        arguments?.getInt("SELECTED_TAB")?.let { tabIndex ->
+            binding.tabVp.setCurrentItem(tabIndex, false)
+            binding.tabLayout.getTabAt(tabIndex)?.select()
+        }
+
         var currentMonth = YearMonth.now()
 
         binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, currentMonth.year, currentMonth.monthValue)
