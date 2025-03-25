@@ -63,7 +63,7 @@ public class PayController {
             @ApiResponse(responseCode = "200", description = "검증 성공"),
             @ApiResponse(responseCode = "400", description = "검증 실패")
     })
-    public ResponseEntity<String> validateCard(
+    public ResponseEntity<?> validateCard(
             @RequestBody(
                     description = "카드 유효성 요청 정보",
                     required = true,

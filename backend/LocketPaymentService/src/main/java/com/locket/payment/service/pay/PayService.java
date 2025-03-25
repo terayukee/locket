@@ -17,9 +17,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -40,7 +38,8 @@ public class PayService {
     /**
      * 카드 유효성 및 잔액 확인
      */
-    public ResponseEntity<String> validateCardAndBalance(String cardNumber, BigDecimal amount) {
+    public ResponseEntity<Map<String, String>> validateCardAndBalance(String cardNumber, BigDecimal amount) {
+        Map<String, String> response = new HashMap<>();
         try {
             // 1️⃣ 카드 정보 조회
             CardInfo cardInfo = cardInfoRepository.findByCardNumber(cardNumber)
@@ -49,11 +48,18 @@ public class PayService {
 
             // 2️⃣ 잔액 확인
             if (bankAccount.getBalance().compareTo(amount) < 0) {
-                return ResponseEntity.badRequest().body("잔액이 부족합니다.");
+                response.put("status", "FAIL");
+                response.put("message", "잔액이 부족합니다.");
+                return ResponseEntity.badRequest().body(response);
             }
-            return ResponseEntity.ok("카드 유효 및 잔액 충분");
+
+            response.put("status", "OK");
+            response.put("message", "카드 유효 및 잔액 충분");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            response.put("status", "FAIL");
+            response.put("message", e.getMessage());
+            return ResponseEntity.badRequest().body(response);
         }
     }
 
