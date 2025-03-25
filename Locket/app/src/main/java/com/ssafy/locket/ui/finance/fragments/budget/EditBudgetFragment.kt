@@ -6,6 +6,7 @@ import android.text.TextUtils
 import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
+import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
 import com.ssafy.locket.databinding.FragmentEditBudgetBinding
@@ -20,6 +21,10 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
 
 
         validateInputForm(binding.etGoalBudget)
+
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun validateInputForm(editText: EditText) = with(binding) {

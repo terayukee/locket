@@ -1,7 +1,8 @@
-package com.ssafy.locket.ui.finance
+package com.ssafy.locket.ui.finance.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
@@ -36,5 +37,8 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
         binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, currentMonth.year, currentMonth.monthValue)
 
+        binding.btnAnalysis.setOnClickListener {
+            findNavController().navigate(R.id.action_financeFragment_to_expenseAnalysisFragment)
+        }
     }
 }
