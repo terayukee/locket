@@ -6,8 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -25,8 +24,7 @@ public class PaymentHistoryDto {
     private LocalDateTime createdAt;
     private List<OrderDetailDto> orders;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
