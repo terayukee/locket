@@ -2,6 +2,21 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketApiGateway.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketApiGateway.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketApiGateway.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketApiGateway.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketApiGateway.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketApiGateway.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketDiscovery.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketDiscovery.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketDiscovery.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketDiscovery.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketDiscovery.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketDiscovery.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketElasticSearch.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketElasticSearch.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketElasticSearch.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketElasticSearch.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketElasticSearch.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketElasticSearch.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketPaymentService.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketPaymentService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketPaymentService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketPaymentService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketPaymentService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketPaymentService.test.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketUserService.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketUserService.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketUserService.main.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketUserService.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/LocketUserService.test.iml" filepath="$PROJECT_DIR$/.idea/modules/LocketUserService.test.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/SpecializationPJT.iml" filepath="$PROJECT_DIR$/.idea/SpecializationPJT.iml" />
     </modules>
   </component>
