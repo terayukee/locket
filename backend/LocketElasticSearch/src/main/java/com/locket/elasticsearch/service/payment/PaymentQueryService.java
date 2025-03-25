@@ -102,4 +102,12 @@ public class PaymentQueryService {
     public List<PaymentHistory> findByUserAndMonth(long userId, int year, int month) {
         return getPaymentsInMonth(userId, year, month);
     }
+
+    public List<PaymentHistory> getAvailablePayments(int userId) {
+        return paymentHistoryRepository.findByBuyerIdAndPaymentStatusAndReceiptUploaded(
+                userId,
+                "SUCCESS",
+                false
+        );
+    }
 }

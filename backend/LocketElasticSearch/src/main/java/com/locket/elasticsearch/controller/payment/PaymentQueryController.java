@@ -23,6 +23,12 @@ public class PaymentQueryController {
 
     private final PaymentQueryService paymentQueryService;
 
+    @GetMapping("/available/{userId}")
+    public ResponseEntity<?> getAvailablePaymentsForReceipt(@PathVariable int userId) {
+        List<PaymentHistory> availablePayments = paymentQueryService.getAvailablePayments(userId);
+        return ResponseEntity.ok(availablePayments);
+    }
+
     @GetMapping("/history")
     @Operation(
             summary = "월 단위 결제 내역 전체 조회",
@@ -41,6 +47,7 @@ public class PaymentQueryController {
         List<PaymentHistory> historyList = paymentQueryService.findByUserAndMonth(userId, year, month);
         return ResponseEntity.ok(historyList);
     }
+
 
     @GetMapping("/calendar")
     @Operation(summary = "월 단위 결제 내역 리스트 조회 (캘린더용)", description = "지정된 연/월에 대한 전체 지출 합계 및 일자별 지출 금액 리스트를 반환합니다.")
@@ -89,5 +96,6 @@ public class PaymentQueryController {
     ) {
         List<DayPaymentDto> result = paymentQueryService.getDayPaymentData(userId, year, month, day);
         return ResponseEntity.ok(result);
+
     }
 }
