@@ -25,8 +25,7 @@ public class PaymentHistoryDto {
     private LocalDateTime createdAt;
     private List<OrderDetailDto> orders;
 
-    @Getter
-    @Setter
+    @Getter @Setter
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
