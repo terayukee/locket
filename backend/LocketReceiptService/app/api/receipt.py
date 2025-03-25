@@ -13,7 +13,9 @@ router = APIRouter()
 ocr_service = OCRService()
 classifier = ItemClassifier()
 
-@router.post("/camera/{payment_id}", response_model=ReceiptResponse)
+@router.post("/camera/{payment_id}",
+             summary="영수증 이미지 OCR + 품목 카테고리 분류",
+             response_model=ReceiptResponse)
 async def process_receipt_from_camera(
         payment_id: int,
         file: UploadFile = File(description="영수증 이미지 파일")
@@ -59,7 +61,9 @@ async def process_receipt_from_camera(
             detail=str(e)
         )
 
-@router.post("/pdf/{payment_id}", response_model=ReceiptResponse)
+@router.post("/pdf/{payment_id}",
+             summary="PDF 거래명세표 OCR + 품목 카테고리 분류",
+             response_model=ReceiptResponse)
 async def process_receipt_pdf(
         payment_id: int,
         file: UploadFile = File(description="PDF 영수증 파일")
