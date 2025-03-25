@@ -56,4 +56,32 @@ public class PayController {
     )  {
         return payService.processPayment(request);
     }
+
+    @PostMapping("/validate-card")
+    @Operation(summary = "카드 유효성 및 잔액 확인", description = "카드번호와 결제 금액을 받아 유효성과 잔액을 확인합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "검증 성공"),
+            @ApiResponse(responseCode = "400", description = "검증 실패")
+    })
+    public ResponseEntity<String> validateCard(
+            @RequestBody(
+                    description = "카드 유효성 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "카드 검증 예시",
+                                    summary = "기본 카드 검증 요청 예시",
+                                    value = "{\n" +
+                                            "  \"cardNumber\": \"1234123412341234\",\n" +
+                                            "  \"amount\": 2000\n" +
+                                            "}"
+                            )
+                    )
+            )
+            @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
+    ) {
+        return payService.validateCardAndBalance(request.getCardNumber(), request.getAmount());
+    }
+
 }
