@@ -9,7 +9,6 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "payment_ledger")
 @Getter
-@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -20,8 +19,10 @@ public class PaymentLedger {
     @Column(name = "ledger_id")
     private Integer ledgerId;
 
-    @Column(name = "payment_order_id", nullable = false)
-    private Integer paymentOrderId;
+    // ✅ 연관관계 매핑 (ManyToOne → FK가 payment_order_id)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "payment_order_id", nullable = false)
+    private PaymentOrder paymentOrder;
 
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal amount;
