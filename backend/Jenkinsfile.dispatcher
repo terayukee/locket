@@ -5,34 +5,34 @@ pipeline {
         stage('Checkout') {
             steps {
                 git credentialsId: 'GitLab-PAT',
-                    branch: 'backend',
-                    url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git'
+                        branch: 'backend',
+                        url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git'
             }
         }
 
         stage('Detect Changed Services') {
             steps {
                 withCredentials([usernamePassword(
-                    credentialsId: 'GitLab-USER-TOKEN',
-                    usernameVariable: 'GIT_USERNAME',
-                    passwordVariable: 'GIT_PASSWORD'
+                        credentialsId: 'GitLab-USER-TOKEN',
+                        usernameVariable: 'GIT_USERNAME',
+                        passwordVariable: 'GIT_PASSWORD'
                 )]) {
                     script {
-                        // 작업 디렉토리 정리
+                        // 작업 디렉토리 클린 (캐시 제거)
                         sh 'git clean -fdx'
 
-                        // 최신 원격 backend 브랜치 fetch
+                        // 원격 최신 backend 브랜치 fetch
                         sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend"
 
-                        // 정확한 기준 커밋 찾기
-                        def baseCommit = sh(script: "git merge-base FETCH_HEAD HEAD", returnStdout: true).trim()
-                        def currentCommit = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                        // origin/backend과 현재 HEAD 커밋 비교
+                        def changes = sh(
+                                script: "git diff --name-only origin/backend HEAD",
+                                returnStdout: true
+                        ).trim().split('\n')
 
-                        // 변경된 파일 목록 확인
-                        def changes = sh(script: "git diff --name-only ${baseCommit} ${currentCommit}", returnStdout: true).trim().split('\n')
                         echo "Changed files: ${changes.join(', ')}"
 
-                        // 서비스별 변경 감지 → 순차 빌드 (직렬)
+                        // 변경된 서비스 감지 후 순차적으로 빌드 트리거
                         if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
                             build job: 'backend-api-gateway'
                         }
