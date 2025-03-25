@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.locket.common.jwt.JwtUtil;
 
 import java.util.List;
 
@@ -27,6 +28,7 @@ import java.util.List;
 public class PayController {
 
     private final PayService payService;
+    private final JwtUtil jwtUtil;
 
     @PostMapping("/nfc")
     @Operation(summary = "결제", description = "결제를 처리합니다.")
@@ -88,14 +90,13 @@ public class PayController {
         return payService.validateCardAndBalance(request.getCardNumber(), request.getAmount());
     }
 
-    // PayController.java
 
     @PostMapping("/my-cards")
     @Operation(summary = "내 카드 목록 조회", description = "JWT를 기반으로 현재 사용자 ID에 연결된 카드 목록을 조회합니다.")
     public ResponseEntity<List<CardInfoDto>> getMyCards(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         int userId = 0;
-//        userId = jwtUtil.extractUserId(token);
+        userId = jwtUtil.extractUserId(token);
         return ResponseEntity.ok(payService.getCardsByUserId(userId));
     }
 

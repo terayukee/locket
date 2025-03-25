@@ -4,7 +4,7 @@ plugins {
 	id 'io.spring.dependency-management' version '1.1.7'
 }
 
-group = 'com.ssafy.locket'
+group = 'com.locket.discovery'
 version = '0.0.1-SNAPSHOT'
 
 java {
@@ -34,7 +34,10 @@ dependencies {
 
     implementation 'org.springframework.boot:spring-boot-starter-actuator' // 엑츄에이터
     implementation 'io.micrometer:micrometer-registry-prometheus' // 프로메테우스
-	
+
+	// ✅ 커스텀 공용 모듈 의존성 추가
+	implementation project(':LocketCommon')
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
