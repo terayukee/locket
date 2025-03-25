@@ -38,3 +38,8 @@ springdoc:
     path: /api/elasticsearch/v3/api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+locket:
+  receipt:
+    service:
+      url: http://localhost:8000  # FastAPI 서버 주소

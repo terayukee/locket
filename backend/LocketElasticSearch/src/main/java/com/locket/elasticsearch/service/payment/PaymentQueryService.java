@@ -10,6 +10,7 @@ import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Comparator;
 
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PaymentQueryService {
 
@@ -104,10 +106,11 @@ public class PaymentQueryService {
     }
 
     public List<PaymentHistory> getAvailablePayments(int userId) {
-        return paymentHistoryRepository.findByBuyerIdAndPaymentStatusAndReceiptUploaded(
-                userId,
-                "SUCCESS",
-                false
-        );
+        List<PaymentHistory> allUserPayments = paymentHistoryRepository.findByBuyerId(userId);
+        return allUserPayments.stream()
+                .filter(payment ->
+                        payment.getPaymentStatus().equals("SUCCESS") &&
+                                !payment.isReceiptUploaded())
+                .toList();
     }
 }

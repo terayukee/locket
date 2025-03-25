@@ -25,8 +25,14 @@ public class PaymentQueryController {
 
     @GetMapping("/available/{userId}")
     public ResponseEntity<?> getAvailablePaymentsForReceipt(@PathVariable int userId) {
-        List<PaymentHistory> availablePayments = paymentQueryService.getAvailablePayments(userId);
-        return ResponseEntity.ok(availablePayments);
+        try {
+            List<PaymentHistory> availablePayments = paymentQueryService.getAvailablePayments(userId);
+            return ResponseEntity.ok(availablePayments);
+        } catch (Exception e) {
+            return ResponseEntity.status(500)
+                    .body("결제 내역 조회 중 오류가 발생했습니다: " + e.getMessage());
+        }
+
     }
 
     @GetMapping("/history")
@@ -98,4 +104,6 @@ public class PaymentQueryController {
         return ResponseEntity.ok(result);
 
     }
+
+
 }
