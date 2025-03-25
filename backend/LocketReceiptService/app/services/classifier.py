@@ -46,7 +46,7 @@ class ItemClassifier:
 
             # GPT 호출
             response = await self.client.chat.completions.create(
-                model="gpt-3.5-turbo",
+                model="gpt-4",
                 messages=[
                     {"role": "system", "content": "다음 상품들을 주어진 카테고리로 분류해주세요. 정확히 주어진 형식으로만 응답해주세요."},
                     {"role": "user", "content": prompt}
