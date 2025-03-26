@@ -1,9 +1,8 @@
 rootProject.name = 'LocketBackend'
 
+include 'LocketCommon'
 include 'LocketApiGateway'
 include 'LocketUserService'
 include 'LocketPaymentService'
 include 'LocketElasticSearch'
 include 'LocketDiscovery'
-include 'LocketCommon'
-

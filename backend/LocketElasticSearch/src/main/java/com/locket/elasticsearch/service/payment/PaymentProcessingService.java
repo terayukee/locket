@@ -20,6 +20,7 @@ public class PaymentProcessingService {
 
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
+        System.out.println("✅ Processing Payment Success Event: " + event);
 
         // DTO -> Elasticsearch Entity로 변환
         PaymentHistory history = PaymentHistory.builder()

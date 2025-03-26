@@ -20,6 +20,8 @@ public class PaymentEventConsumer {
 
     @KafkaListener(topics = "payment.success", groupId = "elastic-search-group")
     public void listenPaymentSuccess(ConsumerRecord<String, PaymentSuccessEvent> record, Acknowledgment ack) {
+        log.info("🌀 KafkaListener triggered with record: {}", record); // try 밖
+        System.out.println("🌀 KafkaListener triggered with record:" + record);
         try {
             PaymentSuccessEvent paymentEvent = record.value();
             log.info("📥 Received Payment Success Event: {}", paymentEvent);

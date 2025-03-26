@@ -17,24 +17,19 @@ repositories {
     mavenCentral()
 }
 
+
 dependencies {
-    // Lombok
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
 
-    // ✅ 스프링 기반으로 만들기
-    implementation 'org.springframework.boot:spring-boot-starter'
-
-    // JWT (공통 JWT 유틸 작성 시 사용)
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-    // JSON 직렬화용 Jackson
+    implementation 'org.springframework:spring-context'
+
     implementation 'com.fasterxml.jackson.core:jackson-databind'
     implementation 'com.fasterxml.jackson.core:jackson-annotations'
-
-    // 기타 공용 유틸 추가 가능
 
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
@@ -43,6 +38,14 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-autoconfigure'
     implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
 
+}
+
+bootJar {
+    enabled = false
+}
+
+jar {
+    enabled = true
 
 }
 

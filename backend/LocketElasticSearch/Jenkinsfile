@@ -3,9 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'spring-locket-elasticsearch'
-        DOCKER_CONTAINER = 'spring-locket-elasticsearch'
         DOCKER_PORT = 8083
-        DOCKER_PATH = '/home/ubuntu/docker'  // EC2 서버의 Docker 저장 경로
 
         EC2_USER = credentials('EC2_USER')
         EC2_IP = credentials('EC2_IP')
@@ -14,7 +12,6 @@ pipeline {
         ELASTICSEARCH_URIS = credentials('ELASTICSEARCH_URIS')
         ELASTICSEARCH_USERNAME = credentials('ELASTICSEARCH_USERNAME')
         ELASTICSEARCH_PASSWORD = credentials('ELASTICSEARCH_PASSWORD')
-
         KAFKA_BOOTSTRAP_SERVERS = credentials('KAFKA_BOOTSTRAP_SERVERS')
 
         JAVA_HOME = '/opt/java/openjdk'
@@ -36,70 +33,66 @@ pipeline {
                     credentialsId: 'GitLab-PAT'
             }
         }
+
         stage('Build Application') {
             steps {
-                echo '🔨 Building the application with Gradle Wrapper...'
+                echo '🔨 Building LocketElasticSearch...'
                 dir('backend/LocketElasticSearch') {
-                    sh 'gradle clean build -x test'  // 테스트 제외하고 빌드
+                    sh 'gradle clean build -x test'
                     sh 'ls -al $(pwd)/build/libs'
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
-                echo '🐳 Building the Docker image...'
+                echo '🐳 Building Docker image...'
                 dir('backend/LocketElasticSearch') {
                     sh 'cp build/libs/LocketElasticSearch-0.0.1-SNAPSHOT.jar .'
                     sh 'docker build -t ${DOCKER_IMAGE}:latest .'
                 }
             }
         }
-        stage('Save and Transfer Docker Image') {
+
+        stage('Push to Docker Hub') {
             steps {
-                echo '📦 Saving and transferring Docker image to EC2...'
-                sh """
-                docker save ${DOCKER_IMAGE}:latest | gzip > LocketElasticSearch-0.0.1-SNAPSHOT.tar.gz
-                """
-                sshPublisher(publishers: [
-                    sshPublisherDesc(
-                        configName: 'EC2-Server',
-                        transfers: [
-                            sshTransfer(
-                                sourceFiles: 'LocketElasticSearch-0.0.1-SNAPSHOT.tar.gz'
-                            )
-                        ]
-                    )
-                ])
+                echo '📤 Pushing Docker image to Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'DockerHub_PAT',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+                        docker tag ${DOCKER_IMAGE}:latest ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                        docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                    '''
+                }
             }
         }
-        stage('Deploy to EC2') {
+
+        stage('Deploy to Docker Swarm') {
             steps {
-                echo '🚀 Deploying LocketElasticSearch on EC2...'
-                sshPublisher(publishers: [
-                    sshPublisherDesc(
-                        configName: 'EC2-Server',
-                        transfers: [
-                            sshTransfer(
-                                execCommand: """
-                                    mkdir -p ${DOCKER_PATH}
-                                    docker stop ${DOCKER_CONTAINER} || true
-                                    docker rm ${DOCKER_CONTAINER} || true
-                                    docker rmi ${DOCKER_IMAGE}:latest || true
-                                    docker load < ${DOCKER_PATH}/LocketElasticSearch-0.0.1-SNAPSHOT.tar.gz
-                                    docker run -d --name ${DOCKER_CONTAINER} \
-                                      -p ${DOCKER_PORT}:${DOCKER_PORT} \
-                                      -e SPRING_PROFILES_ACTIVE=prod \
-                                      -e SERVER_PORT=${DOCKER_PORT} \
-                                      -e ELASTICSEARCH_URIS=${ELASTICSEARCH_URIS} \
-                                      -e ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME} \
-                                      -e ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD} \
-                                      -e KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS} \
-                                      ${DOCKER_IMAGE}:latest
-                                """.stripIndent()
-                            )
-                        ]
+                echo '🚀 Deploying to Docker Swarm on EC2...'
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'SSH_KEY',
+                        keyFileVariable: 'EC2_SSH_KEY_FILE',
+                        usernameVariable: 'EC2_USER'
+                    ),
+                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP'),
+                    usernamePassword(
+                        credentialsId: 'DockerHub_PAT',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
                     )
-                ])
+                ]) {
+                    sh '''
+                        echo "🚀 Updating Docker Swarm service..."
+                        ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
+                            "docker service update --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
+                    '''
+                }
             }
         }
     }
