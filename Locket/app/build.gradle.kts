@@ -94,6 +94,8 @@ dependencies {
 
     implementation ("com.kakao.sdk:v2-user:2.20.1")
 
+    //지문인식
+    implementation ("androidx.biometric:biometric:1.0.1")
 }
 
 kapt {
