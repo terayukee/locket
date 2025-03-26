@@ -3,13 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.ssafy.locket">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-
-
     <uses-feature
         android:name="android.hardware.camera"
         android:required="false" />
 
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
 
@@ -24,20 +22,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Locket"
         tools:targetApi="31">
+
         <activity
             android:name=".ui.login.LoginActivity"
-            android:exported="false"
-            android:screenOrientation="nosensor"/>
-        <activity
-            android:name=".ui.MainActivity"
             android:exported="true"
-            android:screenOrientation="nosensor">
+            android:screenOrientation="nosensor"
+            android:taskAffinity=""
+            android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="false"
+            android:screenOrientation="nosensor"
+            android:taskAffinity=""/>
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

@@ -1,33 +1,28 @@
-package com.ssafy.locket.ui.login.register_user_info
+package com.ssafy.locket.ui.payment
 
-import android.content.Context
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
-import android.widget.LinearLayout
+import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
-import com.ssafy.locket.databinding.FragmentRegisterPasswordBinding
+import com.ssafy.locket.databinding.FragmentNfcPaymentBinding
+import com.ssafy.locket.databinding.FragmentPaymentPasswordBinding
+import com.ssafy.locket.ui.login.register_user_info.PasswordInputHandler
 
-class RegisterPasswordFragment : BaseFragment<FragmentRegisterPasswordBinding>(
-    FragmentRegisterPasswordBinding::bind,
-    R.layout.fragment_register_password
+class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
+    FragmentPaymentPasswordBinding::bind,
+    R.layout.fragment_payment_password
 ) {
     private lateinit var passwordInputHandler: PasswordInputHandler
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initPassword()
         initEvent()
-        setupNumberButtons()
-        setupClearButton()
-    }
-
-    private fun initEvent() {
-        binding.ivBack.setOnClickListener {
-            findNavController().popBackStack()
-        }
     }
 
     fun initPassword(){
@@ -42,9 +37,18 @@ class RegisterPasswordFragment : BaseFragment<FragmentRegisterPasswordBinding>(
             ),
             maxPasswordLength = 6
         ) {
-            val password = passwordInputHandler.getPassword().toString()
-            val bundle = Bundle().apply { putString("password", password) }
-            findNavController().navigate(R.id.action_registerPasswordFragment_to_confirmPasswordFragment,bundle)
+            val navOptions = NavOptions.Builder()
+                .setPopUpTo(R.id.paymentPasswordFragment, true) // 현재 화면을 스택에서 제거
+                .build()
+            findNavController().navigate(R.id.action_paymentPasswordFragment_to_nfcPaymentFragment, null, navOptions)
+        }
+        setupNumberButtons()
+        setupClearButton()
+    }
+
+    fun initEvent(){
+        binding.ivBack.setOnClickListener {
+            findNavController().popBackStack()
         }
     }
 

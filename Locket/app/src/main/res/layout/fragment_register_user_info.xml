@@ -39,15 +39,16 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="98dp"
         android:layout_marginEnd="24dp"
-        android:text="직업과 태어난 해를 입력해주세요"
         android:letterSpacing="-0.02"
+        android:text="직업과 태어난 해를 입력해주세요"
+        app:layout_constraintVertical_bias="0.2"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progressBar" />
+        app:layout_constraintTop_toTopOf="parent" />
     <TextView
         android:id="@+id/subtitleText"
         android:layout_width="0dp"
@@ -66,10 +67,12 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_job_select"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="48dp"
         android:layout_marginEnd="24dp"
+        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintDimensionRatio="6:1"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -93,26 +96,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageView
+            <FrameLayout
                 android:id="@+id/iv_job_select"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_all_down_arrow"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_gravity="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_all_down_arrow" />
+            </FrameLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
+
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cv_birthyear"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="24dp"
         app:cardCornerRadius="8dp"
         app:cardElevation="0dp"
+        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintDimensionRatio="6:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cv_job_select">
@@ -139,8 +152,10 @@
                 android:id="@+id/et_birth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
                 android:hint="2000"
                 android:inputType="number"
+                android:letterSpacing="-0.02"
                 android:maxLength="4"
                 android:paddingTop="0dp"
                 android:paddingBottom="7dp"

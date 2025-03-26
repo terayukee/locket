@@ -11,6 +11,7 @@ import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
 import android.provider.Settings
 import com.ssafy.locket.databinding.FragmentRegisterBiometricsBinding
+import com.ssafy.locket.ui.MainActivity
 
 class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBinding>(
     FragmentRegisterBiometricsBinding::bind,
@@ -23,7 +24,7 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
 
     private fun initEvent() {
         binding.btnLater.setOnClickListener {
-            findNavController().navigate(R.id.action_registerBiometricsFragment_to_homeFragment)
+            moveToMainActivity()
         }
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
@@ -40,7 +41,8 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
                 showToast("이 장치의 지문을 등록하였습니다")
-                findNavController().navigate(R.id.action_registerBiometricsFragment_to_homeFragment)
+
+                moveToMainActivity()
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 showToast("이 장치에서는 생체 인식이 지원되지 않습니다.")
@@ -56,6 +58,12 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
                 showToast("생체 인식 인증 실패")
             }
         }
+    }
+
+    private fun moveToMainActivity() {
+        val intent = Intent(requireContext(), MainActivity::class.java)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun redirectToBiometricSettings() {

@@ -60,6 +60,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.tvBudgetFeedback.text = "100,000원 남았어요"
 
         (requireContext() as MainActivity).changeBackgroundColor(R.color.background)
+        binding.icProfile.setOnClickListener {
+            findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
+        }
     }
 
     override fun onStop() {
