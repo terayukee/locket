@@ -27,7 +27,6 @@
             android:name=".ui.login.LoginActivity"
             android:exported="true"
             android:screenOrientation="nosensor"
-            android:taskAffinity=""
             android:excludeFromRecents="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -40,7 +39,7 @@
             android:name=".ui.MainActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:taskAffinity=""/>
+            android:excludeFromRecents="true"/>
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

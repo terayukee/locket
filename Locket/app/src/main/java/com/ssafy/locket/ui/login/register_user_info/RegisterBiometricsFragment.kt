@@ -64,8 +64,10 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
         val intent = Intent(requireContext(), MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
-        requireActivity().finish()
+        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        requireActivity().finishAffinity() // 기존 스택 완전히 제거
     }
+
 
     private fun redirectToBiometricSettings() {
         val intent = Intent(Settings.ACTION_BIOMETRIC_ENROLL)

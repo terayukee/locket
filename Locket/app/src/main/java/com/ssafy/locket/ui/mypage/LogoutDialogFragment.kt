@@ -14,6 +14,7 @@ import android.widget.Button
 import androidx.fragment.app.DialogFragment
 import com.ssafy.locket.R
 import com.ssafy.locket.databinding.FragmentLogoutDialogBinding
+import com.ssafy.locket.ui.MainActivity
 import com.ssafy.locket.ui.login.LoginActivity
 
 class LogoutDialogFragment : DialogFragment() {
@@ -47,11 +48,11 @@ class LogoutDialogFragment : DialogFragment() {
     }
 
     private fun performLogout() {
-        // 로그아웃 로직
-        // TODO 저장된 데이터 삭제하기
         val intent = Intent(requireContext(), LoginActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
+        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        requireActivity().finishAffinity() // 기존 스택 완전히 제거
     }
 
     override fun onDestroyView() {
