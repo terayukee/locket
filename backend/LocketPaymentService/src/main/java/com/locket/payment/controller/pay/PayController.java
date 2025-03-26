@@ -98,4 +98,30 @@ public class PayController {
         return ResponseEntity.ok(payService.getCardsByUserId(userId));
     }
 
+    @GetMapping("/auth-info/fingerprint")
+    @Operation(summary = "지문 등록 여부 조회", description = "JWT 기반 사용자 ID로 Redis에서 지문 등록 여부를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "데이터 없음")
+    })
+    public ResponseEntity<Boolean> checkFingerprintRegistered(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        int userId = jwtUtil.extractUserId(token);
+        boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
+        return ResponseEntity.ok(registered);
+    }
+
+    @GetMapping("/auth-info/password")
+    @Operation(summary = "간편 비밀번호 조회", description = "JWT 기반 사용자 ID로 Redis에서 간편 비밀번호를 조회합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "데이터 없음")
+    })
+    public ResponseEntity<String> getPaymentPassword(HttpServletRequest request) {
+        String token = request.getHeader("Authorization");
+        int userId = jwtUtil.extractUserId(token);
+        String password = payService.getPaymentPasswordFromRedis(userId);
+        return ResponseEntity.ok(password);
+    }
+
 }

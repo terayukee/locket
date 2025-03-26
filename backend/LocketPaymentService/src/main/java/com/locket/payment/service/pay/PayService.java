@@ -9,6 +9,7 @@ import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ public class PayService {
     private final PaymentLedgerRepository paymentLedgerRepository;
     private final PaymentProducer paymentProducer;
     private final StringRedisTemplate redisTemplate;
+
 
     /**
      * 카드 유효성 및 잔액 확인
@@ -206,8 +208,6 @@ public class PayService {
         return true; // 현재는 무조건 성공 처리
     }
 
-    // PayService.java
-
     public List<CardInfoDto> getCardsByUserId(int userId) {
         List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
         return cards.stream()
@@ -220,4 +220,16 @@ public class PayService {
                 .collect(Collectors.toList());
     }
 
+    public boolean getFingerprintRegisteredFromRedis(int userId) {
+        String key = "user:" + userId + ":auth";
+        String value = redisTemplate.opsForHash().get(key, "fingerprintRegistered").toString();
+        return Boolean.parseBoolean(value);
+    }
+
+    public String getPaymentPasswordFromRedis(int userId) {
+        String key = "user:" + userId + ":auth";
+        Object value = redisTemplate.opsForHash().get(key, "paymentPassword");
+        if (value == null) throw new RuntimeException("간편 비밀번호가 없습니다.");
+        return value.toString();
+    }
 }
