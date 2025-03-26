@@ -25,6 +25,8 @@ public class PaymentSuccessEvent {
     private String paymentCategory;
     private String paymentMerchant;
     private String storeName;
+    private int cardId;
+    private String cardName;
     private boolean receiptUploaded;
     private String paymentStatus;
     private OffsetDateTime createdAt;

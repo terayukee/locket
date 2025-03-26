@@ -10,7 +10,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PaymentRequest {
-    private String cardNumber;    // 카드 결제이므로 카드 번호 필수
+    private int cardId;
     private int buyerId;
     private int sellerId;
     private String paymentCategory;

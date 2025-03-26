@@ -32,6 +32,9 @@ public class CardInfo {
     @Column(nullable = false, length = 4)
     private String cardCvc;
 
+    @Column(nullable = true, length = 50)
+    private String cardName;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 

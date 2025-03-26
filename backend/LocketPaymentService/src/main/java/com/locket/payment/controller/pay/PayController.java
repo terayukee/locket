@@ -14,9 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import com.locket.common.jwt.JwtUtil;
 
 import java.util.List;
@@ -47,7 +45,7 @@ public class PayController {
                                     name = "결제 예시",
                                     summary = "기본 결제 요청 예시",
                                     value = "{\n" +
-                                            "  \"cardNumber\": \"1234123412341234\",\n" +
+                                            "  \"cardId\": \"1\",\n" +
                                             "  \"buyerId\": 1,\n" +
                                             "  \"sellerId\": 2,\n" +
                                             "  \"paymentCategory\": \"카페\",\n" +
@@ -79,7 +77,7 @@ public class PayController {
                                     name = "카드 검증 예시",
                                     summary = "기본 카드 검증 요청 예시",
                                     value = "{\n" +
-                                            "  \"cardNumber\": \"1234123412341234\",\n" +
+                                            "  \"cardId\": \"1\",\n" +
                                             "  \"amount\": 2000\n" +
                                             "}"
                             )
@@ -87,11 +85,11 @@ public class PayController {
             )
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
-        return payService.validateCardAndBalance(request.getCardNumber(), request.getAmount());
+        return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
     }
 
 
-    @PostMapping("/my-cards")
+    @GetMapping("/cards")
     @Operation(summary = "내 카드 목록 조회", description = "JWT를 기반으로 현재 사용자 ID에 연결된 카드 목록을 조회합니다.")
     public ResponseEntity<List<CardInfoDto>> getMyCards(HttpServletRequest request) {
         String token = request.getHeader("Authorization");

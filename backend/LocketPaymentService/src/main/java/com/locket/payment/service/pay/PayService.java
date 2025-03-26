@@ -39,11 +39,11 @@ public class PayService {
     /**
      * 카드 유효성 및 잔액 확인
      */
-    public ResponseEntity<Map<String, String>> validateCardAndBalance(String cardNumber, BigDecimal amount) {
+    public ResponseEntity<Map<String, String>> validateCardAndBalance(int cardId, BigDecimal amount) {
         Map<String, String> response = new HashMap<>();
         try {
             // 1️⃣ 카드 정보 조회
-            CardInfo cardInfo = cardInfoRepository.findByCardNumber(cardNumber)
+            CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
                     .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
             BankAccount bankAccount = cardInfo.getBankAccount();
 
@@ -66,18 +66,14 @@ public class PayService {
 
     @Transactional
     public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
-        // 1️⃣ 카드 정보 + 잔액 조회
-        CardInfo cardInfo = cardInfoRepository.findByCardNumber(request.getCardNumber())
-                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
+        // 카드 정보
+        int cardId = request.getCardId();
+        CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
+                .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드입니다."));
         BankAccount bankAccount = cardInfo.getBankAccount();
 
+        // 결제 금액
         BigDecimal paymentAmount = request.getAmount();
-        if (bankAccount.getBalance().compareTo(paymentAmount) < 0) {
-            return ResponseEntity.badRequest().body(PaymentResponse.builder()
-                    .status("FAIL")
-                    .message("잔액 부족")
-                    .build());
-        }
 
         // 1️⃣Redis에서 사용자 정보 가져오기
         String birthDate = "1998";
@@ -186,7 +182,8 @@ public class PayService {
                 .birthDate(birthDate)
                 .totalAmount(paymentAmount)
                 .currency("KRW")
-                .paymentCategory(request.getPaymentCategory())
+                .cardId(cardId)
+                .cardName(cardInfo.getCardName())
                 .paymentMerchant(request.getPaymentMerchant())
                 .storeName(request.getStoreName())
                 .receiptUploaded(false) // 추후 true로 설정

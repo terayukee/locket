@@ -20,7 +20,8 @@ public class PaymentProcessingService {
 
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
-        System.out.println("✅ Processing Payment Success Event: " + event);
+
+        String category = "카페";
 
         // DTO -> Elasticsearch Entity로 변환
         PaymentHistory history = PaymentHistory.builder()
@@ -31,8 +32,10 @@ public class PaymentProcessingService {
                 .birthDate(event.getBirthDate())
                 .totalAmount(event.getTotalAmount())
                 .currency(event.getCurrency())
-                .paymentCategory(event.getPaymentCategory())
+                .paymentCategory(category)
                 .paymentMerchant(event.getPaymentMerchant())
+                .cardId(event.getCardId())
+                .cardName(event.getCardName())
                 .storeName(event.getStoreName())                  // ✅ 매장명
                 .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부
                 .paymentStatus(event.getPaymentStatus())

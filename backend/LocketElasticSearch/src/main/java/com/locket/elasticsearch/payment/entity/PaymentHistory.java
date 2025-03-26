@@ -46,6 +46,12 @@ public class PaymentHistory {
     @Field(type = FieldType.Keyword)
     private String paymentMerchant;
 
+    @Field(type = FieldType.Integer)
+    private int cardId;
+
+    @Field(type = FieldType.Keyword)
+    private String cardName;
+
     @Field(type = FieldType.Keyword)
     private String storeName;  // ✅ 매장명 필드 추가
 
