@@ -70,21 +70,17 @@ pipeline {
             steps {
                 echo '🚀 Deploying to Docker Swarm on EC2...'
                 withCredentials([
-                    string(credentialsId: 'SSH_KEY', variable: 'EC2_SSH_KEY'),
-                    string(credentialsId: 'EC2_USER', variable: 'EC2_USER'),
+                    sshUserPrivateKey(
+                        credentialsId: 'SSH_KEY',
+                        keyFileVariable: 'EC2_SSH_KEY_FILE',
+                        usernameVariable: 'EC2_USER'
+                    ),
                     string(credentialsId: 'EC2_IP', variable: 'EC2_IP')
                 ]) {
                     sh '''
-                        echo "📝 Writing SSH key to file..."
-                        echo "$EC2_SSH_KEY" > temp-key.pem
-                        chmod 400 temp-key.pem
-
                         echo "🚀 Updating Docker Swarm service..."
-                        ssh -o StrictHostKeyChecking=no -i temp-key.pem $EC2_USER@$EC2_IP \
+                        ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
                             "docker service update --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
-
-                        echo "🧹 Cleaning up SSH key..."
-                        rm -f temp-key.pem
                     '''
                 }
             }
