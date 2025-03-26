@@ -76,12 +76,17 @@ pipeline {
                         keyFileVariable: 'EC2_SSH_KEY_FILE',
                         usernameVariable: 'EC2_USER'
                     ),
-                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP')
+                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP'),
+                    usernamePassword(
+                        credentialsId: 'DockerHub_PAT',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
+                    )
                 ]) {
                     sh '''
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
-                            "docker service update --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
+                            "docker service update --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
                     '''
                 }
             }
