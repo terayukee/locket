@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.finance.fragments.budget.BudgetFragment">
+    tools:context=".presentation.finance.fragments.budget.BudgetFragment">
 
     <TextView
         android:id="@+id/textview1"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toTopOf="@+id/progress_bar"
         app:layout_constraintBottom_toTopOf="@+id/tv_recommend_budget_today_text"/>
 
-    <com.ssafy.locket.ui.finance.fragments.budget.CustomProgressBar
+    <com.ssafy.locket.presentation.finance.fragments.budget.CustomProgressBar
         android:id="@+id/progress_bar"
         android:visibility="invisible"
         android:layout_width="0dp"

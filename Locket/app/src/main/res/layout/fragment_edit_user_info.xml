@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F6F7F9"
-    tools:context=".ui.mypage.EditUserInfoFragment">
+    tools:context=".presentation.mypage.EditUserInfoFragment">
 
     <ImageView
         android:id="@+id/iv_back"

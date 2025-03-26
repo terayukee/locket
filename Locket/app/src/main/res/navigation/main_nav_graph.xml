@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/homeFragment"
-        android:name="com.ssafy.locket.ui.home.HomeFragment"
+        android:name="com.ssafy.locket.presentation.home.HomeFragment"
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
@@ -25,7 +25,7 @@
     </fragment>
     <fragment
         android:id="@+id/financeFragment"
-        android:name="com.ssafy.locket.ui.finance.fragments.FinanceFragment"
+        android:name="com.ssafy.locket.presentation.finance.fragments.FinanceFragment"
         android:label="fragment_finance"
         tools:layout="@layout/fragment_finance" >
         <action
@@ -37,7 +37,7 @@
     </fragment>
     <fragment
         android:id="@+id/cardPaymentFragment"
-        android:name="com.ssafy.locket.ui.payment.CardPaymentFragment"
+        android:name="com.ssafy.locket.presentation.payment.CardPaymentFragment"
         android:label="fragment_card_payment"
         tools:layout="@layout/fragment_card_payment" >
         <action
@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/productListFragment"
-        android:name="com.ssafy.locket.ui.graph.ProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.ProductListFragment"
         android:label="fragment_product_list"
         tools:layout="@layout/fragment_product_list" >
         <action
@@ -67,7 +67,7 @@
     </fragment>
     <fragment
         android:id="@+id/likeProductListFragment"
-        android:name="com.ssafy.locket.ui.graph.LikeProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.LikeProductListFragment"
         android:label="fragment_like_product_list"
         tools:layout="@layout/fragment_like_product_list" >
         <action
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchProductListFragment"
-        android:name="com.ssafy.locket.ui.graph.SearchProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.SearchProductListFragment"
         android:label="fragment_search_product_list"
         tools:layout="@layout/fragment_search_product_list" >
         <action
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/categoryProductListFragment"
-        android:name="com.ssafy.locket.ui.graph.CategoryProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.CategoryProductListFragment"
         android:label="fragment_category_product_list"
         tools:layout="@layout/fragment_category_product_list" >
         <action
@@ -94,7 +94,7 @@
     </fragment>
     <fragment
         android:id="@+id/recommandProductListFragment"
-        android:name="com.ssafy.locket.ui.graph.RecommandProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.RecommandProductListFragment"
         android:label="fragment_recommand_product_list"
         tools:layout="@layout/fragment_recommand_product_list" >
         <action
@@ -103,62 +103,12 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.ssafy.locket.ui.graph.ProductDetailFragment"
+        android:name="com.ssafy.locket.presentation.graph.ProductDetailFragment"
         android:label="fragment_product_detail"
         tools:layout="@layout/fragment_product_detail" />
-
-    <fragment
-        android:id="@+id/signInFragment"
-        android:name="com.ssafy.locket.ui.login.SignInFragment"
-        android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
-        <action
-            android:id="@+id/action_signInFragment_to_registerUserInfoFragment"
-            app:destination="@id/registerUserInfoFragment" />
-        <action
-            android:id="@+id/action_signInFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerPasswordFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterPasswordFragment"
-        android:label="fragment_register_password"
-        tools:layout="@layout/fragment_register_password" >
-        <action
-            android:id="@+id/action_registerPasswordFragment_to_confirmPasswordFragment"
-            app:destination="@id/confirmPasswordFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/confirmPasswordFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.ConfirmPasswordFragment"
-        android:label="fragment_confirm_password"
-        tools:layout="@layout/fragment_confirm_password" >
-        <action
-            android:id="@+id/action_confirmPasswordFragment_to_registerBiometricsFragment"
-            app:destination="@id/registerBiometricsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerUserInfoFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterUserInfoFragment"
-        android:label="fragment_register_user_info"
-        tools:layout="@layout/fragment_register_user_info" >
-        <action
-            android:id="@+id/action_registerUserInfoFragment_to_registerPasswordFragment"
-            app:destination="@id/registerPasswordFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerBiometricsFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterBiometricsFragment"
-        android:label="RegisterBiometricsFragment"
-        tools:layout="@layout/fragment_register_biometrics" >
-        <action
-            android:id="@+id/action_registerBiometricsFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
-
     <fragment
         android:id="@+id/characterFragment"
-        android:name="com.ssafy.locket.ui.home.character.CharacterInitialFragment"
+        android:name="com.ssafy.locket.presentation.home.character.CharacterInitialFragment"
         android:label="fragment_character"
         tools:layout="@layout/fragment_character_initial" >
         <action
@@ -167,17 +117,17 @@
     </fragment>
     <fragment
         android:id="@+id/characterGrowthFragment"
-        android:name="com.ssafy.locket.ui.home.character.CharacterGrowthFragment"
+        android:name="com.ssafy.locket.presentation.home.character.CharacterGrowthFragment"
         android:label="fragment_character_growth"
         tools:layout="@layout/fragment_character_growth" />
     <dialog
         android:id="@+id/receiptUploadDialog"
-        android:name="com.ssafy.locket.ui.home.receipt.ReceiptUploadDialog"
+        android:name="com.ssafy.locket.presentation.home.receipt.ReceiptUploadDialog"
         android:label="ReceiptUploadDialog"
         tools:layout="@layout/dialog_receipt_upload"/>
     <fragment
         android:id="@+id/receiptListFragment"
-        android:name="com.ssafy.locket.ui.home.receipt.ReceiptListFragment"
+        android:name="com.ssafy.locket.presentation.home.receipt.ReceiptListFragment"
         android:label="fragment_receipt_list"
         tools:layout="@layout/fragment_receipt_list" >
         <action
@@ -186,22 +136,22 @@
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.ssafy.locket.ui.notification.NotificationFragment"
+        android:name="com.ssafy.locket.presentation.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
     <fragment
         android:id="@+id/editBudgetFragment"
-        android:name="com.ssafy.locket.ui.finance.fragments.budget.EditBudgetFragment"
+        android:name="com.ssafy.locket.presentation.finance.fragments.budget.EditBudgetFragment"
         android:label="fragment_edit_budget"
         tools:layout="@layout/fragment_edit_budget" />
     <fragment
         android:id="@+id/expenseAnalysisFragment"
-        android:name="com.ssafy.locket.ui.finance.fragments.analysis.ExpenseAnalysisFragment"
+        android:name="com.ssafy.locket.presentation.finance.fragments.analysis.ExpenseAnalysisFragment"
         android:label="fragment_expense_analysis"
         tools:layout="@layout/fragment_expense_analysis" />
     <fragment
         android:id="@+id/myPageFragment"
-        android:name="com.ssafy.locket.ui.mypage.MyPageFragment"
+        android:name="com.ssafy.locket.presentation.mypage.MyPageFragment"
         android:label="fragment_my_page"
         tools:layout="@layout/fragment_my_page" >
         <action
@@ -213,7 +163,7 @@
     </fragment>
     <fragment
         android:id="@+id/deleteAccountFragment"
-        android:name="com.ssafy.locket.ui.mypage.DeleteAccountFragment"
+        android:name="com.ssafy.locket.presentation.mypage.DeleteAccountFragment"
         android:label="fragment_delete_account"
         tools:layout="@layout/fragment_delete_account" >
         <action
@@ -222,7 +172,7 @@
     </fragment>
     <fragment
         android:id="@+id/editUserInfoFragment"
-        android:name="com.ssafy.locket.ui.mypage.EditUserInfoFragment"
+        android:name="com.ssafy.locket.presentation.mypage.EditUserInfoFragment"
         android:label="fragment_edit_user_info"
         tools:layout="@layout/fragment_edit_user_info" >
         <action
@@ -231,7 +181,7 @@
     </fragment>
     <fragment
         android:id="@+id/paymentPasswordFragment"
-        android:name="com.ssafy.locket.ui.payment.PaymentPasswordFragment"
+        android:name="com.ssafy.locket.presentation.payment.PaymentPasswordFragment"
         android:label="fragment_payment_password"
         tools:layout="@layout/fragment_payment_password" >
         <action
@@ -240,7 +190,7 @@
     </fragment>
     <fragment
         android:id="@+id/nfcPaymentFragment"
-        android:name="com.ssafy.locket.ui.payment.NfcPaymentFragment"
+        android:name="com.ssafy.locket.presentation.payment.NfcPaymentFragment"
         android:label="fragment_nfc_payment"
         tools:layout="@layout/fragment_nfc_payment" />
 </navigation>

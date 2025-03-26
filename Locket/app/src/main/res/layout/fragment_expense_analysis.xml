@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.finance.fragments.analysis.ExpenseAnalysisFragment">
+    tools:context=".presentation.finance.fragments.analysis.ExpenseAnalysisFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

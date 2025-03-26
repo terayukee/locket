@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D4E6EC"
-    tools:context=".ui.home.character.CharacterGrowthFragment">
+    tools:context=".presentation.home.character.CharacterGrowthFragment">
 
     <ImageView
         android:id="@+id/btn_back"

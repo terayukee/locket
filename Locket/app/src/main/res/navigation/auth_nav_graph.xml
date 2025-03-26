@@ -6,7 +6,7 @@
     app:startDestination="@id/signInFragment">
     <fragment
         android:id="@+id/signInFragment"
-        android:name="com.ssafy.locket.ui.login.SignInFragment"
+        android:name="com.ssafy.locket.presentation.login.SignInFragment"
         android:label="fragment_sign_in"
         tools:layout="@layout/fragment_sign_in" >
         <action
@@ -15,7 +15,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerPasswordFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterPasswordFragment"
+        android:name="com.ssafy.locket.presentation.login.register_user_info.RegisterPasswordFragment"
         android:label="fragment_register_password"
         tools:layout="@layout/fragment_register_password" >
         <action
@@ -24,7 +24,7 @@
     </fragment>
     <fragment
         android:id="@+id/confirmPasswordFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.ConfirmPasswordFragment"
+        android:name="com.ssafy.locket.presentation.login.register_user_info.ConfirmPasswordFragment"
         android:label="fragment_confirm_password"
         tools:layout="@layout/fragment_confirm_password" >
         <action
@@ -33,7 +33,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerUserInfoFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterUserInfoFragment"
+        android:name="com.ssafy.locket.presentation.login.register_user_info.RegisterUserInfoFragment"
         android:label="fragment_register_user_info"
         tools:layout="@layout/fragment_register_user_info" >
         <action
@@ -42,7 +42,7 @@
     </fragment>
     <fragment
         android:id="@+id/registerBiometricsFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterBiometricsFragment"
+        android:name="com.ssafy.locket.presentation.login.register_user_info.RegisterBiometricsFragment"
         android:label="RegisterBiometricsFragment"
         tools:layout="@layout/fragment_register_biometrics" >
         <action

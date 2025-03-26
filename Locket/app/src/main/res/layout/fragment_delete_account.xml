@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="#F6F7F9"
-    tools:context=".ui.mypage.DeleteAccountFragment">
+    tools:context=".presentation.mypage.DeleteAccountFragment">
 
     <ImageView
         android:id="@+id/iv_back"
