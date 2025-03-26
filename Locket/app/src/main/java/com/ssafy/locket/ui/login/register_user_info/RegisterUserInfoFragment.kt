@@ -1,17 +1,25 @@
 package com.ssafy.locket.ui.login.register_user_info
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.DisplayMetrics
+import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.PopupWindow
+import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
 import com.ssafy.locket.databinding.FragmentRegisterUserInfoBinding
+import com.ssafy.locket.databinding.PopupJobMenuBinding
 
 
 class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
@@ -39,7 +47,7 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
             findNavController().popBackStack()
         }
         binding.ivJobSelect.setOnClickListener {
-            showPopupMenu(it)
+            showPopupWindow(it)
         }
 
         binding.etBirth.addTextChangedListener(object : TextWatcher {
@@ -74,15 +82,42 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
         }
     }
 
-    private fun showPopupMenu(view: View) {
-        val popupMenu = PopupMenu(requireContext(), view)
-        requireActivity().menuInflater.inflate(R.menu.job_menu, popupMenu.menu)
-        popupMenu.setOnMenuItemClickListener { item: MenuItem ->
-            binding.tvJoblabel.text = item.title
-            checkIfJobSelected()  // 직업 선택 시 체크
+    private fun showPopupWindow(view: View) {
+        val inflater = LayoutInflater.from(requireContext())
+        val popupBinding = PopupJobMenuBinding.inflate(inflater) // ViewBinding 사용
+
+        // PopupWindow 설정
+        val popupWindow = PopupWindow(
+            popupBinding.root,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
             true
+        )
+
+        //크기 설정
+        val displayMetrics = DisplayMetrics()
+        requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
+        val screenWidth = displayMetrics.widthPixels
+        val popupWidth = (screenWidth * 0.85).toInt()  // 화면 너비의 90% 크기로 설정
+        popupWindow.width = popupWidth
+        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow.isOutsideTouchable = true
+        popupWindow.showAsDropDown(view, -view.x.toInt(), 0)
+
+        val clickListener = View.OnClickListener { clickedView ->
+            val jobTitle = when (clickedView.id) {
+                R.id.popupItemStudent -> "학생/주부/무직"
+                R.id.popupItemEmployee -> "직장인"
+                R.id.popupItemSelfEmployed -> "자영업"
+                else -> return@OnClickListener
+            }
+            binding.tvJoblabel.text = jobTitle
+            checkIfJobSelected()
+            popupWindow.dismiss()
         }
-        popupMenu.show()
+        popupBinding.popupItemStudent.setOnClickListener(clickListener)
+        popupBinding.popupItemEmployee.setOnClickListener(clickListener)
+        popupBinding.popupItemSelfEmployed.setOnClickListener(clickListener)
     }
 
     private fun checkIfJobSelected() {

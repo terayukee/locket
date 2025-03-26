@@ -19,7 +19,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
 
     fun initEvent(){
         binding.ivKakaoMove.setOnClickListener {
-            findNavController().navigate(R.id.action_signInFragment_to_homeFragment)
+            findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment)
         }
     }
 }
