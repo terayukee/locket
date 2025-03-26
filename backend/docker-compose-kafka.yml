@@ -82,7 +82,7 @@ services:
     image: obsidiandynamics/kafdrop:latest
     container_name: kafdrop
     ports:
-      - "9500:9500"
+      - "9500:9000"
     environment:
       KAFKA_BROKERCONNECT: j12d204.p.ssafy.io:19092,j12d204.p.ssafy.io:19093,j12d204.p.ssafy.io:19094
       JVM_OPTS: "-Xms256M -Xmx512M"
