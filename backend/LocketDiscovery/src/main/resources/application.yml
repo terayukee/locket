@@ -11,3 +11,14 @@ eureka:
   client:
     registerWithEureka: false  # 자기 자신은 Eureka에 등록하지 않음
     fetchRegistry: false       # 서비스 목록 조회 안 함 (Eureka 서버니까)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  health:
+    livenessstate:
+      enabled: true
+    readinessstate:
+      enabled: true
