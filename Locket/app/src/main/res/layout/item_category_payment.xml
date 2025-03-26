@@ -10,12 +10,12 @@
         android:id="@+id/iv_bullet"
         android:layout_width="8dp"
         android:layout_height="8dp"
+        android:src="@drawable/ic_finance_budget_bullet_filled"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_category"
         app:layout_constraintDimensionRatio="1"
-        android:background="@drawable/ic_finance_budget_bullet_filled"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/tv_category"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/tv_category" />
 
     <TextView
         android:id="@+id/tv_category"

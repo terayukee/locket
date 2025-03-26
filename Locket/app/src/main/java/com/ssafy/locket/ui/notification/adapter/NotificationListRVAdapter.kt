@@ -51,10 +51,10 @@ class NotificationListRVAdapter:
         val binding =
             ItemNotificationBinding.inflate(LayoutInflater.from(context), parent, false)
 
-        val displayMetrics = context.resources.displayMetrics
-        val screenHeight = displayMetrics.heightPixels
-        val itemHeight = (screenHeight * 0.08).toInt()
-        binding.root.layoutParams.height = itemHeight
+//        val displayMetrics = context.resources.displayMetrics
+//        val screenHeight = displayMetrics.heightPixels
+//        val itemHeight = (screenHeight * 0.08).toInt()
+//        binding.root.layoutParams.height = itemHeight
         return CustomViewHolder(binding)
     }
 

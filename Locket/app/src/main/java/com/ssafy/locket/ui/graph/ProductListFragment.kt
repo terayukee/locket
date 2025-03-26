@@ -11,7 +11,6 @@ import com.ssafy.locket.data.remote.dto.Product
 import com.ssafy.locket.databinding.FragmentProductListBinding
 import com.ssafy.locket.ui.graph.adapter.MoneyHappyAdapter
 import com.ssafy.locket.ui.graph.adapter.ProductAdapter
-import com.ssafy.locket.ui.main.MainActivity
 
 class ProductListFragment : BaseFragment<FragmentProductListBinding>(
     FragmentProductListBinding::bind,

@@ -1,6 +1,5 @@
 package com.ssafy.locket.ui.home
 
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
@@ -8,7 +7,7 @@ import com.example.locket.CommonUtils
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
 import com.ssafy.locket.databinding.FragmentHomeBinding
-import com.ssafy.locket.ui.main.MainActivity
+import com.ssafy.locket.ui.MainActivity
 import java.time.LocalDate
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
@@ -21,30 +20,31 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         val today = LocalDate.now()
 
         binding.ivCharacterBg.setOnClickListener {
-            findNavController().navigate(R.id.characterFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_characterFragment)
         }
 
         binding.layoutReceipt.setOnClickListener {
-            findNavController().navigate(R.id.receiptListFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_receiptListFragment)
         }
 
         binding.icNotification.setOnClickListener {
-            findNavController().navigate(R.id.notificationFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_notificationFragment)
         }
 
         binding.ivBudgetCardBg.setOnClickListener {
             val bundle = Bundle().apply {
                 putInt("SELECTED_TAB", 2)
             }
-            findNavController().navigate(R.id.action_homeFragment_to_financeFragment, bundle)
+            (requireContext() as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
+//            findNavController().navigate(R.id.action_homeFragment_to_financeFragment, bundle)
         }
 
         binding.ivPaymentCardBg.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_financeFragment)
+            (requireContext() as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
         }
 
         binding.btnAnalysis.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_expenseAnalysisFragment)
+            findNavController().navigate(R.id.action_financeFragment_to_expenseAnalysisFragment)
         }
 
         binding.tvUserName.text = getString(R.string.home_name, "아영")
@@ -57,9 +57,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.tvBudgetTitle.text = getString(R.string.home_budget_month, today.monthValue)
         binding.tvBudgetData.text = getString(R.string.finance_won, CommonUtils.makeComma(200000))
 
-        binding.tvBudgetFeedback.text = "10만원 남았습니다"
+        binding.tvBudgetFeedback.text = "100,000원 남았어요"
 
-        (requireContext() as MainActivity).changeBackgroundColor(R.color.background_home)
+        (requireContext() as MainActivity).changeBackgroundColor(R.color.background)
     }
 
     override fun onStop() {

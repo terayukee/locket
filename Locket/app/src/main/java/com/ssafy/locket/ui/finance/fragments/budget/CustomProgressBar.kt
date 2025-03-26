@@ -66,7 +66,7 @@ class CustomProgressBar @JvmOverloads constructor(
     fun setProgress(progress: Int) {
         val limitedProgress = progress.coerceIn(0, 100)
         progressBar.progress = limitedProgress
-        (tvPercent as PercentageTextView).setProgress(limitedProgress)
+        (tvPercent as PercentageTextView).setProgress(progress)
     }
 
     inner class PercentageTextView @JvmOverloads constructor(

@@ -1,7 +1,9 @@
 package com.ssafy.locket.ui.finance.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
 import android.graphics.Color
+import android.graphics.PorterDuff
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -57,8 +59,7 @@ class CategoryPaymentRVAdapter: ListAdapter<CategoryPayment, CategoryPaymentRVAd
                 }
             }
 
-            binding.ivBullet.setBackgroundColor(bulletColor)
-            // 다른 거 찾아보기, 네모네모해짐
+            binding.ivBullet.setColorFilter(bulletColor, PorterDuff.Mode.SRC_IN)
 
             binding.tvCategory.text = categoryName
             binding.tvCategoryPercent.text = context.resources.getString(R.string.finance_analysis_percent, item.percent)
@@ -72,10 +73,10 @@ class CategoryPaymentRVAdapter: ListAdapter<CategoryPayment, CategoryPaymentRVAd
         val binding =
             ItemCategoryPaymentBinding.inflate(LayoutInflater.from(context), parent, false)
 
-        val displayMetrics = context.resources.displayMetrics
-        val screenHeight = displayMetrics.heightPixels
-        val itemHeight = (screenHeight * 0.0224).toInt()
-        binding.root.layoutParams.height = itemHeight
+//        val displayMetrics = context.resources.displayMetrics
+//        val screenHeight = displayMetrics.heightPixels
+//        val itemHeight = (screenHeight * 0.0224).toInt()
+//        binding.root.layoutParams.height = itemHeight
         return CustomViewHolder(binding)
     }
 

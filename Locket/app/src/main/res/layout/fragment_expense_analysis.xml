@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.finance.fragments.analysis.ExpenseAnalysisFragment">
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -29,13 +30,13 @@
             android:letterSpacing="-0.02"
             android:textColor="@color/text"
             android:textSize="20sp"
-            app:layout_constraintEnd_toStartOf="@+id/iv_prev_month_icon"
+            app:layout_constraintEnd_toStartOf="@+id/btn_prev_month_icon"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btn_back"
             tools:text="2025년 3월" />
 
         <ImageView
-            android:id="@+id/iv_prev_month_icon"
+            android:id="@+id/btn_prev_month_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_finance_arrow_left"
@@ -43,12 +44,12 @@
             android:paddingVertical="8dp"
             android:paddingEnd="4dp"
             android:paddingStart="8dp"
-            app:layout_constraintBottom_toBottomOf="@+id/iv_next_month_icon"
-            app:layout_constraintEnd_toStartOf="@+id/iv_next_month_icon"
-            app:layout_constraintTop_toTopOf="@+id/iv_next_month_icon" />
+            app:layout_constraintBottom_toBottomOf="@+id/btn_next_month_icon"
+            app:layout_constraintEnd_toStartOf="@+id/btn_next_month_icon"
+            app:layout_constraintTop_toTopOf="@+id/btn_next_month_icon" />
 
         <ImageView
-            android:id="@+id/iv_next_month_icon"
+            android:id="@+id/btn_next_month_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_finance_arrow_right"
@@ -83,7 +84,7 @@
             android:letterSpacing="-0.02"
             android:textColor="@color/text"
             android:textSize="20sp"
-            app:layout_constraintEnd_toEndOf="@+id/iv_next_month_icon"
+            app:layout_constraintEnd_toEndOf="@+id/btn_next_month_icon"
             app:layout_constraintStart_toEndOf="@+id/textview1"
             app:layout_constraintTop_toBottomOf="@+id/tv_year_month"
             tools:text="463,000원" />
@@ -152,9 +153,61 @@
             android:textColor="@color/text"
             android:textSize="20sp"
             android:layout_marginTop="24dp"
-            app:layout_constraintEnd_toEndOf="@+id/tv_payment_data"
+            app:layout_constraintEnd_toEndOf="@+id/tv_category_title"
             app:layout_constraintStart_toStartOf="@+id/textview1"
             app:layout_constraintTop_toBottomOf="@+id/iv_division2" />
 
+        <ImageView
+            android:id="@+id/iv_category_character"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintWidth_percent="0.5995"
+            android:src="@drawable/test_image_character"
+            app:layout_constraintStart_toStartOf="@+id/tv_feedback_content"
+            app:layout_constraintEnd_toEndOf="@+id/tv_feedback_content"
+            app:layout_constraintTop_toBottomOf="@+id/tv_pattern_analysis"/>
+
+        <TextView
+            android:id="@+id/tv_category_type"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text = "카페인 뱀파이어형"
+            android:textSize="18sp"
+            android:textColor="@color/text"
+            android:letterSpacing="-0.02"
+            android:fontFamily="@font/pretendard_medium"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_feedback_content"
+            app:layout_constraintTop_toBottomOf="@+id/iv_category_character"
+            app:layout_constraintStart_toStartOf="@+id/tv_feedback_content"
+            app:layout_constraintEnd_toEndOf="@+id/tv_feedback_content"/>
+
+<!--        <ImageView-->
+<!--            android:id="@+id/iv_feedback_bg"-->
+<!--            android:layout_width="0dp"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginVertical="16dp"-->
+<!--            android:background="@drawable/bg_finance_analysis_feedback"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/tv_category_type"-->
+<!--            app:layout_constraintStart_toStartOf="@+id/tv_pattern_analysis"-->
+<!--            app:layout_constraintEnd_toEndOf="@+id/tv_pattern_analysis"/>-->
+
+        <TextView
+            android:id="@+id/tv_feedback_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            tools:text=""
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:layout_marginVertical="16dp"
+            android:padding="16dp"
+            android:background="@drawable/bg_finance_analysis_feedback"
+            app:layout_constraintStart_toStartOf="@id/tv_pattern_analysis"
+            app:layout_constraintEnd_toEndOf="@+id/tv_pattern_analysis"
+            app:layout_constraintTop_toBottomOf="@id/tv_category_type"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

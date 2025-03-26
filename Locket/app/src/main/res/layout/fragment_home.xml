@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background_home"
+    android:background="@color/background"
     android:paddingHorizontal="24dp"
     android:paddingTop="16dp"
     tools:context=".ui.home.HomeFragment">
@@ -60,6 +60,8 @@
         android:letterSpacing="-0.02"
         android:textColor="@color/primary"
         android:textSize="24sp"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintEnd_toEndOf="@+id/ic_profile"
         app:layout_constraintStart_toStartOf="@+id/tv_user_name"
         app:layout_constraintTop_toBottomOf="@+id/tv_user_name"
@@ -135,6 +137,7 @@
         android:maxLines="1"
         android:textColor="@color/text"
         android:textSize="14sp"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="@+id/iv_payment_card_bg"
         app:layout_constraintEnd_toStartOf="@+id/btn_analysis"
         app:layout_constraintStart_toStartOf="@+id/iv_payment_icon_bg"
@@ -143,25 +146,14 @@
 
     <ImageView
         android:id="@+id/btn_analysis"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
-        android:background="@drawable/bg_home_btn_small"
+        app:layout_constraintDimensionRatio="2.5"
+        android:background="@drawable/ic_finance_analysis"
         app:layout_constraintBottom_toBottomOf="@+id/iv_payment_card_bg"
         app:layout_constraintEnd_toEndOf="@+id/iv_payment_card_bg"
         app:layout_constraintTop_toTopOf="@+id/iv_payment_card_bg" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:letterSpacing="-0.02"
-        android:text="분석하기"
-        android:textColor="@color/white"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@+id/btn_analysis"
-        app:layout_constraintEnd_toEndOf="@+id/btn_analysis"
-        app:layout_constraintStart_toStartOf="@+id/btn_analysis"
-        app:layout_constraintTop_toTopOf="@+id/btn_analysis" />
 
     <ImageView
         android:id="@+id/iv_budget_card_bg"
@@ -222,7 +214,7 @@
         android:textColor="@color/text"
         android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/tv_budget_title"
-        app:layout_constraintEnd_toStartOf="@+id/btn_analysis"
+        app:layout_constraintEnd_toEndOf="@+id/iv_budget_card_bg"
         app:layout_constraintStart_toEndOf="@+id/iv_budget_icon_bg"
         app:layout_constraintTop_toTopOf="@+id/iv_budget_icon_bg"
         tools:text="200,000원" />
@@ -231,13 +223,12 @@
         android:id="@+id/tv_budget_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
         android:letterSpacing="-0.02"
         android:textColor="@color/text"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="@+id/iv_budget_icon_bg"
-        app:layout_constraintEnd_toStartOf="@+id/btn_analysis"
-        app:layout_constraintStart_toEndOf="@+id/iv_budget_icon_bg"
+        app:layout_constraintEnd_toEndOf="@+id/tv_budget_data"
+        app:layout_constraintStart_toStartOf="@+id/tv_budget_data"
         app:layout_constraintTop_toBottomOf="@+id/tv_budget_data"
         tools:text="3월 목표 예산" />
 
@@ -249,8 +240,9 @@
         android:maxLines="1"
         android:textColor="@color/text"
         android:textSize="14sp"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="@+id/iv_budget_card_bg"
-        app:layout_constraintEnd_toStartOf="@+id/btn_analysis"
+        app:layout_constraintEnd_toEndOf="@+id/tv_budget_data"
         app:layout_constraintStart_toStartOf="@+id/iv_payment_icon_bg"
         app:layout_constraintTop_toBottomOf="@+id/tv_budget_title"
         tools:text="100,000원 남았어요" />

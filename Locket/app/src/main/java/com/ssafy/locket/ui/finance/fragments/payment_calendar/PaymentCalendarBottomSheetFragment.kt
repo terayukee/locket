@@ -43,6 +43,8 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        init()
+
         var date = LocalDate.now() // 임시 데이터
         // TODO 선택된 날짜와 데이터 전달 받아야 함
 

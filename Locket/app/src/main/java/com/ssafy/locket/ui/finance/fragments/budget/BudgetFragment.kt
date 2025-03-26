@@ -17,10 +17,11 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var progress = 20
+        var progress = 2
         binding.progressBar.setProgress(progress)
 
-        binding.tvBudgetLeftNo.visibility = View.VISIBLE
+//        binding.tvBudgetLeftNo.visibility = View.VISIBLE // 예산설정 안 된 경우
+        binding.groupBudget.visibility = View.VISIBLE // 예산설정 한 경우
 
         val budget = 340000
         val today = LocalDate.now()

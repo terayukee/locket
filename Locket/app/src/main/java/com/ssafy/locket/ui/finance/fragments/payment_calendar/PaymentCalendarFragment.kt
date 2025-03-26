@@ -25,8 +25,8 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 ) {
     private var selectedDate = LocalDate.now()
     private var currentMonth = YearMonth.now()
-    private val startMonth = YearMonth.of(2015, 1) // 2024년 1월부터 제공
-    private val endMonth = YearMonth.of(2040, 12) // 2024년 1월부터 제공
+    private val startMonth = YearMonth.of(2020, 1)
+    private val endMonth = YearMonth.of(2030, 12)
     private val daysOfWeek = daysOfWeek(DayOfWeek.MONDAY)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
