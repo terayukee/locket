@@ -20,7 +20,7 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initEvent()
         initAdapter()
     }
 
@@ -41,5 +41,11 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
 
         val tmpList : List<Receipt> = listOf(Receipt(0,"쿠팡","쇼핑","내일배움카드", 3000), Receipt(1,"쿠팡","쇼핑","내일배움카드3", 8000))
         receiptRVAdapter.submitList(tmpList)
+    }
+
+    fun initEvent(){
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 }

@@ -11,9 +11,6 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_characterFragment"
-            app:destination="@id/characterFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_receiptListFragment"
             app:destination="@id/receiptListFragment" />
         <action
@@ -22,6 +19,9 @@
         <action
             android:id="@+id/action_homeFragment_to_myPageFragment"
             app:destination="@id/myPageFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_characterInitialFragment"
+            app:destination="@id/characterInitialFragment" />
     </fragment>
     <fragment
         android:id="@+id/financeFragment"
@@ -108,15 +108,6 @@
         tools:layout="@layout/fragment_product_detail" />
 
     <fragment
-        android:id="@+id/characterFragment"
-        android:name="com.ssafy.locket.ui.home.character.CharacterInitialFragment"
-        android:label="fragment_character"
-        tools:layout="@layout/fragment_character_initial" >
-        <action
-            android:id="@+id/action_characterFragment_to_characterGrowthFragment"
-            app:destination="@id/characterGrowthFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/characterGrowthFragment"
         android:name="com.ssafy.locket.ui.home.character.CharacterGrowthFragment"
         android:label="fragment_character_growth"
@@ -190,4 +181,13 @@
         android:name="com.ssafy.locket.ui.payment.NfcPaymentFragment"
         android:label="fragment_nfc_payment"
         tools:layout="@layout/fragment_nfc_payment" />
+    <fragment
+        android:id="@+id/characterInitialFragment"
+        android:name="com.ssafy.locket.ui.home.character.CharacterInitialFragment"
+        android:label="fragment_character_initial"
+        tools:layout="@layout/fragment_character_initial" >
+        <action
+            android:id="@+id/action_characterInitialFragment_to_characterGrowthFragment"
+            app:destination="@id/characterGrowthFragment" />
+    </fragment>
 </navigation>

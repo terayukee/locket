@@ -20,7 +20,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         val today = LocalDate.now()
 
         binding.ivCharacterBg.setOnClickListener {
-            findNavController().navigate(R.id.action_homeFragment_to_characterFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
         }
 
         binding.layoutReceipt.setOnClickListener {
