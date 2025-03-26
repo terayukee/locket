@@ -10,5 +10,9 @@ COPY build/libs/LocketPaymentService-0.0.1-SNAPSHOT.jar app.jar
 # 4. 컨테이너에서 노출할 포트
 EXPOSE 8081
 
-# 5. 애플리케이션 실행 명령어 (환경 변수 설정 포함)
+# 5. 헬스체크 명령 추가 (actuator를 사용하는 경우)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+  CMD curl -f http://localhost:8081/actuator/health || exit 1
+
+# 6. 애플리케이션 실행 명령어
 ENTRYPOINT ["java", "-jar", "app.jar"]
