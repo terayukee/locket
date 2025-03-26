@@ -76,14 +76,8 @@ pipeline {
                         transfers: [
                             sshTransfer(
                                 execCommand: '''
-                                    echo "🚀 Creating service ${DOCKER_IMAGE} on Swarm"
-                                    docker service create --name ${DOCKER_IMAGE} \
-                                        --replicas 1 \
-                                        --publish ${DOCKER_PORT}:${DOCKER_PORT} \
-                                        --env SERVER_PORT=${DOCKER_PORT} \
-                                        --env SPRING_PROFILES_ACTIVE=prod \
-                                        --env EUREKA_SERVER=${EUREKA_SERVER} \
-                                        ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                                    echo "🚀 Updating service ${DOCKER_IMAGE} on Swarm"
+                                    docker service update --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}
                                 '''.stripIndent()
                             )
                         ]

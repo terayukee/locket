@@ -80,16 +80,8 @@ pipeline {
                         transfers: [
                             sshTransfer(
                                 execCommand: '''
-                                    echo "🛠 Creating new Swarm service for ${DOCKER_IMAGE}..."
-                                    docker service create --name ${DOCKER_IMAGE} \
-                                        -p ${DOCKER_PORT}:${DOCKER_PORT} \
-                                        -e SPRING_PROFILES_ACTIVE=prod \
-                                        -e SERVER_PORT=${DOCKER_PORT} \
-                                        -e ELASTICSEARCH_URIS=${ELASTICSEARCH_URIS} \
-                                        -e ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME} \
-                                        -e ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD} \
-                                        -e KAFKA_BOOTSTRAP_SERVERS=${KAFKA_BOOTSTRAP_SERVERS} \
-                                        ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                                    echo "🚀 Updating service ${DOCKER_IMAGE} on Swarm"
+                                    docker service update --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}
                                 '''.stripIndent()
                             )
                         ]
