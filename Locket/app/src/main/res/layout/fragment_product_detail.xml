@@ -106,10 +106,15 @@
 
             <ImageView
                 android:id="@+id/iv_like_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="5sp"
                 android:src="@drawable/ic_all_empty_heart"
-                app:layout_constraintEnd_toEndOf="@+id/tv_review"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.9"
+                app:layout_constraintWidth_percent="0.07"
+                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_review" />
 
             <View
@@ -158,9 +163,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintDimensionRatio="1"
+                app:layout_constraintDimensionRatio="2:1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintWidth_percent="0.87"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_chart_description" />
 
@@ -171,9 +176,11 @@
                 android:elevation="4dp"
                 app:cardBackgroundColor="#00CBBF"
                 app:cardCornerRadius="16dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginBottom="50dp"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

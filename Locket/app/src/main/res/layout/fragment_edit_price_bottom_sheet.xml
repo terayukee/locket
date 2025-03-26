@@ -31,7 +31,7 @@
         app:layout_constraintTop_toBottomOf="@+id/view_handle" />
 
     <EditText
-        android:id="@+id/tv_current_price"
+        android:id="@+id/tv_want_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
@@ -39,8 +39,10 @@
         android:gravity="center"
         android:paddingVertical="16dp"
         android:letterSpacing="-0.02"
-        android:text="현재 가격: 10,730원"
-        android:textColor="#BBBBBB"
+        android:maxLength="11"
+        android:inputType="number"
+        android:hint="현재 가격: 10,730원"
+        android:textColor="@color/black"
         android:textSize="16sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -59,7 +61,7 @@
         android:textSize="14sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_current_price" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_want_price" />
 
     <!-- 확인 버튼 -->
     <androidx.appcompat.widget.AppCompatButton
