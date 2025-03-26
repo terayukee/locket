@@ -29,11 +29,11 @@ class LogoutDialogFragment : DialogFragment() {
         dialog.setContentView(view)
 
         binding.btnLogout.setOnClickListener {
+            performLogout()
             dismiss()
         }
 
         binding.btnCancel.setOnClickListener {
-            performLogout()
             dismiss()
         }
 
@@ -43,7 +43,6 @@ class LogoutDialogFragment : DialogFragment() {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-
         return dialog
     }
 

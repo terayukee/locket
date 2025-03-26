@@ -108,55 +108,6 @@
         tools:layout="@layout/fragment_product_detail" />
 
     <fragment
-        android:id="@+id/signInFragment"
-        android:name="com.ssafy.locket.ui.login.SignInFragment"
-        android:label="fragment_sign_in"
-        tools:layout="@layout/fragment_sign_in" >
-        <action
-            android:id="@+id/action_signInFragment_to_registerUserInfoFragment"
-            app:destination="@id/registerUserInfoFragment" />
-        <action
-            android:id="@+id/action_signInFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerPasswordFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterPasswordFragment"
-        android:label="fragment_register_password"
-        tools:layout="@layout/fragment_register_password" >
-        <action
-            android:id="@+id/action_registerPasswordFragment_to_confirmPasswordFragment"
-            app:destination="@id/confirmPasswordFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/confirmPasswordFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.ConfirmPasswordFragment"
-        android:label="fragment_confirm_password"
-        tools:layout="@layout/fragment_confirm_password" >
-        <action
-            android:id="@+id/action_confirmPasswordFragment_to_registerBiometricsFragment"
-            app:destination="@id/registerBiometricsFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerUserInfoFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterUserInfoFragment"
-        android:label="fragment_register_user_info"
-        tools:layout="@layout/fragment_register_user_info" >
-        <action
-            android:id="@+id/action_registerUserInfoFragment_to_registerPasswordFragment"
-            app:destination="@id/registerPasswordFragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/registerBiometricsFragment"
-        android:name="com.ssafy.locket.ui.login.register_user_info.RegisterBiometricsFragment"
-        android:label="RegisterBiometricsFragment"
-        tools:layout="@layout/fragment_register_biometrics" >
-        <action
-            android:id="@+id/action_registerBiometricsFragment_to_homeFragment"
-            app:destination="@id/homeFragment" />
-    </fragment>
-
-    <fragment
         android:id="@+id/characterFragment"
         android:name="com.ssafy.locket.ui.home.character.CharacterInitialFragment"
         android:label="fragment_character"
@@ -215,11 +166,7 @@
         android:id="@+id/deleteAccountFragment"
         android:name="com.ssafy.locket.ui.mypage.DeleteAccountFragment"
         android:label="fragment_delete_account"
-        tools:layout="@layout/fragment_delete_account" >
-        <action
-            android:id="@+id/action_deleteAccountFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_delete_account" />
     <fragment
         android:id="@+id/editUserInfoFragment"
         android:name="com.ssafy.locket.ui.mypage.EditUserInfoFragment"
