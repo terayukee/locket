@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 @Component
 @RequiredArgsConstructor
-@Slf4j
+//@Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        log.info("Processing JWT authentication for path: {}", request.getRequestURI());
+//        log.info("Processing JWT authentication for path: {}", request.getRequestURI());
 
         try {
             // 인증 헤더 가져오기
@@ -76,7 +76,7 @@ public class JwtFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
 
         } catch (Exception e) {
-            log.error("JWT 인증 처리 중 오류 발생", e);
+//            log.error("JWT 인증 처리 중 오류 발생", e);
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.getWriter().write(e.getMessage());
         }
@@ -85,7 +85,7 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         String path = request.getRequestURI();
-        log.info("Checking path against exclude patterns: {}", path);
+//        log.info("Checking path against exclude patterns: {}", path);
 
         return excludedPatterns.stream()
                 .anyMatch(pattern -> pattern.matcher(path).matches());
@@ -100,7 +100,7 @@ public class JwtFilter extends OncePerRequestFilter {
                 return Long.parseLong(lastPart);
             }
         } catch (NumberFormatException e) {
-            log.warn("Failed to parse user ID from path: {}", path);
+//            log.warn("Failed to parse user ID from path: {}", path);
         }
         return null;
     }
