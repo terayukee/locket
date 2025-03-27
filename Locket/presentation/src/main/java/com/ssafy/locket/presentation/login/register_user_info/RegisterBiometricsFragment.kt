@@ -6,7 +6,7 @@ import android.provider.Settings
 import android.view.View
 import androidx.biometric.BiometricManager
 import androidx.navigation.fragment.findNavController
-import com.ssafy.locket.presentation.MainActivity
+import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentRegisterBiometricsBinding

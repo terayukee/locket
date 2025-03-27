@@ -1,16 +1,14 @@
 package com.ssafy.locket.presentation.finance.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.locket.CommonUtils
 import com.google.android.material.tabs.TabLayoutMediator
-import com.ssafy.locket.presentation.MainActivity
+import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentFinanceBinding

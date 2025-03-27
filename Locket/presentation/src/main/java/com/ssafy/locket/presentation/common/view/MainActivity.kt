@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation
+package com.ssafy.locket.presentation.common.view
 
 import android.os.Bundle
 import android.view.View
@@ -9,9 +9,9 @@ import androidx.navigation.NavOptions
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationBarView
+import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
-
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -23,25 +23,29 @@ class MainActivity : AppCompatActivity() {
         initNavigationBar()
     }
 
-    fun initNavigationBar(){
+    fun initNavigationBar() {
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
         val navController = navHostFragment.navController
         val bottomNavigationView = binding.bottomNavigation
         bottomNavigationView.setupWithNavController(navController)
         bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
-        bottomNavigationView.setOnItemSelectedListener { item ->
 
-            val navigateOptions = NavOptions.Builder()
-                .setLaunchSingleTop(true)  // Prevent multiple instances of the same destination
-                .setPopUpTo(navController.graph.startDestinationId, false)  // Clear the back stack up to the start destination
-                .build()
-            when (item.itemId) {
-                R.id.home -> navController.navigate(R.id.homeFragment, null, navigateOptions)
-                R.id.household_account_book -> navController.navigate(R.id.financeFragment, null, navigateOptions)
-                R.id.lowest_price_graph -> navController.navigate(R.id.productListFragment, null, navigateOptions)
-                R.id.payment -> navController.navigate(R.id.cardPaymentFragment, null, navigateOptions)
-                else -> false
+        bottomNavigationView.setOnItemSelectedListener { item ->
+            navController.currentDestination?.id?.let {
+                val navigateOptions = NavOptions.Builder()
+                    .setLaunchSingleTop(true)
+                    .setPopUpTo(it, true)
+                    .build()
+
+                when (item.itemId) {
+                    R.id.home -> navController.navigate(R.id.homeFragment, null, navigateOptions)
+                    R.id.household_account_book -> navController.navigate(R.id.financeFragment, null, navigateOptions)
+                    R.id.lowest_price_graph -> navController.navigate(R.id.productListFragment, null, navigateOptions)
+                    R.id.payment -> navController.navigate(R.id.cardPaymentFragment, null, navigateOptions)
+                    else -> false
+                }
             }
+
             true
         }
         hideBottomNavigationView(navController)
