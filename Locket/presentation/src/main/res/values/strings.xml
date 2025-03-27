@@ -7,7 +7,7 @@
     <string name="home_payment_month">%d월에 쓴 돈</string>
     <string name="home_budget_month">%d월 목표 예산</string>
 
-    <string name="receipt_category_card">%1$s | %2$s</string>
+    <string name="receipt_description">%1$s | %2$s | %3$s</string>
     <string name="receipt_price">-%s원</string>
 
     <string name="finance_year_month">%1$d년 %2$d월</string>

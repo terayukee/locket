@@ -2,11 +2,14 @@ package com.ssafy.locket.presentation.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.locket.CommonUtils
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
+import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
+import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
 import java.time.LocalDate
 
@@ -14,7 +17,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind,
     R.layout.fragment_home
 ) {
-//    private val mainViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,11 +36,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
 
         binding.ivBudgetCardBg.setOnClickListener {
-//            mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
+            mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
             (requireContext() as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
         }
 
         binding.ivPaymentCardBg.setOnClickListener {
+            mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
             (requireContext() as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
         }
 

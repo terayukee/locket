@@ -39,7 +39,7 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
             }
         }
 
-        val tmpList : List<Receipt> = listOf(Receipt(0,"쿠팡","쇼핑","내일배움카드", 3000), Receipt(1,"쿠팡","쇼핑","내일배움카드3", 8000))
+        val tmpList : List<Receipt> = listOf(Receipt(0,"쿠팡","쇼핑","내일배움카드", 3000, "2024.03.11"), Receipt(1,"쿠팡","쇼핑","내일배움카드3", 8000, "2024.03.10"))
         receiptRVAdapter.submitList(tmpList)
     }
 }

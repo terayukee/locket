@@ -48,7 +48,7 @@ class ReceiptRVAdapter(val type: String):
                 .placeholder(R.drawable.ic_finance_category_etc)
                 .into(binding.ivCategory)
             binding.tvReceiptPlace.text = item.place
-            binding.tvReceiptCategory.text = context.getString(R.string.receipt_category_card, item.category, item.cardName)
+            binding.tvReceiptDescription.text = context.getString(R.string.receipt_description, item.category, item.cardName, item.date)
             binding.tvReceiptPrice.text = context.getString(R.string.receipt_price, CommonUtils.makeComma(item.price))
             binding.root.setOnClickListener {
                 if(type == "receipt") itemClickListener.onClick(it, item, adapterPosition)

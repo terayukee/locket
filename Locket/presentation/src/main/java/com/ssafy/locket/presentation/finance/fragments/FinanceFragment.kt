@@ -1,6 +1,7 @@
 package com.ssafy.locket.presentation.finance.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -80,14 +81,18 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         }.attach()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//            repeatOnLifecycle(Lifecycle.State.RESUMED) {
                 mainViewModel.selectedFinanceTab.collect { state ->
+                    Log.d(TAG, "initTabLayout: $state")
                     if(state is FinanceNavigationState.Budget){
                         binding.tabVp.setCurrentItem(2, false)
                         binding.tabLayout.getTabAt(2)?.select()
+                    } else {
+                        binding.tabVp.setCurrentItem(0, false)
+                        binding.tabLayout.getTabAt(0)?.select()
                     }
                 }
-            }
+//            }
         }
     }
 

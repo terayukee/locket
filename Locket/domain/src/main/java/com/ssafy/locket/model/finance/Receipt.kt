@@ -12,5 +12,6 @@ data class Receipt(
     @SerializedName("cardName")
     val cardName: String,
     @SerializedName("price")
-    val price: Int
+    val price: Int,
+    val date: String
 )
