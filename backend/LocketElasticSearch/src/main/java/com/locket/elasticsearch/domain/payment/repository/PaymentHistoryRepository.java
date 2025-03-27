@@ -1,6 +1,6 @@
-package com.locket.elasticsearch.payment.repository;
+package com.locket.elasticsearch.domain.payment.repository;
 
-import com.locket.elasticsearch.payment.entity.PaymentHistory;
+import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

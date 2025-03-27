@@ -1,4 +1,4 @@
-package com.locket.elasticsearch.payment.entity;
+package com.locket.elasticsearch.domain.payment.entity;
 
 import lombok.*;
 import org.springframework.data.annotation.Id;

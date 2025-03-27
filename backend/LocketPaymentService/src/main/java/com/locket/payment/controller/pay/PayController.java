@@ -1,6 +1,7 @@
 package com.locket.payment.controller.pay;
 
 import com.locket.payment.domain.pay.dto.CardInfoDto;
+import com.locket.payment.domain.pay.dto.PaymentPasswordRequest;
 import com.locket.payment.domain.pay.dto.PaymentRequest;
 import com.locket.payment.domain.pay.dto.PaymentResponse;
 import com.locket.payment.service.pay.PayService;
@@ -111,17 +112,33 @@ public class PayController {
         return ResponseEntity.ok(registered);
     }
 
-    @GetMapping("/auth-info/password")
-    @Operation(summary = "간편 비밀번호 조회", description = "JWT 기반 사용자 ID로 Redis에서 간편 비밀번호를 조회합니다.")
+    @PostMapping("/auth/verify-password")
+    @Operation(summary = "간편 비밀번호 검증", description = "클라이언트가 보낸 간편 비밀번호(int)가 Redis에 저장된 값과 일치하는지 확인합니다.")
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(responseCode = "404", description = "데이터 없음")
+            @ApiResponse(responseCode = "200", description = "검증 결과 반환"),
+            @ApiResponse(responseCode = "400", description = "비밀번호 누락 또는 잘못된 형식")
     })
-    public ResponseEntity<String> getPaymentPassword(HttpServletRequest request) {
+    public ResponseEntity<Boolean> verifyPaymentPassword(
+            HttpServletRequest request,
+            @RequestBody(
+                    description = "간편 비밀번호 검증 요청 (정수형)",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "비밀번호 검증 요청 예시",
+                                    summary = "기본 요청",
+                                    value = "{ \"paymentPassword\": 1234 }"
+                            )
+                    )
+            )
+            @org.springframework.web.bind.annotation.RequestBody PaymentPasswordRequest passwordRequest
+    ) {
         String token = request.getHeader("Authorization");
         int userId = jwtUtil.extractUserId(token);
-        String password = payService.getPaymentPasswordFromRedis(userId);
-        return ResponseEntity.ok(password);
+
+        boolean isValid = payService.verifyPaymentPassword(userId, passwordRequest.getPaymentPassword());
+        return ResponseEntity.ok(isValid);
     }
 
 }
