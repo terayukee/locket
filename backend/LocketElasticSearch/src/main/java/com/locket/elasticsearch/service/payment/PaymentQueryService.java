@@ -1,7 +1,7 @@
 package com.locket.elasticsearch.service.payment;
 
-import com.locket.elasticsearch.payment.entity.PaymentHistory;
-import com.locket.elasticsearch.payment.repository.PaymentHistoryRepository;
+import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
+import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
