@@ -5,6 +5,7 @@ import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
 import android.util.AttributeSet
+import android.util.Log
 import android.view.View
 import android.widget.ProgressBar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -13,6 +14,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.res.ResourcesCompat
 import com.ssafy.locket.R
 
+private const val TAG = "CustomProgressBar"
 class CustomProgressBar @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -24,7 +26,6 @@ class CustomProgressBar @JvmOverloads constructor(
     private val tvPercent: View
 
     init {
-
         progressBar = ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal).apply {
             id = View.generateViewId()
             max = 100
@@ -66,6 +67,7 @@ class CustomProgressBar @JvmOverloads constructor(
         val limitedProgress = progress.coerceIn(0, 100)
         progressBar.progress = limitedProgress
         (tvPercent as PercentageTextView).setProgress(progress)
+        if(progress > 100) progressBar.progressDrawable = ContextCompat.getDrawable(context, R.drawable.bg_finance_budget_progress_over)
     }
 
     inner class PercentageTextView @JvmOverloads constructor(
@@ -99,8 +101,11 @@ class CustomProgressBar @JvmOverloads constructor(
 
             val paddingPx = (horizontalPadding * resources.displayMetrics.density)
 
-            // 텍스트 x 좌표 계산 (진행된 영역의 왼쪽에 위치 + 패딩)
-            val textX = (progressWidth * (progress / 100f)) - textWidth / 2 - paddingPx
+            var textX : Float
+
+            // 텍스트 x 좌표 계산
+            textX = if(progress > 100) (progressWidth * (100 / 100f)) - textWidth / 2 - paddingPx
+            else (progressWidth * (progress / 100f)) - textWidth / 2 - paddingPx
 
             // 텍스트 그리기
             canvas.drawText(percentText, textX, height / 2f + paint.textSize / 2f, paint)

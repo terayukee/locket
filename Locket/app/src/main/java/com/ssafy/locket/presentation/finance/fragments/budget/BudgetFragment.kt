@@ -21,7 +21,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        var progress = 2
+        var progress = 210
         binding.progressBar.setProgress(progress)
 
 //        binding.tvBudgetLeftNo.visibility = View.VISIBLE // 예산설정 안 된 경우

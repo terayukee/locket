@@ -96,6 +96,10 @@ dependencies {
 
     //지문인식
     implementation ("androidx.biometric:biometric:1.0.1")
+
+    // Data Store
+    implementation ("androidx.datastore:datastore-preferences:1.1.4")
+    implementation ("androidx.datastore:datastore-core:1.1.4")
 }
 
 kapt {
