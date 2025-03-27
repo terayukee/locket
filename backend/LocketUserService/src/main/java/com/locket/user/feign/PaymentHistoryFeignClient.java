@@ -11,9 +11,9 @@ import java.util.List;
 @FeignClient(name = "elasticsearch-service")
 public interface PaymentHistoryFeignClient {
 
-    @GetMapping("/api/elasticsearch/payment/history/{userId}")
+    @GetMapping("/api/elasticsearch/payment/history")
     List<PaymentHistoryDto> getPaymentHistories(
-            @PathVariable("userId") int userId,
+            @RequestParam("userId") int userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );

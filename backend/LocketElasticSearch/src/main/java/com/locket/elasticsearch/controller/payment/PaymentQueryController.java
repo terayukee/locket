@@ -17,9 +17,9 @@ public class PaymentQueryController {
 
     private final PaymentQueryService paymentQueryService;
 
-    @GetMapping("/history/{userId}")
+    @GetMapping("/history")
     public ResponseEntity<?> getMonthlyPaymentHistory(
-            @PathVariable int userId,
+            @RequestParam int userId,
             @RequestParam int year,
             @RequestParam int month
     ) {
