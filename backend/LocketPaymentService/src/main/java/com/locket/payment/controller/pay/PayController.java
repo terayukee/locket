@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.*;
 import com.locket.common.jwt.JwtUtil;
 
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -91,54 +93,88 @@ public class PayController {
 
 
     @GetMapping("/cards")
-    @Operation(summary = "내 카드 목록 조회", description = "JWT를 기반으로 현재 사용자 ID에 연결된 카드 목록을 조회합니다.")
-    public ResponseEntity<List<CardInfoDto>> getMyCards(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        long userId = 0;
-//        userId = jwtUtil.extractUserId(token);
-        return ResponseEntity.ok(payService.getCardsByUserId(userId));
+    @Operation(summary = "내 카드 목록 조회", description = "사용자 ID를 기반으로 등록된 카드 목록을 조회합니다.")
+    public ResponseEntity<?> getMyCards(
+            @RequestHeader("Authorization") String token,
+            @RequestParam long userId
+    ) {
+        try {
+            List<CardInfoDto> cards = payService.getCardsByUserId(userId);
+            return ResponseEntity.ok(cards);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "NOT_FOUND",
+                    "error", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "INTERNAL_ERROR",
+                    "error", e.getMessage()
+            ));
+        }
     }
 
     @GetMapping("/auth-info/fingerprint")
-    @Operation(summary = "지문 등록 여부 조회", description = "JWT 기반 사용자 ID로 Redis에서 지문 등록 여부를 조회합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "조회 성공"),
-            @ApiResponse(responseCode = "404", description = "데이터 없음")
-    })
-    public ResponseEntity<Boolean> checkFingerprintRegistered(HttpServletRequest request) {
-        String token = request.getHeader("Authorization");
-        long userId = jwtUtil.extractUserId(token);
-        boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
-        return ResponseEntity.ok(registered);
+    @Operation(summary = "지문 등록 여부 조회", description = "사용자 ID를 기반으로 Redis에서 지문 등록 여부를 조회합니다.")
+    public ResponseEntity<?> checkFingerprintRegistered(
+            @RequestHeader("Authorization") String token,
+            @RequestParam long userId
+    ) {
+        try {
+            boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
+            return ResponseEntity.ok(Map.of(
+                    "userId", userId,
+                    "fingerprintRegistered", registered
+            ));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "NOT_FOUND",
+                    "error", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "INTERNAL_ERROR",
+                    "error", e.getMessage()
+            ));
+        }
     }
 
     @PostMapping("/auth/verify-password")
-    @Operation(summary = "간편 비밀번호 검증", description = "클라이언트가 보낸 간편 비밀번호(int)가 Redis에 저장된 값과 일치하는지 확인합니다.")
-    @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "검증 결과 반환"),
-            @ApiResponse(responseCode = "400", description = "비밀번호 누락 또는 잘못된 형식")
-    })
-    public ResponseEntity<Boolean> verifyPaymentPassword(
-            HttpServletRequest request,
-            @RequestBody(
-                    description = "간편 비밀번호 검증 요청 (정수형)",
-                    required = true,
-                    content = @Content(
-                            mediaType = "application/json",
-                            examples = @ExampleObject(
-                                    name = "비밀번호 검증 요청 예시",
-                                    summary = "기본 요청",
-                                    value = "{ \"paymentPassword\": 123456 }"
-                            )
-                    )
-            )
-            @org.springframework.web.bind.annotation.RequestBody PaymentPasswordRequest passwordRequest
+    @Operation(summary = "간편 비밀번호 검증", description = "사용자 ID와 입력된 간편 비밀번호를 검증합니다.")
+    public ResponseEntity<?> verifyPaymentPassword(
+            @RequestHeader("Authorization") String token,
+            @RequestParam long userId,
+            @RequestBody PaymentPasswordRequest passwordRequest
     ) {
-        String token = request.getHeader("Authorization");
-        long userId = jwtUtil.extractUserId(token);
-
-        boolean isValid = payService.verifyPaymentPassword(userId, passwordRequest.getPaymentPassword());
-        return ResponseEntity.ok(isValid);
+        try {
+            boolean isValid = payService.verifyPaymentPassword(userId, passwordRequest.getPaymentPassword());
+            return ResponseEntity.ok(Map.of(
+                    "userId", userId,
+                    "valid", isValid
+            ));
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(404).body(Map.of(
+                    "status", 404,
+                    "message", "NOT_FOUND",
+                    "error", e.getMessage()
+            ));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(400).body(Map.of(
+                    "status", 400,
+                    "message", "BAD_REQUEST",
+                    "error", e.getMessage()
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "INTERNAL_ERROR",
+                    "error", e.getMessage()
+            ));
+        }
     }
 
 }

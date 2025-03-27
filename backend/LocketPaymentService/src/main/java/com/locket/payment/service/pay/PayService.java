@@ -253,6 +253,12 @@ public class PayService {
 
     public List<CardInfoDto> getCardsByUserId(long userId) {
         List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
+
+        // ✅ 카드가 하나도 없을 경우 예외를 던질 수도 있음
+        if (cards.isEmpty()) {
+            throw new NoSuchElementException("해당 사용자에게 등록된 카드가 없습니다.");
+        }
+
         return cards.stream()
                 .map(card -> CardInfoDto.builder()
                         .cardId(card.getCardId())
@@ -265,23 +271,38 @@ public class PayService {
 
     public boolean getFingerprintRegisteredFromRedis(long userId) {
         String key = "user:" + userId + ":auth";
-        String value = redisTemplate.opsForHash().get(key, "fingerprintRegistered").toString();
-        return Boolean.parseBoolean(value);
+
+        try {
+            Object rawValue = redisTemplate.opsForHash().get(key, "fingerprintRegistered");
+
+            if (rawValue == null) {
+                throw new NoSuchElementException("지문 등록 정보가 존재하지 않습니다.");
+            }
+
+            return Boolean.parseBoolean(rawValue.toString());
+        } catch (Exception e) {
+            // Redis 연결 문제 or 형식 오류 등
+            throw new IllegalStateException("지문 등록 여부 조회 중 오류가 발생했습니다: " + e.getMessage());
+        }
     }
 
     public boolean verifyPaymentPassword(long userId, int inputPassword) {
         String key = "user:" + userId + ":auth";
-        Object value = redisTemplate.opsForHash().get(key, "paymentPassword");
-
-        if (value == null) {
-            throw new IllegalArgumentException("등록된 간편 비밀번호가 없습니다.");
-        }
 
         try {
+            Object value = redisTemplate.opsForHash().get(key, "paymentPassword");
+
+            if (value == null) {
+                throw new NoSuchElementException("등록된 간편 비밀번호가 없습니다.");
+            }
+
             int storedPassword = Integer.parseInt(value.toString());
             return storedPassword == inputPassword;
+
         } catch (NumberFormatException e) {
             throw new IllegalStateException("Redis에 저장된 비밀번호 형식이 올바르지 않습니다.");
+        } catch (Exception e) {
+            throw new IllegalStateException("비밀번호 검증 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }
