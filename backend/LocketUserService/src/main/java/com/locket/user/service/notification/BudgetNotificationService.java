@@ -31,8 +31,8 @@ public class BudgetNotificationService {
 
     public void handleBudgetNotification(PaymentSuccessEvent event) {
         Long userId = (long) event.getBuyerId();
-        int year = event.getCreatedAt().getYear();
-        int month = event.getCreatedAt().getMonthValue();
+        int year = event.getYear();
+        int month = event.getMonth();
 
         Goal goal = goalRepository.findByUserIdAndGoalYearAndGoalMonth(userId, year, month)
                 .orElse(null);
@@ -111,25 +111,35 @@ public class BudgetNotificationService {
     }
 
     public NotificationResult testHandleBudgetNotification(PaymentSuccessEvent event) {
-        Long userId = (long) event.getBuyerId();
-        int year = event.getCreatedAt().getYear();
-        int month = event.getCreatedAt().getMonthValue();
+        Long userId = event.getBuyerId();
+        int year = event.getYear();
+        int month = event.getMonth();
 
         Goal goal = goalRepository.findByUserIdAndGoalYearAndGoalMonth(userId, year, month)
                 .orElse(null);
 
         if (goal == null) {
+            log.warn("❗ 예산 목표가 존재하지 않음: userId={}, year={}, month={}", userId, year, month);
             return new NotificationResult("NO_GOAL", "❌ 예산 목표가 존재하지 않습니다.");
         }
 
         List<PaymentHistoryDto> histories = paymentHistoryFeignClient.getPaymentHistories(userId, year, month);
         BigDecimal totalUsed = histories.stream()
                 .map(PaymentHistoryDto::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .add(event.getTotalAmount()); // ✅ 이번 결제도 포함
 
         int goalAmount = goal.getGoalAmount();
         double usageRatio = totalUsed.doubleValue() / goalAmount;
+        long usagePercent = Math.round(usageRatio * 100);
 
+        // ✅ 너무 초과한 경우 처리
+        if (usageRatio >= 1.0) {
+            return new NotificationResult("EXCEEDED",
+                    "⛔ 이미 예산을 초과했습니다! (사용률 " + usagePercent + "%)");
+        }
+
+        // ✅ 70~90%, 90~100% 구간만 알림
         boolean shouldNotify = (
                 (usageRatio >= 0.9 && usageRatio < 1.0) ||
                         (usageRatio >= 0.7 && usageRatio < 0.9)

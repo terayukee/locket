@@ -1,6 +1,7 @@
 package com.locket.user.controller.notification;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
+import com.locket.user.domain.notification.dto.BudgetTestRequest;
 import com.locket.user.service.notification.BudgetNotificationService;
 import com.locket.user.service.notification.BudgetNotificationService.NotificationResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +16,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +26,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/notification/test")
@@ -67,10 +70,11 @@ public class BudgetNotificationTestController {
                     ))
             }
     )
-    public ResponseEntity<Map<String, String>> testBudgetAlert(@RequestBody BudgetTestRequest request) {
+    public ResponseEntity<Map<String, String>> testBudgetAlert(@org.springframework.web.bind.annotation.RequestBody BudgetTestRequest request) {
+        log.info("🔍 요청 값: userId={}, amount={}", request.getUserId(), request.getAmount());
 
         PaymentSuccessEvent event = PaymentSuccessEvent.builder()
-                .buyerId((int) request.getUserId())
+                .buyerId(request.getUserId())
                 .sellerId(999)
                 .userJob("직장인")
                 .birthDate("1990")
@@ -84,6 +88,9 @@ public class BudgetNotificationTestController {
                 .receiptUploaded(false)
                 .paymentStatus("SUCCESS")
                 .createdAt(OffsetDateTime.now())
+                .year(OffsetDateTime.now().getYear())
+                .month(OffsetDateTime.now().getMonthValue())
+                .day(OffsetDateTime.now().getDayOfMonth())
                 .orders(Collections.emptyList())
                 .transactionId("TEST-" + System.currentTimeMillis())
                 .build();
@@ -95,28 +102,5 @@ public class BudgetNotificationTestController {
         response.put("message", result.getMessage());
 
         return ResponseEntity.ok(response);
-    }
-
-    @Schema(description = "예산 초과 테스트 요청 바디")
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Builder
-    public static class BudgetTestRequest {
-
-        @Schema(description = "사용자 ID", example = "1")
-        private long userId;
-
-        @Schema(description = "결제 금액", example = "100000")
-        private int amount;
-
-        @Schema(description = "결제 카테고리", example = "식비")
-        private String category;
-
-        @Schema(description = "결제 상품명 또는 가맹점", example = "김밥천국")
-        private String merchant;
-
-        @Schema(description = "결제가 발생한 매장 이름", example = "강남본점")
-        private String store;
     }
 }
