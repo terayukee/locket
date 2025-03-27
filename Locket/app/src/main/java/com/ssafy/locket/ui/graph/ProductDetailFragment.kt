@@ -4,7 +4,11 @@ import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.locket.CommonUtils
 import com.github.mikephil.charting.charts.LineChart
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
@@ -14,11 +18,13 @@ import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.ssafy.locket.ui.graph.viewmodel.EditPriceViewModel
 
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     FragmentProductDetailBinding::bind,
     R.layout.fragment_product_detail
 ) {
+    private val viewModel: EditPriceViewModel by activityViewModels()
     val bottomSheet = EditPriceBottomSheetFragment.newInstance()
     //차트
     private lateinit var lineChart: LineChart
@@ -28,8 +34,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
-        lineChart = binding.chartPriceGraph
-        setupLineChart()
+        initViewModel()
+        initChart()
     }
 
     fun initEvent(){
@@ -49,6 +55,24 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)  // 빈 하트
             }
         }
+    }
+
+    fun initViewModel(){
+        lifecycleScope.launchWhenStarted {
+            viewModel.editprice.collect { editprice ->
+                if(editprice==""){
+                    binding.tvSetting.text = "설정 안됨"
+                }
+                else{
+                    binding.tvSetting.text = CommonUtils.formatNumber(editprice)+"원"
+                }
+            }
+        }
+    }
+
+    fun initChart(){
+        lineChart = binding.chartPriceGraph
+        setupLineChart()
     }
 
     private fun setupLineChart() {
