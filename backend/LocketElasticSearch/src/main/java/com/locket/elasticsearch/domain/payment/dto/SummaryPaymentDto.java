@@ -12,6 +12,8 @@ import java.math.BigDecimal;
 public class SummaryPaymentDto {
     private String paymentCategory;
     private String paymentMerchant;
+    private Integer cardId;
+    private String cardName;
     private String storeName;
     private BigDecimal totalAmount;
 }

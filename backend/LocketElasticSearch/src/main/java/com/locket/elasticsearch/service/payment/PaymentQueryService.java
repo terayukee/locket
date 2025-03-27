@@ -68,9 +68,12 @@ public class PaymentQueryService {
                 .map(p -> SummaryPaymentDto.builder()
                         .paymentCategory(p.getPaymentCategory())
                         .paymentMerchant(p.getPaymentMerchant())
+                        .cardId(p.getCardId())
+                        .cardName(p.getCardName())
                         .storeName(p.getStoreName())
                         .totalAmount(p.getTotalAmount())
                         .build())
                 .collect(Collectors.toList());
     }
+
 }
