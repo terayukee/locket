@@ -12,5 +12,5 @@ public interface CardInfoRepository extends JpaRepository<CardInfo, Integer> {
 
     Optional<CardInfo> findByCardId(Integer cardId);
 
-    List<CardInfo> findByUserId(Integer userId);
+    List<CardInfo> findByUserId(Long userId);
 }

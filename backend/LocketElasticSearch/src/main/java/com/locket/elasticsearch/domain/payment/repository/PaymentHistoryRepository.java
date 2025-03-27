@@ -11,5 +11,5 @@ import java.util.List;
 public interface PaymentHistoryRepository extends ElasticsearchRepository<PaymentHistory, String> {
 
     // 기본적으로 자동으로 파싱해서 날짜 range 쿼리 수행해줌
-    List<PaymentHistory> findByBuyerIdAndCreatedAtBetween(int buyerId, Instant from, Instant to);
+    List<PaymentHistory> findByBuyerIdAndCreatedAtBetween(long buyerId, Instant from, Instant to);
 }

@@ -40,7 +40,7 @@ public class BudgetController {
     })
     @GetMapping("/status/{userId}")
     public BudgetStatusResponseDto getBudgetMonthlyStatus(
-            @PathVariable("userId") int userId,
+            @PathVariable("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     ) {

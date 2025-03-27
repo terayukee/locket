@@ -22,11 +22,11 @@ public class PaymentHistory {
     @Id
     private String transactionId;
 
-    @Field(type = FieldType.Integer)
-    private int buyerId;
+    @Field(type = FieldType.Long)
+    private long buyerId;
 
-    @Field(type = FieldType.Integer)
-    private int sellerId;
+    @Field(type = FieldType.Long)
+    private long sellerId;
 
     @Field(type = FieldType.Keyword)
     private String userJob;

@@ -94,7 +94,7 @@ public class PayController {
     @Operation(summary = "내 카드 목록 조회", description = "JWT를 기반으로 현재 사용자 ID에 연결된 카드 목록을 조회합니다.")
     public ResponseEntity<List<CardInfoDto>> getMyCards(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        int userId = 0;
+        long userId = 0;
 //        userId = jwtUtil.extractUserId(token);
         return ResponseEntity.ok(payService.getCardsByUserId(userId));
     }
@@ -107,7 +107,7 @@ public class PayController {
     })
     public ResponseEntity<Boolean> checkFingerprintRegistered(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
-        int userId = jwtUtil.extractUserId(token);
+        long userId = jwtUtil.extractUserId(token);
         boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
         return ResponseEntity.ok(registered);
     }
@@ -135,7 +135,7 @@ public class PayController {
             @org.springframework.web.bind.annotation.RequestBody PaymentPasswordRequest passwordRequest
     ) {
         String token = request.getHeader("Authorization");
-        int userId = jwtUtil.extractUserId(token);
+        long userId = jwtUtil.extractUserId(token);
 
         boolean isValid = payService.verifyPaymentPassword(userId, passwordRequest.getPaymentPassword());
         return ResponseEntity.ok(isValid);

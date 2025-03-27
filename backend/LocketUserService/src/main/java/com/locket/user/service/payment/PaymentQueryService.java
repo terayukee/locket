@@ -13,7 +13,7 @@ public class PaymentQueryService {
 
     private final PaymentHistoryFeignClient paymentHistoryFeignClient;
 
-    public List<PaymentHistoryDto> getUserPaymentHistory(int userId, int year, int month) {
+    public List<PaymentHistoryDto> getUserPaymentHistory(long userId, int year, int month) {
         return paymentHistoryFeignClient.getPaymentHistories(userId, year, month);
     }
 }

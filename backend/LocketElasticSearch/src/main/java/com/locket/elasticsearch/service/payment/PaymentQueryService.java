@@ -19,14 +19,14 @@ public class PaymentQueryService {
 
     private final PaymentHistoryRepository paymentHistoryRepository;
 
-    public List<PaymentHistory> findByUserAndMonth(int userId, int year, int month) {
+    public List<PaymentHistory> findByUserAndMonth(long userId, int year, int month) {
         DateRange range = DateTimeUtil.getMonthRangeUtc(year, month);
         return paymentHistoryRepository.findByBuyerIdAndCreatedAtBetween(
                 userId, range.getStart(), range.getEnd()
         );
     }
 
-    public CalendarPaymentDto getCalendarPaymentData(int userId, int year, int month) {
+    public CalendarPaymentDto getCalendarPaymentData(long userId, int year, int month) {
         DateRange range = DateTimeUtil.getMonthRangeUtc(year, month);
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndCreatedAtBetween(
                 userId, range.getStart(), range.getEnd()
@@ -57,7 +57,7 @@ public class PaymentQueryService {
                 .build();
     }
 
-    public List<SummaryPaymentDto> getSummaryPaymentData(int userId, int year, int month) {
+    public List<SummaryPaymentDto> getSummaryPaymentData(long userId, int year, int month) {
         DateRange range = DateTimeUtil.getMonthRangeUtc(year, month);
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndCreatedAtBetween(
                 userId, range.getStart(), range.getEnd()

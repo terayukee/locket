@@ -16,8 +16,8 @@ import java.util.List;
 @Builder
 public class PaymentSuccessEvent {
     private String transactionId;
-    private int buyerId;
-    private int sellerId;
+    private long buyerId;
+    private long sellerId;
     private String userJob;
     private String birthDate;
     private BigDecimal totalAmount;

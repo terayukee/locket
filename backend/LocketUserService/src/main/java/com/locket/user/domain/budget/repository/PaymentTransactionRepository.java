@@ -13,7 +13,7 @@ public interface PaymentTransactionRepository extends JpaRepository<PaymentTrans
             "AND pt.payment_transaction_status = 'SUCCESS' " +
             "AND DATE_PART('year', pt.payment_timestamp) = :year " +
             "AND DATE_PART('month', pt.payment_timestamp) = :month", nativeQuery = true)
-    BigDecimal sumSuccessAmountByUserAndYearMonth(@Param("buyerId") int buyerId,
+    BigDecimal sumSuccessAmountByUserAndYearMonth(@Param("buyerId") long buyerId,
                                                   @Param("year") int year,
                                                   @Param("month") int month);
 }

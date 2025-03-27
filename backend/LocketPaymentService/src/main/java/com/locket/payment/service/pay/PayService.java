@@ -208,7 +208,7 @@ public class PayService {
         return true; // 현재는 무조건 성공 처리
     }
 
-    public List<CardInfoDto> getCardsByUserId(int userId) {
+    public List<CardInfoDto> getCardsByUserId(long userId) {
         List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
         return cards.stream()
                 .map(card -> CardInfoDto.builder()
@@ -220,13 +220,13 @@ public class PayService {
                 .collect(Collectors.toList());
     }
 
-    public boolean getFingerprintRegisteredFromRedis(int userId) {
+    public boolean getFingerprintRegisteredFromRedis(long userId) {
         String key = "user:" + userId + ":auth";
         String value = redisTemplate.opsForHash().get(key, "fingerprintRegistered").toString();
         return Boolean.parseBoolean(value);
     }
 
-    public boolean verifyPaymentPassword(int userId, int inputPassword) {
+    public boolean verifyPaymentPassword(long userId, int inputPassword) {
         String key = "user:" + userId + ":auth";
         Object value = redisTemplate.opsForHash().get(key, "paymentPassword");
 

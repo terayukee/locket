@@ -13,7 +13,7 @@ public interface PaymentHistoryFeignClient {
 
     @GetMapping("/api/elasticsearch/payment/history")
     List<PaymentHistoryDto> getPaymentHistories(
-            @RequestParam("userId") int userId,
+            @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );

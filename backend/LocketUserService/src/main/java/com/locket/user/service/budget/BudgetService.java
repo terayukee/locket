@@ -66,7 +66,7 @@ public class BudgetService {
 
 
     @Transactional(readOnly = true)
-    public BudgetStatusResponseDto getBudgetMonthlyStatus(int userId, int year, int month) {
+    public BudgetStatusResponseDto getBudgetMonthlyStatus(long userId, int year, int month) {
 
         // goals 테이블에서 목표 조회
         Optional<Goals> goalOpt = goalsRepository.findTopByUserIdAndYearMonth(userId, year, month);

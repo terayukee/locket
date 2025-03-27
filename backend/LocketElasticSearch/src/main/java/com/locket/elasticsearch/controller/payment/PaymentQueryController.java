@@ -33,7 +33,7 @@ public class PaymentQueryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     public ResponseEntity<?> getMonthlyPaymentHistory(
-            @RequestParam int userId,
+            @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month
     ) {
@@ -49,7 +49,7 @@ public class PaymentQueryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     public ResponseEntity<CalendarPaymentDto> getCalendarPayments(
-            @RequestParam int userId,
+            @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month
     ) {
@@ -65,7 +65,7 @@ public class PaymentQueryController {
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
     public ResponseEntity<List<SummaryPaymentDto>> getSummaryPayments(
-            @RequestParam int userId,
+            @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month
     ) {

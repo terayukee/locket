@@ -14,7 +14,7 @@ public interface GoalsRepository extends JpaRepository<Goals, Integer> {
             "AND DATE_PART('year', g.created_at) = :year " +
             "AND DATE_PART('month', g.created_at) = :month " +
             "ORDER BY g.created_at DESC LIMIT 1", nativeQuery = true)
-    Optional<Goals> findTopByUserIdAndYearMonth(@Param("userId") int userId,
+    Optional<Goals> findTopByUserIdAndYearMonth(@Param("userId") long userId,
                                                 @Param("year") int year,
                                                 @Param("month") int month);
 }

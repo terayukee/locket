@@ -11,8 +11,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PaymentRequest {
     private int cardId;
-    private int buyerId;
-    private int sellerId;
+    private long buyerId;
+    private long sellerId;
     private String paymentCategory;
     private String paymentMerchant;
     private BigDecimal amount;

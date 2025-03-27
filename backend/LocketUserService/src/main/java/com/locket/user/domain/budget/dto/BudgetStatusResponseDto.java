@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class BudgetStatusResponseDto {
-    private int userId;
+    private long userId;
     private BudgetData budget;
 
     @Getter
