@@ -226,10 +226,19 @@ public class PayService {
         return Boolean.parseBoolean(value);
     }
 
-    public String getPaymentPasswordFromRedis(int userId) {
+    public boolean verifyPaymentPassword(int userId, int inputPassword) {
         String key = "user:" + userId + ":auth";
         Object value = redisTemplate.opsForHash().get(key, "paymentPassword");
-        if (value == null) throw new RuntimeException("간편 비밀번호가 없습니다.");
-        return value.toString();
+
+        if (value == null) {
+            throw new IllegalArgumentException("등록된 간편 비밀번호가 없습니다.");
+        }
+
+        try {
+            int storedPassword = Integer.parseInt(value.toString());
+            return storedPassword == inputPassword;
+        } catch (NumberFormatException e) {
+            throw new IllegalStateException("Redis에 저장된 비밀번호 형식이 올바르지 않습니다.");
+        }
     }
 }
