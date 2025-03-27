@@ -63,8 +63,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    override fun onStop() {
-        super.onStop()
+    override fun onDestroyView() {
+        super.onDestroyView()
         (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
     }
 }

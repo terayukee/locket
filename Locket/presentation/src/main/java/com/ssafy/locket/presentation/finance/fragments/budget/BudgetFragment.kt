@@ -7,6 +7,8 @@ import androidx.navigation.fragment.findNavController
 import com.example.locket.CommonUtils
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
+import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
+import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentBudgetBinding
 import java.time.LocalDate
 import java.time.YearMonth
@@ -15,7 +17,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     FragmentBudgetBinding::bind,
     R.layout.fragment_budget
 ) {
-//    private val mainViewModel : MainViewModel by activityViewModels()
+    private val mainViewModel : MainViewModel by activityViewModels()
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -50,8 +52,8 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
         return YearMonth.of(currentDate.year, currentDate.month).lengthOfMonth()
     }
 
-    override fun onStop() {
-        super.onStop()
-//        mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
     }
 }

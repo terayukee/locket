@@ -2,6 +2,7 @@ package com.ssafy.locket.presentation.finance.fragments
 
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -11,8 +12,11 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
+import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
+import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentFinanceBinding
 import com.ssafy.locket.presentation.finance.adapter.FinanceVPAdapter
+import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 
@@ -21,20 +25,41 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
     FragmentFinanceBinding::bind,
     R.layout.fragment_finance
 ) {
-//    private val mainViewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
+    private val financeSharedViewModel : FinanceSharedViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         initTabLayout()
 
-        var currentMonth = YearMonth.now()
-
-        binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, currentMonth.year, currentMonth.monthValue)
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                financeSharedViewModel.selectedYearMonth.collect {
+                    if(it > YearMonth.of(2029,12)) {
+                        binding.btnNextMonthIcon.isEnabled = false
+                    } else if (it < YearMonth.of(2020,2)) {
+                        binding.btnPrevMonthIcon.isEnabled = false
+                    } else {
+                        binding.btnPrevMonthIcon.isEnabled = true
+                        binding.btnNextMonthIcon.isEnabled = true
+                    }
+                    binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, it.year, it.monthValue)
+                }
+            }
+        }
 
         binding.tvPaymentData.text = resources.getString(R.string.finance_won, CommonUtils.makeComma(100000))
         binding.btnAnalysis.setOnClickListener {
             findNavController().navigate(R.id.action_financeFragment_to_expenseAnalysisFragment)
+        }
+
+        binding.btnPrevMonthIcon.setOnClickListener {
+            financeSharedViewModel.setYearMonth(financeSharedViewModel.selectedYearMonth.value.minusMonths(1))
+        }
+
+        binding.btnNextMonthIcon.setOnClickListener {
+            financeSharedViewModel.setYearMonth(financeSharedViewModel.selectedYearMonth.value.plusMonths(1))
         }
     }
 
@@ -56,19 +81,18 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                mainViewModel.selectedFinanceTab.collect { state ->
-//                    Log.d(TAG, "initTabLayout: $state")
-//                    if(state is FinanceNavigationState.Budget){
-//                        binding.tabVp.setCurrentItem(2, false)
-//                        binding.tabLayout.getTabAt(2)?.select()
-//                    }
-//                }
+                mainViewModel.selectedFinanceTab.collect { state ->
+                    if(state is FinanceNavigationState.Budget){
+                        binding.tabVp.setCurrentItem(2, false)
+                        binding.tabLayout.getTabAt(2)?.select()
+                    }
+                }
             }
         }
+    }
 
-//        arguments?.getInt("SELECTED_TAB")?.let { tabIndex ->
-//            binding.tabVp.setCurrentItem(tabIndex, false)
-//            binding.tabLayout.getTabAt(tabIndex)?.select()
-//        }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        financeSharedViewModel.initYearMonth()
     }
 }
