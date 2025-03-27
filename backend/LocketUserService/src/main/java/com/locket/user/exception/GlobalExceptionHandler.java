@@ -16,7 +16,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleNotFound(ResourceNotFoundException ex) {
         ErrorResponse errorResponse = ErrorResponse.builder()
                 .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
+                .error("ACCESS_DENIED")
                 .message(ex.getMessage())
                 .timestamp(LocalDateTime.now())
                 .build();

@@ -7,6 +7,7 @@ import lombok.Getter;
 @Builder
 public class BudgetStatusResponseDto {
     private int userId;
+    private boolean hasBudget; // 예산 설정 여부
     private BudgetData budget;
 
     @Getter

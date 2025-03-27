@@ -64,49 +64,68 @@ public class BudgetService {
                 .build();
     }
 
-
     @Transactional(readOnly = true)
     public BudgetStatusResponseDto getBudgetMonthlyStatus(int userId, int year, int month) {
 
         // goals 테이블에서 목표 조회
         Optional<Goals> goalOpt = goalsRepository.findTopByUserIdAndYearMonth(userId, year, month);
-        int target = goalOpt.map(Goals::getGoalAmount).orElse(0);
 
-        // 결제 거래 내역에서 사용 금액 합산
-        BigDecimal spent = paymentTransactionRepository.sumSuccessAmountByUserAndYearMonth(userId, year, month);
+        // 예산 설정 여부 확인
+        boolean hasBudget = goalOpt.isPresent();
 
-        // 남은 예산 계산
-        BigDecimal remaining = BigDecimal.valueOf(target).subtract(spent);
-        if (remaining.compareTo(BigDecimal.ZERO) < 0) {
-            remaining = BigDecimal.ZERO;
-        }
+        if (hasBudget) {
+            int target = goalOpt.get().getGoalAmount();
 
-        // 진행률 계산 (target이 0이면 0)
-        BigDecimal progress = BigDecimal.ZERO;
-        if (target > 0) {
-            progress = spent.multiply(BigDecimal.valueOf(100))
+            // 결제 거래 내역에서 사용 금액 합산
+            BigDecimal spent = paymentTransactionRepository.sumSuccessAmountByUserAndYearMonth(userId, year, month);
+
+            // 남은 예산 계산
+            BigDecimal remaining = BigDecimal.valueOf(target).subtract(spent);
+            if (remaining.compareTo(BigDecimal.ZERO) < 0) {
+                remaining = BigDecimal.ZERO;
+            }
+
+            // 진행률 계산
+            BigDecimal progress = spent.multiply(BigDecimal.valueOf(100))
                     .divide(BigDecimal.valueOf(target), 2, RoundingMode.HALF_UP);
+
+            BudgetMonthlyStatusDto monthlyDto = BudgetMonthlyStatusDto.builder()
+                    .year(year)
+                    .month(month)
+                    .target(target)
+                    .spent(spent)
+                    .remaining(remaining)
+                    .progress(progress)
+                    .build();
+
+            // 예산 정보가 있는 응답
+            return BudgetStatusResponseDto.builder()
+                    .userId(userId)
+                    .hasBudget(true) // 예산이 설정되어 있음을 표시
+                    .budget(BudgetStatusResponseDto.BudgetData.builder()
+                            .monthly(monthlyDto)
+                            .build())
+                    .build();
+        } else {
+            // 예산이 없는 경우 빈 객체
+            BudgetMonthlyStatusDto emptyMonthlyDto = BudgetMonthlyStatusDto.builder()
+                    .year(year)
+                    .month(month)
+                    .target(0)
+                    .spent(BigDecimal.ZERO)
+                    .remaining(BigDecimal.ZERO)
+                    .progress(BigDecimal.ZERO)
+                    .build();
+
+            // hasBudget 필드를 false로 설정하여 응답
+            return BudgetStatusResponseDto.builder()
+                    .userId(userId)
+                    .hasBudget(false)
+                    .budget(BudgetStatusResponseDto.BudgetData.builder()
+                            .monthly(emptyMonthlyDto)
+                            .build())
+                    .build();
         }
-
-        // BudgetMonthlyStatusDto
-        BudgetMonthlyStatusDto monthlyDto = BudgetMonthlyStatusDto.builder()
-                .year(year)
-                .month(month)
-                .target(target)
-                .spent(spent)
-                .remaining(remaining)
-                .progress(progress)
-                .build();
-
-        // 최종 응답 DTO
-        return BudgetStatusResponseDto.builder()
-                .userId(userId)
-                .budget(BudgetStatusResponseDto.BudgetData.builder()
-                        .monthly(monthlyDto)
-                        .build())
-                .build();
-
     }
-
 
 }
