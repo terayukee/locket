@@ -46,7 +46,8 @@ public class BudgetNotificationService {
         List<PaymentHistoryDto> histories = paymentHistoryFeignClient.getPaymentHistories(userId, year, month);
         BigDecimal totalUsed = histories.stream()
                 .map(PaymentHistoryDto::getTotalAmount)
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
+                .reduce(BigDecimal.ZERO, BigDecimal::add)
+                .add(event.getTotalAmount()); // ✅ 이번 결제도 포함
 
         int goalAmount = goal.getGoalAmount();
         double usageRatio = totalUsed.doubleValue() / goalAmount;
