@@ -1,7 +1,12 @@
 package com.locket.elasticsearch.controller.payment;
 
+import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.SummaryPaymentDto;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.service.payment.PaymentQueryService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +23,15 @@ public class PaymentQueryController {
     private final PaymentQueryService paymentQueryService;
 
     @GetMapping("/history")
+    @Operation(
+            summary = "월 단위 결제 내역 전체 조회",
+            description = "지정된 연/월에 대한 결제 내역 전체(PaymentHistory)를 반환합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
     public ResponseEntity<?> getMonthlyPaymentHistory(
             @RequestParam int userId,
             @RequestParam int year,
@@ -27,5 +41,35 @@ public class PaymentQueryController {
         return ResponseEntity.ok(historyList);
     }
 
+    @GetMapping("/calendar")
+    @Operation(summary = "월 단위 결제 내역 리스트 조회 (캘린더용)", description = "지정된 연/월에 대한 전체 지출 합계 및 일자별 지출 금액 리스트를 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<CalendarPaymentDto> getCalendarPayments(
+            @RequestParam int userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        CalendarPaymentDto result = paymentQueryService.getCalendarPaymentData(userId, year, month);
+        return ResponseEntity.ok(result);
+    }
 
+    @GetMapping("/list")
+    @Operation(summary = "월 단위 결제 내역 리스트 조회 (내역용)", description = "지정된 연/월의 결제 내역에서 paymentCategory, paymentMerchant, storeName, totalAmount 필드를 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<List<SummaryPaymentDto>> getSummaryPayments(
+            @RequestParam int userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        List<SummaryPaymentDto> result = paymentQueryService.getSummaryPaymentData(userId, year, month);
+        return ResponseEntity.ok(result);
+    }
 }
