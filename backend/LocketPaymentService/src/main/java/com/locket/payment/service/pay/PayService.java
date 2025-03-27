@@ -47,7 +47,9 @@ public class PayService {
             // 1️⃣ 카드 정보 조회
             CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
                     .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
+
             BankAccount bankAccount = cardInfo.getBankAccount();
+
 
             // 2️⃣ 잔액 확인
             if (bankAccount.getBalance().compareTo(amount) < 0) {
@@ -68,14 +70,36 @@ public class PayService {
 
     @Transactional
     public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
+        try {
         // 카드 정보
         int cardId = request.getCardId();
         CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드입니다."));
+
         BankAccount bankAccount = cardInfo.getBankAccount();
+
+        if (bankAccount == null) {
+            return ResponseEntity.badRequest().body(
+                    PaymentResponse.builder()
+                            .transactionId(null)
+                            .status("BAD_REQUEST")
+                            .message("카드에 연결된 계좌 정보가 없습니다.")
+                            .build()
+            );
+        }
 
         // 결제 금액
         BigDecimal paymentAmount = request.getAmount();
+
+        if (bankAccount.getBalance().compareTo(paymentAmount) < 0) {
+            return ResponseEntity.status(402).body(
+                    PaymentResponse.builder()
+                            .transactionId(null)
+                            .status("PAYMENT_REQUIRED")
+                            .message("잔액 부족")
+                            .build()
+            );
+        }
 
         // 1️⃣Redis에서 사용자 정보 가져오기
         String birthDate = "1998";
@@ -201,6 +225,25 @@ public class PayService {
                 .status("SUCCESS")
                 .message("결제 성공 및 Kafka 메시지 전송 완료")
                 .build());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(
+                    PaymentResponse.builder()
+                            .transactionId(null)
+                            .status("BAD_REQUEST")
+                            .message(e.getMessage())
+                            .build()
+            );
+        } catch (Exception e) {
+            log.error("[결제 실패 - 시스템 오류]", e);
+            return ResponseEntity.status(500).body(
+                    PaymentResponse.builder()
+                            .transactionId(null)
+                            .status("INTERNAL_ERROR")
+                            .message("서버 내부 오류")
+                            .build()
+            );
+        }
     }
 
     private boolean callBootpayAPI(PaymentRequest request) {

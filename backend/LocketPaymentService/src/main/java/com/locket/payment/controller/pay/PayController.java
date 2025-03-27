@@ -46,7 +46,7 @@ public class PayController {
                                     name = "결제 예시",
                                     summary = "기본 결제 요청 예시",
                                     value = "{\n" +
-                                            "  \"cardId\": \"1\",\n" +
+                                            "  \"cardId\": 1,\n" +
                                             "  \"buyerId\": 1,\n" +
                                             "  \"sellerId\": 2,\n" +
                                             "  \"paymentCategory\": \"카페\",\n" +
@@ -78,7 +78,7 @@ public class PayController {
                                     name = "카드 검증 예시",
                                     summary = "기본 카드 검증 요청 예시",
                                     value = "{\n" +
-                                            "  \"cardId\": \"1\",\n" +
+                                            "  \"cardId\": 1,\n" +
                                             "  \"amount\": 2000\n" +
                                             "}"
                             )
@@ -128,7 +128,7 @@ public class PayController {
                             examples = @ExampleObject(
                                     name = "비밀번호 검증 요청 예시",
                                     summary = "기본 요청",
-                                    value = "{ \"paymentPassword\": 1234 }"
+                                    value = "{ \"paymentPassword\": 123456 }"
                             )
                     )
             )
