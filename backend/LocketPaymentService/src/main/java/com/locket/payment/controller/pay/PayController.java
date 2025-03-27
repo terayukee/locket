@@ -94,7 +94,7 @@ public class PayController {
     public ResponseEntity<List<CardInfoDto>> getMyCards(HttpServletRequest request) {
         String token = request.getHeader("Authorization");
         int userId = 0;
-        userId = jwtUtil.extractUserId(token);
+//        userId = jwtUtil.extractUserId(token);
         return ResponseEntity.ok(payService.getCardsByUserId(userId));
     }
 
