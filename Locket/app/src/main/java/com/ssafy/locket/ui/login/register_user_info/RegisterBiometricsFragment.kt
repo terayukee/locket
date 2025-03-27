@@ -9,9 +9,11 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
-import android.provider.Settings
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
 import com.ssafy.locket.databinding.FragmentRegisterBiometricsBinding
 import com.ssafy.locket.ui.MainActivity
+import javax.crypto.KeyGenerator
 
 class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBinding>(
     FragmentRegisterBiometricsBinding::bind,
@@ -35,13 +37,11 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
     }
 
     private fun initBiometrics() {
-        // BiometricManager로 생체 인증 가능 여부 체크
         val biometricManager = BiometricManager.from(requireContext())
-
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                showToast("이 장치의 지문을 등록하였습니다")
-
+                generateSecretKey() // 새 키 생성
+                showToast("지문이 등록되었습니다.")
                 moveToMainActivity()
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
@@ -52,7 +52,6 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
             }
             BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
                 showToast("생체 인식 정보가 등록되지 않았습니다.")
-                redirectToBiometricSettings()
             }
             else -> {
                 showToast("생체 인식 인증 실패")
@@ -65,12 +64,26 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-        requireActivity().finishAffinity() // 기존 스택 완전히 제거
+        requireActivity().finishAffinity()
     }
 
+    // 📌 1. Keystore에서 SecretKey 생성 (최초 실행 시)
+    private fun generateSecretKey() {
+        val keyGenerator = KeyGenerator.getInstance(
+            KeyProperties.KEY_ALGORITHM_AES, "AndroidKeyStore"
+        )
 
-    private fun redirectToBiometricSettings() {
-        val intent = Intent(Settings.ACTION_BIOMETRIC_ENROLL)
-        startActivity(intent)
+        val keyGenParameterSpec = KeyGenParameterSpec.Builder(
+            "biometric_key",
+            KeyProperties.PURPOSE_ENCRYPT or KeyProperties.PURPOSE_DECRYPT
+        )
+            .setBlockModes(KeyProperties.BLOCK_MODE_CBC)
+            .setEncryptionPaddings(KeyProperties.ENCRYPTION_PADDING_PKCS7)
+            .setUserAuthenticationRequired(true) // 지문 인증 필수
+            .build()
+
+        keyGenerator.init(keyGenParameterSpec)
+        keyGenerator.generateKey()
     }
+
 }

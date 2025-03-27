@@ -43,6 +43,9 @@
         <action
             android:id="@+id/action_cardPaymentFragment_to_paymentPasswordFragment"
             app:destination="@id/paymentPasswordFragment" />
+        <action
+            android:id="@+id/action_cardPaymentFragment_to_nfcPaymentFragment"
+            app:destination="@id/nfcPaymentFragment" />
     </fragment>
     <fragment
         android:id="@+id/productListFragment"

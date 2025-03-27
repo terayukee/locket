@@ -1,12 +1,17 @@
 package com.ssafy.locket.ui.payment
 
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
 import android.os.Bundle
+import android.security.keystore.KeyGenParameterSpec
+import android.security.keystore.KeyProperties
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.HorizontalScrollView
 import android.widget.LinearLayout
+import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
@@ -15,7 +20,13 @@ import com.ssafy.locket.BaseFragment
 import com.ssafy.locket.R
 import com.ssafy.locket.data.remote.dto.Card
 import com.ssafy.locket.databinding.FragmentCardPaymentBinding
+import com.ssafy.locket.ui.MainActivity
+import com.ssafy.locket.ui.mypage.LogoutDialogFragment
 import com.ssafy.locket.ui.payment.Adapter.CardAdapter
+import java.security.KeyStore
+import javax.crypto.Cipher
+import javax.crypto.KeyGenerator
+import javax.crypto.SecretKey
 
 class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     FragmentCardPaymentBinding::bind,
@@ -26,8 +37,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
     //지문 관련
-    private var biometricPrompt: BiometricPrompt? = null
-    private var promptInfo: BiometricPrompt.PromptInfo? = null
+
     //스크롤 가능
     private var selectedPosition = 0
     private var lastScrollX = 0
@@ -60,7 +70,6 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-
         // 현재 선택된 페이지 저장
         outState.putInt("selectedPosition", selectedPosition)
         // ScrollView의 스크롤 위치 저장
@@ -85,12 +94,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             }
         })
         binding.ivFingerprint.setOnClickListener {
-            setupBiometricPrompt()
-            if (biometricPrompt != null && promptInfo != null) {
-                biometricPrompt?.authenticate(promptInfo!!)
-            } else {
-                showToast("지문 인증이 준비되지 않았습니다.")
-            }
+            initBiometrics()
         }
         binding.btnPassword.setOnClickListener {
             requireActivity().window.decorView.setBackgroundColor(Color.BLACK)
@@ -160,35 +164,91 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         }
     }
 
-    private fun setupBiometricPrompt() {
-        biometricPrompt = BiometricPrompt(
-            requireActivity(), // requireActivity()를 사용하여 Activity context를 전달
-            ContextCompat.getMainExecutor(requireContext()), // MainExecutor 사용
+    private fun initBiometrics() {
+        val biometricManager = BiometricManager.from(requireContext())
+
+        when (biometricManager.canAuthenticate()) {
+            BiometricManager.BIOMETRIC_SUCCESS -> {
+                if (isFingerprintChanged()) {
+                    //지문 변경되었으니 새로 등록하세요 먼저 간편비밀 번호 확인
+                    showToast("지문이 변경되었습니다. 간편비밀번호으로 본인을 인증하세요.")
+                    val dialogFragment = RecertifyDialogFragment()
+                    dialogFragment.show(parentFragmentManager, "recertify_dialog")
+                } else {
+                    authenticateWithBiometrics()
+                }
+            }
+            BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
+                showToast("이 장치에서는 생체 인식이 지원되지 않습니다.")
+            }
+            BiometricManager.BIOMETRIC_ERROR_HW_UNAVAILABLE -> {
+                showToast("생체 인식 하드웨어가 사용 불가능합니다.")
+            }
+            BiometricManager.BIOMETRIC_ERROR_NONE_ENROLLED -> {
+                showToast("생체 인식 정보가 등록되지 않았습니다.")
+            }
+            else -> {
+                showToast("생체 인식 인증 실패")
+            }
+        }
+    }
+
+    // 📌 1. Keystore에서 SecretKey 가져오기
+    private fun getSecretKey(): SecretKey? {
+        val keyStore = KeyStore.getInstance("AndroidKeyStore").apply { load(null) }
+        return keyStore.getKey("biometric_key", null) as? SecretKey
+    }
+
+    // 📌 2. 지문이 변경되었는지 확인
+    private fun isFingerprintChanged(): Boolean {
+        return try {
+            val secretKey = getSecretKey() ?: throw Exception("SecretKey is null")
+
+            // 기존 SecretKey로 암호화 테스트
+            val cipher = Cipher.getInstance(
+                "${KeyProperties.KEY_ALGORITHM_AES}/" +
+                        "${KeyProperties.BLOCK_MODE_CBC}/" +
+                        KeyProperties.ENCRYPTION_PADDING_PKCS7
+            )
+            cipher.init(Cipher.ENCRYPT_MODE, secretKey) // 기존 키로 암호화 가능 여부 확인
+            false // 암호화 성공 → 기존 지문 유지됨
+        } catch (e: Exception) {
+            Log.e("Biometric", "지문 변경 감지됨!", e)
+            //deleteSecretKey() // 기존 키 삭제
+            //generateSecretKey() // 새 키 생성
+            true // 암호화 실패 → 지문 변경됨
+        }
+    }
+
+    //지문 검사 로직
+    private fun authenticateWithBiometrics() {
+        val executor = ContextCompat.getMainExecutor(requireContext())
+        val biometricPrompt = BiometricPrompt(
+            this,
+            executor,
             object : BiometricPrompt.AuthenticationCallback() {
                 override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
                     super.onAuthenticationSucceeded(result)
-                    // 인증 성공 시 처리할 로직
-                    showToast("지문 인증 성공")
+                    showToast("지문 인증 성공!")
+                    findNavController().navigate(R.id.action_cardPaymentFragment_to_nfcPaymentFragment)
                 }
-
                 override fun onAuthenticationFailed() {
                     super.onAuthenticationFailed()
-                    // 인증 실패 시 처리할 로직
-                    showToast("지문 인증 실패")
+                    showToast("지문 인증 실패. 다시 시도해주세요.")
                 }
-
                 override fun onAuthenticationError(errorCode: Int, errString: CharSequence) {
                     super.onAuthenticationError(errorCode, errString)
-                    // 인증 중 에러 처리
-                    showToast("인증 오류: $errString")
+                    showToast("지문 인증 오류: $errString")
                 }
-            })
-
-        // 인증 팝업 화면 정보 설정
-        promptInfo = BiometricPrompt.PromptInfo.Builder()
+            }
+        )
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
             .setTitle("지문 인증")
-            .setSubtitle("지문을 등록한 후 인증하세요.")
+            .setSubtitle("결제를 위해 지문을 인증해주세요.")
             .setNegativeButtonText("취소")
             .build()
+
+        biometricPrompt.authenticate(promptInfo)
     }
+
 }

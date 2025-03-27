@@ -96,6 +96,8 @@ dependencies {
 
     //지문인식
     implementation ("androidx.biometric:biometric:1.0.1")
+    implementation ("androidx.biometric:biometric:1.2.0-alpha05")
+
 }
 
 kapt {
