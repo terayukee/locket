@@ -20,15 +20,6 @@ pipeline {
                     script {
                         // 1. 클로저 정의: 변경 감지 후 순차 빌드
                         def triggerBuilds = { changes ->
-                            if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
-                                echo "🔍 변경 감지됨: backend-api-gateway"
-                                try {
-                                    build job: 'backend-api-gateway'
-                                    echo "✅ 빌드 성공: backend-api-gateway"
-                                } catch (err) {
-                                    echo "❌ 빌드 실패: backend-api-gateway - ${err}"
-                                }
-                            }
                             if (changes.any { it.startsWith("backend/LocketDiscovery/") }) {
                                 echo "🔍 변경 감지됨: backend-discovery"
                                 try {
@@ -38,13 +29,13 @@ pipeline {
                                     echo "❌ 빌드 실패: backend-discovery - ${err}"
                                 }
                             }
-                            if (changes.any { it.startsWith("backend/LocketElasticSearch/") }) {
-                                echo "🔍 변경 감지됨: backend-elasticsearch"
+                            if (changes.any { it.startsWith("backend/LocketUserService/") }) {
+                                echo "🔍 변경 감지됨: backend-user"
                                 try {
-                                    build job: 'backend-elasticsearch'
-                                    echo "✅ 빌드 성공: backend-elasticsearch"
+                                    build job: 'backend-user'
+                                    echo "✅ 빌드 성공: backend-user"
                                 } catch (err) {
-                                    echo "❌ 빌드 실패: backend-elasticsearch - ${err}"
+                                    echo "❌ 빌드 실패: backend-user - ${err}"
                                 }
                             }
                             if (changes.any { it.startsWith("backend/LocketPaymentService/") }) {
@@ -56,13 +47,22 @@ pipeline {
                                     echo "❌ 빌드 실패: backend-payment - ${err}"
                                 }
                             }
-                            if (changes.any { it.startsWith("backend/LocketUserService/") }) {
-                                echo "🔍 변경 감지됨: backend-user"
+                            if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
+                                echo "🔍 변경 감지됨: backend-api-gateway"
                                 try {
-                                    build job: 'backend-user'
-                                    echo "✅ 빌드 성공: backend-user"
+                                    build job: 'backend-api-gateway'
+                                    echo "✅ 빌드 성공: backend-api-gateway"
                                 } catch (err) {
-                                    echo "❌ 빌드 실패: backend-user - ${err}"
+                                    echo "❌ 빌드 실패: backend-api-gateway - ${err}"
+                                }
+                            }
+                            if (changes.any { it.startsWith("backend/LocketElasticSearch/") }) {
+                                echo "🔍 변경 감지됨: backend-elasticsearch"
+                                try {
+                                    build job: 'backend-elasticsearch'
+                                    echo "✅ 빌드 성공: backend-elasticsearch"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-elasticsearch - ${err}"
                                 }
                             }
                         }
