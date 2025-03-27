@@ -24,9 +24,6 @@ public class Goal {
     @Column(name = "goal_amount", nullable = false)
     private Integer goalAmount;
 
-    @Column(name = "used_amount", nullable = false)
-    private Integer usedAmount;
-
     @Column(name = "is_achieved", nullable = false)
     private Boolean isAchieved;
 
@@ -38,10 +35,4 @@ public class Goal {
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
-
-    // ✅ 사용 금액 업데이트
-    public void updateUsedAmount(int updatedUsedAmount) {
-        this.usedAmount = updatedUsedAmount;
-        this.isAchieved = this.usedAmount >= this.goalAmount;
-    }
 }
