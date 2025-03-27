@@ -15,5 +15,4 @@ public class KakaoUserInfoDto {
 
     private String id;
     private String nickname;
-    private String email;
 }

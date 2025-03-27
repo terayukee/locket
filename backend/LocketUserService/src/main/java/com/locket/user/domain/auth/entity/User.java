@@ -27,9 +27,6 @@ public class User {
     @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;
 
-    @Column(name = "email", length = 100)
-    private String email;
-
     @Column(name = "birth_year", nullable = false)
     private Integer birthYear;
 
@@ -43,9 +40,6 @@ public class User {
     @Column(name = "fingerprint_registered", nullable = false)
     private Boolean fingerprintRegistered;
 
-    @Column(name = "refresh_token", length = 255)
-    private String refreshToken;
-
     @Column(name = "fcm_token", length = 255)
     private String fcmToken;
 
@@ -54,12 +48,6 @@ public class User {
 
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
-
-
-    // 리프레시 토큰 업데이트 메서드
-    public void updateRefreshToken(String refreshToken) {
-        this.refreshToken = refreshToken;
-    }
 
     // FCM 토큰 업데이트
     public void updateFcmToken(String fcmToken) {

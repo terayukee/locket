@@ -9,4 +9,5 @@ import lombok.Setter;
 @NoArgsConstructor
 public class KakaoLoginRequest {
     private String accessToken;
+    private String fcmToken;
 }

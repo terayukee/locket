@@ -1,10 +1,13 @@
 package com.locket.common.jwt;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.io.Decoders; // 추가된 import
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,12 +22,14 @@ public class JwtUtil {
     @Value("${jwt.secret}")
     private String secret;
 
-    private final long accessTokenValidity = 1000 * 60 * 60 * 24L; // 24시간
-    //    private final long accessTokenValidity = 1000 * 60 * 60L; // 1시간
-    private final long refreshTokenValidity = 1000 * 60 * 60 * 24 * 7L; // 7일
+    @Value("${jwt.access-exp}")
+    private long accessTokenValidity; // 86400000 (24시간)
+
+    @Value("${jwt.refresh-exp}")
+    private long refreshTokenValidity; // 604800000 (7일)
 
     private Key getSigningKey() {
-        byte[] keyBytes = secret.getBytes();
+        byte[] keyBytes = Decoders.BASE64.decode(this.secret);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
@@ -33,13 +38,13 @@ public class JwtUtil {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
         claims.put("nickname", nickname);
-
+        claims.put("type", "access_token");
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessTokenValidity))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();
     }
 
@@ -47,16 +52,17 @@ public class JwtUtil {
     public String createRefreshToken(Long userId) {
         Map<String, Object> claims = new HashMap<>();
         claims.put("userId", userId);
+        claims.put("type", "refresh_token");
 
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + refreshTokenValidity))
-                .signWith(SignatureAlgorithm.HS256, secret)
+                .signWith(SignatureAlgorithm.HS256, getSigningKey())
                 .compact();
     }
 
-    // 토큰에서 사용자 ID 추출 (귀하의 코드에서 가져온 메서드명)
+    // 토큰에서 사용자 ID 추출
     public Long extractUserId(String token) {
         return Long.valueOf(Jwts.parser()
                 .setSigningKey(secret)
@@ -65,7 +71,14 @@ public class JwtUtil {
                 .getSubject());
     }
 
-    // 모든 클레임 추출
+    public Claims getClaimsFromToken(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(this.getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
     public Claims extractAllClaims(String token) {
         return Jwts.parser()
                 .setSigningKey(secret)
@@ -75,15 +88,28 @@ public class JwtUtil {
 
     // 토큰에서 사용자 ID 추출 (클레임 기반)
     public Long getUserIdFromToken(String token) {
-        Claims claims = extractAllClaims(token);
+        Claims claims = getClaimsFromToken(token);
         return claims.get("userId", Long.class);
     }
 
-    // 토큰 유효성 검증 (귀하의 코드에서 가져온 메서드명)
+    // 토큰 타입 체크 메서드(AccessToken인지 확인)
+    public boolean isAccessToken(String token) {
+        return "access_token".equals(getClaimsFromToken(token).get("type"));
+    }
+
+    // 토큰의 만료시간 가져오는 메서드
+    public Date getExpirationFromToken(String token) {
+        return getClaimsFromToken(token).getExpiration();
+    }
+
+    // 토큰 유효성 검증
     public boolean validateToken(String token) {
         try {
-            Jwts.parser().setSigningKey(secret).parseClaimsJws(token);
+            getClaimsFromToken(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            // 만료된 토큰에 대한 별도 처리 가능
+            return false;
         } catch (JwtException e) {
             return false;
         }

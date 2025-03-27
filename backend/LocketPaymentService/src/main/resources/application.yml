@@ -38,3 +38,8 @@ springdoc:
     path: /api/payment/v3/api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+jwt:
+  secret: ${JWT_SECRET:my-secret-jwt-key-for-dev-only}
+  access-exp: ${JWT_ACCESS_EXP:86400000}   # 24시간
+  refresh-exp: ${JWT_REFRESH_EXP:604800000} # 7일

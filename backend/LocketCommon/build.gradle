@@ -34,10 +34,6 @@ dependencies {
     testImplementation platform('org.junit:junit-bom:5.10.0')
     testImplementation 'org.junit.jupiter:junit-jupiter'
 
-    implementation 'org.springframework:spring-web'
-    implementation 'org.springframework.boot:spring-boot-autoconfigure'
-    implementation 'jakarta.servlet:jakarta.servlet-api:5.0.0'
-
 }
 
 bootJar {

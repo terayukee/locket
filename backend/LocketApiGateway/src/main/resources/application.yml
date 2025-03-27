@@ -1,47 +1,57 @@
 spring:
   profiles:
-    active: dev  # 기본값을 'dev'로 설정 (로컬에서는 자동 적용됨)
+    active: dev
   application:
     name: locket-api-gateway
 
   cloud:
     gateway:
       globalcors:
-        add-to-simple-url-handler-mapping: true  # ✅ 중요
+        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
       routes:
+        # 서비스 라우팅
         - id: payment-service
-          uri: lb://payment-service
+          uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
 
         - id: user-service
-          uri: lb://user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/user/**
+            - Path=/api/users/**
 
-        - id: elasticsearch-service  # ✅ Elasticsearch 서비스 추가
-          uri: lb://elasticsearch-service
+        - id: elasticsearch-service
+          uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
 
-        # 🔥 Swagger API 문서를 Gateway가 프록시하도록 추가
+        # Swagger 관련 경로
+#        - id: openapi
+#          uri: lb://LOCKET-API-GATEWAY
+#          predicates:
+#            - Path=/v3/api-docs/**, /swagger-ui/**, /webjars/**
+#          filters:
+#            - RewritePath=/(?<segment>.*), /$\{segment}
+
+
+        # 서비스별 API 문서 경로
         - id: payment-service-docs
-          uri: lb://payment-service
+          uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/v3/api-docs
 
         - id: user-service-docs
-          uri: lb://user-service
+          uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/user/v3/api-docs
+            - Path=/api/users/v3/api-docs
 
-        - id: elasticsearch-service-docs  # ✅ Elasticsearch Swagger 추가
-          uri: lb://elasticsearch-service
+        - id: elasticsearch-service-docs
+          uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
 
@@ -61,22 +71,24 @@ management:
         enabled: true
 
 jwt:
-  secret: ${jwt_secret_key}
-  access-exp: ${jwt_access_exp}
-  refresh-exp: ${jwt_refresh_exp}
+  secret: ${JWT_SECRET:my-secret-jwt-key-for-dev-only}
+  access-exp: ${JWT_ACCESS_EXP:86400000}
+  refresh-exp: ${JWT_REFRESH_EXP:604800000}
 
 springdoc:
   api-docs:
     enabled: true
-    groups.enabled: true
+    groups:
+      enabled: true
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
     urls:
+#      - name: "API Gateway"
+#        url: /v3/api-docs
       - name: "Locket Payment Service"
         url: http://localhost:8080/api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: http://localhost:8080/api/user/v3/api-docs
-      - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch API 추가
+        url: http://localhost:8080/api/users/v3/api-docs
+      - name: "Locket ElasticSearch Service"
         url: http://localhost:8080/api/elasticsearch/v3/api-docs
-

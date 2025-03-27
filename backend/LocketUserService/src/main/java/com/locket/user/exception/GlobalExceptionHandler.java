@@ -75,4 +75,16 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errorResponse);
     }
+
+    @ExceptionHandler(KakaoApiException.class)
+    public ResponseEntity<ErrorResponse> handleKakaoApiException(KakaoApiException ex) {
+        HttpStatus status = ex.getStatus();
+        ErrorResponse errorResponse = new ErrorResponse(
+                status.value(),
+                "Kakao API Error",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(status).body(errorResponse);
+    }
+
 }
