@@ -46,7 +46,7 @@
     </fragment>
     <fragment
         android:id="@+id/productListFragment"
-        android:name="com.ssafy.locket.presentation.graph.ProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragments.ProductListFragment"
         android:label="fragment_product_list"
         tools:layout="@layout/fragment_product_list" >
         <action
@@ -59,15 +59,15 @@
             android:id="@+id/action_productListFragment_to_categoryProductListFragment"
             app:destination="@id/categoryProductListFragment" />
         <action
-            android:id="@+id/action_productListFragment_to_recommandProductListFragment"
-            app:destination="@id/recommandProductListFragment" />
+            android:id="@+id/action_productListFragment_to_recommendProductListFragment"
+            app:destination="@id/recommendProductListFragment" />
         <action
             android:id="@+id/action_productListFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/likeProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.LikeProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragments.LikeProductListFragment"
         android:label="fragment_like_product_list"
         tools:layout="@layout/fragment_like_product_list" >
         <action
@@ -76,7 +76,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.SearchProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragments.SearchProductListFragment"
         android:label="fragment_search_product_list"
         tools:layout="@layout/fragment_search_product_list" >
         <action
@@ -85,7 +85,7 @@
     </fragment>
     <fragment
         android:id="@+id/categoryProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.CategoryProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragments.CategoryProductListFragment"
         android:label="fragment_category_product_list"
         tools:layout="@layout/fragment_category_product_list" >
         <action
@@ -93,17 +93,17 @@
             app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
-        android:id="@+id/recommandProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.RecommandProductListFragment"
-        android:label="fragment_recommand_product_list"
+        android:id="@+id/recommendProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragments.RecommendProductListFragment"
+        android:label="fragment_recommend_product_list"
         tools:layout="@layout/fragment_recommend_product_list" >
         <action
-            android:id="@+id/action_recommandProductListFragment_to_productDetailFragment"
+            android:id="@+id/action_recommendProductListFragment_to_productDetailFragment"
             app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.ssafy.locket.presentation.graph.ProductDetailFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragments.ProductDetailFragment"
         android:label="fragment_product_detail"
         tools:layout="@layout/fragment_product_detail" />
     <fragment

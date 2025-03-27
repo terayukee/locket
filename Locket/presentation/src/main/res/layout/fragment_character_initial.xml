@@ -4,15 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.home.character.CharacterInitialFragment">
+    tools:context=".home.character.fragments.CharacterInitialFragment">
 
     <TextView
         android:id="@+id/tv_title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_bold"
         android:text="캐릭터 키우기"
-        android:textAlignment="center"
+        android:gravity="center"
         android:textColor="@color/text"
         android:textSize="18sp"
         android:letterSpacing="-0.02"
@@ -37,7 +36,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="36dp"
         android:fontFamily="@font/pretendard_bold"
         android:text="나만의 고양이를 키워서\n기프티콘을 얻어보세요!"
         android:textColor="@color/text"

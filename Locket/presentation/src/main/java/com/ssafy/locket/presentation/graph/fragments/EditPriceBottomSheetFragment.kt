@@ -1,3 +1,5 @@
+package com.ssafy.locket.presentation.graph.fragments
+
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher

@@ -1,3 +1,5 @@
+package com.ssafy.locket.presentation.graph.fragments
+
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
@@ -33,7 +35,7 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
             findNavController().navigate(R.id.action_productListFragment_to_categoryProductListFragment)
         }
         binding.btnRecommandMove.setOnClickListener {
-            findNavController().navigate(R.id.action_productListFragment_to_recommandProductListFragment)
+            findNavController().navigate(R.id.action_productListFragment_to_recommendProductListFragment)
         }
     }
 

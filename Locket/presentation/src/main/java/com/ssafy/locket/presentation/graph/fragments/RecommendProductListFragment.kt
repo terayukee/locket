@@ -32,7 +32,7 @@ class RecommendProductListFragment : BaseFragment<FragmentRecommendProductListBi
 
     fun initAdapter(){
         productList = mutableListOf()
-        productAdapter = ProductAdapter(productList,findNavController(),R.id.action_recommandProductListFragment_to_productDetailFragment)
+        productAdapter = ProductAdapter(productList,findNavController(),R.id.action_recommendProductListFragment_to_productDetailFragment)
         productList.add(Product(1000))
         productList.add(Product(2000))
         productList.add(Product(3000))
