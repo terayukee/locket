@@ -28,7 +28,18 @@ class RecertifyDialogFragment: DialogFragment() {
         _binding = FragmentRecertifyDialogBinding.inflate(layoutInflater)
         val view = binding.root
         dialog.setContentView(view)
+        // Optional: Customize dialog appearance
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
 
+        initEvent()
+        return dialog
+    }
+
+    fun initEvent(){
         binding.btnPay.setOnClickListener {
             findNavController().navigate(R.id.paymentPasswordFragment)
             dismiss()
@@ -40,15 +51,8 @@ class RecertifyDialogFragment: DialogFragment() {
             findNavController().navigate(R.id.paymentPasswordFragment)
             dismiss()
         }
-
-        // Optional: Customize dialog appearance
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        dialog.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
-        )
-        return dialog
     }
+
 
     override fun onDestroyView() {
         super.onDestroyView()

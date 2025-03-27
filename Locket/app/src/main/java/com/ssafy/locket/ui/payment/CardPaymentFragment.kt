@@ -14,6 +14,7 @@ import android.widget.LinearLayout
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.ssafy.locket.BaseFragment
@@ -23,6 +24,7 @@ import com.ssafy.locket.databinding.FragmentCardPaymentBinding
 import com.ssafy.locket.ui.MainActivity
 import com.ssafy.locket.ui.mypage.LogoutDialogFragment
 import com.ssafy.locket.ui.payment.Adapter.CardAdapter
+import com.ssafy.locket.ui.payment.viewmodel.RecertifyViewModel
 import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.KeyGenerator
@@ -36,7 +38,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     val Int.dp: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
-    //지문 관련
+    //지문 관련 이벤트 처리때문에 viewModel작성
+    private val viewModel: RecertifyViewModel by activityViewModels()
 
     //스크롤 가능
     private var selectedPosition = 0
@@ -87,6 +90,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     }
 
     fun initEvent(){
+        viewModel.updateRecertify(0)
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateDots(position)
