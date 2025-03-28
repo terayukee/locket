@@ -60,8 +60,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     runtimeOnly 'org.postgresql:postgresql' // PostgreSQL JDBC 드라이버 추가
 
-    // Spring Boot Redis
+    // ✅ Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
 
     // Resilience4j (Circuit Breaker)
     implementation 'io.github.resilience4j:resilience4j-spring-boot3:2.2.0'

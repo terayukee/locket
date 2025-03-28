@@ -26,6 +26,12 @@ spring:
     listener:
       ack-mode: manual
 
+  data:
+    redis:
+      host: j12d204.p.ssafy.io
+      port: 6379
+      password: ${REDIS.PASSWORD}
+
 management:
   endpoints:
     web:
