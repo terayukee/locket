@@ -11,7 +11,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
     consumer:
-      group-id: elastic-search-group
+      group-id: ${KAFKA.CONSUMER.ELASTIC-GROUP-ID}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
@@ -19,6 +19,7 @@ spring:
         spring.json.trusted.packages: "*"
     listener:
       ack-mode: manual_immediate
+
 
 management:
   endpoints:
