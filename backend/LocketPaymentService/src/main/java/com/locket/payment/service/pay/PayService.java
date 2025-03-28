@@ -102,15 +102,31 @@ public class PayService {
         }
 
         // 1️⃣Redis에서 사용자 정보 가져오기
-        String birthDate = "1998";
+        int birthYear  = 1998;
         String userJob = "학생";
-        try {
-            String redisKey = "user:" + request.getBuyerId();
-            birthDate = Optional.ofNullable(redisTemplate.opsForValue().get(redisKey + ":birthDate")).orElse("1998");
-            userJob = Optional.ofNullable(redisTemplate.opsForValue().get(redisKey + ":userJob")).orElse("학생");
-        } catch (Exception e) {
-            log.warn("Redis 연결 실패, 기본값 사용");
-        }
+        long buyerId = request.getBuyerId();
+
+            try {
+                String redisKey = "user:" + buyerId;
+
+                String redisBirthYear = redisTemplate.opsForValue().get(redisKey + ":birthYear");
+                String redisUserJob = redisTemplate.opsForValue().get(redisKey + ":userJob");
+
+                if (redisBirthYear != null) {
+                    birthYear = Integer.parseInt(redisBirthYear);
+                } else {
+                    log.warn("❗ Redis에서 birthYear 값을 찾을 수 없음. 기본값 사용: {}", birthYear);
+                }
+
+                if (redisUserJob != null) {
+                    userJob = redisUserJob;
+                } else {
+                    log.warn("❗ Redis에서 userJob 값을 찾을 수 없음. 기본값 사용: {}", userJob);
+                }
+
+            } catch (Exception e) {
+                log.warn("❌ Redis 사용자 정보 조회 실패: {} - 기본값 사용 (birthYear={}, userJob={})", e.getMessage(), birthYear, userJob);
+            }
 
         // 2️⃣  결제 트랜잭션 저장
         PaymentTransaction transaction = PaymentTransaction.builder()

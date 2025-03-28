@@ -141,6 +141,10 @@ public class UserService {
         // ✅ Refresh Token도 Redis에 저장 (7일 TTL)
         redisTemplate.opsForValue().set("user:" + userId + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
 
+        // 엘라스틱서치 결제 트랜잭션 저장 시 활용할 잡다한 데이터
+        redisTemplate.opsForValue().set("user:" + userId + ":birthYear", String.valueOf(user.getBirthYear()));
+        redisTemplate.opsForValue().set("user:" + userId + ":userJob", String.valueOf(user.getUserJob()));
+
 
         return LoginResponseDto.builder()
                 .userId(user.getUserId())
