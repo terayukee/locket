@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
     private final StringRedisTemplate redisTemplate; // ✅ Redis 주입
@@ -134,7 +133,7 @@ public class UserService {
         Long userId = user.getUserId();
 
         // 2. Redis 저장
-        redisTemplate.opsForValue().set("user:" + userId + ":hasPaymentPassword", String.valueOf(user.getPaymentPassword()));
+        redisTemplate.opsForValue().set("user:" + userId + ":paymentPassword", String.valueOf(user.getPaymentPassword()));
         redisTemplate.opsForValue().set("user:" + userId + ":fingerprintRegistered", String.valueOf(user.getFingerprintRegistered()));
 
         // ✅ Refresh Token도 Redis에 저장 (7일 TTL)
