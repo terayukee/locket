@@ -77,7 +77,7 @@ public class BudgetNotificationTestController {
                 .buyerId(request.getUserId())
                 .sellerId(999)
                 .userJob("직장인")
-                .birthDate("1990")
+                .birthDate(1990)
                 .totalAmount(BigDecimal.valueOf(request.getAmount()))
                 .currency("KRW")
                 .cardId(1)
