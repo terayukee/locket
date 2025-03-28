@@ -53,7 +53,7 @@ public class PaymentProcessingService {
                     .currency(event.getCurrency())
                     .paymentCategory(categoryResponse.getCategory())  // API 응답으로 받은 카테고리 사용
                     //.paymentCategory(event.getPaymentCategory())
-                    .needsItemCheck(categoryResponse.isNeedsItemCheck())
+                    .needItemCheck(categoryResponse.isNeedsItemCheck())
                     .paymentMerchant(event.getPaymentMerchant())
                     .storeName(event.getStoreName())                  // ✅ 매장명
                     .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부

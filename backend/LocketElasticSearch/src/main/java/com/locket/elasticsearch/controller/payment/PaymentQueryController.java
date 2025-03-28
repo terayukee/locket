@@ -3,6 +3,7 @@ package com.locket.elasticsearch.controller.payment;
 import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto;
 import com.locket.elasticsearch.domain.payment.dto.DayPaymentDto;
 import com.locket.elasticsearch.domain.payment.dto.MonthPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.ReceiptPaymentDto;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.service.payment.PaymentQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,15 +25,25 @@ public class PaymentQueryController {
     private final PaymentQueryService paymentQueryService;
 
     @GetMapping("/available/{userId}")
-    public ResponseEntity<?> getAvailablePaymentsForReceipt(@PathVariable int userId) {
+    @Operation(
+            summary = "영수증 등록 가능한 전체 결제 내역 조회",
+            description = "품목 카테고리 분류가 필요하며, 아직 영수증이 등록되지 않은 결제 내역을 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<List<ReceiptPaymentDto>> getReceiptRegisterablePayments(
+            @PathVariable(name = "userId") long userId
+    ) {
         try {
-            List<PaymentHistory> availablePayments = paymentQueryService.getAvailablePayments(userId);
-            return ResponseEntity.ok(availablePayments);
+            List<ReceiptPaymentDto> payments = paymentQueryService.getReceiptRegisterablePayments(userId);
+            return ResponseEntity.ok(payments);
         } catch (Exception e) {
-            return ResponseEntity.status(500)
-                    .body("결제 내역 조회 중 오류가 발생했습니다: " + e.getMessage());
+            log.error("Failed to get receipt registerable payments for user {}: {}", userId, e.getMessage());
+            throw new RuntimeException("영수증 등록 가능한 결제 내역 조회 중 오류가 발생했습니다.");
         }
-
     }
 
     @GetMapping("/history")

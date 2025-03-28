@@ -78,7 +78,7 @@ public class PaymentHistory {
     private List<OrderDetail> orders;
 
     @Field(type = FieldType.Boolean)
-    private boolean needsItemCheck; // 카테고리 분류 관련(품목 데이터 분류)
+    private boolean needItemCheck; // 카테고리 분류 관련(품목 데이터 분류 필요 여부)
 
 
     @Getter

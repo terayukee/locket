@@ -5,6 +5,7 @@ import com.locket.elasticsearch.common.util.DateTimeUtil;
 import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto;
 import com.locket.elasticsearch.domain.payment.dto.DayPaymentDto;
 import com.locket.elasticsearch.domain.payment.dto.MonthPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.ReceiptPaymentDto;
 import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto.DailySpending;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
@@ -105,12 +106,34 @@ public class PaymentQueryService {
         return getPaymentsInMonth(userId, year, month);
     }
 
-    public List<PaymentHistory> getAvailablePayments(int userId) {
-        List<PaymentHistory> allUserPayments = paymentHistoryRepository.findByBuyerId(userId);
-        return allUserPayments.stream()
-                .filter(payment ->
-                        payment.getPaymentStatus().equals("SUCCESS") &&
-                                !payment.isReceiptUploaded())
-                .toList();
+    /**
+     * 영수증 등록이 가능한 결제 내역 조회.
+     * 결제 상태가 'SUCCESS'이고 영수증이 등록되지 않은(receiptUploaded=false) 내역만 반환
+     * @throws IllegalArgumentException 유효하지 않은 userId가 입력된 경우
+     */
+    public List<ReceiptPaymentDto> getReceiptRegisterablePayments(Long userId) {
+        if (userId == null) {
+            throw new IllegalArgumentException("userId는 null일 수 없습니다.");
+        }
+
+        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndPaymentStatusAndReceiptUploaded(
+                userId,
+                "SUCCESS",
+                false
+        );
+
+        return payments.stream()
+                .map(payment -> ReceiptPaymentDto.builder()
+                        .transactionId(payment.getTransactionId())
+                        .storeName(payment.getStoreName())
+                        .paymentCategory(payment.getPaymentCategory())
+                        .cardName(payment.getCardName())
+                        .paymentDate(String.format("%d.%02d.%02d",
+                                payment.getYear(),
+                                payment.getMonth(),
+                                payment.getDay()))
+                        .amount(payment.getTotalAmount().intValue())
+                        .build())
+                .collect(Collectors.toList());
     }
 }
