@@ -1,6 +1,9 @@
 # 1. Java 베이스 이미지 사용 (JDK 17 Slim 버전)
 FROM openjdk:17-jdk-slim
 
+# 🔧 curl 설치 (healthcheck용)
+RUN apt-get update && apt-get install -y curl && rm -rf /var/lib/apt/lists/*
+
 # 2. 작업 디렉토리 생성 및 설정
 WORKDIR /app
 

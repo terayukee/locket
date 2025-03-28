@@ -9,10 +9,8 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class SummaryPaymentDto {
+public class DayPaymentDto {
     private String paymentCategory;
-    private String paymentMerchant;
-    private Integer cardId;
     private String cardName;
     private String storeName;
     private BigDecimal totalAmount;

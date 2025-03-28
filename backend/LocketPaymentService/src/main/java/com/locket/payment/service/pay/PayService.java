@@ -200,6 +200,8 @@ public class PayService {
                         order.getPaymentOrderStatus().name()
                 )).collect(Collectors.toList());
 
+        OffsetDateTime createdAt = OffsetDateTime.now(ZoneOffset.ofHours(9));
+
         PaymentSuccessEvent event = PaymentSuccessEvent.builder()
                 .transactionId(UUID.randomUUID().toString())
                 .buyerId(request.getBuyerId())
@@ -214,7 +216,10 @@ public class PayService {
                 .storeName(request.getStoreName())
                 .receiptUploaded(false) // 추후 true로 설정
                 .paymentStatus("SUCCESS")
-                .createdAt(OffsetDateTime.now(ZoneOffset.ofHours(9)))
+                .createdAt(createdAt)
+                .year(createdAt.getYear())
+                .month(createdAt.getMonthValue())
+                .day(createdAt.getDayOfMonth())
                 .orders(orderDetails)
                 .build();
 

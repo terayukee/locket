@@ -1,7 +1,14 @@
+server:
+  port: 8083
+
 spring:
   config:
     activate:
       on-profile: prod
+
+  kafka:
+    consumer:
+      group-id: elastic-service-group-prod
 
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS}
@@ -12,4 +19,10 @@ eureka:
   client:
     service-url:
       defaultZone: http://j12d204.p.ssafy.io:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 

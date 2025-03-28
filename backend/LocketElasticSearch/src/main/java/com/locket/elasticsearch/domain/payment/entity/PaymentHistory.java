@@ -64,6 +64,16 @@ public class PaymentHistory {
     @Field(type = FieldType.Date, format = DateFormat.date_time)
     private OffsetDateTime createdAt;
 
+    // ✅ 날짜별 집계나 필터링을 위한 필드 추가
+    @Field(type = FieldType.Integer)
+    private int year;
+
+    @Field(type = FieldType.Integer)
+    private int month;
+
+    @Field(type = FieldType.Integer)
+    private int day;
+
     @Field(type = FieldType.Nested)
     private List<OrderDetail> orders;
 

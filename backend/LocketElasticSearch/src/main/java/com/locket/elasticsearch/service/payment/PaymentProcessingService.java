@@ -40,6 +40,9 @@ public class PaymentProcessingService {
                 .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부
                 .paymentStatus(event.getPaymentStatus())
                 .createdAt(event.getCreatedAt())
+                .year(event.getYear())
+                .month(event.getMonth())
+                .day(event.getDay())
                 .orders(convertOrderDetails(event.getOrders()))
                 .build();
 

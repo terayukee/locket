@@ -16,7 +16,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
     consumer:
-      group-id: user-service-group
+      group-id: ${KAFKA.CONSUMER.USER-GROUP-ID}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
@@ -24,6 +24,7 @@ spring:
         spring.json.trusted.packages: "*"
     listener:
       ack-mode: manual_immediate
+
 
   cloud:
     openfeign:
@@ -45,11 +46,6 @@ management:
     web:
       exposure:
         include: health, prometheus
-  health:
-    livenessstate:
-      enabled: true
-    readinessstate:
-      enabled: true
 
 springdoc:
   api-docs:

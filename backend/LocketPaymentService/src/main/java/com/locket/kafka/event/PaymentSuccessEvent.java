@@ -27,6 +27,9 @@ public class PaymentSuccessEvent {
     private String storeName;
     private int cardId;
     private String cardName;
+    private int year;   // 예: 2025
+    private int month;  // 예: 3
+    private int day;    // 예: 28
     private boolean receiptUploaded;
     private String paymentStatus;
     private OffsetDateTime createdAt;

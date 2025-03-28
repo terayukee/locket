@@ -1,6 +1,7 @@
 package com.locket.user.service.payment;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
+import com.locket.user.service.notification.BudgetNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,21 +15,7 @@ import org.springframework.kafka.support.Acknowledgment;
 public class PaymentProcessingService {
 
     private final CharacterService characterService;
-
-    @KafkaListener(topics = "${spring.kafka.topics.payment-success}",
-            groupId = "${spring.kafka.consumer.group-id}")
-    public void consumePaymentSuccessEvent(PaymentSuccessEvent event, Acknowledgment ack) {
-        try {
-            log.info("✅ Payment Success Event received: {}", event);
-            processPaymentSuccess(event);
-
-            ack.acknowledge();
-        } catch (Exception e) {
-            log.error("❌ Error processing payment success event: {}", event, e);
-
-            ack.acknowledge();
-        }
-    }
+    private final BudgetNotificationService budgetNotificationService;
 
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
@@ -47,6 +34,8 @@ public class PaymentProcessingService {
             }
         }
 
+        // ➤ 예산 초과 확인 및 알림 + 업데이트 서비스 호출
+        budgetNotificationService.handleBudgetNotification(event);
     }
 
     private boolean isSamsungCardPayment(PaymentSuccessEvent event) {
