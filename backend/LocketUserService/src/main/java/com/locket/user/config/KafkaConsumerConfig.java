@@ -42,6 +42,7 @@ public class KafkaConsumerConfig {
 		props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
 		props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
 
+
 		return new DefaultKafkaConsumerFactory<>(props, new StringDeserializer(), deserializer);
 	}
 
