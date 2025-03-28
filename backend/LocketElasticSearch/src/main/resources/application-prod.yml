@@ -6,6 +6,10 @@ spring:
     activate:
       on-profile: prod
 
+  kafka:
+    consumer:
+      group-id: elastic-service-group-prod
+
   elasticsearch:
     uris: ${ELASTICSEARCH_URIS}
     username: ${ELASTICSEARCH_USERNAME}
