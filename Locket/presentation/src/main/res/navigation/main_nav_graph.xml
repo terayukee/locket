@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_characterInitialFragment"
             app:destination="@id/characterInitialFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_expenseAnalysisFragment"
+            app:destination="@id/expenseAnalysisFragment" />
     </fragment>
     <fragment
         android:id="@+id/financeFragment"

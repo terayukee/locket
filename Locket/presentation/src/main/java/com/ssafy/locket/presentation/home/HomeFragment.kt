@@ -46,7 +46,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
 
         binding.btnAnalysis.setOnClickListener {
-            findNavController().navigate(R.id.action_financeFragment_to_expenseAnalysisFragment)
+            findNavController().navigate(R.id.action_homeFragment_to_expenseAnalysisFragment)
         }
 
         binding.tvUserName.text = getString(R.string.home_name, "아영")
