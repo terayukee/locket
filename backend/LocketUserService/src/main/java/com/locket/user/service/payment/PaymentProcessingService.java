@@ -23,15 +23,18 @@ public class PaymentProcessingService {
         // 삼성카드로 결제한 경우 사료 추가
         if (isSamsungCardPayment(event)) {
             Long userId = event.getBuyerId();
-            log.info("👉 Samsung Card payment detected. Adding food bonus for user: {}", userId);
+            log.info("👉 삼성카드 결제! 사용자 {}에게 사료 지급 : {}", userId);
 
             try {
                 characterService.addFood(userId);
-                log.info("✅ Food bonus added successfully for user: {}", userId);
+                log.info("✅ 사료 추가 : {}", userId);
             } catch (Exception e) {
-                log.error("❌ Failed to add food bonus for user: {}", userId, e);
+                log.error("❌ 사료 추가 실패: {}", userId, e);
                 throw e;
             }
+        } else {
+            log.info("ℹ️ 삼성카드가 아닌 결제입니다. 카드명: {}, 사용자 ID: {}",
+                    event.getCardName(), event.getBuyerId());
         }
 
         // ➤ 예산 초과 확인 및 알림 + 업데이트 서비스 호출
@@ -45,6 +48,8 @@ public class PaymentProcessingService {
         if (cardName != null && cardName.toUpperCase().contains("SAMSUNG")) {
             return true;
         }
+        log.debug("🔍 카드명 확인 결과: 삼성카드가 아닙니다. 카드명: {}",
+                cardName != null ? cardName : "정보 없음");
         return false;
     }
 
