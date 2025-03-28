@@ -11,4 +11,7 @@ import java.util.List;
 public interface PaymentHistoryRepository extends ElasticsearchRepository<PaymentHistory, String> {
 
     List<PaymentHistory> findByBuyerIdAndYearAndMonth(long buyerId, int year, int month);
+
+    List<PaymentHistory> findByBuyerIdAndYearAndMonthAndDay(long buyerId, int year, int month, int day);
+
 }

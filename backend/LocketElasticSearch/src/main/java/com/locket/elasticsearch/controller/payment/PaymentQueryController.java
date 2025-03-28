@@ -1,7 +1,8 @@
 package com.locket.elasticsearch.controller.payment;
 
 import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto;
-import com.locket.elasticsearch.domain.payment.dto.SummaryPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.DayPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.MonthPaymentDto;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.service.payment.PaymentQueryService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -57,19 +58,36 @@ public class PaymentQueryController {
         return ResponseEntity.ok(result);
     }
 
-    @GetMapping("/list")
-    @Operation(summary = "월 단위 결제 내역 리스트 조회 (내역용)", description = "지정된 연/월의 결제 내역에서 paymentCategory, paymentMerchant, storeName, totalAmount 필드를 반환합니다.")
+    @GetMapping("/month")
+    @Operation(summary = "월 단위 결제 내역 리스트 조회 (내역용)", description = "지정된 연/월의 결제 내역에서 paymentCategory, cardName, storeName, totalAmount, year, month 필드를 반환합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<List<SummaryPaymentDto>> getSummaryPayments(
+    public ResponseEntity<List<MonthPaymentDto>> getMonthPayments(
             @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month
     ) {
-        List<SummaryPaymentDto> result = paymentQueryService.getSummaryPaymentData(userId, year, month);
+        List<MonthPaymentDto> result = paymentQueryService.getMonthPaymentData(userId, year, month);
+        return ResponseEntity.ok(result);
+    }
+
+    @GetMapping("/day")
+    @Operation(summary = "일 단위 결제 내역 리스트 조회", description = "지정된 연/월/일의 결제 내역에서 paymentCategory, cardName, storeName, totalAmount 필드를 반환합니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<List<DayPaymentDto>> getDayPayments(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month,
+            @RequestParam int day
+    ) {
+        List<DayPaymentDto> result = paymentQueryService.getDayPaymentData(userId, year, month, day);
         return ResponseEntity.ok(result);
     }
 }

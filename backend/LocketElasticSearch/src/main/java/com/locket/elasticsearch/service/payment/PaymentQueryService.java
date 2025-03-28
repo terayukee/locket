@@ -3,7 +3,8 @@ package com.locket.elasticsearch.service.payment;
 import com.locket.elasticsearch.common.dto.DateRange;
 import com.locket.elasticsearch.common.util.DateTimeUtil;
 import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto;
-import com.locket.elasticsearch.domain.payment.dto.SummaryPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.DayPaymentDto;
+import com.locket.elasticsearch.domain.payment.dto.MonthPaymentDto;
 import com.locket.elasticsearch.domain.payment.dto.CalendarPaymentDto.DailySpending;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
@@ -64,13 +65,30 @@ public class PaymentQueryService {
     /**
      * 월별 상세 소비 내역 (카드/가맹점/카테고리 중심)
      */
-    public List<SummaryPaymentDto> getSummaryPaymentData(long userId, int year, int month) {
+    public List<MonthPaymentDto> getMonthPaymentData(long userId, int year, int month) {
         return getPaymentsInMonth(userId, year, month).stream()
                 .sorted(Comparator.comparing(PaymentHistory::getCreatedAt).reversed())
-                .map(p -> SummaryPaymentDto.builder()
+                .map(p -> MonthPaymentDto.builder()
                         .paymentCategory(p.getPaymentCategory())
-                        .paymentMerchant(p.getPaymentMerchant())
-                        .cardId(p.getCardId())
+                        .cardName(p.getCardName())
+                        .storeName(p.getStoreName())
+                        .totalAmount(p.getTotalAmount())
+                        .year(p.getYear())
+                        .month(p.getMonth())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * 일별 상세 소비 내역 (카드/가맹점/카테고리 중심)
+     */
+    public List<DayPaymentDto> getDayPaymentData(long userId, int year, int month, int day) {
+        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonthAndDay(userId, year, month, day);
+
+        return payments.stream()
+                .sorted(Comparator.comparing(PaymentHistory::getCreatedAt).reversed())
+                .map(p -> DayPaymentDto.builder()
+                        .paymentCategory(p.getPaymentCategory())
                         .cardName(p.getCardName())
                         .storeName(p.getStoreName())
                         .totalAmount(p.getTotalAmount())
