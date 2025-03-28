@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Component
@@ -78,14 +79,10 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
                 // 토큰에서 사용자 ID 추출
                 Long userId = jwtUtil.getUserIdFromToken(token);
 
-                // 사용자 ID와 URL 경로의 ID 일치 여부 확인 (사용자 정보 접근 시)
-                if (path.matches("^/api/users/\\d+$")) {
-                    Long pathUserId = extractUserIdFromPath(path);
-
-                    // 요청 경로의 사용자 ID가 토큰의 사용자 ID와 일치하는지 확인
-                    if (pathUserId != null && !pathUserId.equals(userId)) {
-                        return onError(exchange, "다른 사용자의 정보에 접근할 권한이 없습니다.", HttpStatus.FORBIDDEN);
-                    }
+                // 사용자 ID와 URL 경로의 ID 일치 여부 확인 (사용자 리소스 접근 시)
+                Long pathUserId = extractUserIdFromPath(path);
+                if (pathUserId != null && !pathUserId.equals(userId)) {
+                    return onError(exchange, "다른 사용자의 정보에 접근할 권한이 없습니다.", HttpStatus.FORBIDDEN);
                 }
 
                 // 사용자 ID를 헤더에 추가
@@ -109,14 +106,17 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
     }
 
     private Long extractUserIdFromPath(String path) {
-        try {
-            String[] parts = path.split("/");
-            if (parts.length > 0) {
-                String lastPart = parts[parts.length - 1];
-                return Long.parseLong(lastPart);
+
+        String pattern = "^/api/[^/]+/(\\d+)(?:/.*)?$";
+        Pattern r = Pattern.compile(pattern);
+        Matcher m = r.matcher(path);
+
+        if (m.matches()) {
+            try {
+                return Long.parseLong(m.group(1));
+            } catch (NumberFormatException e) {
+                log.warn("Failed to parse user ID from path: {}", path);
             }
-        } catch (NumberFormatException e) {
-            log.warn("Failed to parse user ID from path: {}", path);
         }
         return null;
     }

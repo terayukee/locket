@@ -62,14 +62,6 @@ public class JwtUtil {
                 .compact();
     }
 
-    // 토큰에서 사용자 ID 추출
-    public Long extractUserId(String token) {
-        return Long.valueOf(Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody()
-                .getSubject());
-    }
 
     public Claims getClaimsFromToken(String token) {
         return Jwts.parserBuilder()
@@ -79,12 +71,6 @@ public class JwtUtil {
                 .getBody();
     }
 
-    public Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .setSigningKey(secret)
-                .parseClaimsJws(token)
-                .getBody();
-    }
 
     // 토큰에서 사용자 ID 추출 (클레임 기반)
     public Long getUserIdFromToken(String token) {
