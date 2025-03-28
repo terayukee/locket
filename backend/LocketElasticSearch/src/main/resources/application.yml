@@ -17,6 +17,9 @@ spring:
       auto-offset-reset: earliest
       properties:
         spring.json.trusted.packages: "*"
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
     listener:
       ack-mode: manual_immediate
 
@@ -42,4 +45,4 @@ springdoc:
 locket:
   receipt:
     service:
-      url: http://localhost:8000  # FastAPI 서버 주소
+      url: http://localhost:8000  # FastAPI 로컬 서버 주소

@@ -77,6 +77,10 @@ public class PaymentHistory {
     @Field(type = FieldType.Nested)
     private List<OrderDetail> orders;
 
+    @Field(type = FieldType.Boolean)
+    private boolean needsItemCheck; // 카테고리 분류 관련(품목 데이터 분류)
+
+
     @Getter
     @Setter
     @NoArgsConstructor
