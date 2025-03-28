@@ -223,7 +223,7 @@ public class PayService {
                 .buyerId(request.getBuyerId())
                 .sellerId(request.getSellerId())
                 .userJob(userJob)
-                .birthDate(birthDate)
+                .birthDate(birthYear)
                 .totalAmount(paymentAmount)
                 .currency("KRW")
                 .cardId(cardId)

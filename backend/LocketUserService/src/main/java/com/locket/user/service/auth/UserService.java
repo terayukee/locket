@@ -33,7 +33,7 @@ public class UserService {
     public User processKakaoLogin(KakaoUserInfoDto kakaoUserInfo, String fcmToken) {
 
         // 기존 사용자 확인 및 탈퇴 여부 확인
-        User user = userRepository.findByLoginId(kakaoUserInfo.getId()).orElse(null);
+        User user = userRepository.findByKakaoId(kakaoUserInfo.getId()).orElse(null);
 
         // 사용자가 존재하고 탈퇴하지 않았다면 FCM 토큰 업데이트 후 반환
         if (user != null && !user.getIsDeleted()) {
@@ -55,13 +55,13 @@ public class UserService {
     @Transactional
     public User registerUser(SignupRequest request) {
 
-        userRepository.findByLoginId(request.getLoginId()).ifPresent(user -> {
+        userRepository.findByKakaoId(request.getKakaoId()).ifPresent(user -> {
             throw new IllegalArgumentException("이미 가입된 사용자입니다.");
         });
 
         // 1. 필수 필드 검증
-        if (request.getLoginId() == null || request.getLoginId().isEmpty()) {
-            throw new IllegalArgumentException("로그인 ID는 필수 입력값입니다.");
+        if (request.getKakaoId() == 0) {
+            throw new IllegalArgumentException("카카오 ID는 필수 입력값입니다.");
         }
 
         if (request.getNickname() == null || request.getNickname().isEmpty()) {
@@ -92,7 +92,6 @@ public class UserService {
 
         // 사용자 생성
         User newUser = User.builder()
-                .loginId(request.getLoginId())
                 .nickname(request.getNickname())
                 .birthYear(request.getBirthYear())
                 .userJob(UserJob.valueOf(request.getUserJob()))
@@ -174,7 +173,6 @@ public class UserService {
         // 새로운 값 또는 기존 값을 사용하여 업데이트된 엔티티 생성
         User updatedUser = User.builder()
                 .userId(user.getUserId())
-                .loginId(user.getLoginId())
                 .nickname(request.getNickname() != null ? request.getNickname() : user.getNickname())
                 .birthYear(request.getBirthYear() != null ? request.getBirthYear() : user.getBirthYear())
                 .userJob(request.getUserJob() != null ? UserJob.valueOf(request.getUserJob()) : user.getUserJob())
@@ -214,7 +212,6 @@ public class UserService {
 
         User deletedUser = User.builder()
                 .userId(user.getUserId())
-                .loginId(user.getLoginId())
                 .nickname(user.getNickname())
                 .birthYear(user.getBirthYear())
                 .userJob(user.getUserJob())
