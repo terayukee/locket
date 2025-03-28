@@ -20,6 +20,12 @@ spring:
       ddl-auto: validate  # 배포 환경에서는 스키마 자동 변경 방지
     show-sql: false  # SQL 로그 비활성화 (성능 최적화)
 
+  data:
+    redis:
+      host: j12d204.p.ssafy.io
+      port: 6379
+      password: ${REDIS_PASSWORD}
+
 eureka:
   client:
     register-with-eureka: true
