@@ -24,4 +24,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Locket"
 include(":app")
- 
+include(":domain")
+include(":data")
+include(":presentation")

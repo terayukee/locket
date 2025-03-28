@@ -63,6 +63,9 @@ android {
 }
 
 dependencies {
+    implementation (project(":domain"))
+    implementation (project(":data"))
+    implementation(project(":presentation"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -73,25 +76,9 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
-    // https://github.com/square/retrofit
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    //gson. json 파싱용
-    implementation ("com.google.code.gson:gson:2.10.1")
-    // https://github.com/square/retrofit/tree/master/retrofit-converters/gson
-    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     //dagger와 hilt
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-    //nav바 이동
-    implementation("androidx.navigation:navigation-fragment:2.8.9")
-    implementation("androidx.navigation:navigation-ui:2.8.9")
-
-    implementation ("com.github.bumptech.glide:glide:4.16.0")
-    //chart 생성
-    implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
-
-    // calendar
-    implementation("com.kizitonwose.calendar:view:2.5.4")
 
     implementation ("com.kakao.sdk:v2-user:2.20.1")
 

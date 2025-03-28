@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.finance.fragments.budget.BudgetFragment">
+
+    <TextView
+        android:id="@+id/textview1"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:text="한 달 예산"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_budget_left"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textview1"
+        app:layout_constraintTop_toBottomOf="@+id/textview1"
+        tools:text="0원 남음" />
+
+    <TextView
+        android:id="@+id/tv_budget_left_daily"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_regular"
+        android:letterSpacing="-0.02"
+        android:textColor="#A3A5AF"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textview1"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget_left"
+        tools:text="하루 예산 0원" />
+
+    <TextView
+        android:id="@+id/tv_budget_left_no"
+        android:visibility="gone"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:letterSpacing="-0.02"
+        android:text="이번 달 예산을 설정 해주세요"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/textview1"
+        app:layout_constraintTop_toTopOf="@+id/progress_bar"
+        app:layout_constraintBottom_toTopOf="@+id/tv_recommend_budget_today_text"/>
+
+    <com.ssafy.locket.presentation.finance.fragments.budget.CustomProgressBar
+        android:id="@+id/progress_bar"
+        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintDimensionRatio="11.033"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget_left_daily" />
+
+    <ImageView
+        android:id="@+id/iv_budget_bullet"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_finance_budget_bullet_filled"
+        app:layout_constraintTop_toTopOf="@+id/tv_budget_text"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_budget_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_budget_text"/>
+
+    <TextView
+        android:id="@+id/tv_budget_text"
+        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:text="예산"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_budget"
+        app:layout_constraintStart_toEndOf="@+id/iv_budget_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+
+    <TextView
+        android:id="@+id/tv_budget"
+        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="end"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_budget_text"
+        app:layout_constraintTop_toTopOf="@+id/tv_budget_text"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_budget_text"
+        tools:text="500,000원"/>
+
+    <ImageView
+        android:id="@+id/iv_recommend_budget_today_bullet"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_finance_budget_bullet_stroke"
+        app:layout_constraintTop_toTopOf="@+id/tv_recommend_budget_today_text"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_recommend_budget_today_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_recommend_budget_today_text"/>
+
+    <TextView
+        android:id="@+id/tv_recommend_budget_today_text"
+        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:text="오늘까지 권장 지출"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_recommend_budget_today"
+        app:layout_constraintStart_toEndOf="@+id/iv_recommend_budget_today_bullet"
+        app:layout_constraintTop_toBottomOf="@+id/tv_budget_text" />
+
+    <TextView
+        android:id="@+id/tv_recommend_budget_today"
+        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="end"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_recommend_budget_today_text"
+        app:layout_constraintTop_toTopOf="@+id/tv_recommend_budget_today_text"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_recommend_budget_today_text"
+        tools:text="500,000원"/>
+
+    <Button
+        android:id="@+id/btn_budget_set"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_all_btn"
+        android:letterSpacing="-0.02"
+        android:text="월별 예산 설정"
+        android:textSize="18sp"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textview1"
+        app:layout_constraintVertical_bias="0.694" />
+
+    <androidx.constraintlayout.widget.Group
+        android:id="@+id/group_budget"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        app:constraint_referenced_ids="progress_bar, iv_budget_bullet, tv_budget_text, tv_budget, iv_recommend_budget_today_bullet, tv_recommend_budget_today_text, tv_recommend_budget_today"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
