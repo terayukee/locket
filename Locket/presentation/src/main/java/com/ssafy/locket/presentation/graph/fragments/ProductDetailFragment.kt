@@ -2,6 +2,7 @@ package com.ssafy.locket.presentation.graph.fragments
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
@@ -17,6 +18,7 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductDetailBinding
+import com.ssafy.locket.presentation.graph.PriceMarkerView
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
@@ -50,7 +52,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                 binding.cvNotificationSetting.visibility = View.VISIBLE
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)  // 색칠된 하트
             } else {
-                binding.cvNotificationSetting.visibility = View.GONE
+                binding.cvNotificationSetting.visibility = View.INVISIBLE
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)  // 빈 하트
             }
         }
@@ -124,7 +126,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             lineWidth = 2f
             setDrawCircles(false) // 원형 점 숨기기
             setDrawCircleHole(false) // 원 내부 구멍 숨기기
-            valueTextSize = 10f
+            setDrawValues(false) // 값(라벨) 숨기기
         }
         // 최저가 라인
         val lowPriceDataSet = LineDataSet(lowPriceEntries, "최저가").apply {
@@ -132,14 +134,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             lineWidth = 2f
             setDrawCircles(false) // 원형 점 숨기기
             setDrawCircleHole(false) // 원 내부 구멍 숨기기
-            valueTextSize = 10f
+            setDrawValues(false) // 값(라벨) 숨기기
         }
         // 평균가 표시 (17,925원)
         val leftAxis: YAxis = lineChart.axisLeft
-        val limitLine = LimitLine(17925f, "6개월간 평균가").apply {
+        val limitLine = LimitLine(17925f, "6개월간 평균가: 17925").apply {
             lineColor = Color.parseColor("#00CBBF")
             lineWidth = 2f
-            textColor = Color.parseColor("#00CBBF")
             labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
             enableDashedLine(10f, 10f, 0f) // 점선 스타일 (10px 선, 10px 공백)
         }
@@ -154,18 +155,52 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
         // Y축에 추가
         leftAxis.addLimitLine(lowPriceLimitLine)
+        leftAxis.setDrawLabels(false)
+        leftAxis.setDrawGridLines(false)
+
         // 데이터 적용
         lineChart.data = LineData(highPriceDataSet, lowPriceDataSet)
         lineChart.invalidate()
+        lineChart.axisRight.isEnabled = false
         // X축 설정
         val xAxis: XAxis = lineChart.xAxis
         xAxis.position = XAxis.XAxisPosition.BOTTOM
         xAxis.granularity = 1f
         xAxis.valueFormatter = IndexAxisValueFormatter(dates)
+        xAxis.setDrawGridLines(false)
         // 설명 제거
         lineChart.description = Description().apply { text = "" }
-        // 범례 설정
-        val legend: Legend = lineChart.legend
-        legend.isEnabled = true
+        val legend = lineChart.legend
+        legend.isEnabled = false
+
+        lineChart = binding.chartPriceGraph
+        lineChart.setPinchZoom(false) // 확대/축소 비활성화
+        lineChart.setDragEnabled(true) // 드래그 활성화
+        lineChart.setScaleXEnabled(true) // X축 스케일만 활성화
+        lineChart.setScaleYEnabled(false) // Y축 스케일 비활성화
+        lineChart.setDoubleTapToZoomEnabled(false)
+        lineChart.setNestedScrollingEnabled(false)
+
+        val markerView = PriceMarkerView(requireContext())
+        markerView.setData(dates, highPrices, lowPrices)
+        lineChart.marker = markerView
+
+        lineChart.setOnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // 부모 스크롤뷰의 스크롤 막기
+                    v.parent.requestDisallowInterceptTouchEvent(true)
+                }
+                MotionEvent.ACTION_UP -> {
+                    // 터치가 끝나면 부모 스크롤뷰의 스크롤 허용
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+                MotionEvent.ACTION_CANCEL -> {
+                    v.parent.requestDisallowInterceptTouchEvent(false)
+                }
+            }
+            // 차트의 기본 터치 이벤트 처리
+            false
+        }
     }
 }
