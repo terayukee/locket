@@ -75,7 +75,7 @@
         android:background="@drawable/bg_bottom_btn"
         android:text="완료"
         android:textColor="#FFFFFF"
-        android:textSize="16sp"
+        android:textSize="@dimen/btn_text_size"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintWidth_percent="0.85"

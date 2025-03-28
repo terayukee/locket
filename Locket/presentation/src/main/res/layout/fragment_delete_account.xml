@@ -102,7 +102,7 @@
         android:padding="16dp"
         android:text="탈퇴하기"
         android:textColor="#FFFFFF"
-        android:textSize="18sp"
+        android:textSize="@dimen/btn_text_size"
         android:textStyle="bold"
         app:cornerRadius="10dp"
         android:fontFamily="@font/pretendard_medium"

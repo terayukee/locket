@@ -8,6 +8,9 @@ import androidx.biometric.BiometricManager
 import androidx.navigation.fragment.findNavController
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import androidx.biometric.BiometricPrompt
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import javax.crypto.KeyGenerator
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
@@ -39,9 +42,7 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
         val biometricManager = BiometricManager.from(requireContext())
         when (biometricManager.canAuthenticate()) {
             BiometricManager.BIOMETRIC_SUCCESS -> {
-                generateSecretKey() // 새 키 생성
-                showToast("지문이 등록되었습니다.")
-                moveToMainActivity()
+                showBiometricPrompt()
             }
             BiometricManager.BIOMETRIC_ERROR_NO_HARDWARE -> {
                 showToast("이 장치에서는 생체 인식이 지원되지 않습니다.")
@@ -85,4 +86,39 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
         keyGenerator.generateKey()
     }
 
+    private fun showBiometricPrompt() {
+        val executor = ContextCompat.getMainExecutor(requireContext())
+        val biometricPrompt = BiometricPrompt(
+            requireActivity() as FragmentActivity,
+            executor,
+            object : BiometricPrompt.AuthenticationCallback() {
+                override fun onAuthenticationError(
+                    errorCode: Int, errString: CharSequence
+                ) {
+                    super.onAuthenticationError(errorCode, errString)
+                    showToast("인증 실패: $errString")
+                }
+
+                override fun onAuthenticationSucceeded(result: BiometricPrompt.AuthenticationResult) {
+                    super.onAuthenticationSucceeded(result)
+                    // 인증 성공 후 새 키 생성 및 다음 화면 이동
+                    generateSecretKey()
+                    showToast("지문이 등록되었습니다")
+                    moveToMainActivity()
+                }
+
+                override fun onAuthenticationFailed() {
+                    super.onAuthenticationFailed()
+                    showToast("지문 인증 실패!")
+                }
+            })
+
+        val promptInfo = BiometricPrompt.PromptInfo.Builder()
+            .setTitle("지문 인증")
+            .setSubtitle("지문을 등록하여 인증하세요.")
+            .setNegativeButtonText("취소")
+            .build()
+
+        biometricPrompt.authenticate(promptInfo)
+    }
 }

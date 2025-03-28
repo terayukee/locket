@@ -33,6 +33,7 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
     }
 
     fun initEvent(){
+        binding.editAge.hint = "2000"
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }

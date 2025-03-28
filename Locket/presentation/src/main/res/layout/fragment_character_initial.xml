@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_all_btn"
         android:text="캐릭터 키우기"
-        android:textSize="20sp"
+        android:textSize="@dimen/btn_text_size"
         android:letterSpacing="-0.02"
         android:textColor="@color/white"
         android:fontFamily="@font/pretendard_medium"
