@@ -7,6 +7,8 @@ import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
 import com.locket.user.domain.budget.entity.Goals;
 import com.locket.user.domain.budget.repository.GoalsRepository;
 import com.locket.user.domain.budget.repository.PaymentTransactionRepository;
+import com.locket.user.domain.payment.dto.PaymentHistoryDto;
+import com.locket.user.feign.PaymentHistoryFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -23,7 +26,7 @@ import java.util.Optional;
 public class BudgetService {
 
     private final GoalsRepository goalsRepository;
-    private final PaymentTransactionRepository paymentTransactionRepository;
+    private final PaymentHistoryFeignClient paymentHistoryFeignClient;
 
     @Transactional
     public BudgetSetResponseDto setMonthlyBudget(BudgetSetRequestDto requestDto) {
@@ -74,26 +77,31 @@ public class BudgetService {
         boolean hasBudget = goalOpt.isPresent();
 
         if (hasBudget) {
-            int target = goalOpt.get().getGoalAmount();
+            // 이번 달 목표 사용 금액
+            int goalAmount = goalOpt.get().getGoalAmount();
 
             // 결제 거래 내역에서 사용 금액 합산
-            BigDecimal spent = paymentTransactionRepository.sumSuccessAmountByUserAndYearMonth(userId, year, month);
+            List<PaymentHistoryDto> histories = paymentHistoryFeignClient.getPaymentHistories(userId, year, month);
+            BigDecimal totalUsed = histories.stream()
+                    .map(PaymentHistoryDto::getTotalAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
 
             // 남은 예산 계산
-            BigDecimal remaining = BigDecimal.valueOf(target).subtract(spent);
+            BigDecimal remaining = BigDecimal.valueOf(goalAmount).subtract(totalUsed);
             if (remaining.compareTo(BigDecimal.ZERO) < 0) {
                 remaining = BigDecimal.ZERO;
             }
 
             // 진행률 계산
-            BigDecimal progress = spent.multiply(BigDecimal.valueOf(100))
-                    .divide(BigDecimal.valueOf(target), 2, RoundingMode.HALF_UP);
+            BigDecimal progress = totalUsed.multiply(BigDecimal.valueOf(100))
+                    .divide(BigDecimal.valueOf(goalAmount), 2, RoundingMode.HALF_UP);
 
             BudgetMonthlyStatusDto monthlyDto = BudgetMonthlyStatusDto.builder()
                     .year(year)
                     .month(month)
-                    .target(target)
-                    .spent(spent)
+                    .target(goalAmount)
+                    .spent(totalUsed)
                     .remaining(remaining)
                     .progress(progress)
                     .build();
