@@ -163,7 +163,7 @@
         android:background="@drawable/bg_all_btn"
         android:letterSpacing="-0.02"
         android:text="월별 예산 설정"
-        android:textSize="18sp"
+        android:textSize="16sp"
         android:textColor="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

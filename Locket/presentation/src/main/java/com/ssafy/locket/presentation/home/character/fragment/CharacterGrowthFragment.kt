@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.home.character.fragments
+package com.ssafy.locket.presentation.home.character.fragment
 
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment

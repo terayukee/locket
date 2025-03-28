@@ -31,6 +31,7 @@ class ReceiptUploadDialog: DialogFragment() {
 
         binding.btnUploadImg.setOnClickListener {
             // TODO 갤러리 이미지 열기
+            findNavController().navigate(R.id.action_receiptUploadDialog_to_receiptDetailFragment)
         }
 
         binding.btnUploadPdf.setOnClickListener {

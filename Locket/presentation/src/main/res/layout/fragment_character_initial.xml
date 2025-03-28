@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".home.character.fragments.CharacterInitialFragment">
+    tools:context=".home.character.fragment.CharacterInitialFragment">
 
     <TextView
         android:id="@+id/tv_title"
@@ -94,7 +94,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/bg_all_btn"
         android:text="캐릭터 키우기"
-        android:textSize="20sp"
+        android:textSize="16sp"
         android:letterSpacing="-0.02"
         android:textColor="@color/white"
         android:fontFamily="@font/pretendard_medium"

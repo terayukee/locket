@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.notification
+package com.ssafy.locket.presentation.home.notification
 
 import android.os.Bundle
 import android.view.View
@@ -7,7 +7,7 @@ import com.ssafy.locket.model.home.Notification
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentNotificationBinding
-import com.ssafy.locket.presentation.notification.adapter.NotificationListRVAdapter
+import com.ssafy.locket.presentation.home.notification.adapter.NotificationListRVAdapter
 
 class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
     FragmentNotificationBinding::bind,

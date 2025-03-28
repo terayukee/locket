@@ -1,10 +1,10 @@
 package com.ssafy.locket.presentation.finance.fragments.payment_list
 
-import ReceiptRVAdapter
+import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import android.os.Bundle
 import android.view.View
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ssafy.locket.model.finance.Receipt
+import com.ssafy.locket.model.finance.Payment
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentPaymentListBinding
@@ -14,7 +14,7 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
     FragmentPaymentListBinding::bind,
     R.layout.fragment_payment_list
 ) {
-    private lateinit var receiptRVAdapter: ReceiptRVAdapter
+    private lateinit var paymentRVAdapter: PaymentRVAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -24,14 +24,14 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
     }
 
     private fun initAdapter() {
-        receiptRVAdapter = ReceiptRVAdapter("payment")
+        paymentRVAdapter = PaymentRVAdapter("payment")
 
         binding.rvPayment.apply {
-            adapter = receiptRVAdapter
+            adapter = paymentRVAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        val tmpList : List<Receipt> = listOf(Receipt(0,"쿠팡","쇼핑","내일배움카드", 3000, "2024.04.11"), Receipt(1,"쿠팡","쇼핑","내일배움카드3", 8000, "2024.04.12"))
-        receiptRVAdapter.submitList(tmpList)
+        val tmpList : List<Payment> = listOf(Payment(0,"쿠팡","쇼핑","내일배움카드", 3000, "2024.04.11"), Payment(1,"쿠팡","쇼핑","내일배움카드3", 8000, "2024.04.12"))
+        paymentRVAdapter.submitList(tmpList)
     }
 }

@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.notification.adapter
+package com.ssafy.locket.presentation.home.notification.adapter
 
 import android.content.Context
 import android.view.LayoutInflater

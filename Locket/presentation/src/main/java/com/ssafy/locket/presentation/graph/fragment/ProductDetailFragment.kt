@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.graph.fragments
+package com.ssafy.locket.presentation.graph.fragment
 
 import android.graphics.Color
 import android.os.Bundle

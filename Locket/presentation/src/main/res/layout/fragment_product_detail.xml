@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.graph.ProductDetailFragment"
+    tools:context=".graph.fragment.ProductDetailFragment"
     android:background="@color/white"
     android:paddingTop="16dp">
 
@@ -20,6 +20,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_back"
         android:fillViewport="true">
 
@@ -120,7 +121,7 @@
             <View
                 android:id="@+id/v_underline"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
+                android:layout_height="4dp"
                 android:layout_marginTop="24sp"
                 android:background="#EFEFEF"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -135,9 +136,9 @@
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="6dp"
                 android:layout_marginTop="16sp"
-                android:text="가격별동 차트"
+                android:text="가격변동 차트"
                 android:letterSpacing="-0.02"
-                android:textColor="#2B2B2B"
+                android:textColor="@color/text"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -163,9 +164,9 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
-                app:layout_constraintDimensionRatio="2:1"
+                app:layout_constraintDimensionRatio="1.3802"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.87"
+                android:layout_marginHorizontal="24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/tv_chart_description" />
 

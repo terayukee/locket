@@ -22,6 +22,9 @@
         <action
             android:id="@+id/action_homeFragment_to_myPageFragment"
             app:destination="@id/myPageFragment" />
+        <action
+            android:id="@+id/action_homeFragment_to_expenseAnalysisFragment"
+            app:destination="@id/expenseAnalysisFragment" />
     </fragment>
     <fragment
         android:id="@+id/financeFragment"
@@ -46,7 +49,7 @@
     </fragment>
     <fragment
         android:id="@+id/productListFragment"
-        android:name="com.ssafy.locket.presentation.graph.fragments.ProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragment.ProductListFragment"
         android:label="fragment_product_list"
         tools:layout="@layout/fragment_product_list" >
         <action
@@ -67,7 +70,7 @@
     </fragment>
     <fragment
         android:id="@+id/likeProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.fragments.LikeProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragment.LikeProductListFragment"
         android:label="fragment_like_product_list"
         tools:layout="@layout/fragment_like_product_list" >
         <action
@@ -76,7 +79,7 @@
     </fragment>
     <fragment
         android:id="@+id/searchProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.fragments.SearchProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragment.SearchProductListFragment"
         android:label="fragment_search_product_list"
         tools:layout="@layout/fragment_search_product_list" >
         <action
@@ -85,7 +88,7 @@
     </fragment>
     <fragment
         android:id="@+id/categoryProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.fragments.CategoryProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragment.CategoryProductListFragment"
         android:label="fragment_category_product_list"
         tools:layout="@layout/fragment_category_product_list" >
         <action
@@ -94,7 +97,7 @@
     </fragment>
     <fragment
         android:id="@+id/recommendProductListFragment"
-        android:name="com.ssafy.locket.presentation.graph.fragments.RecommendProductListFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragment.RecommendProductListFragment"
         android:label="fragment_recommend_product_list"
         tools:layout="@layout/fragment_recommend_product_list" >
         <action
@@ -103,12 +106,12 @@
     </fragment>
     <fragment
         android:id="@+id/productDetailFragment"
-        android:name="com.ssafy.locket.presentation.graph.fragments.ProductDetailFragment"
+        android:name="com.ssafy.locket.presentation.graph.fragment.ProductDetailFragment"
         android:label="fragment_product_detail"
         tools:layout="@layout/fragment_product_detail" />
     <fragment
         android:id="@+id/characterFragment"
-        android:name="com.ssafy.locket.presentation.home.character.fragments.CharacterInitialFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterInitialFragment"
         android:label="fragment_character"
         tools:layout="@layout/fragment_character_initial" >
         <action
@@ -117,17 +120,21 @@
     </fragment>
     <fragment
         android:id="@+id/characterGrowthFragment"
-        android:name="com.ssafy.locket.presentation.home.character.fragments.CharacterGrowthFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterGrowthFragment"
         android:label="fragment_character_growth"
         tools:layout="@layout/fragment_character_growth" />
     <dialog
         android:id="@+id/receiptUploadDialog"
         android:name="com.ssafy.locket.presentation.home.receipt.ReceiptUploadDialog"
         android:label="ReceiptUploadDialog"
-        tools:layout="@layout/dialog_receipt_upload"/>
+        tools:layout="@layout/dialog_receipt_upload">
+        <action
+            android:id="@+id/action_receiptUploadDialog_to_receiptDetailFragment"
+            app:destination="@id/receiptDetailFragment" />
+    </dialog>
     <fragment
         android:id="@+id/receiptListFragment"
-        android:name="com.ssafy.locket.presentation.home.receipt.ReceiptListFragment"
+        android:name="com.ssafy.locket.presentation.home.receipt.fragment.ReceiptListFragment"
         android:label="fragment_receipt_list"
         tools:layout="@layout/fragment_receipt_list" >
         <action
@@ -136,7 +143,7 @@
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
-        android:name="com.ssafy.locket.presentation.notification.NotificationFragment"
+        android:name="com.ssafy.locket.presentation.home.notification.NotificationFragment"
         android:label="fragment_notification"
         tools:layout="@layout/fragment_notification" />
     <fragment
@@ -193,4 +200,18 @@
         android:name="com.ssafy.locket.presentation.payment.NfcPaymentFragment"
         android:label="fragment_nfc_payment"
         tools:layout="@layout/fragment_nfc_payment" />
+    <fragment
+        android:id="@+id/receiptDetailFragment"
+        android:name="com.ssafy.locket.presentation.home.receipt.fragment.ReceiptDetailFragment"
+        android:label="fragment_receipt_detail"
+        tools:layout="@layout/fragment_receipt_detail" >
+        <action
+            android:id="@+id/action_receiptDetailFragment_to_editReceiptDetailFragment"
+            app:destination="@id/editReceiptDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/editReceiptDetailFragment"
+        android:name="com.ssafy.locket.presentation.home.receipt.fragment.EditReceiptDetailFragment"
+        android:label="fragment_edit_receipt_detail"
+        tools:layout="@layout/fragment_edit_receipt_detail" />
 </navigation>

@@ -1,6 +1,6 @@
 package com.ssafy.locket.presentation.finance.fragments.payment_calendar
 
-import ReceiptRVAdapter
+import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
@@ -24,7 +24,7 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
     private var mContext : Context? = null
     private var _binding : FragmentPaymentListBottomSheetBinding? = null
     private val binding get() = _binding!!
-    private lateinit var receiptRVAdapter: ReceiptRVAdapter
+    private lateinit var paymentRVAdapter: PaymentRVAdapter
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -53,10 +53,10 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun init(){
-        receiptRVAdapter = ReceiptRVAdapter("payment")
+        paymentRVAdapter = PaymentRVAdapter("payment")
 
         binding.rvPayment.apply {
-            adapter = receiptRVAdapter
+            adapter = paymentRVAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
 

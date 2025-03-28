@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.graph.fragments
+package com.ssafy.locket.presentation.graph.fragment
 
 import android.os.Bundle
 import android.view.View

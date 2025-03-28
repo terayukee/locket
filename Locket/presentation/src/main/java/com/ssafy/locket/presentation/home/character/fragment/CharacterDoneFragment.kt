@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.home.character.fragments
+package com.ssafy.locket.presentation.home.character.fragment
 
 import android.os.Bundle
 import android.view.View

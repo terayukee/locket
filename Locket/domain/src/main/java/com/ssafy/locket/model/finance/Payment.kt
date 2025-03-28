@@ -2,7 +2,7 @@ package com.ssafy.locket.model.finance
 
 import com.google.gson.annotations.SerializedName
 
-data class Receipt(
+data class Payment(
     @SerializedName("id")
     val id: Int,
     @SerializedName("place")
