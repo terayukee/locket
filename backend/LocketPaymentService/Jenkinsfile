@@ -92,7 +92,10 @@ pipeline {
                     sh '''
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
-                            "docker service update --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
+                            "docker service update \
+                                --env-add REDIS_PASSWORD=$REDIS_PASSWORD \
+                                --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
+                                ${DOCKER_IMAGE}"
                     '''
                 }
             }
