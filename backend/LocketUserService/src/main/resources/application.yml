@@ -45,11 +45,6 @@ management:
     web:
       exposure:
         include: health, prometheus
-  health:
-    livenessstate:
-      enabled: true
-    readinessstate:
-      enabled: true
 
 springdoc:
   api-docs:

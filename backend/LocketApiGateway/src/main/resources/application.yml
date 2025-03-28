@@ -69,11 +69,6 @@ management:
     metrics:
       export:
         enabled: true
-  health:
-    livenessstate:
-      enabled: true
-    readinessstate:
-      enabled: true
 
 jwt:
   secret: ${JWT_SECRET:my-secret-jwt-key-for-dev-only}

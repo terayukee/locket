@@ -38,8 +38,3 @@ management:
     metrics:
       export:
         enabled: true
-  health:
-    livenessstate:
-      enabled: true
-    readinessstate:
-      enabled: true
