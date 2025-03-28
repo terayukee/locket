@@ -10,12 +10,14 @@ import com.locket.user.domain.auth.entity.UserJob;
 import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -24,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final StringRedisTemplate redisTemplate; // ✅ Redis 주입
 
     // 카카오 로그인
     @Transactional
@@ -125,12 +128,19 @@ public class UserService {
 
     // 로그인, JWT 토큰 발급
     public LoginResponseDto login(User user) {
-        // JWT 토큰 생성
+        // 1. JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getNickname());
         String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
 
-        // Redis에 리프레시 토큰 저장
-//        tokenService.saveRefreshToken(user.getUserId(), refreshToken);
+        Long userId = user.getUserId();
+
+        // 2. Redis 저장
+        redisTemplate.opsForValue().set("user:" + userId + ":hasPaymentPassword", String.valueOf(user.getPaymentPassword()));
+        redisTemplate.opsForValue().set("user:" + userId + ":fingerprintRegistered", String.valueOf(user.getFingerprintRegistered()));
+
+        // ✅ Refresh Token도 Redis에 저장 (7일 TTL)
+        redisTemplate.opsForValue().set("user:" + userId + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
+
 
         return LoginResponseDto.builder()
                 .userId(user.getUserId())
