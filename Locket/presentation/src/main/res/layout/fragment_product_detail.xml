@@ -31,6 +31,8 @@
                 android:id="@+id/iv_product_image"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
+                android:layout_marginStart="24dp"
+                android:layout_marginEnd="24dp"
                 android:src="@drawable/ic_graph_search"
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -41,15 +43,15 @@
                 android:id="@+id/tv_product_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="32dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="16sp"
+                android:fontFamily="@font/pretendard_bold"
                 android:letterSpacing="-0.02"
                 android:text="하리보 골드베렌 젤리 93개"
-                android:fontFamily="@font/pretendard_bold"
                 android:textSize="16sp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/iv_star"
                 app:layout_constraintHorizontal_bias="0.1"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/iv_product_image" />
 
             <ImageView
@@ -66,12 +68,13 @@
                 android:id="@+id/tv_review"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="24dp"
+                android:fontFamily="@font/pretendard_regular"
                 android:letterSpacing="-0.02"
                 android:text="5.0(118)"
-                android:fontFamily="@font/pretendard_regular"
                 android:textSize="14sp"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_star"
-                app:layout_constraintStart_toEndOf="@+id/iv_star" />
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <TextView
                 android:id="@+id/tv_highest_price"
@@ -114,13 +117,12 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_marginTop="5sp"
+                android:layout_marginEnd="24dp"
                 android:src="@drawable/ic_all_empty_heart"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.9"
-                app:layout_constraintWidth_percent="0.07"
                 app:layout_constraintDimensionRatio="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_review" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tv_review"
+                app:layout_constraintWidth_percent="0.07" />
 
             <View
                 android:id="@+id/v_underline"
@@ -136,33 +138,34 @@
                 android:id="@+id/tv_chart_title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/bg_product_rounded_beige"
-                android:paddingHorizontal="12dp"
-                android:paddingVertical="3dp"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="16sp"
-                android:text="가격별동 차트"
+                android:background="@drawable/bg_product_rounded_beige"
                 android:fontFamily="@font/pretendard_medium"
                 android:letterSpacing="-0.02"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="3dp"
+                android:text="가격별동 차트"
                 android:textColor="#2B2B2B"
                 android:textSize="12sp"
                 android:textStyle="bold"
-                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintTop_toBottomOf="@+id/v_underline" />
 
             <TextView
                 android:id="@+id/tv_chart_description"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
                 android:layout_marginTop="8dp"
-                android:letterSpacing="-0.02"
+                android:layout_marginEnd="24dp"
                 android:fontFamily="@font/pretendard_bold"
+                android:letterSpacing="-0.02"
                 android:text="변화하는 쿠팡가를 확인해보세요"
                 android:textSize="14sp"
                 android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/tv_chart_title"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/tv_chart_title" />
 
             <com.github.mikephil.charting.charts.LineChart
@@ -171,10 +174,10 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
                 app:layout_constraintDimensionRatio="2:1"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.87"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_chart_description" />
+                app:layout_constraintEnd_toEndOf="@+id/tv_chart_description"
+                app:layout_constraintStart_toStartOf="@+id/tv_chart_description"
+                app:layout_constraintTop_toBottomOf="@+id/tv_chart_description"
+                app:layout_constraintWidth_percent="0.87" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/cv_notification_setting"
