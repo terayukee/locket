@@ -121,7 +121,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
         // 최고가 라인
         val highPriceDataSet = LineDataSet(highPriceEntries, "최고가").apply {
-            color = Color.BLUE
+            color = Color.RED
             lineWidth = 2f
             setDrawCircles(false) // 원형 점 숨기기
             setDrawCircleHole(false) // 원 내부 구멍 숨기기
@@ -129,7 +129,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
         // 최저가 라인
         val lowPriceDataSet = LineDataSet(lowPriceEntries, "최저가").apply {
-            color = Color.RED
+            color = Color.parseColor("#C9C9C9")
             lineWidth = 2f
             setDrawCircles(false) // 원형 점 숨기기
             setDrawCircleHole(false) // 원 내부 구멍 숨기기
