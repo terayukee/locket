@@ -22,9 +22,3 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://j12d204.p.ssafy.io:8761/eureka  # EC2의 Eureka 서버 사용
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health, info, prometheus
