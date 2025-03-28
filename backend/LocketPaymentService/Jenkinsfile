@@ -14,6 +14,8 @@ pipeline {
         DB_PASSWORD = credentials('DB_PASSWORD')
         KAFKA_BOOTSTRAP_SERVERS = credentials('KAFKA_BOOTSTRAP_SERVERS')
 
+        REDIS_PASSWORD = credentials('REDIS_PASSWORD')   // 🔐 Redis 비밀번호 추가
+
         JAVA_HOME = '/opt/java/openjdk'
         GRADLE_HOME = '/opt/gradle/gradle-8.7'
         PATH = "${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"

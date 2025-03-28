@@ -21,8 +21,8 @@ public class User {
     @Column(name = "user_id")
     private Long userId;
 
-    @Column(name = "login_id", nullable = false, length = 100)
-    private String loginId;  // 카카오 ID를 저장
+    @Column(name = "kakao_id")
+    private Long kakaoId;
 
     @Column(name = "nickname", nullable = false, length = 50)
     private String nickname;

@@ -38,9 +38,9 @@ public class BudgetController {
             @ApiResponse(responseCode = "404", description = "ACCESS_DENIED"),
             @ApiResponse(responseCode = "401", description = "UNAUTHORIZED")
     })
-    @GetMapping("/status/{userId}")
+    @GetMapping("/status")
     public BudgetStatusResponseDto getBudgetMonthlyStatus(
-            @PathVariable("userId") long userId,
+            @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     ) {

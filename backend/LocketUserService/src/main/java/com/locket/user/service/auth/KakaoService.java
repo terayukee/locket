@@ -82,7 +82,7 @@ public class KakaoService {
         JsonNode jsonNode = objectMapper.readTree(responseBody);
 
         // 필수 값 추출
-        String id = jsonNode.get("id").asText();
+        long id = Long.parseLong(jsonNode.get("id").asText());
 
         // 카카오 계정 정보 추출
         JsonNode kakaoAccount = jsonNode.get("kakao_account");

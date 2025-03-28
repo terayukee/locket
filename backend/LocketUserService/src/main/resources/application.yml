@@ -34,6 +34,12 @@ spring:
             connect-timeout: 5000
             read-timeout: 5000
 
+  data:
+    redis:
+      host: j12d204.p.ssafy.io
+      port: 6379
+      password: ${REDIS.PASSWORD}
+
 eureka:
   client:
     register-with-eureka: true

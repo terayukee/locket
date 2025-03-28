@@ -10,27 +10,29 @@ import com.locket.user.domain.auth.entity.UserJob;
 import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
+    private final StringRedisTemplate redisTemplate; // ✅ Redis 주입
 
     // 카카오 로그인
     @Transactional
     public User processKakaoLogin(KakaoUserInfoDto kakaoUserInfo, String fcmToken) {
 
         // 기존 사용자 확인 및 탈퇴 여부 확인
-        User user = userRepository.findByLoginId(kakaoUserInfo.getId()).orElse(null);
+        User user = userRepository.findByKakaoId(kakaoUserInfo.getId()).orElse(null);
 
         // 사용자가 존재하고 탈퇴하지 않았다면 FCM 토큰 업데이트 후 반환
         if (user != null && !user.getIsDeleted()) {
@@ -52,13 +54,13 @@ public class UserService {
     @Transactional
     public User registerUser(SignupRequest request) {
 
-        userRepository.findByLoginId(request.getLoginId()).ifPresent(user -> {
+        userRepository.findByKakaoId(request.getKakaoId()).ifPresent(user -> {
             throw new IllegalArgumentException("이미 가입된 사용자입니다.");
         });
 
         // 1. 필수 필드 검증
-        if (request.getLoginId() == null || request.getLoginId().isEmpty()) {
-            throw new IllegalArgumentException("로그인 ID는 필수 입력값입니다.");
+        if (request.getKakaoId() == 0) {
+            throw new IllegalArgumentException("카카오 ID는 필수 입력값입니다.");
         }
 
         if (request.getNickname() == null || request.getNickname().isEmpty()) {
@@ -89,7 +91,6 @@ public class UserService {
 
         // 사용자 생성
         User newUser = User.builder()
-                .loginId(request.getLoginId())
                 .nickname(request.getNickname())
                 .birthYear(request.getBirthYear())
                 .userJob(UserJob.valueOf(request.getUserJob()))
@@ -125,12 +126,23 @@ public class UserService {
 
     // 로그인, JWT 토큰 발급
     public LoginResponseDto login(User user) {
-        // JWT 토큰 생성
+        // 1. JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getNickname());
         String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
 
-        // Redis에 리프레시 토큰 저장
-//        tokenService.saveRefreshToken(user.getUserId(), refreshToken);
+        Long userId = user.getUserId();
+
+        // 2. Redis 저장
+        redisTemplate.opsForValue().set("user:" + userId + ":paymentPassword", String.valueOf(user.getPaymentPassword()));
+        redisTemplate.opsForValue().set("user:" + userId + ":fingerprintRegistered", String.valueOf(user.getFingerprintRegistered()));
+
+        // ✅ Refresh Token도 Redis에 저장 (7일 TTL)
+        redisTemplate.opsForValue().set("user:" + userId + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
+
+        // 엘라스틱서치 결제 트랜잭션 저장 시 활용할 잡다한 데이터
+        redisTemplate.opsForValue().set("user:" + userId + ":birthYear", String.valueOf(user.getBirthYear()));
+        redisTemplate.opsForValue().set("user:" + userId + ":userJob", String.valueOf(user.getUserJob()));
+
 
         return LoginResponseDto.builder()
                 .userId(user.getUserId())
@@ -160,7 +172,6 @@ public class UserService {
         // 새로운 값 또는 기존 값을 사용하여 업데이트된 엔티티 생성
         User updatedUser = User.builder()
                 .userId(user.getUserId())
-                .loginId(user.getLoginId())
                 .nickname(request.getNickname() != null ? request.getNickname() : user.getNickname())
                 .birthYear(request.getBirthYear() != null ? request.getBirthYear() : user.getBirthYear())
                 .userJob(request.getUserJob() != null ? UserJob.valueOf(request.getUserJob()) : user.getUserJob())
@@ -200,7 +211,6 @@ public class UserService {
 
         User deletedUser = User.builder()
                 .userId(user.getUserId())
-                .loginId(user.getLoginId())
                 .nickname(user.getNickname())
                 .birthYear(user.getBirthYear())
                 .userJob(user.getUserJob())

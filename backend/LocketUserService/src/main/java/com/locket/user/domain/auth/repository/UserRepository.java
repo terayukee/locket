@@ -10,6 +10,6 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, Long> {
 
     // 로그인 ID(카카오 ID)로 사용자 찾기
-    Optional<User> findByLoginId(String loginId);
+    Optional<User> findByKakaoId(long kakaoId);
 
 }

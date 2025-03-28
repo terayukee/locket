@@ -18,7 +18,7 @@ public class PaymentHistoryDto {
     private long buyerId;
     private long sellerId;
     private String userJob;
-    private String birthDate;
+    private long birthDate;
     private BigDecimal totalAmount;
     private String currency;
     private String paymentCategory;

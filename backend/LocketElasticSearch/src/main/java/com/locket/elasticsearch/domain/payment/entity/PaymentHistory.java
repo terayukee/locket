@@ -31,8 +31,8 @@ public class PaymentHistory {
     @Field(type = FieldType.Keyword)
     private String userJob;
 
-    @Field(type = FieldType.Keyword)
-    private String birthDate;
+    @Field(type = FieldType.Long)
+    private long birthDate;
 
     @Field(type = FieldType.Double)
     private BigDecimal totalAmount;
