@@ -10,6 +10,7 @@ import com.locket.user.domain.auth.entity.UserJob;
 import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -206,4 +207,38 @@ public class UserService {
         redisTemplate.delete(userIdKey + REDIS_BIRTH_YEAR_SUFFIX);
         redisTemplate.delete(userIdKey + REDIS_USER_JOB_SUFFIX);
     }
+
+    // 개발용 로그인 설정 (kakaoId 없이 userId만으로 토큰 생성)
+    @Profile("dev")
+    public LoginResponseDto devLogin(User user) {
+        // 1. JWT 토큰 생성 (kakaoId 없이 userId만으로 토큰 생성)
+        String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getNickname());
+        String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
+
+        Long userId = user.getUserId();
+        String userIdKey = REDIS_USER_PREFIX + userId;
+
+        // 2. Redis 저장
+        redisTemplate.opsForValue().set(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX,
+                String.valueOf(user.getPaymentPassword()));
+        redisTemplate.opsForValue().set(userIdKey + REDIS_FINGERPRINT_SUFFIX,
+                String.valueOf(user.getFingerprintRegistered()));
+
+        // Refresh Token 저장 (7일 TTL)
+        redisTemplate.opsForValue().set(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX,
+                refreshToken, 7, TimeUnit.DAYS);
+
+        // 기타 정보 저장
+        redisTemplate.opsForValue().set(userIdKey + REDIS_BIRTH_YEAR_SUFFIX,
+                String.valueOf(user.getBirthYear()));
+        redisTemplate.opsForValue().set(userIdKey + REDIS_USER_JOB_SUFFIX,
+                String.valueOf(user.getUserJob()));
+
+        return LoginResponseDto.builder()
+                .userId(user.getUserId())
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }

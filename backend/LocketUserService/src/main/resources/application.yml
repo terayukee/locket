@@ -63,6 +63,6 @@ springdoc:
 
 
 jwt:
-  secret: ${JWT_SECRET:my-secret-jwt-key-for-dev-only}
+  secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}
   access-exp: ${JWT_ACCESS_EXP:86400000}   # 24시간
   refresh-exp: ${JWT_REFRESH_EXP:604800000} # 7일

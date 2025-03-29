@@ -4,8 +4,6 @@ spring:
     username: ${DB.USERNAME}
     password: ${DB.PASSWORD}
     driver-class-name: org.postgresql.Driver
-  profiles:
-    active: dev
 
   jpa:
     hibernate:
