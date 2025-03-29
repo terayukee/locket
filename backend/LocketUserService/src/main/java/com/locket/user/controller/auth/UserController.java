@@ -237,34 +237,34 @@ public class UserController {
         }
     }
 
-    @Profile("dev")
-    @Operation(
-            summary = "[테스트용] 로그인",
-            description = "개발 환경에서만 사용 가능한 테스트 로그인입니다",
-            security = {} // 인증 필요 없음
-    )
-    @PostMapping("/dev-login/{user_id}")
-    public ResponseEntity<?> devLogin(@PathVariable("user_id") Long userId) {
-        try {
-            // 사용자 ID로 사용자 조회
-            User user = userService.findById(userId);
-
-            // 탈퇴한 사용자인지 확인
-            if (user.getIsDeleted()) {
-                Map<String, String> response = new HashMap<>();
-                response.put("message", "탈퇴한 사용자입니다.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-            }
-
-            // 테스트용 로그인 처리 (kakaoId 의존성 제거)
-            LoginResponseDto loginResponse = userService.devLogin(user);
-
-            return ResponseEntity.ok(loginResponse);
-        } catch (ResourceNotFoundException e) {
-            Map<String, String> response = new HashMap<>();
-            response.put("message", "사용자를 찾을 수 없습니다.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-    }
+//    @Profile("dev")
+//    @Operation(
+//            summary = "[테스트용] 로그인",
+//            description = "개발 환경에서만 사용 가능한 테스트 로그인입니다",
+//            security = {} // 인증 필요 없음
+//    )
+//    @PostMapping("/dev-login/{user_id}")
+//    public ResponseEntity<?> devLogin(@PathVariable("user_id") Long userId) {
+//        try {
+//            // 사용자 ID로 사용자 조회
+//            User user = userService.findById(userId);
+//
+//            // 탈퇴한 사용자인지 확인
+//            if (user.getIsDeleted()) {
+//                Map<String, String> response = new HashMap<>();
+//                response.put("message", "탈퇴한 사용자입니다.");
+//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+//            }
+//
+//            // 테스트용 로그인 처리 (kakaoId 의존성 제거)
+//            LoginResponseDto loginResponse = userService.devLogin(user);
+//
+//            return ResponseEntity.ok(loginResponse);
+//        } catch (ResourceNotFoundException e) {
+//            Map<String, String> response = new HashMap<>();
+//            response.put("message", "사용자를 찾을 수 없습니다.");
+//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+//        }
+//    }
 
 }
