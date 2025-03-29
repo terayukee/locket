@@ -10,6 +10,7 @@ import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -256,6 +257,15 @@ public class PayService {
                             .transactionId(null)
                             .status("BAD_REQUEST")
                             .message(e.getMessage())
+                            .build()
+            );
+        } catch (OptimisticLockingFailureException e) {
+            log.warn("💥 낙관적 락 충돌 발생 - 동시 수정 감지됨", e);
+            return ResponseEntity.status(409).body(
+                    PaymentResponse.builder()
+                            .transactionId(null)
+                            .status("CONFLICT")
+                            .message("다른 요청이 동시에 처리되어 충돌이 발생했습니다. 다시 시도해주세요.")
                             .build()
             );
         } catch (Exception e) {
