@@ -4,6 +4,13 @@ server:
 spring:
   application:
     name: payment-service
+  datasource:
+    hikari:
+      maximum-pool-size: 150   # 병렬 요청 수 대비 충분한 값
+      minimum-idle: 30
+      idle-timeout: 300000     # 5분
+      max-lifetime: 1800000    # 30분
+      connection-timeout: 3000 # 3초 (너무 길게 대기하지 않게)
   profiles:
     active: dev
     include: key  # application-key.yml 포함 (DB, Kafka 정보)
