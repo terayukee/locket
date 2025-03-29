@@ -1,10 +1,10 @@
 from fastapi import APIRouter, UploadFile, File
-from ..services.ocr import OCRService
-from ..services.classifier import ItemClassifier
-from ..schemas.receipt import ReceiptResponse
-from ..utils.file_validator import FileValidator
-from ..exceptions.receipt_exceptions import FileValidationException, OCRProcessingException, ClassificationException
-from ..constants.status import ErrorMessage
+from ..domain.receipt.service.ocr import OCRService
+from ..domain.receipt.service.classifier import ItemClassifier
+from ..domain.receipt.dto.receipt_dto import ReceiptResponse
+from ..common.core.validator import FileValidator
+from ..domain.receipt.exception.exception import FileValidationException, OCRProcessingException, ClassificationException
+from ..common.constant.status import ErrorMessage
 import base64
 from io import BytesIO
 from pdf2image import convert_from_bytes

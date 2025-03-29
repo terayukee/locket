@@ -15,6 +15,7 @@ class StatusCode(Enum):
     FILE_TOO_LARGE = 4002
     INVALID_FILE_TYPE = 4003
     INVALID_IMAGE_SIZE = 4004
+    MODEL_LOAD_ERROR = 4005
 
     # OCR 관련 에러
     OCR_PROCESSING_ERROR = 5001
@@ -27,6 +28,7 @@ class ErrorMessage(Enum):
     FILE_TOO_LARGE = "파일 크기가 5MB를 초과합니다."
     INVALID_FILE_TYPE = "지원하지 않는 파일 형식입니다."
     INVALID_IMAGE_SIZE = "이미지 해상도가 너무 낮습니다."
+    MODEL_LOAD_ERROR = "모델 로드 중 오류가 발생했습니다"
 
     # OCR 관련 메시지
     OCR_PROCESSING_ERROR = "OCR 처리 중 오류가 발생했습니다."
