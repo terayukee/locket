@@ -15,9 +15,9 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Intege
     Optional<BankAccount> findById(Integer accountId);
 
     // 🔁 기존 비관적 락은 제거
-    // @Lock(LockModeType.PESSIMISTIC_WRITE)
-    // Optional<BankAccount> findByAccountId(Integer accountId);
+     @Lock(LockModeType.PESSIMISTIC_WRITE)
+     Optional<BankAccount> findByAccountId(Integer accountId);
 
     // ✅ 낙관적 락에서는 일반 조회 메서드 사용 가능
-    Optional<BankAccount> findByAccountId(Integer accountId);
+//    Optional<BankAccount> findByAccountId(Integer accountId);
 }
