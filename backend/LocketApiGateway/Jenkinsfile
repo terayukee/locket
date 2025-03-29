@@ -77,6 +77,7 @@ pipeline {
                         usernameVariable: 'EC2_USER'
                     ),
                     string(credentialsId: 'EC2_IP', variable: 'EC2_IP'),
+                    string(credentialsId: 'EUREKA_SERVER', variable: 'EUREKA_SERVER'), // 🔥 추가됨
                     usernamePassword(
                         credentialsId: 'DockerHub_PAT',
                         usernameVariable: 'DOCKERHUB_USERNAME',
@@ -86,11 +87,15 @@ pipeline {
                     sh '''
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
-                            "docker service update --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
+                            "docker service update \
+                                --env-add EUREKA_SERVER=$EUREKA_SERVER \
+                                --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
+                                ${DOCKER_IMAGE}"
                     '''
                 }
             }
         }
+
     }
 
     post {

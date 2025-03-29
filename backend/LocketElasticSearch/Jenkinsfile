@@ -85,16 +85,27 @@ pipeline {
                         credentialsId: 'DockerHub_PAT',
                         usernameVariable: 'DOCKERHUB_USERNAME',
                         passwordVariable: 'DOCKERHUB_TOKEN'
-                    )
+                    ),
+                    string(credentialsId: 'ELASTICSEARCH_URIS', variable: 'ELASTICSEARCH_URIS'),
+                    string(credentialsId: 'ELASTICSEARCH_USERNAME', variable: 'ELASTICSEARCH_USERNAME'),
+                    string(credentialsId: 'ELASTICSEARCH_PASSWORD', variable: 'ELASTICSEARCH_PASSWORD'),
+                    string(credentialsId: 'KAFKA_BOOTSTRAP_SERVERS', variable: 'KAFKA_BOOTSTRAP_SERVERS')
                 ]) {
                     sh '''
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
-                            "docker service update --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest ${DOCKER_IMAGE}"
+                            "docker service update \
+                                --env-add ELASTICSEARCH_URIS=$ELASTICSEARCH_URIS \
+                                --env-add ELASTICSEARCH_USERNAME=$ELASTICSEARCH_USERNAME \
+                                --env-add ELASTICSEARCH_PASSWORD=$ELASTICSEARCH_PASSWORD \
+                                --env-add KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS \
+                                --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
+                                ${DOCKER_IMAGE}"
                     '''
                 }
             }
         }
+
     }
 
     post {
