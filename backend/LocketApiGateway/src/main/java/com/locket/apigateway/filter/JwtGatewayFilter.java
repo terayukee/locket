@@ -27,6 +27,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             // 인증이 필요 없는 URL 패턴
             Pattern.compile("^/api/users/login$"),
             Pattern.compile("^/api/users/signup$"),
+            Pattern.compile("^/api/users/refresh$"),
             Pattern.compile("^/swagger-ui.html$"),
             Pattern.compile("^/swagger-ui/.*$"),
             Pattern.compile("^/v3/api-docs/.*$"),

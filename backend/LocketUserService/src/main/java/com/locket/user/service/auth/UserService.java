@@ -14,83 +14,61 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
-
 
 @Service
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
     private final JwtUtil jwtUtil;
-    private final StringRedisTemplate redisTemplate; // ✅ Redis 주입
+    private final StringRedisTemplate redisTemplate;
 
-    // 카카오 로그인
+    private static final String REDIS_USER_PREFIX = "user:";
+    private static final String REDIS_PAYMENT_PASSWORD_SUFFIX = ":paymentPassword";
+    private static final String REDIS_FINGERPRINT_SUFFIX = ":fingerprintRegistered";
+    private static final String REDIS_REFRESH_TOKEN_SUFFIX = ":refreshToken";
+    private static final String REDIS_BIRTH_YEAR_SUFFIX = ":birthYear";
+    private static final String REDIS_USER_JOB_SUFFIX = ":userJob";
+
     @Transactional
     public User processKakaoLogin(KakaoUserInfoDto kakaoUserInfo, String fcmToken) {
 
-        // 기존 사용자 확인 및 탈퇴 여부 확인
         User user = userRepository.findByKakaoId(kakaoUserInfo.getId()).orElse(null);
 
         // 사용자가 존재하고 탈퇴하지 않았다면 FCM 토큰 업데이트 후 반환
         if (user != null && !user.getIsDeleted()) {
-            // FCM 토큰 업데이트
-            if (fcmToken != null && !fcmToken.isEmpty()) {
+            // FCM 토큰 업데이트 (변경된 경우에만)
+            if (fcmToken != null && !fcmToken.isEmpty() && !fcmToken.equals(user.getFcmToken())) {
                 user.updateFcmToken(fcmToken);
                 userRepository.save(user);
             }
             return user;
         }
-
         // 탈퇴한 사용자거나 없는 사용자면 null 반환
         return null;
-
     }
-
 
     // 회원가입
     @Transactional
     public User registerUser(SignupRequest request) {
-
         userRepository.findByKakaoId(request.getKakaoId()).ifPresent(user -> {
             throw new IllegalArgumentException("이미 가입된 사용자입니다.");
         });
 
-        // 1. 필수 필드 검증
-        if (request.getKakaoId() == 0) {
-            throw new IllegalArgumentException("카카오 ID는 필수 입력값입니다.");
-        }
-
-        if (request.getNickname() == null || request.getNickname().isEmpty()) {
-            throw new IllegalArgumentException("닉네임은 필수 입력값입니다.");
-        }
-
-        // 2. birthYear 검증
-        int currentYear = LocalDate.now().getYear();
-        if (request.getBirthYear() == null || request.getBirthYear() < 1930 || request.getBirthYear() > currentYear) {
-            throw new IllegalArgumentException("유효하지 않은 출생년도입니다. 1930년부터 " + currentYear + "년까지의 값을 입력해주세요.");
-        }
-
-        // 3. UserJob 검증
-        String userJob = request.getUserJob();
-        try {
-            UserJob.valueOf(userJob);
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("유효하지 않은 직업입니다. 직장인, 무직, 자영업자 중 하나를 선택해주세요.");
-        }
-
-        // 4. 결제 비밀번호 검증
+        validateRequiredFields(request);
+        validateBirthYear(request.getBirthYear());
+        validateUserJob(request.getUserJob());
         validatePaymentPassword(request.getPaymentPassword(), request.getConfirmPaymentPassword());
 
-        // 5. 지문 등록 여부 검증
         if (request.getFingerprintRegistered() == null) {
             throw new IllegalArgumentException("지문 등록 여부는 필수 입력값입니다.");
         }
 
         // 사용자 생성
         User newUser = User.builder()
+                .kakaoId(request.getKakaoId())
                 .nickname(request.getNickname())
                 .birthYear(request.getBirthYear())
                 .userJob(UserJob.valueOf(request.getUserJob()))
@@ -104,20 +82,43 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
+    private void validateRequiredFields(SignupRequest request) {
+        if (request.getKakaoId() == 0) {
+            throw new IllegalArgumentException("카카오 ID는 필수 입력값입니다.");
+        }
+
+        if (request.getNickname() == null || request.getNickname().isEmpty()) {
+            throw new IllegalArgumentException("닉네임은 필수 입력값입니다.");
+        }
+    }
+
+    private void validateBirthYear(Integer birthYear) {
+        int currentYear = LocalDate.now().getYear();
+        if (birthYear == null || birthYear < 1930 || birthYear > currentYear) {
+            throw new IllegalArgumentException("유효하지 않은 출생년도입니다. 1930년부터 " + currentYear + "년까지의 값을 입력해주세요.");
+        }
+    }
+
+    private UserJob validateUserJob(String userJobStr) {
+        try {
+            return UserJob.valueOf(userJobStr);
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("유효하지 않은 직업입니다. 직장인, 무직, 자영업자 중 하나를 선택해주세요.");
+        }
+    }
+
     private void validatePaymentPassword(Integer paymentPassword, Integer confirmPaymentPassword) {
         // 결제 비밀번호가 있는 경우에만 검증
         if (paymentPassword != null) {
-            // 4자리 숫자 검증
+
             if (paymentPassword < 1000 || paymentPassword > 9999) {
                 throw new IllegalArgumentException("결제 비밀번호는 4자리 숫자여야 합니다.");
             }
 
-            // 확인 비밀번호 필수 입력 검증
             if (confirmPaymentPassword == null) {
                 throw new IllegalArgumentException("결제 비밀번호 확인은 필수 입력값입니다.");
             }
 
-            // 비밀번호 일치 여부 검증
             if (!paymentPassword.equals(confirmPaymentPassword)) {
                 throw new IllegalArgumentException("결제 비밀번호가 일치하지 않습니다.");
             }
@@ -131,18 +132,23 @@ public class UserService {
         String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
 
         Long userId = user.getUserId();
+        String userIdKey = REDIS_USER_PREFIX + userId;
 
         // 2. Redis 저장
-        redisTemplate.opsForValue().set("user:" + userId + ":paymentPassword", String.valueOf(user.getPaymentPassword()));
-        redisTemplate.opsForValue().set("user:" + userId + ":fingerprintRegistered", String.valueOf(user.getFingerprintRegistered()));
+        redisTemplate.opsForValue().set(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX,
+                String.valueOf(user.getPaymentPassword()));
+        redisTemplate.opsForValue().set(userIdKey + REDIS_FINGERPRINT_SUFFIX,
+                String.valueOf(user.getFingerprintRegistered()));
 
-        // ✅ Refresh Token도 Redis에 저장 (7일 TTL)
-        redisTemplate.opsForValue().set("user:" + userId + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
+        // Refresh Token 저장 (7일 TTL)
+        redisTemplate.opsForValue().set(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX,
+                refreshToken, 7, TimeUnit.DAYS);
 
-        // 엘라스틱서치 결제 트랜잭션 저장 시 활용할 잡다한 데이터
-        redisTemplate.opsForValue().set("user:" + userId + ":birthYear", String.valueOf(user.getBirthYear()));
-        redisTemplate.opsForValue().set("user:" + userId + ":userJob", String.valueOf(user.getUserJob()));
-
+        // 엘라스틱서치 결제 트랜잭션 저장 시 활용할 데이터
+        redisTemplate.opsForValue().set(userIdKey + REDIS_BIRTH_YEAR_SUFFIX,
+                String.valueOf(user.getBirthYear()));
+        redisTemplate.opsForValue().set(userIdKey + REDIS_USER_JOB_SUFFIX,
+                String.valueOf(user.getUserJob()));
 
         return LoginResponseDto.builder()
                 .userId(user.getUserId())
@@ -151,56 +157,35 @@ public class UserService {
                 .build();
     }
 
-    // 사용자 ID로 사용자 조회
     public User findById(Long userId) {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
     }
 
-    // 사용자 정보 수정
     @Transactional
     public User updateUser(Long userId, UserUpdateRequest request) {
-        // 사용자 찾기
+
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
-        // 탈퇴 사용자 확인
         if (user.getIsDeleted()) {
             throw new ResourceNotFoundException("탈퇴한 사용자입니다.");
         }
 
-        // 새로운 값 또는 기존 값을 사용하여 업데이트된 엔티티 생성
-        User updatedUser = User.builder()
-                .userId(user.getUserId())
-                .nickname(request.getNickname() != null ? request.getNickname() : user.getNickname())
-                .birthYear(request.getBirthYear() != null ? request.getBirthYear() : user.getBirthYear())
-                .userJob(request.getUserJob() != null ? UserJob.valueOf(request.getUserJob()) : user.getUserJob())
-                .paymentPassword(user.getPaymentPassword())
-                .fingerprintRegistered(user.getFingerprintRegistered())
-                .fcmToken(user.getFcmToken())
-                .createdAt(user.getCreatedAt())
-                .isDeleted(user.getIsDeleted())
-                .build();
-
-        // 출생년도 검증 (변경할 경우)
+        // 유효성 검사
         if (request.getBirthYear() != null) {
-            int currentYear = LocalDate.now().getYear();
-            if (request.getBirthYear() < 1930 || request.getBirthYear() > currentYear) {
-                throw new IllegalArgumentException("유효하지 않은 출생년도입니다. 1930년부터 " + currentYear + "년까지의 값을 입력해주세요.");
-            }
+            validateBirthYear(request.getBirthYear());
         }
 
-        // 사용자 직업 검증 (변경할 경우)
+        UserJob userJob = null;
         if (request.getUserJob() != null) {
-            try {
-                UserJob.valueOf(request.getUserJob());
-            } catch (IllegalArgumentException e) {
-                throw new IllegalArgumentException("유효하지 않은 직업입니다. 직장인, 무직, 자영업자 중 하나를 선택해주세요.");
-            }
+            userJob = validateUserJob(request.getUserJob());
         }
 
-        // 저장 및 반환
-        return userRepository.save(updatedUser);
+        // 사용자 정보 업데이트
+        user.update(request.getNickname(), request.getBirthYear(), userJob);
+
+        return userRepository.save(user);
     }
 
     // 회원 탈퇴
@@ -209,19 +194,16 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
 
-        User deletedUser = User.builder()
-                .userId(user.getUserId())
-                .nickname(user.getNickname())
-                .birthYear(user.getBirthYear())
-                .userJob(user.getUserJob())
-                .paymentPassword(user.getPaymentPassword())
-                .fingerprintRegistered(user.getFingerprintRegistered())
-                .fcmToken(user.getFcmToken())
-                .createdAt(user.getCreatedAt())
-                .isDeleted(true) // 탈퇴 처리
-                .build();
+        // soft delete
+        user.markAsDeleted();
+        userRepository.save(user);
 
-        userRepository.save(deletedUser);
+        // Redis에서 사용자 데이터 정리
+        String userIdKey = REDIS_USER_PREFIX + userId;
+        redisTemplate.delete(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX);
+        redisTemplate.delete(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX);
+        redisTemplate.delete(userIdKey + REDIS_FINGERPRINT_SUFFIX);
+        redisTemplate.delete(userIdKey + REDIS_BIRTH_YEAR_SUFFIX);
+        redisTemplate.delete(userIdKey + REDIS_USER_JOB_SUFFIX);
     }
-
 }

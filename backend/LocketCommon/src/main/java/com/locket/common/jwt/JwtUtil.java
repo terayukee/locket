@@ -1,12 +1,13 @@
 package com.locket.common.jwt;
 
+import com.locket.common.exception.JwtAuthException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.io.Decoders; // 추가된 import
+import io.jsonwebtoken.io.Decoders;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -98,6 +99,26 @@ public class JwtUtil {
             return false;
         } catch (JwtException e) {
             return false;
+        }
+    }
+
+    // 리프레시 토큰 검증
+    public void validateRefreshToken(String token) throws JwtAuthException {
+        try {
+
+            if (!validateToken(token)) {
+                throw new JwtAuthException("유효하지 않은 리프레시 토큰입니다.");
+            }
+
+            // 리프레시 토큰 타입 확인
+            if (isAccessToken(token)) {
+                throw new JwtAuthException("액세스 토큰이 전달되었습니다. 리프레시 토큰을 전달해주세요.");
+            }
+
+        } catch (ExpiredJwtException e) {
+            throw new JwtAuthException("만료된 리프레시 토큰입니다. 다시 로그인해주세요.");
+        } catch (JwtException e) {
+            throw new JwtAuthException("유효하지 않은 토큰 형식입니다: " + e.getMessage());
         }
     }
 }

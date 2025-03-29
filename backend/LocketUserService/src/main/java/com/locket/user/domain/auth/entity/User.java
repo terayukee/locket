@@ -53,4 +53,14 @@ public class User {
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
     }
+
+    public void update(String nickname, Integer birthYear, UserJob userJob) {
+        if (nickname != null) this.nickname = nickname;
+        if (birthYear != null) this.birthYear = birthYear;
+        if (userJob != null) this.userJob = userJob;
+    }
+
+    public void markAsDeleted() {
+        this.isDeleted = true;
+    }
 }
