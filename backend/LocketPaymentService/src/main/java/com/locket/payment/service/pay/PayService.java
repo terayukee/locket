@@ -76,7 +76,10 @@ public class PayService {
         CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
                 .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드입니다."));
 
-        BankAccount bankAccount = cardInfo.getBankAccount();
+        // ✅ 락을 걸고 계좌 조회
+        BankAccount bankAccount = bankAccountRepository.findByAccountId(cardInfo.getBankAccount().getAccountId())
+                .orElseThrow(() -> new IllegalArgumentException("계좌 정보를 찾을 수 없습니다."));
+//        BankAccount bankAccount = cardInfo.getBankAccount();
 
         if (bankAccount == null) {
             return ResponseEntity.badRequest().body(
