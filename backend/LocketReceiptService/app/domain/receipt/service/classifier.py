@@ -1,15 +1,23 @@
 from typing import List, Dict
 import openai
-import json
-from ..config import settings
-from ..exceptions.receipt_exceptions import ClassificationException
-from ..constants.status import ErrorMessage
+from app.config.settings import settings
+from app.common.constant.status import ErrorMessage
+from ..exception.exception import ClassificationException
 
 class ItemClassifier:
     CATEGORIES = ["식비", "카페/디저트", "쇼핑", "생활", "교통", "기타"]
 
     def __init__(self):
-        self.client = openai.AsyncOpenAI(api_key=settings.OPENAI_API_KEY)
+        try:
+            # OpenAI 클라이언트 초기화
+            openai.api_key = settings.OPENAI_API_KEY
+        except Exception as e:
+            print(f"OpenAI 클라이언트 초기화 실패: {str(e)}")
+            print(f"API Key: {settings.OPENAI_API_KEY[:10]}...")
+            raise ClassificationException(
+                message=ErrorMessage.CLASSIFICATION_ERROR,
+                detail=f"OpenAI 클라이언트 초기화 실패: {str(e)}"
+            )
 
     async def classify_receipt(self, receipt_data: Dict) -> Dict:
         try:
@@ -60,13 +68,13 @@ class ItemClassifier:
             print(f"GPT 요청 프롬프트: {prompt}")
 
             # GPT 호출
-            response = await self.client.chat.completions.create(
+            response = await openai.ChatCompletion.acreate(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": "다음 상품들을 주어진 카테고리로 분류해주세요. 정확히 주어진 형식으로만 응답해주세요."},
                     {"role": "user", "content": prompt}
                 ],
-                temperature=0.3  # 더 일관된 응답을 위해 temperature 낮춤
+                temperature=0.3
             )
 
             response_content = response.choices[0].message.content

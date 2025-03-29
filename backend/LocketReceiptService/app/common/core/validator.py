@@ -2,8 +2,8 @@ from fastapi import UploadFile
 from PIL import Image
 from io import BytesIO
 from PyPDF2 import PdfReader
-from ..constants.status import ErrorMessage
-from ..exceptions.receipt_exceptions import FileValidationException
+from ..constant.status import ErrorMessage
+from app.domain.receipt.exception.exception import FileValidationException
 
 class FileValidator:
     ALLOWED_EXTENSIONS = {'jpg', 'jpeg', 'png'}

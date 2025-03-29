@@ -14,4 +14,19 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
 
     List<PaymentHistory> findByBuyerIdAndYearAndMonthAndDay(long buyerId, int year, int month, int day);
 
+    // 기본적으로 자동으로 파싱해서 날짜 range 쿼리 수행해줌
+    List<PaymentHistory> findByBuyerIdAndCreatedAtBetween(int buyerId, Instant from, Instant to);
+
+
+    // 영수증 등록 가능한 전체 결제 내역 조회
+    List<PaymentHistory> findByBuyerIdAndPaymentStatusAndReceiptUploaded(
+            long buyerId,
+            String paymentStatus,
+            boolean receiptUploaded
+    );
+
+
+    // 사용자의 전체 결제 내역 조회
+    List<PaymentHistory> findByBuyerId(long buyerId);
+
 }
