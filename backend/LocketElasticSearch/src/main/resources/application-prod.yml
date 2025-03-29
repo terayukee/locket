@@ -24,5 +24,18 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
-
+        include: health, info, prometheus, gateway, readiness, liveness
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true

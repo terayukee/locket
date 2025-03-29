@@ -28,7 +28,7 @@ management:
   endpoints:
     web:
       exposure:
-        include: prometheus, health, gateway, readiness, liveness
+        include: prometheus, health, gateway, readiness, liveness, info
   endpoint:
     prometheus:
       enabled: true
@@ -37,10 +37,6 @@ management:
     health:
       show-details: always
       probes:
-        enabled: true
-  prometheus:
-    metrics:
-      export:
         enabled: true
   health:
     readinessstate:
