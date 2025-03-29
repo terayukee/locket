@@ -11,7 +11,7 @@ spring:
       group-id: user-service-group-prod
 
   datasource:
-    url: ${DB.URL_USER}
+    url: ${DB_URL_USER}
     username: ${DB_USERNAME}
     password: ${DB_PASSWORD}
 
