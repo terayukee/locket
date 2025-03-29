@@ -77,6 +77,3 @@ services:
 networks:
   monitoring:
     external: true
-
-volumes:
-  jenkins_home:
