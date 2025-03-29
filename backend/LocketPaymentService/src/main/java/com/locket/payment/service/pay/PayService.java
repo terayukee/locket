@@ -108,7 +108,8 @@ public class PayService {
         // 1️⃣Redis에서 사용자 정보 가져오기
         int birthYear  = 1998;
         String userJob = "학생";
-        long buyerId = request.getBuyerId();
+
+        long buyerId = cardInfo.getUserId();
 
             try {
                 String redisKey = "user:" + buyerId;
@@ -136,7 +137,7 @@ public class PayService {
         PaymentTransaction transaction = PaymentTransaction.builder()
                 .card(cardInfo)
                 .account(bankAccount)
-                .buyerId(request.getBuyerId())
+                .buyerId(buyerId)
                 .sellerId(request.getSellerId())
                 .paymentTransactionStatus(PaymentStatus.EXECUTING)
                 .paymentCategory(request.getPaymentCategory())
@@ -224,7 +225,7 @@ public class PayService {
 
         PaymentSuccessEvent event = PaymentSuccessEvent.builder()
                 .transactionId(UUID.randomUUID().toString())
-                .buyerId(request.getBuyerId())
+                .buyerId(buyerId)
                 .sellerId(request.getSellerId())
                 .userJob(userJob)
                 .birthDate(birthYear)

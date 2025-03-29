@@ -49,7 +49,6 @@ public class PayController {
                                     summary = "기본 결제 요청 예시",
                                     value = "{\n" +
                                             "  \"cardId\": 1,\n" +
-                                            "  \"buyerId\": 1,\n" +
                                             "  \"sellerId\": 2,\n" +
                                             "  \"paymentCategory\": \"카페\",\n" +
                                             "  \"paymentMerchant\": \"아메리카노\",\n" +
