@@ -1,11 +1,9 @@
 import requests
 import json
-import base64
 from typing import Dict
-from decimal import Decimal
-from ..config import settings
-from ..constants.status import ErrorMessage
-from ..exceptions.receipt_exceptions import OCRProcessingException
+from app.config.settings import settings
+from app.common.constant.status import ErrorMessage
+from ..exception.exception import OCRProcessingException
 
 class OCRService:
     def __init__(self):

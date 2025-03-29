@@ -1,5 +1,5 @@
 from fastapi import HTTPException
-from ..constants.status import StatusCode, ErrorMessage
+from app.common.constant.status import StatusCode, ErrorMessage
 
 class ReceiptException(HTTPException):
     def __init__(
@@ -30,6 +30,10 @@ class OCRProcessingException(ReceiptException):
     def __init__(self, message: ErrorMessage, detail: str = None):
         super().__init__(StatusCode.OCR_PROCESSING_ERROR, message, detail)
 
-class ClassificationException(ReceiptException):
+class ClassificationException(ReceiptException):  # ReceiptException 상속
     def __init__(self, message: ErrorMessage, detail: str = None):
-        super().__init__(StatusCode.CLASSIFICATION_ERROR, message, detail)
+        super().__init__(
+            status_code=StatusCode.CLASSIFICATION_ERROR,
+            message=message,
+            detail=detail
+        )

@@ -6,12 +6,12 @@ import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryReposito
 import com.locket.kafka.event.PaymentSuccessEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
-import com.locket.elasticsearch.dto.CategoryResponse;
 import org.springframework.web.reactive.function.client.WebClient;
-import com.locket.elasticsearch.dto.StoreRequest;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -25,22 +25,19 @@ public class PaymentProcessingService {
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
 
-
         try {
-            // FastAPI로 store_name을 POST Body로 전달
-            StoreRequest requestBody = new StoreRequest(event.getStoreName());
+            // FastAPI 호출 - Map으로 직접 요청/응답 처리
+            log.info("📤 Sending category classification request for store: {}", event.getStoreName());
+            Map<String, String> request = Map.of("storeName", event.getStoreName());
 
-            CategoryResponse categoryResponse = webClient.post()
-                .uri("/api/category/classify")
-                .bodyValue(requestBody)
-                .retrieve()
-                .onStatus(
-                        status -> status.is4xxClientError() || status.is5xxServerError(),
-                        response -> response.bodyToMono(String.class)
-                                .map(body -> new RuntimeException("API call failed: " + body))
-                )
-                .bodyToMono(CategoryResponse.class)
-                .block();
+            Map<String, Object> response = webClient.post()
+                    .uri("/api/category/classify")
+                    .bodyValue(Map.of("storeName", event.getStoreName()))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .block();
+            log.info("📥 Received category classification response: {}", response);
+            log.info("📥 Category from response: {}", response.get("paymentCategory"));
 
             // DTO -> Elasticsearch Entity로 변환
             PaymentHistory history = PaymentHistory.builder()
@@ -51,9 +48,9 @@ public class PaymentProcessingService {
                     .birthDate(event.getBirthDate())
                     .totalAmount(event.getTotalAmount())
                     .currency(event.getCurrency())
-                    .paymentCategory(categoryResponse.getCategory())  // API 응답으로 받은 카테고리 사용
+                    .paymentCategory((String) response.get("paymentCategory"))  // API 응답으로 받은 카테고리 사용
                     //.paymentCategory(event.getPaymentCategory())
-                    .needItemCheck(categoryResponse.isNeedsItemCheck())
+                    .needItemCheck((Boolean) response.get("needItemCheck"))
                     .paymentMerchant(event.getPaymentMerchant())
                     .storeName(event.getStoreName())                  // ✅ 매장명
                     .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부
@@ -62,6 +59,7 @@ public class PaymentProcessingService {
                     .orders(convertOrderDetails(event.getOrders()))
                     .build();
 
+            log.info("💾 Saving payment with category: {}", history.getPaymentCategory());
             paymentHistoryRepository.save(history);
             log.info("✅ Saved PaymentHistory to Elasticsearch with ID: {}", history.getTransactionId());
         } catch (Exception e) {
