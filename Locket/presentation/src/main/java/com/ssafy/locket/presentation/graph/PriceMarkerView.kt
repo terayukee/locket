@@ -1,6 +1,7 @@
 package com.ssafy.locket.presentation.graph
 
 import android.content.Context
+import android.view.ViewGroup
 import android.widget.TextView
 import com.example.locket.CommonUtils
 import com.github.mikephil.charting.components.MarkerView
@@ -35,6 +36,30 @@ class PriceMarkerView(context: Context) : MarkerView(context, R.layout.custom_ma
     }
 
     override fun getOffset(): MPPointF {
-        return MPPointF(-(width / 2f), -height.toFloat())
+        val chartLocation = IntArray(2)
+        val markerLocation = IntArray(2)
+
+        // 차트의 위치와 마커의 위치를 가져옵니다
+        (parent as? ViewGroup)?.getLocationInWindow(chartLocation)
+        getLocationInWindow(markerLocation)
+
+        // 차트의 실제 너비와 높이를 계산합니다
+        val chartWidth = (parent as? ViewGroup)?.width ?: 0
+
+        // 마커의 오프셋 계산
+        val xOffset = -(width / 2f)  // 마커가 차트에서 중앙에 오도록 설정
+        val yOffset = -height.toFloat()
+
+        // 화면의 크기 가져오기
+        val displayMetrics = resources.displayMetrics
+
+        // 오른쪽 가장자리가 차트를 벗어나지 않도록 조정
+        val rightEdgeOffset = markerLocation[0] + width + xOffset
+        if (rightEdgeOffset > chartWidth) {
+            return MPPointF(chartWidth - markerLocation[0] - width.toFloat(), yOffset) // 차트의 오른쪽을 벗어나지 않도록 조정
+        }
+
+        // 마커가 차트의 범위 안에 있을 경우
+        return MPPointF(xOffset, yOffset)
     }
 }

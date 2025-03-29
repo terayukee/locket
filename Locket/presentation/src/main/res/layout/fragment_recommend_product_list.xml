@@ -25,6 +25,7 @@
         android:letterSpacing="-0.02"
         android:textSize="14sp"
         android:text="내 주문목록 기반 추천 상품"
+        android:fontFamily="@font/pretendard_bold"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

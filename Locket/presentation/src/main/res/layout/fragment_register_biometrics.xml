@@ -36,16 +36,18 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="98dp"
         android:layout_marginEnd="24dp"
         android:letterSpacing="-0.02"
+        android:fontFamily="@font/pretendard_bold"
         android:text="생체 정보를 등록해주세요."
+        app:layout_constraintVertical_bias="0.196"
         android:textColor="#424242"
         android:textSize="24sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/progress_bar" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/iv_fingerprint_img"

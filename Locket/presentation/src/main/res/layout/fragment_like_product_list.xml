@@ -24,6 +24,7 @@
         android:layout_marginTop="2dp"
         android:letterSpacing="-0.02"
         android:textSize="14sp"
+        android:fontFamily="@font/pretendard_bold"
         android:text="관심목록"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,18 +1,26 @@
 package com.ssafy.locket.presentation.common.view
 
+import android.content.Intent
+import android.nfc.NdefMessage
+import android.nfc.NfcAdapter
+import android.nfc.Tag
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.navigation.NavController
 import androidx.navigation.NavOptions
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.navigation.NavigationBarView
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ActivityMainBinding
+import com.ssafy.locket.presentation.payment.NfcPaymentFragment
 import dagger.hilt.android.AndroidEntryPoint
 
+private const val TAG = "MainActivity_NFC"
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
@@ -70,4 +78,18 @@ class MainActivity : AppCompatActivity() {
     fun setBottomNavigationIndex(id: Int) {
         binding.bottomNavigation.selectedItemId = id
     }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+
+        intent?.let {
+            if (it.action == NfcAdapter.ACTION_NDEF_DISCOVERED || it.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
+                val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
+                val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
+                if (currentFragment is NfcPaymentFragment) {
+                    currentFragment.handleNfcTag(intent)
+                    }
+                }
+            }
+        }
 }

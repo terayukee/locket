@@ -11,6 +11,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.USE_BIOMETRIC" />
     <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.NFC" />
+    <uses-feature android:name="android.hardware.nfc" android:required="true" />
 
     <application
         android:name=".ApplicationClass"
@@ -40,7 +42,15 @@
             android:name=".presentation.common.view.MainActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:excludeFromRecents="true"/>
+            android:excludeFromRecents="true">
+            <intent-filter>
+                <action android:name="android.nfc.action.NDEF_DISCOVERED" />
+                <action android:name="android.nfc.action.TAG_DISCOVERED" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="*/*" />
+            </intent-filter>
+        </activity>
+
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

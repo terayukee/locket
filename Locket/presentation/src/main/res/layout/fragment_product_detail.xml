@@ -59,10 +59,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:src="@drawable/ic_product_star"
-                app:layout_constraintBottom_toBottomOf="@+id/tv_product_title"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.8"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tv_product_title" />
 
             <TextView
                 android:id="@+id/tv_review"
@@ -73,8 +73,8 @@
                 android:letterSpacing="-0.02"
                 android:text="5.0(118)"
                 android:textSize="14sp"
-                app:layout_constraintBottom_toBottomOf="@+id/iv_star"
-                app:layout_constraintEnd_toEndOf="parent" />
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/iv_star" />
 
             <TextView
                 android:id="@+id/tv_highest_price"
