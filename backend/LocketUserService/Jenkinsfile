@@ -98,7 +98,7 @@ pipeline {
                         credentialsId: 'DockerHub_PAT',
                         usernameVariable: 'DOCKERHUB_USERNAME',
                         passwordVariable: 'DOCKERHUB_TOKEN'
-                    )
+                    ),
                     string(credentialsId: 'REDIS_PASSWORD', variable: 'REDIS_PASSWORD') // 👈 추가 필요
                 ]) {
                     sh '''
