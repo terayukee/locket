@@ -37,13 +37,13 @@ public class UserController {
     })
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody KakaoLoginRequest request) {
-        // 1. 카카오 액세스 토큰으로 사용자 정보 가져오기
+        // 카카오 액세스 토큰으로 사용자 정보 가져오기
         KakaoUserInfoDto kakaoUserInfo = kakaoService.getUserInfo(request.getAccessToken());
 
-        // 2. 사용자 확인 (기존 회원인지 확인)
+        // 사용자 확인 (기존 회원인지 확인)
         User user = userService.processKakaoLogin(kakaoUserInfo, request.getFcmToken());
 
-        // 3. 회원이 아닌 경우 회원가입 필요 응답
+        // 회원이 아닌 경우 회원가입 필요
         if (user == null) {
             Map<String, Object> response = new HashMap<>();
             response.put("message", "회원가입이 필요합니다");
@@ -53,7 +53,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
 
-        // 4. 로그인 처리 및 JWT 발급
+        // 로그인 처리 및 JWT 발급
         LoginResponseDto loginResponse = userService.login(user);
 
         return ResponseEntity.ok(loginResponse);
@@ -67,16 +67,16 @@ public class UserController {
     })
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@RequestBody SignupRequest request) {
-        // 1. 회원가입 처리
+        // 회원가입 처리
         User newUser = userService.registerUser(request);
 
-        // 2. 로그인 처리 및 JWT 발급
+        // 로그인 처리 및 JWT 발급
         LoginResponseDto loginResponse = userService.login(newUser);
 
         return ResponseEntity.ok(loginResponse);
     }
 
-    // 특정 사용자 정보 조회 - JWT 필터에서 이미 권한 검증 수행함
+    // 특정 사용자 정보 조회
     @Operation(summary = "회원 정보 조회", description = "특정 사용자의 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공"),
