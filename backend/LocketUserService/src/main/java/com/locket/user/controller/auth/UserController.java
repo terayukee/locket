@@ -12,6 +12,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,8 +35,15 @@ public class UserController {
     private final StringRedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
 
+    @Value("${spring.profiles.active:dev}")
+    private String activeProfile;
+
     // 카카오 로그인
-    @Operation(summary = "소셜로그인", description = "로그인합니다. 신규 회원인 경우 회원가입이 필요합니다.")
+    @Operation(
+            summary = "소셜로그인",
+            description = "로그인합니다. 신규 회원인 경우 회원가입이 필요합니다.",
+            security = {}
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "로그인 성공"),
             @ApiResponse(responseCode = "401", description = "회원가입 필요 (신규 사용자)")
@@ -61,6 +70,36 @@ public class UserController {
         LoginResponseDto loginResponse = userService.login(user);
 
         return ResponseEntity.ok(loginResponse);
+    }
+
+    @Profile("dev")
+    @Operation(
+            summary = "테스트용 로그인",
+            description = "개발 환경에서만 사용 가능한 테스트 로그인입니다",
+            security = {}
+    )
+    @PostMapping("/dev-login/{user_id}")
+    public ResponseEntity<?> devLogin(@PathVariable("user_id") Long userId) {
+        try {
+            // 사용자 ID로 사용자 조회
+            User user = userService.findById(userId);
+
+            // 탈퇴한 사용자인지 확인
+            if (user.getIsDeleted()) {
+                Map<String, String> response = new HashMap<>();
+                response.put("message", "탈퇴한 사용자입니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+            }
+
+            // 로그인 처리 (JWT 발급)
+            LoginResponseDto loginResponse = userService.login(user);
+
+            return ResponseEntity.ok(loginResponse);
+        } catch (ResourceNotFoundException e) {
+            Map<String, String> response = new HashMap<>();
+            response.put("message", "사용자를 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+        }
     }
 
     // 회원가입 처리
