@@ -6,16 +6,15 @@ spring:
 
   cloud:
     gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
       globalcors:
-        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOriginPatterns: "*"
+            allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
-            exposedHeaders: "Authorization, Content-Disposition"
-            maxAge: 3600
       routes:
         # 서비스 라우팅
         - id: payment-service
@@ -27,12 +26,21 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
+          filters:
+            - StripPrefix=0
           order: 100
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
+          filters:
+            - StripPrefix=0
+
+        - id: elasticsearch-payment
+          uri: lb://ELASTICSEARCH-SERVICE
+          predicates:
+            - Path=/api/elasticsearch/payment/**
 
         # Swagger 관련 경로
 #        - id: openapi
@@ -53,12 +61,16 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/v3/api-docs
+          filters:
+            - StripPrefix=0
           order: 1
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
+          filters:
+            - StripPrefix=0
 
 management:
   endpoints:
@@ -88,6 +100,7 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+    configUrl: /v3/api-docs/swagger-config
     urls:
 #      - name: "API Gateway"
 #        url: /v3/api-docs
@@ -97,3 +110,8 @@ springdoc:
         url: /api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
         url: /api/elasticsearch/v3/api-docs
+
+logging:
+  level:
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.web: DEBUG
