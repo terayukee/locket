@@ -56,11 +56,9 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /v3/api-docs
+    path: /api/users/v3/api-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
-
-
 
 jwt:
   secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}

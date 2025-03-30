@@ -49,8 +49,6 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/v3/api-docs
-          filters:
-            - RewritePath=/api/users/v3/api-docs, /v3/api-docs
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
