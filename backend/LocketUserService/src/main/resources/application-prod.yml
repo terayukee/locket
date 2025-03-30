@@ -59,6 +59,6 @@ springdoc:
     path: /api/users/v3/api-docs
   swagger-ui:
     enabled: true
+    server-url: https://j12d204.p.ssafy.io
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
-
