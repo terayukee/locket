@@ -52,3 +52,13 @@ management:
       enabled: true
     livenessstate:
       enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /api/users/v3/api-docs
+  swagger-ui:
+    enabled: true
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
