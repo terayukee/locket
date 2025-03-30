@@ -53,16 +53,12 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/v3/api-docs
-          filters:
-            - RewritePath=/api/users/v3/api-docs, /user-docs
           order: 1
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
-          filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch/v3/api-docs
 
 management:
   endpoints:
@@ -96,8 +92,8 @@ springdoc:
 #      - name: "API Gateway"
 #        url: /v3/api-docs
       - name: "Locket Payment Service"
-        url: http://localhost:8080/api/payment/v3/api-docs
+        url: /api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: http://localhost:8080/api/users/v3/api-docs
+        url: /api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
         url: /api/elasticsearch/v3/api-docs
