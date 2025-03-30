@@ -95,8 +95,8 @@ springdoc:
 #      - name: "API Gateway"
 #        url: /v3/api-docs
       - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
+        url: http://localhost:8080/api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: /api/users/v3/api-docs
+        url: http://localhost:8080/api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
-        url: /api/elasticsearch/v3/api-docs
+        url: http://localhost:8080/api/elasticsearch/v3/api-docs
