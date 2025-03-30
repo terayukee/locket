@@ -67,55 +67,30 @@ class OCRService:
         """OCR 결과에서 영수증 데이터 파싱"""
         try:
             print("OCR 결과 파싱 시작")
-            print("전체 OCR 결과:", json.dumps(ocr_result, indent=2, ensure_ascii=False))
-
             receipt_data = ocr_result['images'][0]['receipt']['result']
-            print("영수증 데이터:", json.dumps(receipt_data, indent=2, ensure_ascii=False))
-
-            # 상점 정보 추출
-            store_info = receipt_data.get('storeInfo', {})
-            store_name = store_info.get('name', {}).get('formatted', {}).get('value', '')
-            if store_info.get('subName', {}).get('text'):
-                store_name += ' ' + store_info['subName']['text']
-            business_number = store_info.get('bizNum', {}).get('formatted', {}).get('value', '')
-            print(f"추출된 상점 정보 - 상점명: {store_name}, 사업자번호: {business_number}")
-
-            # 결제 날짜 추출
-            payment_info = receipt_data.get('paymentInfo', {})
-            if payment_info:
-                date_info = payment_info.get('date', {}).get('text', '')
-                if not date_info:
-                    for field in receipt_data.get('subResults', []):
-                        if 'date' in field:
-                            date_info = field['date'].get('text', '')
-                            break
-                payment_date = date_info
-            else:
-                payment_date = "날짜 정보 없음"
-            print(f"추출된 결제 날짜: {payment_date}")
 
             # 상품 목록 추출
             items = []
+            item_id = 1  # 아이템 ID 초기화
             for subresult in receipt_data.get('subResults', []):
                 for item in subresult.get('items', []):
                     item_data = {
-                        'name': item['name']['formatted']['value'],
-                        'quantity': int(item['count']['formatted']['value']),
-                        'price': str(item['price']['price']['formatted']['value'])
+                        'itemId': item_id,
+                        'itemName': item['name']['formatted']['value'],
+                        'itemQuantity': int(item['count']['formatted']['value']),
+                        'itemAmount': int(item['price']['price']['formatted']['value'])
                     }
                     items.append(item_data)
+                    item_id += 1
                     print(f"추출된 상품 정보:", item_data)
 
             # 총액 추출
-            total_amount = str(receipt_data['totalPrice']['price']['formatted']['value'])
+            total_amount = int(receipt_data['totalPrice']['price']['formatted']['value'])
             print(f"추출된 총액: {total_amount}")
 
             parsed_data = {
-                'store_name': store_name,
-                'business_number': business_number,
-                'payment_date': payment_date,
-                'total_amount': total_amount,
-                'items': items
+                'items': items,
+                'totalAmount': total_amount
             }
             print("최종 파싱 결과:", json.dumps(parsed_data, indent=2, ensure_ascii=False))
 

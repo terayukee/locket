@@ -13,11 +13,11 @@ router = APIRouter()
 ocr_service = OCRService()
 classifier = ItemClassifier()
 
-@router.post("/camera/{payment_id}",
+@router.post("/camera/{transaction_id}",
              summary="영수증 이미지 OCR + 품목 카테고리 분류",
              response_model=ReceiptResponse)
 async def process_receipt_from_camera(
-        payment_id: int,
+        transaction_id: str,
         file: UploadFile = File(description="영수증 이미지 파일")
 ):
     try:
@@ -35,24 +35,34 @@ async def process_receipt_from_camera(
         image_data = base64.b64encode(contents).decode('utf-8')
         ocr_result = await ocr_service.extract_text(image_data)
 
-        # OCR 결과에 품목 분류 추가
-        try:
-            classified_result = await classifier.classify_receipt(ocr_result)
-        except Exception as e:
-            raise ClassificationException(
-                message=ErrorMessage.CLASSIFICATION_ERROR,
-                detail=str(e)
-            )
+        # 품목 분류
+        classified_result = await classifier.classify_receipt(ocr_result)
+
+        # 할인 금액 처리
+        total_sum = sum(item['itemAmount'] for item in classified_result['items'])
+        actual_total = classified_result['totalAmount']
+
+        if total_sum > actual_total:
+            discount = total_sum - actual_total
+            # 가장 큰 금액의 아이템 찾기
+            max_amount_item = max(classified_result['items'],
+                                  key=lambda x: x['itemAmount'])
+            # 할인 적용
+            max_amount_item['itemAmount'] -= discount
+
+        # 카테고리별 금액 계산
+        category_amount = {}
+        for item in classified_result['items']:
+            category = item['itemCategory']
+            amount = item['itemAmount']
+            category_amount[category] = category_amount.get(category, 0) + amount
 
         return ReceiptResponse(
-            payment_id=payment_id,
-            store_name=ocr_result['store_name'],
-            business_number=ocr_result['business_number'],
-            payment_date=ocr_result['payment_date'],
-            total_amount=ocr_result['total_amount'],
             items=classified_result['items'],
-            category_totals=classified_result.get('category_totals')
+            totalAmount=actual_total,
+            categoryAmount=category_amount
         )
+
     except (FileValidationException, OCRProcessingException, ClassificationException) as e:
         raise e
     except Exception as e:
@@ -61,11 +71,11 @@ async def process_receipt_from_camera(
             detail=str(e)
         )
 
-@router.post("/pdf/{payment_id}",
+@router.post("/pdf/{transaction_id}",
              summary="PDF 거래명세표 OCR + 품목 카테고리 분류",
              response_model=ReceiptResponse)
 async def process_receipt_pdf(
-        payment_id: int,
+        transaction_id: str,
         file: UploadFile = File(description="PDF 영수증 파일")
 ):
     try:
@@ -104,23 +114,34 @@ async def process_receipt_pdf(
             # OCR 처리
             ocr_result = await ocr_service.extract_text(image_data)
 
-            try:
-                classified_result = await classifier.classify_receipt(ocr_result)
-            except Exception as e:
-                raise ClassificationException(
-                    message=ErrorMessage.CLASSIFICATION_ERROR,
-                    detail=str(e)
-                )
+            # 품목 분류
+            classified_result = await classifier.classify_receipt(ocr_result)
+
+            # 할인 금액 처리
+            total_sum = sum(item['itemAmount'] for item in classified_result['items'])
+            actual_total = classified_result['totalAmount']
+
+            if total_sum > actual_total:
+                discount = total_sum - actual_total
+                # 가장 큰 금액의 아이템 찾기
+                max_amount_item = max(classified_result['items'],
+                                      key=lambda x: x['itemAmount'])
+                # 할인 적용
+                max_amount_item['itemAmount'] -= discount
+
+            # 카테고리별 금액 계산
+            category_amount = {}
+            for item in classified_result['items']:
+                category = item['itemCategory']
+                amount = item['itemAmount']
+                category_amount[category] = category_amount.get(category, 0) + amount
 
             return ReceiptResponse(
-                payment_id=payment_id,
-                store_name=ocr_result['store_name'],
-                business_number=ocr_result['business_number'],
-                payment_date=ocr_result['payment_date'],
-                total_amount=ocr_result['total_amount'],
                 items=classified_result['items'],
-                category_totals=classified_result.get('category_totals')
+                totalAmount=actual_total,
+                categoryAmount=category_amount
             )
+
         except OCRProcessingException:
             raise
         except Exception as e:

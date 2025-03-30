@@ -1,5 +1,5 @@
 from typing import List, Dict
-import openai
+from openai import AsyncOpenAI
 from app.config.settings import settings
 from app.common.constant.status import ErrorMessage
 from ..exception.exception import ClassificationException
@@ -10,10 +10,12 @@ class ItemClassifier:
     def __init__(self):
         try:
             # OpenAI 클라이언트 초기화
-            openai.api_key = settings.OPENAI_API_KEY
+            self.client = AsyncOpenAI(
+                api_key=settings.OPENAI_API_KEY,
+                base_url="https://api.openai.com/v1"
+            )
         except Exception as e:
             print(f"OpenAI 클라이언트 초기화 실패: {str(e)}")
-            print(f"API Key: {settings.OPENAI_API_KEY[:10]}...")
             raise ClassificationException(
                 message=ErrorMessage.CLASSIFICATION_ERROR,
                 detail=f"OpenAI 클라이언트 초기화 실패: {str(e)}"
@@ -25,32 +27,13 @@ class ItemClassifier:
             # 품목 분류
             classified_items = await self._classify_items(receipt_data["items"])
 
-            # 할인금액 계산
-            total_sum = 0
-            biggest_price = 0
-            biggest_price_index = 0
+            # 결과 데이터 구성
+            result = {
+                'items': classified_items,
+                'totalAmount': receipt_data['totalAmount']
+            }
 
-            # 가장 큰 price 찾기
-            for i, item in enumerate(classified_items):
-                price = float(item['price'])
-                total_sum += price
-                if price > biggest_price:
-                    biggest_price = price
-                    biggest_price_index = i
-
-            # 할인금액 계산
-            actual_total = float(receipt_data["total_amount"])
-            discount = total_sum - actual_total
-
-            # 할인금액이 있으면 가장 큰 price를 가진 품목에서 차감
-            if discount > 0:
-                biggest_price_item = classified_items[biggest_price_index]
-                biggest_price_item['price'] = str(int(float(biggest_price_item['price']) - discount))
-
-            receipt_data["items"] = classified_items
-            receipt_data["category_totals"] = self._calculate_category_totals(classified_items)
-
-            return receipt_data
+            return result
 
         except Exception as e:
             error_msg = f"품목 분류 중 오류 발생: {str(e)}"
@@ -64,11 +47,11 @@ class ItemClassifier:
         """개별 품목 분류"""
         try:
             # 프롬프트 구성
-            prompt = self._create_prompt(items)
+            prompt = self._create_prompt([item['itemName'] for item in items])
             print(f"GPT 요청 프롬프트: {prompt}")
 
             # GPT 호출
-            response = await openai.ChatCompletion.acreate(
+            response = await self.client.chat.completions.create(
                 model="gpt-4",
                 messages=[
                     {"role": "system", "content": "다음 상품들을 주어진 카테고리로 분류해주세요. 정확히 주어진 형식으로만 응답해주세요."},
@@ -93,9 +76,15 @@ class ItemClassifier:
             for item, category in zip(items, categories):
                 if category.strip() not in self.CATEGORIES:
                     raise ValueError(f"유효하지 않은 카테고리입니다: {category}")
-                item_with_category = item.copy()
-                item_with_category['category'] = category.strip()
-                classified_items.append(item_with_category)
+
+                classified_item = {
+                    'itemId': item['itemId'],
+                    'itemName': item['itemName'],
+                    'itemQuantity': item['itemQuantity'],
+                    'itemAmount': item['itemAmount'],
+                    'itemCategory': category.strip()
+                }
+                classified_items.append(classified_item)
 
             return classified_items
 
@@ -107,9 +96,8 @@ class ItemClassifier:
                 detail=error_msg
             )
 
-    def _create_prompt(self, items: List[Dict]) -> str:
+    def _create_prompt(self, item_names: List[str]) -> str:
         """프롬프트 생성"""
-        item_names = [item['name'] for item in items]
         categories = ", ".join(self.CATEGORIES)
 
         return f"""
@@ -134,12 +122,3 @@ class ItemClassifier:
             raise ValueError(f"잘못된 응답 형식입니다: {response}")
 
         return [category.strip() for category in response.split('|')]
-
-    def _calculate_category_totals(self, items: List[Dict]) -> Dict[str, float]:
-        """카테고리별 합계 계산"""
-        totals = {}
-        for item in items:
-            category = item['category']
-            amount = float(item['price'])  # quantity 곱하지 않음
-            totals[category] = totals.get(category, 0) + amount
-        return totals
