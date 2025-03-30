@@ -51,7 +51,7 @@ spring:
           predicates:
             - Path=/api/users/v3/api-docs
           filters:
-            - RewritePath=/api/users/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+            - RewritePath=/api/users/v3/api-docs, /user-docs
           order: 1
 
         - id: elasticsearch-service-docs
