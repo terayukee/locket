@@ -12,8 +12,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,8 +33,6 @@ public class UserController {
     private final StringRedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
 
-    @Value("${spring.profiles.active:dev}")
-    private String activeProfile;
 
     // 카카오 로그인
     @Operation(
@@ -236,35 +232,5 @@ public class UserController {
             throw new UnauthorizedException("토큰 갱신 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
-
-//    @Profile("dev")
-//    @Operation(
-//            summary = "[테스트용] 로그인",
-//            description = "개발 환경에서만 사용 가능한 테스트 로그인입니다",
-//            security = {} // 인증 필요 없음
-//    )
-//    @PostMapping("/dev-login/{user_id}")
-//    public ResponseEntity<?> devLogin(@PathVariable("user_id") Long userId) {
-//        try {
-//            // 사용자 ID로 사용자 조회
-//            User user = userService.findById(userId);
-//
-//            // 탈퇴한 사용자인지 확인
-//            if (user.getIsDeleted()) {
-//                Map<String, String> response = new HashMap<>();
-//                response.put("message", "탈퇴한 사용자입니다.");
-//                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
-//            }
-//
-//            // 테스트용 로그인 처리 (kakaoId 의존성 제거)
-//            LoginResponseDto loginResponse = userService.devLogin(user);
-//
-//            return ResponseEntity.ok(loginResponse);
-//        } catch (ResourceNotFoundException e) {
-//            Map<String, String> response = new HashMap<>();
-//            response.put("message", "사용자를 찾을 수 없습니다.");
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-//        }
-//    }
 
 }
