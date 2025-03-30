@@ -56,7 +56,7 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /api/users/v3/api-docs
+    path: /users-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 

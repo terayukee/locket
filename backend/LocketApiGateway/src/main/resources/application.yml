@@ -15,6 +15,7 @@ spring:
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
+            exposedHeaders: "Authorization, Content-Disposition"
       routes:
         # 서비스 라우팅
         - id: payment-service
@@ -26,16 +27,12 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
-          filters:
-            - StripPrefix=0
           order: 100
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
-          filters:
-            - StripPrefix=0
 
         - id: elasticsearch-payment
           uri: lb://ELASTICSEARCH-SERVICE
@@ -62,7 +59,7 @@ spring:
           predicates:
             - Path=/api/users/v3/api-docs
           filters:
-            - StripPrefix=0
+            - RewritePath=/api/users/v3/api-docs, /users-docs
           order: 1
 
         - id: elasticsearch-service-docs
@@ -70,7 +67,7 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
           filters:
-            - StripPrefix=0
+            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
 
 management:
   endpoints:
@@ -100,7 +97,6 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    configUrl: /v3/api-docs/swagger-config
     urls:
 #      - name: "API Gateway"
 #        url: /v3/api-docs
