@@ -90,6 +90,7 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
+    server-url: https://j12d204.p.ssafy.io
     urls:
 #      - name: "API Gateway"
 #        url: /v3/api-docs
