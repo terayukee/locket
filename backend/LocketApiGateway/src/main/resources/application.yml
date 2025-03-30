@@ -10,7 +10,7 @@ spring:
         add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOriginPatterns: "*"
+            allowedOriginPatterns: "https://j12d204.p.ssafy.io"
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
