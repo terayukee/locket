@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/nfc_payment"
-    tools:context=".presentation.payment.NfcPaymentFragment">>
+    android:background="@color/black">
 
     <TextView
         android:id="@+id/tv_title"
@@ -38,21 +38,37 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.8" />
 
+
+    <TextView
+        android:id="@+id/tv_timer"
+        android:layout_height="45dp"
+        android:layout_width="45dp"
+        android:layout_marginTop="80dp"
+        android:text="30"
+        android:background="@drawable/bg_nfc_circle"
+        android:textColor="#FFFFFF"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_card" />
+
     <TextView
         android:id="@+id/tv_instruction"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
         android:gravity="center"
         android:letterSpacing="-0.02"
         android:text="휴대전화의 뒷면을 카드 리더기에 대세요."
+        android:fontFamily="@font/pretendard_regular"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintVertical_bias="0.2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintVertical_bias="0.3"
-        app:layout_constraintTop_toBottomOf="@id/iv_card"
+        app:layout_constraintTop_toBottomOf="@+id/tv_timer"
         app:layout_constraintWidth_percent="0.9" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

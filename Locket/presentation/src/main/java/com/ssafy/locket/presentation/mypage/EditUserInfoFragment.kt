@@ -24,20 +24,16 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
     R.layout.fragment_edit_user_info
 ) {
     //수정하기 위한 여부
+    var isJobSelected = false
     var isBirthValid = true
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        inititlView()
         initEvent()
     }
 
-    fun inititlView(){
-        binding.layoutJob.setBackgroundResource(R.drawable.bg_card_border_active)
-        binding.layoutAge.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
-    }
-
     fun initEvent(){
+        binding.editAge.hint = "2000"
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -117,6 +113,7 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
                 else -> return@OnClickListener
             }
             binding.tvJobSelect.text = jobTitle
+            checkIfJobSelected()
             popupWindow.dismiss()
         }
         popupBinding.popupItemStudent.setOnClickListener(clickListener)
@@ -132,6 +129,15 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
         } else {
             binding.btnChange.isEnabled = false
             binding.btnChange.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorButtonInactive))  // 비활성화된 색상
+        }
+    }
+
+    private fun checkIfJobSelected() {
+        isJobSelected = binding.tvJobSelect.text.toString() != "직업을 선택해주세요"
+        if (isJobSelected) {
+            binding.layoutJob.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
+        } else {
+            binding.layoutJob.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.finance.fragments.payment_list
+package com.ssafy.locket.presentation.finance.fragment.payment_list
 
 import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import android.os.Bundle

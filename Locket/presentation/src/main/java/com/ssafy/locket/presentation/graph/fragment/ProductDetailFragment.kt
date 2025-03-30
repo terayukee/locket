@@ -3,7 +3,11 @@ package com.ssafy.locket.presentation.graph.fragment
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.locket.CommonUtils
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -13,11 +17,13 @@ import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductDetailBinding
+import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     FragmentProductDetailBinding::bind,
     R.layout.fragment_product_detail
 ) {
+    private val viewModel: EditPriceViewModel by activityViewModels()
     val bottomSheet = EditPriceBottomSheetFragment.newInstance()
     //차트
     private lateinit var lineChart: LineChart
@@ -27,8 +33,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
-        lineChart = binding.chartPriceGraph
-        setupLineChart()
+        initViewModel()
+        initChart()
     }
 
     fun initEvent(){
@@ -48,6 +54,24 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)  // 빈 하트
             }
         }
+    }
+
+    fun initViewModel(){
+        lifecycleScope.launchWhenStarted {
+            viewModel.editprice.collect { editprice ->
+                if(editprice==""){
+                    binding.tvSetting.text = "설정 안됨"
+                }
+                else{
+                    binding.tvSetting.text = CommonUtils.formatNumber(editprice)+"원"
+                }
+            }
+        }
+    }
+
+    fun initChart(){
+        lineChart = binding.chartPriceGraph
+        setupLineChart()
     }
 
     private fun setupLineChart() {
@@ -96,7 +120,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
         // 최고가 라인
         val highPriceDataSet = LineDataSet(highPriceEntries, "최고가").apply {
-            color = Color.BLUE
+            color = Color.RED
             lineWidth = 2f
             setDrawCircles(false) // 원형 점 숨기기
             setDrawCircleHole(false) // 원 내부 구멍 숨기기
@@ -104,7 +128,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
         // 최저가 라인
         val lowPriceDataSet = LineDataSet(lowPriceEntries, "최저가").apply {
-            color = Color.RED
+            color = Color.parseColor("#C9C9C9")
             lineWidth = 2f
             setDrawCircles(false) // 원형 점 숨기기
             setDrawCircleHole(false) // 원 내부 구멍 숨기기

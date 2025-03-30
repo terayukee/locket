@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".presentation.finance.fragments.FinanceFragment">
+    tools:context=".finance.fragment.FinanceFragment">
 
     <TextView
         android:id="@+id/tv_year_month"
@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_medium"
         android:text="지출"
-        android:textColor="#464646"
+        android:textColor="@color/text"
         android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="@+id/tv_payment_data"
         app:layout_constraintStart_toStartOf="@+id/tv_year_month"
@@ -68,7 +68,7 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="24dp"
         android:fontFamily="@font/pretendard_bold"
-        android:textColor="#464646"
+        android:textColor="@color/text"
         android:textSize="20sp"
         app:layout_constraintEnd_toStartOf="@+id/btn_analysis"
         app:layout_constraintStart_toEndOf="@+id/textview1"
@@ -83,7 +83,7 @@
         android:background="@drawable/ic_finance_analysis"
         android:text="분석하기"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="@dimen/btn_text_size"
         app:layout_constraintDimensionRatio="2.5"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_payment_data" />

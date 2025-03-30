@@ -61,7 +61,7 @@
         app:layout_constraintTop_toTopOf="@+id/progress_bar"
         app:layout_constraintBottom_toTopOf="@+id/tv_recommend_budget_today_text"/>
 
-    <com.ssafy.locket.presentation.finance.fragments.budget.CustomProgressBar
+    <com.ssafy.locket.presentation.finance.fragment.budget.CustomProgressBar
         android:id="@+id/progress_bar"
         android:visibility="invisible"
         android:layout_width="0dp"

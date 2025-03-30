@@ -24,13 +24,11 @@ class DeleteAccountFragment : BaseFragment<FragmentDeleteAccountBinding>(
             findNavController().popBackStack()
         }
         binding.btnDelete.setOnClickListener {
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(findNavController().graph.startDestinationId, true) // Clear all fragments, including the start destination
-                .build()
-//            findNavController().navigate(R.id.action_deleteAccountFragment_to_signInFragment, null, navOptions)
             val intent = Intent(requireContext(), LoginActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
+            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+            requireActivity().finishAffinity() // 기존 스택 완전히 제거
         }
     }
 }

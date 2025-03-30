@@ -1,12 +1,18 @@
 package com.ssafy.locket.presentation.payment
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
+import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -16,12 +22,76 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     FragmentNfcPaymentBinding::bind,
     R.layout.fragment_nfc_payment
 ) {
+    private val handler = Handler(Looper.getMainLooper())
+    private var timeRemaining = 30  // 30초 설정
+    private lateinit var vibrator: Vibrator
+    private var isVibrating = false
+
+    val vibrationPattern = longArrayOf(100, 200, 100, 200)
+    private val vibrationAmplitude = intArrayOf(
+        VibrationEffect.DEFAULT_AMPLITUDE,
+        0,
+        VibrationEffect.DEFAULT_AMPLITUDE,
+        0
+    )
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // Initialize vibrator
+        vibrator = ContextCompat.getSystemService(requireContext(), Vibrator::class.java)!!
+
         applyCardRotationAnimation()
+        startTimer()
+        startContinuousVibration()
+
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
+            stopVibration()
             applyCardRotationExitAnimation()
+            handler.removeCallbacksAndMessages(null)
         }
+    }
+
+    private fun startContinuousVibration() {
+        isVibrating = true
+        val vibrationRunnable = object : Runnable {
+            @SuppressLint("NewApi")
+            override fun run() {
+                if (isVibrating) {
+                    val vibrationEffect = VibrationEffect.createWaveform(
+                        vibrationPattern,
+                        vibrationAmplitude,
+                        -1  // Repeat indefinitely
+                    )
+                    vibrator.vibrate(vibrationEffect)
+
+                    handler.postDelayed(this, 800) // Schedule the next vibration cycle
+                }
+            }
+        }
+        handler.post(vibrationRunnable)  // Start vibration immediately
+    }
+
+    private fun stopVibration() {
+        isVibrating = false
+        vibrator.cancel()
+        handler.removeCallbacksAndMessages(null)
+    }
+
+    private fun startTimer() {
+        val timerRunnable = object : Runnable {
+            override fun run() {
+                if (timeRemaining >= 0) {
+                    binding.tvTimer.text = timeRemaining.toString()  // 남은 시간 업데이트
+                    timeRemaining--
+                    handler.postDelayed(this, 1000)  // 1초 후 다시 실행
+                } else {
+                    stopVibration()
+                    applyCardRotationExitAnimation()
+                }
+            }
+        }
+        handler.postDelayed(timerRunnable, 1000)  // 1초 후 시작
     }
 
     private fun applyCardRotationAnimation() {
@@ -67,5 +137,10 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
             override fun onAnimationRepeat(animation: Animation?) {}
         })
         cardView.startAnimation(animation)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        stopVibration()
     }
 }

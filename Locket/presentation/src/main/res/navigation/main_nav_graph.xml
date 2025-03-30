@@ -11,9 +11,6 @@
         android:label="fragment_home"
         tools:layout="@layout/fragment_home" >
         <action
-            android:id="@+id/action_homeFragment_to_characterFragment"
-            app:destination="@id/characterFragment" />
-        <action
             android:id="@+id/action_homeFragment_to_receiptListFragment"
             app:destination="@id/receiptListFragment" />
         <action
@@ -23,12 +20,15 @@
             android:id="@+id/action_homeFragment_to_myPageFragment"
             app:destination="@id/myPageFragment" />
         <action
+            android:id="@+id/action_homeFragment_to_characterInitialFragment"
+            app:destination="@id/characterInitialFragment" />
+        <action
             android:id="@+id/action_homeFragment_to_expenseAnalysisFragment"
             app:destination="@id/expenseAnalysisFragment" />
     </fragment>
     <fragment
         android:id="@+id/financeFragment"
-        android:name="com.ssafy.locket.presentation.finance.fragments.FinanceFragment"
+        android:name="com.ssafy.locket.presentation.finance.fragment.FinanceFragment"
         android:label="fragment_finance"
         tools:layout="@layout/fragment_finance" >
         <action
@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_cardPaymentFragment_to_paymentPasswordFragment"
             app:destination="@id/paymentPasswordFragment" />
+        <action
+            android:id="@+id/action_cardPaymentFragment_to_nfcPaymentFragment"
+            app:destination="@id/nfcPaymentFragment" />
     </fragment>
     <fragment
         android:id="@+id/productListFragment"
@@ -118,6 +121,7 @@
             android:id="@+id/action_characterFragment_to_characterGrowthFragment"
             app:destination="@id/characterGrowthFragment" />
     </fragment>
+
     <fragment
         android:id="@+id/characterGrowthFragment"
         android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterGrowthFragment"
@@ -140,6 +144,9 @@
         <action
             android:id="@+id/action_receiptListFragment_to_receiptUploadDialog"
             app:destination="@id/receiptUploadDialog" />
+        <action
+            android:id="@+id/action_receiptListFragment_to_receiptDetailFragment"
+            app:destination="@id/receiptDetailFragment" />
     </fragment>
     <fragment
         android:id="@+id/notificationFragment"
@@ -148,12 +155,12 @@
         tools:layout="@layout/fragment_notification" />
     <fragment
         android:id="@+id/editBudgetFragment"
-        android:name="com.ssafy.locket.presentation.finance.fragments.budget.EditBudgetFragment"
+        android:name="com.ssafy.locket.presentation.finance.fragment.budget.EditBudgetFragment"
         android:label="fragment_edit_budget"
         tools:layout="@layout/fragment_edit_budget" />
     <fragment
         android:id="@+id/expenseAnalysisFragment"
-        android:name="com.ssafy.locket.presentation.finance.fragments.analysis.ExpenseAnalysisFragment"
+        android:name="com.ssafy.locket.presentation.finance.fragment.analysis.ExpenseAnalysisFragment"
         android:label="fragment_expense_analysis"
         tools:layout="@layout/fragment_expense_analysis" />
     <fragment
@@ -172,11 +179,7 @@
         android:id="@+id/deleteAccountFragment"
         android:name="com.ssafy.locket.presentation.mypage.DeleteAccountFragment"
         android:label="fragment_delete_account"
-        tools:layout="@layout/fragment_delete_account" >
-        <action
-            android:id="@+id/action_deleteAccountFragment_to_signInFragment"
-            app:destination="@id/signInFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_delete_account" />
     <fragment
         android:id="@+id/editUserInfoFragment"
         android:name="com.ssafy.locket.presentation.mypage.EditUserInfoFragment"
@@ -207,11 +210,33 @@
         tools:layout="@layout/fragment_receipt_detail" >
         <action
             android:id="@+id/action_receiptDetailFragment_to_editReceiptDetailFragment"
-            app:destination="@id/editReceiptDetailFragment" />
+            app:destination="@id/editReceiptDetailFragment"
+            app:popUpTo="@+id/receiptDetailFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_receiptDetailFragment_to_homeFragment"
+            app:destination="@id/homeFragment"
+            app:popUpTo="@id/receiptDetailFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
     <fragment
         android:id="@+id/editReceiptDetailFragment"
         android:name="com.ssafy.locket.presentation.home.receipt.fragment.EditReceiptDetailFragment"
         android:label="fragment_edit_receipt_detail"
-        tools:layout="@layout/fragment_edit_receipt_detail" />
+        tools:layout="@layout/fragment_edit_receipt_detail" >
+        <action
+            android:id="@+id/action_editReceiptDetailFragment_to_receiptDetailFragment"
+            app:destination="@id/receiptDetailFragment"
+            app:popUpTo="@+id/editReceiptDetailFragment"
+            app:popUpToInclusive="true"/>
+    </fragment>
+    <fragment
+        android:id="@+id/characterInitialFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterInitialFragment"
+        android:label="fragment_character_initial"
+        tools:layout="@layout/fragment_character_initial" >
+        <action
+            android:id="@+id/action_characterInitialFragment_to_characterGrowthFragment"
+            app:destination="@id/characterGrowthFragment" />
+    </fragment>
 </navigation>

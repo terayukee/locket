@@ -30,12 +30,14 @@
         android:textColor="@color/text"
         android:textSize="16sp"
         android:gravity="center"
+        android:maxLines="1"
+        android:maxLength="6"
         app:layout_constraintHorizontal_weight="3"
         app:layout_constraintBottom_toBottomOf="@+id/tv_product_name"
         app:layout_constraintEnd_toStartOf="@+id/tv_count"
         app:layout_constraintStart_toEndOf="@+id/tv_product_name"
         app:layout_constraintTop_toTopOf="@+id/tv_product_name"
-        tools:text="3,500" />
+        tools:text="3500" />
 
     <TextView
         android:id="@+id/tv_count"
@@ -45,6 +47,8 @@
         android:textSize="16sp"
         android:gravity="center"
         android:paddingStart="4dp"
+        android:maxLines="1"
+        android:maxLength="3"
         app:layout_constraintHorizontal_weight="2"
         app:layout_constraintBottom_toBottomOf="@+id/tv_product_name"
         app:layout_constraintEnd_toStartOf="@+id/tv_category"

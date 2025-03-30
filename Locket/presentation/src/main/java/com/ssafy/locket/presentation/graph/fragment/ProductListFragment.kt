@@ -1,6 +1,8 @@
 package com.ssafy.locket.presentation.graph.fragment
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -36,6 +38,16 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
         }
         binding.btnRecommandMove.setOnClickListener {
             findNavController().navigate(R.id.action_productListFragment_to_recommendProductListFragment)
+        }
+        binding.etProductSearch.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(s: Editable?) {
+                binding.ivClear.visibility = if (s.isNullOrEmpty()) View.INVISIBLE else View.VISIBLE
+            }
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+        })
+        binding.ivClear.setOnClickListener {
+            binding.etProductSearch.setText("")
         }
     }
 

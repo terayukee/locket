@@ -5,6 +5,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 val properties = Properties().apply {
     load(rootProject.file("apikey.properties").inputStream())
@@ -80,6 +81,12 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
     implementation ("com.kakao.sdk:v2-user:2.20.1")
+
+    //지문인식
+    implementation ("androidx.biometric:biometric:1.0.1")
+    implementation ("androidx.biometric:biometric:1.2.0-alpha05")
+    //파이어베이스
+    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
 }
 
 kapt {

@@ -6,14 +6,17 @@ import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
 import com.example.locket.CommonUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditPriceBottomSheetBinding
+import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 
-class EditPriceBottomSheetFragment : BottomSheetDialogFragment() {
+class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
     private var _binding: FragmentEditPriceBottomSheetBinding? = null
     private val binding get() = _binding!!
     private var isFormatting = false
+    private val viewModel: EditPriceViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -26,14 +29,28 @@ class EditPriceBottomSheetFragment : BottomSheetDialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         initEvent()
         setupNumberFormatting()
-        initConfirmButton()
     }
+
+    fun initView(){
+        if(viewModel.editprice.value==""){
+            binding.tvWantPrice.hint = "설정 안됨"
+        }
+        else {
+            binding.tvWantPrice.hint = "현재 가격은 "+CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
+        }
+    }
+
 
     fun initEvent(){
         binding.btnConfirm.setOnClickListener {
-
+            // Get the raw number (without commas)
+            val rawNumber = binding.tvWantPrice.text.toString().replace(",", "")
+            viewModel.updatePrice(rawNumber)
+            binding.tvWantPrice.setText("")
+            dismiss()
         }
     }
 
@@ -46,27 +63,13 @@ class EditPriceBottomSheetFragment : BottomSheetDialogFragment() {
                 if (isFormatting) return
                 val digits = s.toString().replace(Regex("[^\\d]"), "")
                 if (digits.isEmpty()) return
-                try {
-                    isFormatting = true
-                    val formatted = CommonUtils.formatNumber(digits)
-                    binding.tvWantPrice.setText(formatted)
-                    binding.tvWantPrice.setSelection(formatted.length)
-                } catch (e: Exception) {
-                    // Handle any potential formatting errors
-                    e.printStackTrace()
-                } finally {
-                    isFormatting = false
-                }
+                isFormatting = true
+                val formatted = CommonUtils.formatNumber(digits)
+                binding.tvWantPrice.setText(formatted)
+                binding.tvWantPrice.setSelection(formatted.length)
+                isFormatting = false
             }
         })
-    }
-
-    private fun initConfirmButton() {
-        binding.btnConfirm.setOnClickListener {
-            // Get the raw number (without commas)
-            val rawNumber = binding.tvWantPrice.text.toString().replace(",", "")
-            dismiss()
-        }
     }
 
     override fun onDestroyView() {

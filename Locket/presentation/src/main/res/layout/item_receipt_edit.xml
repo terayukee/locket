@@ -21,7 +21,6 @@
         app:layout_constraintHorizontal_weight="7"
         tools:text="맑은물에 반모 촌두부 2개입, 300g, 1개" />
 
-
     <EditText
         android:id="@+id/et_unit_price"
         android:layout_width="0dp"
@@ -31,12 +30,14 @@
         android:gravity="center"
         android:background="@android:color/transparent"
         android:inputType="number"
+        android:maxLines="1"
+        android:maxLength="6"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
         app:layout_constraintEnd_toStartOf="@+id/et_count"
         app:layout_constraintStart_toEndOf="@+id/et_product_name"
         app:layout_constraintTop_toTopOf="@+id/et_product_name"
         app:layout_constraintHorizontal_weight="3"
-        tools:text="3,500" />
+        tools:text="3500" />
 
     <EditText
         android:id="@+id/et_count"
@@ -48,6 +49,8 @@
         android:paddingStart="4dp"
         app:layout_constraintHorizontal_weight="2"
         android:inputType="number"
+        android:maxLines="1"
+        android:maxLength="3"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
         app:layout_constraintEnd_toStartOf="@+id/sp_category"
@@ -66,8 +69,9 @@
         android:dropDownWidth="match_parent"
         android:background="@drawable/bg_receipt_spinner"
         android:layout_marginStart="4dp"
-        android:dropDownVerticalOffset="24dp"
+        android:dropDownVerticalOffset="36dp"
         android:popupBackground="@android:color/white"
+        android:paddingVertical="8dp"
         app:layout_constraintHorizontal_weight="4"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
         app:layout_constraintEnd_toEndOf="parent"

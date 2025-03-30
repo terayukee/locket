@@ -2,6 +2,7 @@ package com.ssafy.locket.presentation.home.notification
 
 import android.os.Bundle
 import android.view.View
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.locket.model.home.Notification
 import com.ssafy.locket.presentation.R
@@ -33,6 +34,10 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
         binding.rvPrevNotification.apply {
             adapter = prevNotificationListRVAdapter
             layoutManager = LinearLayoutManager(requireContext())
+        }
+
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
         }
 
         val tmpRecentList : List<Notification> = listOf(Notification(0,"product","최저가 알림","당근이 설정하신 가격보다 내려갔습니다. 사이트로 들어가 확인하세요","3월 21일"),Notification(1,"product","최저가 알림","신발이 설정하신 가격보다 내려갔습니다. 사이트로 들어가 확인하세요","3월 20일"))

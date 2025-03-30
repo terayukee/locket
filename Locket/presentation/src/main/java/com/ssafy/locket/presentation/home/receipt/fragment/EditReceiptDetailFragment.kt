@@ -26,6 +26,13 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
             binding.rvReceiptDetail.minimumHeight = (resources.displayMetrics.heightPixels * 0.5415).toInt()
         }
 
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
+
+        binding.btnConfirm.setOnClickListener {
+            findNavController().navigate(R.id.action_editReceiptDetailFragment_to_receiptDetailFragment)
+        }
     }
 
     private fun initAdapter() {

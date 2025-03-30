@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.finance.fragments.budget
+package com.ssafy.locket.presentation.finance.fragment.budget
 
 import android.content.Context
 import android.graphics.Canvas

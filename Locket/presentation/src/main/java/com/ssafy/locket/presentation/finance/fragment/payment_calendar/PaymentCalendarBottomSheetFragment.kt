@@ -1,4 +1,4 @@
-package com.ssafy.locket.presentation.finance.fragments.payment_calendar
+package com.ssafy.locket.presentation.finance.fragment.payment_calendar
 
 import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import android.app.Activity

@@ -8,10 +8,10 @@
             <InsightsFilterSettings>
               <option name="connection">
                 <ConnectionSetting>
-                  <option name="appId" value="PLACEHOLDER" />
-                  <option name="mobileSdkAppId" value="" />
-                  <option name="projectId" value="" />
-                  <option name="projectNumber" value="" />
+                  <option name="appId" value="com.ssafy.locket" />
+                  <option name="mobileSdkAppId" value="1:969571691661:android:c07bb3cacb8c7c437b46c4" />
+                  <option name="projectId" value="myfirebasechat-77190" />
+                  <option name="projectNumber" value="969571691661" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
