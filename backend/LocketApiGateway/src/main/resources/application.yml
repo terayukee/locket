@@ -52,9 +52,9 @@ spring:
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs
+            - Path=/api/users/v3/user-docs
           filters:
-            - RewritePath=/api/users/v3/api-docs, /user-docs
+            - RewritePath=/api/users/v3/user-docs, /user-docs
           order: 1
 
         - id: elasticsearch-service-docs
@@ -95,8 +95,8 @@ springdoc:
 #      - name: "API Gateway"
 #        url: /v3/api-docs
       - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
+        url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: /api/users/v3/api-docs
+        url: https://j12d204.p.ssafy.io/api/users/user-docs
       - name: "Locket ElasticSearch Service"
-        url: /api/elasticsearch/v3/api-docs
+        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
