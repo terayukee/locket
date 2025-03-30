@@ -62,7 +62,7 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs, /v3/api-docs
+            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch/v3/api-docs
 
 management:
   endpoints:
