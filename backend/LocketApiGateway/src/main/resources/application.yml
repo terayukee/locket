@@ -24,6 +24,7 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
+          order: 100
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
@@ -48,9 +49,10 @@ spring:
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs/**
+            - Path=/api/users/v3/api-docs
           filters:
-            - RewritePath=/api/users/v3/api-docs/?(?<remaining>.*), /v3/api-docs/${remaining}
+            - RewritePath=/api/users/v3/api-docs(?<segment>.*), /v3/api-docs$\{segment}
+          order: 1
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
