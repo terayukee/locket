@@ -61,7 +61,7 @@ public class UserService {
         validateRequiredFields(request);
         validateBirthYear(request.getBirthYear());
         validateUserJob(request.getUserJob());
-        validatePaymentPassword(request.getPaymentPassword(), request.getConfirmPaymentPassword());
+        validatePaymentPassword(request.getPaymentPassword());
 
         if (request.getFingerprintRegistered() == null) {
             throw new IllegalArgumentException("지문 등록 여부는 필수 입력값입니다.");
@@ -108,20 +108,11 @@ public class UserService {
         }
     }
 
-    private void validatePaymentPassword(Integer paymentPassword, Integer confirmPaymentPassword) {
-        // 결제 비밀번호가 있는 경우에만 검증
-        if (paymentPassword != null) {
+    private void validatePaymentPassword(Integer paymentPassword) {
 
+        if (paymentPassword != null) {
             if (paymentPassword < 1000 || paymentPassword > 9999) {
                 throw new IllegalArgumentException("결제 비밀번호는 4자리 숫자여야 합니다.");
-            }
-
-            if (confirmPaymentPassword == null) {
-                throw new IllegalArgumentException("결제 비밀번호 확인은 필수 입력값입니다.");
-            }
-
-            if (!paymentPassword.equals(confirmPaymentPassword)) {
-                throw new IllegalArgumentException("결제 비밀번호가 일치하지 않습니다.");
             }
         }
     }
@@ -206,39 +197,6 @@ public class UserService {
         redisTemplate.delete(userIdKey + REDIS_FINGERPRINT_SUFFIX);
         redisTemplate.delete(userIdKey + REDIS_BIRTH_YEAR_SUFFIX);
         redisTemplate.delete(userIdKey + REDIS_USER_JOB_SUFFIX);
-    }
-
-    // 개발용 로그인 설정 (kakaoId 없이 userId만으로 토큰 생성)
-    @Profile("dev")
-    public LoginResponseDto devLogin(User user) {
-        // 1. JWT 토큰 생성 (kakaoId 없이 userId만으로 토큰 생성)
-        String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getNickname());
-        String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
-
-        Long userId = user.getUserId();
-        String userIdKey = REDIS_USER_PREFIX + userId;
-
-        // 2. Redis 저장
-        redisTemplate.opsForValue().set(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX,
-                String.valueOf(user.getPaymentPassword()));
-        redisTemplate.opsForValue().set(userIdKey + REDIS_FINGERPRINT_SUFFIX,
-                String.valueOf(user.getFingerprintRegistered()));
-
-        // Refresh Token 저장 (7일 TTL)
-        redisTemplate.opsForValue().set(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX,
-                refreshToken, 7, TimeUnit.DAYS);
-
-        // 기타 정보 저장
-        redisTemplate.opsForValue().set(userIdKey + REDIS_BIRTH_YEAR_SUFFIX,
-                String.valueOf(user.getBirthYear()));
-        redisTemplate.opsForValue().set(userIdKey + REDIS_USER_JOB_SUFFIX,
-                String.valueOf(user.getUserJob()));
-
-        return LoginResponseDto.builder()
-                .userId(user.getUserId())
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
     }
 
 }

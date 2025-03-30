@@ -17,7 +17,6 @@ public class SignupRequest {
     private Integer birthYear;    // 사용자 입력 출생년도
     private String userJob;       // 사용자 직업 (무직/직장인/자영업자)
     private Integer paymentPassword; // 결제 비밀번호
-    private Integer confirmPaymentPassword; // 비밀번호 검증
     private Boolean fingerprintRegistered; // 지문 등록 여부
     private String fcmToken;      // FCM 토큰
 }
