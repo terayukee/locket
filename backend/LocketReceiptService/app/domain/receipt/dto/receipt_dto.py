@@ -9,6 +9,7 @@ class ReceiptItem(BaseModel):
     itemCategory: str
 
 class ReceiptResponse(BaseModel):
+    storeName: str
     items: List[ReceiptItem]
     totalAmount: int
     categoryAmount: Dict[str, int]

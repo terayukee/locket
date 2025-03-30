@@ -58,6 +58,7 @@ async def process_receipt_from_camera(
             category_amount[category] = category_amount.get(category, 0) + amount
 
         return ReceiptResponse(
+            storeName=ocr_result['storeName'],
             items=classified_result['items'],
             totalAmount=actual_total,
             categoryAmount=category_amount
@@ -137,6 +138,7 @@ async def process_receipt_pdf(
                 category_amount[category] = category_amount.get(category, 0) + amount
 
             return ReceiptResponse(
+                storeName=ocr_result['storeName'],
                 items=classified_result['items'],
                 totalAmount=actual_total,
                 categoryAmount=category_amount

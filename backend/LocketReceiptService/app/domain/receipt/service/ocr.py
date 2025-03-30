@@ -69,6 +69,10 @@ class OCRService:
             print("OCR 결과 파싱 시작")
             receipt_data = ocr_result['images'][0]['receipt']['result']
 
+            # 상점명 추출
+            store_name = receipt_data.get('storeInfo', {}).get('name', {}).get('formatted', {}).get('value', '알 수 없음')
+            print(f"추출된 상호명: {store_name}")
+
             # 상품 목록 추출
             items = []
             item_id = 1  # 아이템 ID 초기화
@@ -89,6 +93,7 @@ class OCRService:
             print(f"추출된 총액: {total_amount}")
 
             parsed_data = {
+                'storeName': store_name,
                 'items': items,
                 'totalAmount': total_amount
             }
