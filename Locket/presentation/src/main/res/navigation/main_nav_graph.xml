@@ -126,7 +126,11 @@
         android:id="@+id/characterGrowthFragment"
         android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterGrowthFragment"
         android:label="fragment_character_growth"
-        tools:layout="@layout/fragment_character_growth" />
+        tools:layout="@layout/fragment_character_growth" >
+        <action
+            android:id="@+id/action_characterGrowthFragment_to_characterDoneFragment"
+            app:destination="@id/characterDoneFragment" />
+    </fragment>
     <dialog
         android:id="@+id/receiptUploadDialog"
         android:name="com.ssafy.locket.presentation.home.receipt.ReceiptUploadDialog"
@@ -239,4 +243,9 @@
             android:id="@+id/action_characterInitialFragment_to_characterGrowthFragment"
             app:destination="@id/characterGrowthFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/characterDoneFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterDoneFragment"
+        android:label="fragment_character_done"
+        tools:layout="@layout/fragment_character_done" />
 </navigation>

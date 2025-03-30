@@ -1,14 +1,201 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".presentation.home.character.CharacterDoneFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="#D4E6EC"
+    tools:context=".home.character.fragment.CharacterDoneFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:layout_height="wrap_content">
 
-</FrameLayout>
+        <ImageView
+            android:id="@+id/btn_back"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:padding="16dp"
+            android:scaleX="-1"
+            android:src="@drawable/ic_all_arrow"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/iv_character"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/image_character_level_1"
+            app:layout_constraintBottom_toTopOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintTop_toBottomOf="@+id/iv_character_message_bg"
+            app:layout_constraintWidth_percent="0.6310" />
+
+        <ImageView
+            android:id="@+id/iv_character_message_bg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:src="@drawable/bg_character_message_bubble"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.8"
+            app:layout_constraintStart_toStartOf="@+id/iv_character"
+            app:layout_constraintTop_toBottomOf="@+id/btn_back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/pretendard_medium"
+            android:textColor="@color/text"
+            android:textSize="14sp"
+            android:letterSpacing="-0.02"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_character_message_bg"
+            app:layout_constraintEnd_toEndOf="@+id/iv_character_message_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_character_message_bg"
+            app:layout_constraintTop_toTopOf="@+id/iv_character_message_bg"
+            tools:text="다정한 000를 위해\n선물을 준비했어요" />
+
+        <!--        <ImageView-->
+        <!--            android:id="@+id/bg_chain_point"-->
+        <!--            android:layout_width="0dp"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_marginHorizontal="24dp"-->
+        <!--            android:background="@drawable/bg_character_growth"-->
+        <!--            android:visibility="invisible"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            app:layout_constraintHorizontal_bias="0.666"-->
+        <!--            app:layout_constraintStart_toStartOf="parent"-->
+        <!--            app:layout_constraintTop_toBottomOf="@+id/iv_character" />-->
+
+        <ImageView
+            android:id="@+id/iv_character_gifticon_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginHorizontal="24dp"
+            android:layout_marginVertical="24dp"
+            android:background="@drawable/bg_character_growth"
+            app:layout_constraintBottom_toBottomOf="@+id/padding"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/paddingTop" />
+
+        <View
+            android:id="@+id/paddingTop"
+            android:layout_width="0dp"
+            android:layout_height="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/button"
+            app:layout_constraintEnd_toEndOf="@+id/button"
+            app:layout_constraintStart_toStartOf="@id/button"
+            app:layout_constraintTop_toBottomOf="@+id/iv_character"
+            app:layout_constraintVertical_chainStyle="spread_inside" />
+
+        <android.widget.Button
+            android:id="@+id/button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_character_done_name"
+            android:enabled="false"
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:letterSpacing="-0.02"
+            tools:text="개농이 물어온 선물"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/iv_gifticon_bg"
+            app:layout_constraintEnd_toEndOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintTop_toBottomOf="@+id/paddingTop"
+            app:layout_constraintVertical_chainStyle="spread" />
+
+        <ImageView
+            android:id="@+id/iv_gifticon_bg"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/bg_character_gifticon_stroke"
+            android:layout_marginTop="24dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_gifticon_store_name"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintTop_toBottomOf="@+id/button"
+            app:layout_constraintWidth_percent="0.3342" />
+
+        <ImageView
+            android:id="@+id/iv_gifticon"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:padding="16dp"
+            android:src="@drawable/image_character_gifticon"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_gifticon_bg"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintEnd_toEndOf="@+id/iv_gifticon_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_gifticon_bg"
+            app:layout_constraintTop_toTopOf="@+id/iv_gifticon_bg"
+            app:layout_constraintWidth_percent="0.3342" />
+
+        <TextView
+            android:id="@+id/tv_gifticon_store_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:gravity="center"
+            android:letterSpacing="-0.02"
+            android:maxLines="1"
+            android:text="스타벅스"
+            android:textColor="@color/disabled"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_gifticon_name"
+            app:layout_constraintEnd_toEndOf="@+id/iv_gifticon_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_gifticon_bg"
+            app:layout_constraintTop_toBottomOf="@+id/iv_gifticon_bg" />
+
+
+        <TextView
+            android:id="@+id/tv_gifticon_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:gravity="center"
+            android:letterSpacing="-0.02"
+            android:maxLines="1"
+            android:text="카페 아메리카노 T"
+            android:textColor="@color/text"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/iv_gifticon_barcode"
+            app:layout_constraintEnd_toEndOf="@+id/iv_gifticon_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_gifticon_bg"
+            app:layout_constraintTop_toBottomOf="@+id/tv_gifticon_store_name" />
+
+
+        <ImageView
+            android:id="@+id/iv_gifticon_barcode"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginBottom="36dp"
+            android:gravity="center"
+            android:src="@drawable/image_character_gifticon_barcode"
+            android:layout_marginTop="16dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintDimensionRatio="3.2"
+            app:layout_constraintEnd_toEndOf="@+id/iv_gifticon_bg"
+            app:layout_constraintStart_toStartOf="@+id/iv_gifticon_bg"
+            app:layout_constraintTop_toBottomOf="@+id/tv_gifticon_name"
+            app:layout_constraintWidth_percent="0.4612" />
+
+        <View
+            android:id="@+id/padding"
+            android:layout_width="0dp"
+            android:layout_height="36dp"
+            app:layout_constraintBottom_toBottomOf="@+id/iv_character_gifticon_bg"
+            app:layout_constraintEnd_toEndOf="@+id/iv_gifticon_barcode"
+            app:layout_constraintStart_toStartOf="@id/iv_gifticon_barcode"
+            app:layout_constraintTop_toBottomOf="@+id/iv_gifticon_barcode" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>
