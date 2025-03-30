@@ -48,9 +48,9 @@ spring:
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs
+            - Path=/api/users/v3/api-docs/**
           filters:
-            - RewritePath=/api/users/v3/api-docs(?<remaining>.*), /v3/api-docs${remaining}
+            - RewritePath=/api/users/v3/api-docs/?(?<remaining>.*), /v3/api-docs/${remaining}
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE

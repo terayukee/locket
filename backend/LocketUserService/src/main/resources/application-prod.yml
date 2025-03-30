@@ -57,6 +57,8 @@ springdoc:
   api-docs:
     enabled: true
     path: /v3/api-docs
+  paths-to-match: /api/users/**
+  paths-to-exclude: /api/users/v3/api-docs
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
