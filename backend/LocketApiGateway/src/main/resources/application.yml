@@ -61,6 +61,8 @@ spring:
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
+          filters:
+            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
 
 management:
   endpoints:
@@ -98,4 +100,4 @@ springdoc:
       - name: "Locket User Service"
         url: http://localhost:8080/api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
-        url: http://localhost:8080/api/elasticsearch/v3/api-docs
+        url: /api/elasticsearch/v3/api-docs

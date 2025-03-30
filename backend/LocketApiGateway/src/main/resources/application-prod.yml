@@ -22,7 +22,7 @@ springdoc:
       - name: "Locket User Service"
         url: /api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch 추가
-        url: /api/elasticsearch/v3/api-docs
+        url: /elasticsearch-docs
 
 management:
   endpoints:
