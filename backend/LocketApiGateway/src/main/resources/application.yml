@@ -93,8 +93,3 @@ springdoc:
       - name: "Locket ElasticSearch Service"
         url: /api/elasticsearch/v3/api-docs
     disable-swagger-default-url: true
-
-logging:
-  level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: DEBUG

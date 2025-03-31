@@ -39,7 +39,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://discovery:8761/eureka
+      defaultZone: http://spring-locket_discovery:8761/eureka
 
 management:
   endpoints:
@@ -69,3 +69,7 @@ springdoc:
     path: /users-docs/swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+  cache:
+    disabled: true
+    show-actuator: false
+    auto-tag-classes: false
