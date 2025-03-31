@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "소비 분석 서비스")
 @Slf4j
@@ -52,5 +53,26 @@ public class FeedbackAnalysisController {
             @RequestParam int month
     ) {
         return ResponseEntity.ok(feedbackStatService.getCardUsageStats(userId, year, month));
+    }
+
+    @GetMapping("/top-store")
+    @Operation(summary = "가장 많이 소비한 가게", description = "해당 월 사용자 기준 가장 많이 소비한 storeName을 반환합니다.")
+    public ResponseEntity<String> getTopSpendingStore(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(feedbackStatService.getTopSpendingStore(userId, year, month));
+    }
+
+    @GetMapping("/category-compare-age")
+    @Operation(summary = "카테고리별 연령대 평균 비교", description = "사용자의 연령대와 같은 그룹과 카테고리별 소비 평균을 비교합니다.")
+    public ResponseEntity<Map<String, Object>> getCategoryComparisonWithAgeGroup(
+            @RequestParam long userId,
+            @RequestParam int birthYear,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(feedbackStatService.compareWithAgeGroup(userId, birthYear, year, month));
     }
 }

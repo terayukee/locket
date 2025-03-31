@@ -29,4 +29,11 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
     // 사용자의 전체 결제 내역 조회
     List<PaymentHistory> findByBuyerId(long buyerId);
 
+    // ✅ 연령대 사용자들의 해당 월 결제 내역 조회
+    List<PaymentHistory> findByBirthDateBetweenAndYearAndMonth(
+            int birthDateStart,
+            int birthDateEnd,
+            int year,
+            int month
+    );
 }

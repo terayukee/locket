@@ -64,4 +64,43 @@ public class FeedbackStatService {
                 .sorted(Comparator.comparingInt(FeedbackCardStatDto::getTotalAmount).reversed())
                 .collect(Collectors.toList());
     }
+
+    public String getTopSpendingStore(long userId, int year, int month) {
+        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
+
+        return payments.stream()
+                .filter(p -> p.getStoreName() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getStoreName, Collectors.summingInt(p -> p.getTotalAmount().intValue())))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("가장 많이 소비한 가게가 없습니다.");
+    }
+
+    public Map<String, Object> compareWithAgeGroup(long userId, int birthYear, int year, int month) {
+        // 위 아래 3살차이 까지
+        int ageStart = birthYear - 3;
+        int ageEnd = ageStart + 3;
+
+        // 사용자 소비 내역
+        List<PaymentHistory> userPayments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
+        Map<String, Integer> userCategorySpend = userPayments.stream()
+                .filter(p -> p.getPaymentCategory() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
+                        Collectors.summingInt(p -> p.getTotalAmount().intValue())));
+
+        // 연령대 사용자 소비 내역
+        List<PaymentHistory> groupPayments = paymentHistoryRepository
+                .findByBirthDateBetweenAndYearAndMonth(ageStart, ageEnd, year, month);
+        Map<String, Double> groupAverageSpend = groupPayments.stream()
+                .filter(p -> p.getPaymentCategory() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
+                        Collectors.averagingInt(p -> p.getTotalAmount().intValue())));
+
+        return Map.of(
+                "userSpending", userCategorySpend,
+                "ageGroupAverage", groupAverageSpend
+        );
+    }
+
 }
