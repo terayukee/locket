@@ -98,6 +98,7 @@ pipeline {
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
                             "docker service update \
+                                --env-add SPRING_PROFILES_ACTIVE=prod \
                                 --env-add REDIS_PASSWORD=$REDIS_PASSWORD \
                                 --env-add DB_URL_PAYMENT=$DB_URL_PAYMENT \
                                 --env-add DB_USERNAME=$DB_USERNAME \
