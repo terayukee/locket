@@ -263,7 +263,7 @@ public class PayService {
                     .orders(orderDetails)
                     .build();
 
-//        paymentProducer.sendPaymentSuccessEvent(event);
+            paymentProducer.sendPaymentSuccessEvent(event);
 
             return ResponseEntity.ok(PaymentResponse.builder()
                     .transactionId(transaction.getPaymentTransactionId().toString())
