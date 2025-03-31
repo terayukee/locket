@@ -1,6 +1,7 @@
 package com.example.locket
 
 import android.content.Context
+import android.content.res.Resources
 import android.graphics.PorterDuff
 import android.view.Gravity
 import android.view.LayoutInflater
@@ -62,4 +63,7 @@ object CommonUtils {
         toast.setGravity(Gravity.BOTTOM, 0, 200)
         toast.show()
     }
+
+    fun Float.fromDpToPx(): Int =
+        (this * Resources.getSystem().displayMetrics.density).toInt()
 }

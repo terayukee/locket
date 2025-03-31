@@ -113,20 +113,31 @@
         android:label="fragment_product_detail"
         tools:layout="@layout/fragment_product_detail" />
     <fragment
-        android:id="@+id/characterFragment"
+        android:id="@+id/characterInitialFragment"
         android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterInitialFragment"
         android:label="fragment_character"
         tools:layout="@layout/fragment_character_initial" >
         <action
             android:id="@+id/action_characterFragment_to_characterGrowthFragment"
-            app:destination="@id/characterGrowthFragment" />
+            app:destination="@id/characterGrowthFragment"
+            app:popUpTo="@id/characterInitialFragment"
+            app:popUpToInclusive="true"/>
     </fragment>
 
     <fragment
         android:id="@+id/characterGrowthFragment"
         android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterGrowthFragment"
         android:label="fragment_character_growth"
-        tools:layout="@layout/fragment_character_growth" />
+        tools:layout="@layout/fragment_character_growth" >
+        <action
+            android:id="@+id/action_characterGrowthFragment_to_characterDoneFragment"
+            app:destination="@id/characterDoneFragment"
+            app:popUpTo="@id/characterGrowthFragment"
+            app:popUpToInclusive="true"/>
+        <action
+            android:id="@+id/action_characterGrowthFragment_to_giftCardListFragment"
+            app:destination="@id/giftCardListFragment" />
+    </fragment>
     <dialog
         android:id="@+id/receiptUploadDialog"
         android:name="com.ssafy.locket.presentation.home.receipt.ReceiptUploadDialog"
@@ -230,13 +241,19 @@
             app:popUpTo="@+id/editReceiptDetailFragment"
             app:popUpToInclusive="true"/>
     </fragment>
+
     <fragment
-        android:id="@+id/characterInitialFragment"
-        android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterInitialFragment"
-        android:label="fragment_character_initial"
-        tools:layout="@layout/fragment_character_initial" >
+        android:id="@+id/characterDoneFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.CharacterDoneFragment"
+        android:label="fragment_character_done"
+        tools:layout="@layout/fragment_character_done" />
+    <fragment
+        android:id="@+id/giftCardListFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.GiftCardListFragment"
+        android:label="fragment_gift_card_list"
+        tools:layout="@layout/fragment_gift_card_list" >
         <action
-            android:id="@+id/action_characterInitialFragment_to_characterGrowthFragment"
-            app:destination="@id/characterGrowthFragment" />
+            android:id="@+id/action_giftCardListFragment_to_characterDoneFragment"
+            app:destination="@id/characterDoneFragment" />
     </fragment>
 </navigation>

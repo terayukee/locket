@@ -13,5 +13,8 @@ class CharacterDoneFragment : BaseFragment<FragmentCharacterDoneBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        binding.tvCharacterName.text = getString(R.string.home_character_gifticon_character, "소심한 반짝반짝냥")
+//        binding.tvCharacterName.text = getString(R.string.home_character_gifticon_character, "소심한 반짝냥")
+//        binding.tvCharacterName.text = getString(R.string.home_character_gifticon_character, "소심한냥")
     }
 }

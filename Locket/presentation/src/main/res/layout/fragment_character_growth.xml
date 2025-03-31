@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#D4E6EC"
-    tools:context=".presentation.home.character.CharacterGrowthFragment">
+    tools:context=".home.character.fragment.CharacterGrowthFragment">
 
     <ImageView
         android:id="@+id/btn_back"
@@ -17,6 +17,20 @@
         android:src="@drawable/ic_all_arrow"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btn_gifticon_box"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:letterSpacing="-0.02"
+        android:text="보관함"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_back" />
 
     <ImageView
         android:id="@+id/iv_character"
@@ -36,11 +50,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_bold"
+        android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/text"
         android:textSize="20sp"
-        app:layout_constraintEnd_toEndOf="@+id/iv_character"
-        app:layout_constraintStart_toStartOf="@+id/iv_character"
+        app:layout_constraintEnd_toEndOf="@+id/iv_character_growth_bg"
+        app:layout_constraintStart_toStartOf="@+id/iv_character_growth_bg"
         app:layout_constraintTop_toBottomOf="@+id/iv_character"
         tools:text="개농이" />
 
@@ -53,9 +68,9 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1.2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.666"
+        app:layout_constraintVertical_bias="0.3333"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/iv_character" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_character_name" />
 
     <ImageView
         android:id="@+id/iv_character_bg_small"
