@@ -73,7 +73,7 @@ object CommonUtils {
         val toast = Toast(context)
         toast.duration = Toast.LENGTH_SHORT
         toast.view = binding.root
-        toast.setGravity(Gravity.BOTTOM, 0, 200)
+        toast.setGravity(Gravity.BOTTOM, 0, 228)
         toast.show()
     }
 

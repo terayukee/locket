@@ -19,7 +19,6 @@ class UserDataStoreSource @Inject constructor(
         val USER_ID = longPreferencesKey("user_id")
     }
 
-    // 데이터 저장
     suspend fun saveAccessToken(accessToken: String) {
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN] = accessToken
@@ -44,7 +43,6 @@ class UserDataStoreSource @Inject constructor(
         }
     }
 
-    // 데이터 읽기
     val accessToken: Flow<String?> = dataStore.data.map { preferences ->
         preferences[ACCESS_TOKEN]
     }
@@ -61,7 +59,6 @@ class UserDataStoreSource @Inject constructor(
         preferences[USER_ID]
     }
 
-    // 모든 데이터 초기화
     suspend fun clearAll() {
         dataStore.edit { preferences ->
             preferences.clear()
