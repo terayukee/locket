@@ -36,6 +36,7 @@ public class PayController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "결제 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "409", description = "중복 결제 요청"),
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     public ResponseEntity<PaymentResponse> processPayment(
@@ -53,15 +54,17 @@ public class PayController {
                                             "  \"paymentCategory\": \"카페\",\n" +
                                             "  \"paymentMerchant\": \"아메리카노\",\n" +
                                             "  \"amount\": 2000,\n" +
-                                            "  \"storeName\": \"메가커피 구미인동점\"\n" +
+                                            "  \"storeName\": \"메가커피 구미인동점\",\n" +
+                                            "  \"paymentKey\": \"123e4567-e89b-12d3-a456-426614174000\"\n" +
                                             "}"
                             )
                     )
             )
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
-    )  {
+    ) {
         return payService.processPayment(request);
     }
+
 
     @PostMapping("/validate-card")
     @Operation(summary = "카드 유효성 및 잔액 확인", description = "카드번호와 결제 금액을 받아 유효성과 잔액을 확인합니다.")
