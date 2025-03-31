@@ -54,7 +54,7 @@ public class FeedbackService {
 
             // Python 서비스로 분석 요청
             String feedbackJson = feedbackWebClient.post()
-                    .uri("/api/spending/feedback")
+                    .uri("/api/feedback/spending")
                     .bodyValue(new FeedbackRequest(user, goal, paymentHistories)) // DTO 필요
                     .retrieve()
                     .bodyToMono(String.class)
