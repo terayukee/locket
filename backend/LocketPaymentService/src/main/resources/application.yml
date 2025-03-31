@@ -41,7 +41,7 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /api/payment/v3/api-docs
+    path: /payment-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 

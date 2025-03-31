@@ -34,25 +34,18 @@ spring:
           predicates:
             - Path=/api/elasticsearch/**
 
-        # Swagger 관련 경로
-#        - id: openapi
-#          uri: lb://LOCKET-API-GATEWAY
-#          predicates:
-#            - Path=/v3/api-docs/**, /swagger-ui/**, /webjars/**
-#          filters:
-#            - RewritePath=/(?<segment>.*), /$\{segment}
-
-
         # 서비스별 API 문서 경로
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/api/payment/v3/api-docs
+            - Path=/api/payment/v3/api-docs/**
+          filters:
+            - RewritePath=/api/payment/v3/api-docs(?<segment>/?.*), /payment-docs${segment}
 
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs
+            - Path=/api/users/v3/api-docs/**
           filters:
             - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
           order: 1
@@ -60,7 +53,7 @@ spring:
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
-            - Path=/api/elasticsearch/v3/api-docs
+            - Path=/api/elasticsearch/v3/api-docs/**
           filters:
             - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/?.*), /elasticsearch-docs${segment}
 
@@ -93,8 +86,6 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
     urls:
-#      - name: "API Gateway"
-#        url: /v3/api-docs
       - name: "Locket Payment Service"
         url: /api/payment/v3/api-docs
       - name: "Locket User Service"
