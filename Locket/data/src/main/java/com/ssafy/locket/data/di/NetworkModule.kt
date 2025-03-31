@@ -24,14 +24,20 @@ object NetworkModule {
             .create()
     }
 
-    @Provides
-    @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
-        return OkHttpClient.Builder()
-            .readTimeout(5000, TimeUnit.MILLISECONDS)
-            .connectTimeout(5000, TimeUnit.MILLISECONDS)
-            .build()
-    }
+//    @Singleton
+//    @Provides
+//    fun provideOkHttp(requestInterceptor: RequestInterceptor): OkHttpClient {
+//        return OkHttpClient.Builder().apply {
+//            connectTimeout(10, TimeUnit.SECONDS)
+//            readTimeout(10, TimeUnit.SECONDS)
+//            writeTimeout(10, TimeUnit.SECONDS)
+//            addInterceptor(requestInterceptor)
+//            addInterceptor( // Http 요청/응답 중 Body만 로깅
+//                HttpLoggingInterceptor(ApiLogger())
+//                    .apply { setLevel(HttpLoggingInterceptor.Level.BODY) }
+//            )
+//        }.build()
+//    }
 //
 //    @Provides
 //    @Singleton
@@ -41,5 +47,10 @@ object NetworkModule {
 //            .addConverterFactory(GsonConverterFactory.create(gson))
 //            .client(okHttpClient)
 //            .build()
+//    }
+//
+//    @Provides
+//    fun provideRequestInterceptor(prefs: SharedPrefs): RequestInterceptor {
+//        return RequestInterceptor(prefs)
 //    }
 }
