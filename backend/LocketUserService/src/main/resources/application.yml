@@ -43,7 +43,16 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 springdoc:
   api-docs:
