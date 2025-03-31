@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.locket.CommonUtils
 import com.ssafy.locket.model.finance.CategoryPayment
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemCategoryPaymentBinding
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 class CategoryPaymentRVAdapter: ListAdapter<CategoryPayment, CategoryPaymentRVAdapter.CustomViewHolder>(
     CategoryPaymentRVAdapter

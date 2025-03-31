@@ -5,13 +5,14 @@ import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
-import com.example.locket.CommonUtils
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import java.time.LocalDate
 
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
@@ -85,7 +86,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                     requireActivity().finish() // 액티비티 종료
                 } else {
                     backPressedTime = System.currentTimeMillis()
-                    showToast("한 번 더 누르면 종료됩니다.")
+                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "한 번 더 누르면 종료됩니다.")
                 }
             }
         })

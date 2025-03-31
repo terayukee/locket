@@ -4,14 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.locket.CommonUtils.fromDpToPx
-import com.ssafy.locket.model.finance.Payment
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentGiftCardListBinding
-import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import com.ssafy.locket.presentation.home.character.adapter.GifticonRVAdapter
+import com.ssafy.locket.presentation.utils.CommonUtils.fromDpToPx
 
 
 class GiftCardListFragment : BaseFragment<FragmentGiftCardListBinding>(

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
-import com.example.locket.CommonUtils
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -14,6 +13,7 @@ import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.CalendarDayBinding
 import com.ssafy.locket.presentation.databinding.FragmentPaymentCalendarBinding
+import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.utils.CalendarUtils.displayText
 import java.time.DayOfWeek
 import java.time.LocalDate

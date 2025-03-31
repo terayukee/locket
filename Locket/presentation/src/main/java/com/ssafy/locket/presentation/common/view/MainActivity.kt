@@ -43,7 +43,7 @@ class MainActivity : AppCompatActivity() {
     private val checker = PermissionChecker(this)
 
     private val runtimePermissions =
-        arrayOf(Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.CAMERA)
+        arrayOf(Manifest.permission.CAMERA, Manifest.permission.POST_NOTIFICATIONS)
 
     private fun checkPermission() {
         if (!checker.checkPermission(this, runtimePermissions)) {
@@ -52,7 +52,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             checker.requestPermissionLauncher.launch(runtimePermissions)
-        } else { //이미 전체 권한이 있는 경우
+        } else {
             initNotification()
         }
     }

@@ -1,19 +1,23 @@
 package com.example.locket
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 
+private const val TAG = "PermissionChecker"
 fun interface OnGrantedListener {
     fun onGranted()
 }
@@ -32,7 +36,6 @@ class PermissionChecker(activityOrFragment: Any) {
                 return false
             }
         }
-
         return true
     }
 
@@ -58,14 +61,12 @@ class PermissionChecker(activityOrFragment: Any) {
 
 
     private fun resultChecking(result: Map<String, Boolean>){
-        if(result.values.contains(false) == false) permitted.onGranted()
-//        if(result.values.contains(false)){
-//            CommonUtils.showCustomToast(context, "권한이 부족합니다", "모든 권한을 설정해주세요")
+//        if(result.values.contains(false) == false) permitted.onGranted()
+        if(result.values.contains(false)){
 //            moveToSettings()
-//        }else{
-//            CommonUtils.showCustomToast(context, "모든 권한이 허가되었습니다", "모든 권한을 설정해주세요")
-//            permitted.onGranted()
-//        }
+        }else{
+            permitted.onGranted()
+        }
     }
 
     private fun moveToSettings() {

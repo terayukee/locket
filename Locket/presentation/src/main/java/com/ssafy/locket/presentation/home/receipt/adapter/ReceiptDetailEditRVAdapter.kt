@@ -10,10 +10,9 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.locket.CommonUtils
 import com.ssafy.locket.model.home.ReceiptDetail
 import com.ssafy.locket.presentation.databinding.ItemReceiptEditBinding
-import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailRVAdapter.CustomComparator
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 private const val TAG = "ReceiptDetailEditRVAdap"
 class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRVAdapter.CustomViewHolder>(

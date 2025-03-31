@@ -9,7 +9,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
-import com.example.locket.CommonUtils
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
@@ -19,6 +18,8 @@ import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentFinanceBinding
 import com.ssafy.locket.presentation.finance.adapter.FinanceVPAdapter
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 
@@ -108,7 +109,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     requireActivity().finish() // 액티비티 종료
                 } else {
                     backPressedTime = System.currentTimeMillis()
-                    showToast("한 번 더 누르면 종료됩니다.")
+                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "한 번 더 누르면 종료됩니다.")
                 }
             }
         })

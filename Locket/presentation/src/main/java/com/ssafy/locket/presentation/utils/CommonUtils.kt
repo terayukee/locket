@@ -1,13 +1,13 @@
-package com.example.locket
+package com.ssafy.locket.presentation.utils
 
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.PorterDuff
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.widget.Toast
-import com.ssafy.locket.presentation.R
-import com.ssafy.locket.presentation.databinding.ToastCustomBinding
+import com.ssafy.locket.presentation.databinding.ToastMultiLineCustomBinding
+import com.ssafy.locket.presentation.databinding.ToastSingleLineCustomBinding
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -49,14 +49,27 @@ object CommonUtils {
         }
     }
 
-    fun showCustomToast(context: Context, title: String, content: String) {
+    fun showMultiLineCustomToast(context: Context, title: String, content: String) {
         val inflater = LayoutInflater.from(context)
-        val binding = ToastCustomBinding.inflate(inflater)
+        val binding = ToastMultiLineCustomBinding.inflate(inflater)
 
         binding.tvTitle.text = title
         binding.tvContent.text = content
 
-        if(title.contains("권한")) binding.layout.backgroundTintList = context.getColorStateList(R.color.white)
+//        if(title.contains("권한")) binding.layout.backgroundTintList = context.getColorStateList(R.color.white)
+        val toast = Toast(context)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = binding.root
+        toast.setGravity(Gravity.BOTTOM, 0, 200)
+        toast.show()
+    }
+
+    fun showSingleLineCustomToast(context: Context, type: ToastType, content: String) {
+        val inflater = LayoutInflater.from(context)
+        val binding = ToastSingleLineCustomBinding.inflate(inflater)
+
+        binding.tvContent.text = content
+        if(type == ToastType.ERROR) binding.icError.visibility = View.VISIBLE
         val toast = Toast(context)
         toast.duration = Toast.LENGTH_SHORT
         toast.view = binding.root
@@ -66,4 +79,9 @@ object CommonUtils {
 
     fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
+}
+
+sealed class ToastType {
+    object DEFAULT : ToastType()
+    object ERROR : ToastType()
 }

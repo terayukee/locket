@@ -8,7 +8,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
-import com.example.locket.CommonUtils
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -20,6 +19,7 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductDetailBinding
 import com.ssafy.locket.presentation.graph.PriceMarkerView
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     FragmentProductDetailBinding::bind,

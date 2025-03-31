@@ -6,9 +6,9 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.locket.CommonUtils
 import com.ssafy.locket.model.home.ReceiptDetail
 import com.ssafy.locket.presentation.databinding.ItemReceiptBinding
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 class ReceiptDetailRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailRVAdapter.CustomViewHolder>(CustomComparator) {
     private lateinit var context: Context

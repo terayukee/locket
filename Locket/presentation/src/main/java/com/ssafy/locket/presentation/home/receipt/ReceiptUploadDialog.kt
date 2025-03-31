@@ -1,25 +1,21 @@
 package com.ssafy.locket.presentation.home.receipt
 
-import android.graphics.Color
-import android.net.Uri
+import android.Manifest
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.example.locket.PermissionChecker
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.DialogReceiptUploadBinding
 import com.ssafy.locket.presentation.home.receipt.viewmodel.FileTypeSelectionUiState
-import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionUiState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
-import kotlinx.coroutines.launch
 
 private const val TAG = "ReceiptUploadDialog"
 class ReceiptUploadDialog: DialogFragment() {
@@ -27,7 +23,12 @@ class ReceiptUploadDialog: DialogFragment() {
     private val binding : DialogReceiptUploadBinding
         get() = _binding!!
     private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
+    lateinit var mContext: Context
 
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,12 +54,28 @@ class ReceiptUploadDialog: DialogFragment() {
         }
 
         binding.btnCamera.setOnClickListener {
-            receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Camera)
+            checkPermission()
             dismiss()
         }
 
         binding.btnClose.setOnClickListener {
             findNavController().popBackStack()
+        }
+    }
+
+    private val checker = PermissionChecker(this)
+
+    private val runtimePermission =
+        arrayOf(Manifest.permission.CAMERA)
+
+    private fun checkPermission() {
+//        Log.d(TAG, "checkPermission: checkPermission called")
+        if (!checker.checkPermission(mContext, runtimePermission)) {
+//            Log.d(TAG, "checkPermission: checkPermission not permitted")
+            checker.requestPermissionLauncher.launch(runtimePermission)
+        } else {
+//            Log.d(TAG, "checkPermission: checkPermission permitted")
+            receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Camera)
         }
     }
 

@@ -7,10 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import com.example.locket.CommonUtils
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditPriceBottomSheetBinding
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
     private var _binding: FragmentEditPriceBottomSheetBinding? = null
@@ -39,7 +39,7 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
             binding.tvWantPrice.hint = "설정 안됨"
         }
         else {
-            binding.tvWantPrice.hint = "현재 가격은 "+CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
+            binding.tvWantPrice.hint = "현재 가격은 "+ CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
         }
     }
 

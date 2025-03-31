@@ -4,12 +4,12 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.locket.CommonUtils
 import com.ssafy.locket.model.finance.CategoryPayment
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentExpenseAnalysisBinding
 import com.ssafy.locket.presentation.finance.adapter.CategoryPaymentRVAdapter
+import com.ssafy.locket.presentation.utils.CommonUtils
 import java.time.YearMonth
 
 private const val TAG = "ExpenseAnalysisFragment"

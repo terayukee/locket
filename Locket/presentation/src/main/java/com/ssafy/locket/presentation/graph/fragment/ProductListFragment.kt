@@ -14,6 +14,8 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductListBinding
 import com.ssafy.locket.presentation.graph.adapter.MoneyHappyAdapter
 import com.ssafy.locket.presentation.graph.adapter.ProductAdapter
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 
 class ProductListFragment : BaseFragment<FragmentProductListBinding>(
     FragmentProductListBinding::bind,
@@ -88,7 +90,8 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
                     requireActivity().finish() // 액티비티 종료
                 } else {
                     backPressedTime = System.currentTimeMillis()
-                    showToast("한 번 더 누르면 종료됩니다.")
+//                    showToast("한 번 더 누르면 종료됩니다.")
+                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "한 번 더 누르면 종료됩니다.")
                 }
             }
         })
