@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from .api import receipt, category
 import logging
+import uvicorn
 
 # 로깅 설정
 logging.basicConfig(
