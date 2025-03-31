@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.stream.Collectors;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -27,9 +28,16 @@ public class ReceiptService {
             throw new RuntimeException("이미 영수증이 등록된 결제 내역입니다: " + request.getTransactionId());
         }
 
+        // OCR 결과로 categoryAmount 새로 계산
+        Map<String, Integer> newCategoryAmount = request.getItems().stream()
+                .collect(Collectors.groupingBy(
+                        ReceiptUpdateRequest.ReceiptItem::getItemCategory,
+                        Collectors.summingInt(ReceiptUpdateRequest.ReceiptItem::getItemAmount)
+                ));
+
         // 3. OCR 결과 저장
         payment.setReceiptItems(convertToReceiptItems(request.getItems()));
-        payment.setCategoryAmount(request.getCategoryAmount());
+        payment.setCategoryAmount(newCategoryAmount);
         payment.setReceiptUploaded(true);
 
         // 4. 저장
