@@ -1,3 +1,6 @@
+server:
+  port: 8761
+
 eureka:
   instance:
     hostname: j12d204.p.ssafy.io  # ✅ EC2 도메인 기준으로 Eureka가 자신을 인식

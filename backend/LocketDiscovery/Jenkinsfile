@@ -86,6 +86,8 @@ pipeline {
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
                             "docker service update \
+                                --env-rm SPRING_PROFILES_ACTIVE \
+                                --env-add SPRING_PROFILES_ACTIVE=prod \
                                 --env-add DOCKER_PORT=$DOCKER_PORT \
                                 --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
                                 ${DOCKER_IMAGE}"
