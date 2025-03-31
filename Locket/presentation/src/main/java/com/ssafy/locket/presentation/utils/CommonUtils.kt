@@ -1,5 +1,12 @@
 package com.example.locket
 
+import android.content.Context
+import android.graphics.PorterDuff
+import android.view.Gravity
+import android.view.LayoutInflater
+import android.widget.Toast
+import com.ssafy.locket.presentation.R
+import com.ssafy.locket.presentation.databinding.ToastCustomBinding
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -39,5 +46,20 @@ object CommonUtils {
         } catch (e: Exception) {
             number
         }
+    }
+
+    fun showCustomToast(context: Context, title: String, content: String) {
+        val inflater = LayoutInflater.from(context)
+        val binding = ToastCustomBinding.inflate(inflater)
+
+        binding.tvTitle.text = title
+        binding.tvContent.text = content
+
+        if(title.contains("권한")) binding.layout.backgroundTintList = context.getColorStateList(R.color.white)
+        val toast = Toast(context)
+        toast.duration = Toast.LENGTH_SHORT
+        toast.view = binding.root
+        toast.setGravity(Gravity.BOTTOM, 0, 200)
+        toast.show()
     }
 }

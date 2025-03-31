@@ -3,70 +3,72 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:paddingVertical="10dp"
-    android:background="@drawable/bg_finance_receipt"
+    android:paddingHorizontal="12dp"
+    android:background="@android:color/transparent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/iv_category_bg"
+    <TextView
+        android:id="@+id/tv_product_name"
         android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1"
-        android:background="@drawable/bg_category_small"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:maxLines="2"
+        android:ellipsize="end"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/tv_unit_price"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/iv_category"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_margin="4dp"
-        android:src="@drawable/ic_finance_category_cafe"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_category_bg"
-        app:layout_constraintEnd_toEndOf="@+id/iv_category_bg"
-        app:layout_constraintStart_toStartOf="@+id/iv_category_bg"
-        app:layout_constraintTop_toTopOf="@+id/iv_category_bg" />
-
-    <TextView
-        android:id="@+id/tv_receipt_place"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_regular"
-        android:textColor="@color/text"
-        android:textSize="16sp"
-        android:layout_marginHorizontal="12dp"
-        app:layout_constraintBottom_toTopOf="@+id/tv_receipt_description"
-        app:layout_constraintEnd_toStartOf="@+id/tv_receipt_price"
-        app:layout_constraintStart_toEndOf="@+id/iv_category_bg"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="쿠팡" />
+        app:layout_constraintHorizontal_weight="7"
+        tools:text="맑은물에 반모 촌두부 2개입, 300g, 1개" />
 
     <TextView
-        android:id="@+id/tv_receipt_description"
+        android:id="@+id/tv_unit_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_regular"
-        android:letterSpacing="-0.02"
-        android:textColor="@color/description_text"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="@id/iv_category_bg"
-        app:layout_constraintEnd_toEndOf="@+id/tv_receipt_place"
-        app:layout_constraintStart_toStartOf="@+id/tv_receipt_place"
-        app:layout_constraintTop_toBottomOf="@+id/tv_receipt_place"
-        tools:text="쇼핑 | 국민내일배움 | 2024.04.27" />
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:maxLength="6"
+        app:layout_constraintHorizontal_weight="3"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_product_name"
+        app:layout_constraintEnd_toStartOf="@+id/tv_count"
+        app:layout_constraintStart_toEndOf="@+id/tv_product_name"
+        app:layout_constraintTop_toTopOf="@+id/tv_product_name"
+        tools:text="3500" />
 
     <TextView
-        android:id="@+id/tv_receipt_price"
-        android:layout_width="wrap_content"
+        android:id="@+id/tv_count"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:fontFamily="@font/pretendard_regular"
         android:textColor="@color/text"
-        android:letterSpacing="-0.02"
         android:textSize="16sp"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_receipt_description"
+        android:gravity="center"
+        android:paddingStart="4dp"
+        android:maxLines="1"
+        android:maxLength="3"
+        app:layout_constraintHorizontal_weight="2"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_product_name"
+        app:layout_constraintEnd_toStartOf="@+id/tv_category"
+        app:layout_constraintStart_toEndOf="@+id/tv_unit_price"
+        app:layout_constraintTop_toTopOf="@+id/tv_product_name"
+        tools:text="1" />
+
+    <TextView
+        android:id="@+id/tv_category"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:paddingStart="4dp"
+        app:layout_constraintHorizontal_weight="4"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_product_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/tv_receipt_place"
-        tools:text="-35,000원" />
+        app:layout_constraintStart_toEndOf="@+id/tv_count"
+        app:layout_constraintTop_toTopOf="@+id/tv_product_name"
+        tools:text="식비" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

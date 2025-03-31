@@ -1,19 +1,32 @@
 package com.ssafy.locket.presentation.home.receipt
 
+import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.DialogReceiptUploadBinding
+import com.ssafy.locket.presentation.home.receipt.viewmodel.FileTypeSelectionUiState
+import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionUiState
+import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
+import kotlinx.coroutines.launch
 
+private const val TAG = "ReceiptUploadDialog"
 class ReceiptUploadDialog: DialogFragment() {
     private var _binding: DialogReceiptUploadBinding? = null
     private val binding : DialogReceiptUploadBinding
         get() = _binding!!
+    private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,21 +43,23 @@ class ReceiptUploadDialog: DialogFragment() {
         setDialog()
 
         binding.btnUploadImg.setOnClickListener {
-            // TODO 갤러리 이미지 열기
+            receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Image)
+            dismiss()
         }
 
         binding.btnUploadPdf.setOnClickListener {
-            // TODO 파일 열기
+            receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Pdf)
+            dismiss()
         }
 
         binding.btnCamera.setOnClickListener {
-            // TODO 카메라 촬영 열기
+            receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Camera)
+            dismiss()
         }
 
         binding.btnClose.setOnClickListener {
             findNavController().popBackStack()
         }
-
     }
 
     private fun setDialog() {
@@ -61,6 +76,7 @@ class ReceiptUploadDialog: DialogFragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        dialog?.dismiss()
     }
 
 }

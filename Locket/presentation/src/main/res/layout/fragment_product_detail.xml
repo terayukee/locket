@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".presentation.graph.ProductDetailFragment"
+    tools:context=".graph.fragment.ProductDetailFragment"
     android:background="@color/white"
     android:paddingTop="16dp">
 
@@ -20,6 +20,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_back"
         android:fillViewport="true">
 
@@ -127,7 +128,7 @@
             <View
                 android:id="@+id/v_underline"
                 android:layout_width="match_parent"
-                android:layout_height="2dp"
+                android:layout_height="4dp"
                 android:layout_marginTop="24sp"
                 android:background="#EFEFEF"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -139,14 +140,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="24dp"
-                android:layout_marginTop="16sp"
                 android:background="@drawable/bg_product_rounded_beige"
                 android:fontFamily="@font/pretendard_medium"
                 android:letterSpacing="-0.02"
+                android:textColor="@color/text"
                 android:paddingHorizontal="12dp"
                 android:paddingVertical="3dp"
                 android:text="가격변동 차트"
-                android:textColor="#2B2B2B"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"

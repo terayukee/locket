@@ -17,9 +17,6 @@ import androidx.fragment.app.Fragment
 fun interface OnGrantedListener {
     fun onGranted()
 }
-
-
-private const val TAG = "CheckPermission_싸피"
 class PermissionChecker(activityOrFragment: Any) {
     private lateinit var context:Context
 
@@ -28,7 +25,6 @@ class PermissionChecker(activityOrFragment: Any) {
         permitted = listener
     }
 
-    // 권한 체크
     fun checkPermission(context: Context, permissions: Array<String>): Boolean {
         this.context = context
         for (permission in permissions) {
@@ -40,7 +36,6 @@ class PermissionChecker(activityOrFragment: Any) {
         return true
     }
 
-    // 권한 호출한 이후 결과받아서 처리할 Launcher (startPermissionRequestResult )
     val requestPermissionLauncher: ActivityResultLauncher<Array<String>> = when (activityOrFragment) {
         is AppCompatActivity -> {
             activityOrFragment.registerForActivityResult(
@@ -63,18 +58,16 @@ class PermissionChecker(activityOrFragment: Any) {
 
 
     private fun resultChecking(result: Map<String, Boolean>){
-        Log.d(TAG, "requestPermissionLauncher: 건수 : ${result.size}")
-
-        if(result.values.contains(false)){ //false가 있는 경우라면..
-            Toast.makeText(context, "권한이 부족합니다.", Toast.LENGTH_SHORT).show()
-            moveToSettings()
-        }else{
-            Toast.makeText(context, "모든 권한이 허가되었습니다.", Toast.LENGTH_SHORT).show()
-            permitted.onGranted()
-        }
+        if(result.values.contains(false) == false) permitted.onGranted()
+//        if(result.values.contains(false)){
+//            CommonUtils.showCustomToast(context, "권한이 부족합니다", "모든 권한을 설정해주세요")
+//            moveToSettings()
+//        }else{
+//            CommonUtils.showCustomToast(context, "모든 권한이 허가되었습니다", "모든 권한을 설정해주세요")
+//            permitted.onGranted()
+//        }
     }
 
-    //사용자가 권한을 허용하지 않았을때, 설정창으로 이동
     private fun moveToSettings() {
         val alertDialog = AlertDialog.Builder( context )
         alertDialog.setTitle("권한이 필요합니다.")

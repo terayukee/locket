@@ -3,9 +3,9 @@ package com.ssafy.locket.presentation.finance.adapter
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentActivity
 import androidx.viewpager2.adapter.FragmentStateAdapter
-import com.ssafy.locket.presentation.finance.fragments.budget.BudgetFragment
-import com.ssafy.locket.presentation.finance.fragments.payment_calendar.PaymentCalendarFragment
-import com.ssafy.locket.presentation.finance.fragments.payment_list.PaymentListFragment
+import com.ssafy.locket.presentation.finance.fragment.budget.BudgetFragment
+import com.ssafy.locket.presentation.finance.fragment.payment_calendar.PaymentCalendarFragment
+import com.ssafy.locket.presentation.finance.fragment.payment_list.PaymentListFragment
 
 class FinanceVPAdapter(fragmentActivity: FragmentActivity) : FragmentStateAdapter(fragmentActivity){
 
