@@ -75,4 +75,14 @@ public class FeedbackAnalysisController {
     ) {
         return ResponseEntity.ok(feedbackStatService.compareWithAgeGroup(userId, birthYear, year, month));
     }
+
+    @GetMapping("/compare-previous-month")
+    @Operation(summary = "전월 대비 지출 증감률 분석", description = "사용자의 전월 대비 전체 및 카테고리별 소비 증감률을 반환합니다.")
+    public ResponseEntity<Map<String, Object>> getMonthlyChange(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(feedbackStatService.getMonthlyChange(userId, year, month));
+    }
 }

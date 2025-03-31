@@ -103,4 +103,42 @@ public class FeedbackStatService {
         );
     }
 
+    public Map<String, Object> getMonthlyChange(long userId, int year, int month) {
+        // 전월 계산
+        int prevYear = month == 1 ? year - 1 : year;
+        int prevMonth = month == 1 ? 12 : month - 1;
+
+        List<PaymentHistory> current = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
+        List<PaymentHistory> previous = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, prevYear, prevMonth);
+
+        int currentTotal = current.stream().mapToInt(p -> p.getTotalAmount().intValue()).sum();
+        int previousTotal = previous.stream().mapToInt(p -> p.getTotalAmount().intValue()).sum();
+
+        double totalChangeRate = previousTotal == 0 ? 100.0 : ((currentTotal - previousTotal) * 100.0 / previousTotal);
+
+        // 카테고리별 증감 분석
+        Map<String, Integer> currByCategory = current.stream()
+                .filter(p -> p.getPaymentCategory() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory, Collectors.summingInt(p -> p.getTotalAmount().intValue())));
+
+        Map<String, Integer> prevByCategory = previous.stream()
+                .filter(p -> p.getPaymentCategory() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory, Collectors.summingInt(p -> p.getTotalAmount().intValue())));
+
+        Map<String, Double> categoryChange = new HashMap<>();
+        for (String cat : currByCategory.keySet()) {
+            int curr = currByCategory.getOrDefault(cat, 0);
+            int prev = prevByCategory.getOrDefault(cat, 0);
+            double rate = (prev == 0) ? 100.0 : ((curr - prev) * 100.0 / prev);
+            categoryChange.put(cat, rate);
+        }
+
+        return Map.of(
+                "currentMonthTotal", currentTotal,
+                "previousMonthTotal", previousTotal,
+                "totalChangeRate", totalChangeRate,
+                "categoryChangeRate", categoryChange
+        );
+    }
+
 }
