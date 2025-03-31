@@ -2,6 +2,7 @@ package com.ssafy.locket.presentation.home
 
 import android.os.Bundle
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.locket.CommonUtils
@@ -18,6 +19,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     R.layout.fragment_home
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
+
+    //뒤로 가기 이벤트
+    private var backPressedTime: Long = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,10 +69,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         binding.icProfile.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
         }
+
+        backEvent()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
+    }
+
+    fun backEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finish() // 액티비티 종료
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    showToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        })
     }
 }

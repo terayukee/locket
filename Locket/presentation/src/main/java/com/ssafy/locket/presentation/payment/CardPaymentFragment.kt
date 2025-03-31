@@ -1,14 +1,18 @@
 package com.ssafy.locket.presentation.payment
 
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
+import android.nfc.NfcAdapter
 import android.os.Bundle
+import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
+import androidx.activity.OnBackPressedCallback
 import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
@@ -40,6 +44,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     //스크롤 가능
     private var selectedPosition = 0
     private var lastScrollX = 0
+    //뒤로 가기 이벤트
+    private var backPressedTime: Long = 0
 
     val cards = listOf(
         Card(R.drawable.ic_payment_card_img, "국민행복 삼성카드 V2"),
@@ -53,18 +59,18 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         Card(R.drawable.ic_payment_card_img, "Third Card"),
     )
 
+    override fun onResume() {
+        super.onResume()
+        checkNFCEnabled()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initialAdapter()
         initialView()
         initEvent()
-        savedInstanceState?.let {
-            selectedPosition = it.getInt("selectedPosition", 0)
-            lastScrollX = it.getInt("scrollPosition", 0)
-            binding.viewpager.setCurrentItem(selectedPosition, false) // 애니메이션 없이 복원
-            binding.dotIndicator.scrollTo(lastScrollX, 0) // ScrollView 복원
-        }
-        scrollToDotAtPosition(selectedPosition)
+        backEvent()
+        getCardView(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -75,11 +81,36 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         outState.putInt("scrollPosition", binding.dotIndicatorScroll.scrollX)
     }
 
+    fun getCardView(savedInstanceState: Bundle?){
+        savedInstanceState?.let {
+            selectedPosition = it.getInt("selectedPosition", 0)
+            lastScrollX = it.getInt("scrollPosition", 0)
+            binding.viewpager.setCurrentItem(selectedPosition, false) // 애니메이션 없이 복원
+            binding.dotIndicator.scrollTo(lastScrollX, 0) // ScrollView 복원
+        }
+        scrollToDotAtPosition(selectedPosition)
+    }
+
+
     fun initialAdapter(){
         cardAdapter = CardAdapter(cards)
         binding.viewpager.adapter = cardAdapter
         setupDotIndicator(cards.size)
     }
+
+    fun backEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finish() // 액티비티 종료
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    showToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        })
+    }
+
 
     fun initialView(){
         requireActivity().window.decorView.setBackgroundColor(Color.WHITE)
@@ -164,6 +195,24 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         }
     }
 
+    private fun checkNFCEnabled() {
+        val nfcAdapter = NfcAdapter.getDefaultAdapter(requireContext())
+        if (nfcAdapter == null) {
+            showToast("이 기기는 NFC를 지원하지 않습니다.")
+            return
+        }
+
+        if (!nfcAdapter.isEnabled) {
+            AlertDialog.Builder(requireContext())
+                .setTitle("NFC가 꺼져 있음")
+                .setMessage("NFC를 활성화해야 결제를 진행할 수 있습니다. NFC 설정을 활성화하기 전까지 결제가 불가능합니다.")
+                .setPositiveButton("설정으로 이동") { _, _ ->
+                    startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
+                }
+                .setCancelable(false) // 사용자가 뒤로가기나 다이얼로그 외부를 터치해도 닫히지 않도록 설정
+                .show()
+        }
+    }
     private fun initBiometrics() {
         val biometricManager = BiometricManager.from(requireContext())
 

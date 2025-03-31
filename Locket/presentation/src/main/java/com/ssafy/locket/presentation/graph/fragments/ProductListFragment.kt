@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,10 +24,14 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
     private lateinit var productList: MutableList<Product>
     private lateinit var moneyHappyList: MutableList<Product>
 
+    //뒤로 가기 이벤트
+    private var backPressedTime: Long = 0
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
         initAdapter()
+        backEvent()
     }
 
     fun initEvent(){
@@ -74,5 +79,18 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
         binding.rvRecommanditemList.adapter = productAdapter
         binding.rvMoneyHappyList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMoneyHappyList.adapter = moneyHappyLisAdapter
+    }
+
+    fun backEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finish() // 액티비티 종료
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    showToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        })
     }
 }

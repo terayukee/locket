@@ -3,6 +3,7 @@ package com.ssafy.locket.presentation.finance.fragments
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -28,6 +29,9 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
     private val financeSharedViewModel : FinanceSharedViewModel by activityViewModels()
+
+    //뒤로 가기 이벤트
+    private var backPressedTime: Long = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -62,6 +66,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         binding.btnNextMonthIcon.setOnClickListener {
             financeSharedViewModel.setYearMonth(financeSharedViewModel.selectedYearMonth.value.plusMonths(1))
         }
+        backEvent()
     }
 
     private fun initTabLayout(){
@@ -95,6 +100,20 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 //            }
         }
     }
+
+    fun backEvent(){
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (System.currentTimeMillis() - backPressedTime < 2000) {
+                    requireActivity().finish() // 액티비티 종료
+                } else {
+                    backPressedTime = System.currentTimeMillis()
+                    showToast("한 번 더 누르면 종료됩니다.")
+                }
+            }
+        })
+    }
+
 
     override fun onDestroyView() {
         super.onDestroyView()
