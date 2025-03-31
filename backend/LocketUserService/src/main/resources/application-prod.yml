@@ -27,11 +27,14 @@ spring:
       password: ${REDIS_PASSWORD}
 
 eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${server.port}
+    prefer-ip-address: true
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://j12d204.p.ssafy.io:8761/eureka  # EC2의 Eureka 서버 사용
+      defaultZone: http://j12d204.p.ssafy.io:8761/eureka
 
 management:
   endpoints:

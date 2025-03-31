@@ -16,7 +16,12 @@ spring:
     password: ${ELASTICSEARCH_PASSWORD}
 
 eureka:
+  instance:
+    instance-id: ${spring.cloud.client.hostname}:${spring.application.name}:${server.port}
+    prefer-ip-address: true
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://j12d204.p.ssafy.io:8761/eureka
 
