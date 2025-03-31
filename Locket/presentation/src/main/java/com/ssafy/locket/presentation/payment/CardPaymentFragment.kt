@@ -46,6 +46,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     private var lastScrollX = 0
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
+    //버튼 클릭으로 이벤트 지정
+    private var btnClick = 0
 
     val cards = listOf(
         Card(R.drawable.ic_payment_card_img, "국민행복 삼성카드 V2"),
@@ -58,11 +60,6 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         Card(R.drawable.ic_payment_card_img, "Another Card"),
         Card(R.drawable.ic_payment_card_img, "Third Card"),
     )
-
-    override fun onResume() {
-        super.onResume()
-        checkNFCEnabled()
-    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -125,11 +122,12 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             }
         })
         binding.ivFingerprint.setOnClickListener {
-            initBiometrics()
+            btnClick = 1
+            checkNFCEnabled()
         }
         binding.btnPassword.setOnClickListener {
-            requireActivity().window.decorView.setBackgroundColor(Color.BLACK)
-            findNavController().navigate(R.id.action_cardPaymentFragment_to_paymentPasswordFragment)
+            btnClick = 2
+            checkNFCEnabled()
         }
     }
 
@@ -209,8 +207,17 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                 .setPositiveButton("설정으로 이동") { _, _ ->
                     startActivity(Intent(Settings.ACTION_NFC_SETTINGS))
                 }
-                .setCancelable(false) // 사용자가 뒤로가기나 다이얼로그 외부를 터치해도 닫히지 않도록 설정
+                .setNegativeButton("취소", null)
                 .show()
+        }
+        else{
+            if(btnClick==1){
+                initBiometrics()
+            }
+            else if(btnClick==2){
+                requireActivity().window.decorView.setBackgroundColor(Color.BLACK)
+                findNavController().navigate(R.id.action_cardPaymentFragment_to_paymentPasswordFragment)
+            }
         }
     }
     private fun initBiometrics() {
