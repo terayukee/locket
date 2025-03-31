@@ -39,6 +39,12 @@ public class PaymentProcessingService {
 //            log.info("📥 Received category classification response: {}", response);
 //            log.info("📥 Category from response: {}", response.get("paymentCategory"));
 
+            // 초기 categoryAmount 설정 (단일 카테고리)
+            Map<String, Integer> categoryAmount = Map.of(
+                (String) response.get("paymentCategory"),
+                event.getTotalAmount().intValue()
+            );
+
             // DTO -> Elasticsearch Entity로 변환
             PaymentHistory history = PaymentHistory.builder()
                     .transactionId(event.getTransactionId())
@@ -57,6 +63,8 @@ public class PaymentProcessingService {
                     .paymentStatus(event.getPaymentStatus())
                     .createdAt(event.getCreatedAt())
                     .orders(convertOrderDetails(event.getOrders()))
+                    .paymentCategory((String) response.get("paymentCategory"))
+                    .categoryAmount(categoryAmount)
                     .build();
 
             log.info("💾 Saving payment with category: {}", history.getPaymentCategory());
