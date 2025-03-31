@@ -1,6 +1,11 @@
 server:
   port: 8082
 
+DB:
+  URL_USER: ${DB_URL_USER}
+  USERNAME: ${DB_USERNAME}
+  PASSWORD: ${DB_PASSWORD}
+
 spring:
   config:
     activate:
