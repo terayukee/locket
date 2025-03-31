@@ -47,9 +47,9 @@ spring:
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs/**
+            - Path=/api/users-docs/**
           filters:
-            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
+            - RewritePath=/api/users-docs(?<segment>/?.*), /users-docs${segment}
           order: 1
 
         - id: elasticsearch-service-docs
@@ -81,7 +81,7 @@ springdoc:
       - name: "Locket Payment Service"
         url: /api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: /api/users/v3/api-docs
+        url: /api/users-docs/swagger-ui.html
       - name: "Locket ElasticSearch Service"
         url: /api/elasticsearch/v3/api-docs
 
