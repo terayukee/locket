@@ -65,9 +65,9 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
     private fun performKakaoLogin(accessToken: String) {
         lifecycleScope.launch {
             try {
-                // GET 방식으로 서버에 로그인 요청: accessToken을 URL 경로의 {code}에 매핑
-                /*val response = RetrofitUtil.userService.kakaoLogin(accessToken)
+                //val response = RetrofitUtil.userService.kakaoLogin(accessToken)
 
+                /*
                 if (response.isSuccessful) {
                     // Retrofit의 Response 객체에서 HTTP 응답 헤더를 추출
                     val httpHeaders = response.headers().toMultimap()
