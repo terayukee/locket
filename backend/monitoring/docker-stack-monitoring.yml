@@ -9,6 +9,7 @@ services:
       - "9090:9090"
     networks:
       - monitoring
+      - spring-locket
 
   grafana:
     image: grafana/grafana:latest
@@ -19,6 +20,7 @@ services:
       - "3000:3000"
     networks:
       - monitoring
+      - spring-locket
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -31,6 +33,7 @@ services:
       - "8084:8080"
     networks:
       - monitoring
+      - spring-locket
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -38,7 +41,10 @@ services:
       - "9100:9100"
     networks:
       - monitoring
+      - spring-locket
 
 networks:
   monitoring:
+    external: true
+  spring-locket:
     external: true
