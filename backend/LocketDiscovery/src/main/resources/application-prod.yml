@@ -7,7 +7,7 @@ eureka:
     prefer-ip-address: false
   client:
     service-url:
-      defaultZone: http://j12d204.p.ssafy.io:8761/eureka
+      defaultZone: http://discovery:8761/eureka
 
 management:
   endpoints:

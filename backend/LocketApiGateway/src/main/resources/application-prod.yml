@@ -3,6 +3,62 @@ spring:
     activate:
       on-profile: prod
 
+  application:
+    name: locket-api-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            exposedHeaders: "Authorization, Content-Disposition"
+      routes:
+        # 서비스 라우팅
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/**
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+          order: 100
+
+        - id: elasticsearch-service
+          uri: lb://ELASTICSEARCH-SERVICE
+          predicates:
+            - Path=/api/elasticsearch/**
+
+        # 서비스별 Swagger 문서 라우팅
+        - id: payment-service-docs
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/v3/api-docs
+          filters:
+            - RewritePath=/api/payment/v3/api-docs, /payment-docs
+
+        - id: user-service-docs
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/v3/api-docs/**
+          filters:
+            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
+          order: 1
+
+        - id: elasticsearch-service-docs
+          uri: lb://ELASTICSEARCH-SERVICE
+          predicates:
+            - Path=/api/elasticsearch/v3/api-docs
+          filters:
+            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
+
 eureka:
   instance:
     instance-id: ${HOSTNAME}:${spring.application.name}:${server.port}
@@ -11,14 +67,16 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://j12d204.p.ssafy.io:8761/eureka
+      defaultZone: http://discovery:8761/eureka
 
 server:
   port: 8080
 
-# ✅ 원격 서버에서 실행할 API 문서 경로
 springdoc:
   swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
     urls:
       - name: "Locket Payment Service"
         url: /api/payment/v3/api-docs
