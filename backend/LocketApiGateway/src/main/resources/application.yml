@@ -93,7 +93,7 @@ springdoc:
   api-docs:
     enabled: true
     groups:
-      enabled: false
+      enabled: true
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
