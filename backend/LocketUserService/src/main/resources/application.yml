@@ -25,7 +25,6 @@ spring:
     listener:
       ack-mode: manual_immediate
 
-
   cloud:
     openfeign:
       client:
@@ -39,13 +38,6 @@ spring:
       host: j12d204.p.ssafy.io
       port: 6379
       password: ${REDIS.PASSWORD}
-
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true
 
 management:
   endpoints:

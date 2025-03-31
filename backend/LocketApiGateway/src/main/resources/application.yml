@@ -106,6 +106,7 @@ springdoc:
         url: /api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
         url: /api/elasticsearch/v3/api-docs
+    disable-swagger-default-url: true
 
 logging:
   level:
