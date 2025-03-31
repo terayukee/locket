@@ -1,8 +1,9 @@
 package com.locket.elasticsearch.controller.feedback;
 
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackCategoryStatDto;
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackDayOfWeekDto;
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackCardStatDto;
+
+import com.locket.elastic.dto.FeedbackCardStatDto;
+import com.locket.elastic.dto.FeedbackCategoryStatDto;
+import com.locket.elastic.dto.FeedbackDayOfWeekDto;
 import com.locket.elasticsearch.service.feedback.FeedbackStatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

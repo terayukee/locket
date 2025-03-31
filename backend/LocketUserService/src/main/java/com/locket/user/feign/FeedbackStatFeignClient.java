@@ -1,5 +1,8 @@
 package com.locket.user.feign;
 
+import com.locket.elastic.dto.FeedbackCardStatDto;
+import com.locket.elastic.dto.FeedbackCategoryStatDto;
+import com.locket.elastic.dto.FeedbackDayOfWeekDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

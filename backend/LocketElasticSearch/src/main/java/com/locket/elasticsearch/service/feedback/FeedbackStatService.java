@@ -1,8 +1,8 @@
 package com.locket.elasticsearch.service.feedback;
 
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackCardStatDto;
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackCategoryStatDto;
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackDayOfWeekDto;
+import com.locket.elastic.dto.FeedbackCardStatDto;
+import com.locket.elastic.dto.FeedbackCategoryStatDto;
+import com.locket.elastic.dto.FeedbackDayOfWeekDto;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
 import lombok.RequiredArgsConstructor;
