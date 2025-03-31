@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-locket-discovery'
+        DOCKER_IMAGE = 'spring-locket_discovery'
         DOCKER_PORT = 8761
 
         EC2_USER = credentials('EC2_USER')

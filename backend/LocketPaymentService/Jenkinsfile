@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-locket-payment-service'
+        DOCKER_IMAGE = 'spring-locket_payment-service'
         DOCKER_PORT = 8081
 
         EC2_USER = credentials('EC2_USER')

@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-locket-elasticsearch'
+        DOCKER_IMAGE = 'spring-locket_elasticsearch'
         DOCKER_PORT = 8083
 
         EC2_USER = credentials('EC2_USER')
