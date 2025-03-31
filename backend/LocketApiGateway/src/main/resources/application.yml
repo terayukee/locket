@@ -34,11 +34,6 @@ spring:
           predicates:
             - Path=/api/elasticsearch/**
 
-        - id: elasticsearch-payment
-          uri: lb://ELASTICSEARCH-SERVICE
-          predicates:
-            - Path=/api/elasticsearch/payment/**
-
         # Swagger 관련 경로
 #        - id: openapi
 #          uri: lb://LOCKET-API-GATEWAY
