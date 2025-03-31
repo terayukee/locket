@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <ImageView
+        android:id="@+id/iv_bg"
+        android:layout_width="164dp"
+        android:layout_height="164dp"
+        android:backgroundTint="#EBF5FB"
+        android:background="@drawable/bg_character_growth"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <ImageView
+        android:id="@+id/iv_gifticon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        android:src="@drawable/image_character_gifticon"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_gifticon_store_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:letterSpacing="-0.02"
+        android:maxLines="1"
+        android:text="스타벅스"
+        android:textColor="@color/disabled"
+        android:textSize="14sp"
+        android:paddingStart="4dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/iv_bg" />
+
+    <TextView
+        android:id="@+id/tv_gifticon_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:ellipsize="end"
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:letterSpacing="-0.02"
+        android:maxLines="1"
+        android:text="카페 아메리카노 T"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:paddingStart="4dp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_gifticon"
+        app:layout_constraintStart_toStartOf="@+id/iv_gifticon"
+        app:layout_constraintTop_toBottomOf="@+id/tv_gifticon_store_name" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
