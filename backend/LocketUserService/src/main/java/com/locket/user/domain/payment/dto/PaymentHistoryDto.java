@@ -3,9 +3,9 @@ package com.locket.user.domain.payment.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -23,15 +23,20 @@ public class PaymentHistoryDto {
     private String currency;
     private String paymentCategory;
     private String paymentMerchant;
-    private int cardId;                // ✅ 추가됨
-    private String cardName;           // ✅ 추가됨
-    private String storeName;          // ✅ 추가됨
-    private boolean receiptUploaded;   // ✅ 추가됨
+    private int cardId;
+    private String cardName;
+    private String storeName;
+    private boolean receiptUploaded;
     private String paymentStatus;
     private OffsetDateTime createdAt;
-    private int year;                  // ✅ 추가됨
-    private int month;                 // ✅ 추가됨
-    private int day;                   // ✅ 추가됨
+    private int year;
+    private int month;
+    private int day;
+
+    private boolean needItemCheck;  // ✅ 추가
+    private List<ReceiptItemDto> receiptItems;  // ✅ 추가
+    private Map<String, Integer> categoryAmount; // ✅ 추가
+
     private List<OrderDetailDto> orders;
 
     @Getter
@@ -44,5 +49,18 @@ public class PaymentHistoryDto {
         private String cardNumber;
         private BigDecimal amount;
         private String paymentOrderStatus;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ReceiptItemDto {
+        private Long itemId;
+        private String itemName;
+        private int itemQuantity;
+        private int itemAmount;
+        private String itemCategory;
     }
 }

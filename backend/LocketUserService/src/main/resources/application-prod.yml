@@ -28,9 +28,9 @@ spring:
 
   # ✅ ReceiptService 호출용 WebClient base URL 설정 추가
   locket:
-    spending-pattern:
+    receipt:
       service:
-        url: https://j12d204.p.ssafy.io:8085
+        url: https://j12d204.p.ssafy.io:8500
 
 eureka:
   instance:
