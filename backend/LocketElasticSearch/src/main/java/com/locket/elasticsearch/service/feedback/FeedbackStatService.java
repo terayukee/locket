@@ -36,13 +36,27 @@ public class FeedbackStatService {
 
     public FeedbackDayOfWeekDto getDayOfWeekStats(long userId, int year, int month) {
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
-        Map<DayOfWeek, Integer> map = new EnumMap<>(DayOfWeek.class);
-        for (PaymentHistory p : payments) {
-            DayOfWeek day = p.getCreatedAt().getDayOfWeek();
-            map.merge(day, p.getTotalAmount().intValue(), Integer::sum);
+
+        // 요일별로 지출 합계 계산 (DayOfWeek 기준)
+        Map<DayOfWeek, Integer> dayOfWeekMap = new HashMap<>();
+        for (PaymentHistory payment : payments) {
+            if (payment.getCreatedAt() != null) {
+                DayOfWeek day = payment.getCreatedAt().getDayOfWeek();
+                int amount = payment.getTotalAmount().intValue();
+                dayOfWeekMap.merge(day, amount, Integer::sum);
+            }
         }
-        return new FeedbackDayOfWeekDto(map);
+
+        // DayOfWeek → String으로 변환
+        Map<String, Integer> stringKeyMap = dayOfWeekMap.entrySet().stream()
+                .collect(Collectors.toMap(
+                        entry -> entry.getKey().toString(),  // ex: "MONDAY"
+                        Map.Entry::getValue
+                ));
+
+        return new FeedbackDayOfWeekDto(stringKeyMap);
     }
+
 
     public List<FeedbackCardStatDto> getCardUsageStats(long userId, int year, int month) {
         return paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month).stream()

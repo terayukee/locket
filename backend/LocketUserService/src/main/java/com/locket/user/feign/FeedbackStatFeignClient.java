@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import java.util.List;
 import java.util.Map;
 
-@FeignClient(name = "elasticsearch-service")
+@FeignClient(name = "elasticsearch-service", contextId = "feedbackStatClient")
 public interface FeedbackStatFeignClient {
 
     @GetMapping("/api/elasticsearch/feedback/category-stat")

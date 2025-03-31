@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "elasticsearch-service")
+@FeignClient(name = "elasticsearch-service", contextId = "paymentHistoryClient")
 public interface PaymentHistoryFeignClient {
 
     @GetMapping("/api/elasticsearch/payment/history")
