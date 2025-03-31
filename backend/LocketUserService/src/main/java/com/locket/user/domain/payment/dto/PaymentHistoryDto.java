@@ -6,6 +6,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
@@ -33,6 +34,8 @@ public class PaymentHistoryDto {
     private int month;                 // ✅ 추가됨
     private int day;                   // ✅ 추가됨
     private List<OrderDetailDto> orders;
+    private List<ReceiptItemDto> receiptItems;
+    private Map<String, Integer> categoryAmount;
 
     @Getter
     @Setter
@@ -44,5 +47,18 @@ public class PaymentHistoryDto {
         private String cardNumber;
         private BigDecimal amount;
         private String paymentOrderStatus;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ReceiptItemDto {
+        private Long itemId;
+        private String itemName;
+        private int itemQuantity;
+        private int itemAmount;
+        private String itemCategory;
     }
 }
