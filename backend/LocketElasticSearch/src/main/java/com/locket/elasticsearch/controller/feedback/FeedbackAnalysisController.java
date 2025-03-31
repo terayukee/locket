@@ -85,4 +85,24 @@ public class FeedbackAnalysisController {
     ) {
         return ResponseEntity.ok(feedbackStatService.getMonthlyChange(userId, year, month));
     }
+
+    @GetMapping("/hot-categories")
+    @Operation(summary = "지속적으로 증가한 소비 카테고리", description = "최근 3개월간 소비가 지속적으로 증가한 카테고리를 반환합니다.")
+    public ResponseEntity<List<String>> getHotCategories(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(feedbackStatService.getHotCategories(userId, year, month));
+    }
+
+    @GetMapping("/spending-entropy")
+    @Operation(summary = "지출 다양성 지수", description = "카테고리별 소비 분산도를 바탕으로 Shannon entropy 값을 반환합니다.")
+    public ResponseEntity<Double> getSpendingEntropy(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        return ResponseEntity.ok(feedbackStatService.getSpendingDiversityEntropy(userId, year, month));
+    }
 }

@@ -1,7 +1,7 @@
 package com.locket.elasticsearch.service.feedback;
 
-import com.locket.elasticsearch.domain.feedback.dto.FeedbackCategoryStatDto;
 import com.locket.elasticsearch.domain.feedback.dto.FeedbackCardStatDto;
+import com.locket.elasticsearch.domain.feedback.dto.FeedbackCategoryStatDto;
 import com.locket.elasticsearch.domain.feedback.dto.FeedbackDayOfWeekDto;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
@@ -10,11 +10,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class FeedbackStatService {
 
@@ -22,52 +23,43 @@ public class FeedbackStatService {
 
     public List<FeedbackCategoryStatDto> getCategoryStats(long userId, int year, int month) {
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
-
         int total = payments.stream().mapToInt(p -> p.getTotalAmount().intValue()).sum();
 
         return payments.stream()
                 .filter(p -> p.getPaymentCategory() != null)
                 .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory, Collectors.summingInt(p -> p.getTotalAmount().intValue())))
                 .entrySet().stream()
-                .map(entry -> new FeedbackCategoryStatDto(entry.getKey(), entry.getValue(), total == 0 ? 0 : (entry.getValue() * 100.0 / total)))
+                .map(e -> new FeedbackCategoryStatDto(e.getKey(), e.getValue(), (e.getValue() * 100.0 / total)))
                 .sorted(Comparator.comparingDouble(FeedbackCategoryStatDto::getRatio).reversed())
                 .collect(Collectors.toList());
     }
 
     public FeedbackDayOfWeekDto getDayOfWeekStats(long userId, int year, int month) {
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
-
-        Map<DayOfWeek, Integer> spendingByDay = new EnumMap<>(DayOfWeek.class);
-        for (DayOfWeek day : DayOfWeek.values()) spendingByDay.put(day, 0);
-
+        Map<DayOfWeek, Integer> map = new EnumMap<>(DayOfWeek.class);
         for (PaymentHistory p : payments) {
             DayOfWeek day = p.getCreatedAt().getDayOfWeek();
-            spendingByDay.put(day, spendingByDay.get(day) + p.getTotalAmount().intValue());
+            map.merge(day, p.getTotalAmount().intValue(), Integer::sum);
         }
-
-        return new FeedbackDayOfWeekDto(spendingByDay);
+        return new FeedbackDayOfWeekDto(map);
     }
 
     public List<FeedbackCardStatDto> getCardUsageStats(long userId, int year, int month) {
-        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
-
-        Map<String, List<PaymentHistory>> cardMap = payments.stream()
+        return paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month).stream()
                 .filter(p -> p.getCardName() != null)
-                .collect(Collectors.groupingBy(PaymentHistory::getCardName));
-
-        return cardMap.entrySet().stream()
-                .map(entry -> {
-                    int totalAmount = entry.getValue().stream().mapToInt(p -> p.getTotalAmount().intValue()).sum();
-                    int count = entry.getValue().size();
-                    return new FeedbackCardStatDto(entry.getKey(), count, totalAmount);
-                })
+                .collect(Collectors.groupingBy(PaymentHistory::getCardName))
+                .entrySet().stream()
+                .map(e -> new FeedbackCardStatDto(
+                        e.getKey(),
+                        e.getValue().size(),
+                        e.getValue().stream().mapToInt(p -> p.getTotalAmount().intValue()).sum()
+                ))
                 .sorted(Comparator.comparingInt(FeedbackCardStatDto::getTotalAmount).reversed())
                 .collect(Collectors.toList());
     }
 
     public String getTopSpendingStore(long userId, int year, int month) {
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
-
         return payments.stream()
                 .filter(p -> p.getStoreName() != null)
                 .collect(Collectors.groupingBy(PaymentHistory::getStoreName, Collectors.summingInt(p -> p.getTotalAmount().intValue())))
@@ -78,20 +70,16 @@ public class FeedbackStatService {
     }
 
     public Map<String, Object> compareWithAgeGroup(long userId, int birthYear, int year, int month) {
-        // 위 아래 3살차이 까지
-        int ageStart = birthYear - 3;
-        int ageEnd = ageStart + 3;
+        int ageStart = (birthYear / 10) * 10;
+        int ageEnd = ageStart + 9;
 
-        // 사용자 소비 내역
         List<PaymentHistory> userPayments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
         Map<String, Integer> userCategorySpend = userPayments.stream()
                 .filter(p -> p.getPaymentCategory() != null)
                 .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
                         Collectors.summingInt(p -> p.getTotalAmount().intValue())));
 
-        // 연령대 사용자 소비 내역
-        List<PaymentHistory> groupPayments = paymentHistoryRepository
-                .findByBirthDateBetweenAndYearAndMonth(ageStart, ageEnd, year, month);
+        List<PaymentHistory> groupPayments = paymentHistoryRepository.findByBirthDateBetweenAndYearAndMonth(ageStart, ageEnd, year, month);
         Map<String, Double> groupAverageSpend = groupPayments.stream()
                 .filter(p -> p.getPaymentCategory() != null)
                 .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
@@ -104,7 +92,6 @@ public class FeedbackStatService {
     }
 
     public Map<String, Object> getMonthlyChange(long userId, int year, int month) {
-        // 전월 계산
         int prevYear = month == 1 ? year - 1 : year;
         int prevMonth = month == 1 ? 12 : month - 1;
 
@@ -116,7 +103,6 @@ public class FeedbackStatService {
 
         double totalChangeRate = previousTotal == 0 ? 100.0 : ((currentTotal - previousTotal) * 100.0 / previousTotal);
 
-        // 카테고리별 증감 분석
         Map<String, Integer> currByCategory = current.stream()
                 .filter(p -> p.getPaymentCategory() != null)
                 .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory, Collectors.summingInt(p -> p.getTotalAmount().intValue())));
@@ -141,4 +127,47 @@ public class FeedbackStatService {
         );
     }
 
+    public List<String> getHotCategories(long userId, int year, int month) {
+        Map<String, Integer> month1 = getCategorySums(userId, year, month);
+        int[] prev1 = getPreviousMonth(year, month);
+        Map<String, Integer> month2 = getCategorySums(userId, prev1[0], prev1[1]);
+        int[] prev2 = getPreviousMonth(prev1[0], prev1[1]);
+        Map<String, Integer> month3 = getCategorySums(userId, prev2[0], prev2[1]);
+
+        Set<String> allCats = new HashSet<>(month1.keySet());
+        allCats.retainAll(month2.keySet());
+        allCats.retainAll(month3.keySet());
+
+        return allCats.stream()
+                .filter(cat -> month1.get(cat) > month2.get(cat) && month2.get(cat) > month3.get(cat))
+                .collect(Collectors.toList());
+    }
+
+    private Map<String, Integer> getCategorySums(long userId, int year, int month) {
+        return paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month).stream()
+                .filter(p -> p.getPaymentCategory() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
+                        Collectors.summingInt(p -> p.getTotalAmount().intValue())));
+    }
+
+    private int[] getPreviousMonth(int year, int month) {
+        return (month == 1) ? new int[]{year - 1, 12} : new int[]{year, month - 1};
+    }
+
+    public Double getSpendingDiversityEntropy(long userId, int year, int month) {
+        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
+        Map<String, Integer> byCategory = payments.stream()
+                .filter(p -> p.getPaymentCategory() != null)
+                .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory, Collectors.summingInt(p -> p.getTotalAmount().intValue())));
+
+        int total = byCategory.values().stream().mapToInt(i -> i).sum();
+        if (total == 0) return 0.0;
+
+        double entropy = 0.0;
+        for (int amt : byCategory.values()) {
+            double p = amt / (double) total;
+            entropy += -p * Math.log(p);
+        }
+        return entropy;
+    }
 }
