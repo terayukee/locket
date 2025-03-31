@@ -18,5 +18,11 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         binding.tvCharacterName.setOnClickListener {
             findNavController().navigate(R.id.action_characterGrowthFragment_to_characterDoneFragment)
         }
+
+        binding.tvCharacterName.text = getString(R.string.home_character_gifticon_character,"소심한 반짝냥")
+
+        binding.btnGifticonBox.setOnClickListener {
+            findNavController().navigate(R.id.action_characterGrowthFragment_to_giftCardListFragment)
+        }
     }
 }

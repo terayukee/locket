@@ -88,14 +88,14 @@
             android:id="@+id/paddingTop"
             android:layout_width="0dp"
             android:layout_height="24dp"
-            app:layout_constraintBottom_toTopOf="@+id/button"
-            app:layout_constraintEnd_toEndOf="@+id/button"
-            app:layout_constraintStart_toStartOf="@id/button"
+            app:layout_constraintBottom_toTopOf="@+id/tv_character_name"
+            app:layout_constraintEnd_toEndOf="@+id/tv_character_name"
+            app:layout_constraintStart_toStartOf="@id/tv_character_name"
             app:layout_constraintTop_toBottomOf="@+id/iv_character"
             app:layout_constraintVertical_chainStyle="spread_inside" />
 
         <android.widget.Button
-            android:id="@+id/button"
+            android:id="@+id/tv_character_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_character_done_name"
@@ -105,6 +105,7 @@
             tools:text="개농이 물어온 선물"
             android:textColor="@color/text"
             android:textSize="16sp"
+            android:paddingHorizontal="12dp"
             app:layout_constraintBottom_toTopOf="@+id/iv_gifticon_bg"
             app:layout_constraintEnd_toEndOf="@+id/iv_character_gifticon_bg"
             app:layout_constraintStart_toStartOf="@+id/iv_character_gifticon_bg"
@@ -121,7 +122,7 @@
             app:layout_constraintDimensionRatio="1"
             app:layout_constraintEnd_toEndOf="@+id/iv_character_gifticon_bg"
             app:layout_constraintStart_toStartOf="@+id/iv_character_gifticon_bg"
-            app:layout_constraintTop_toBottomOf="@+id/button"
+            app:layout_constraintTop_toBottomOf="@+id/tv_character_name"
             app:layout_constraintWidth_percent="0.3342" />
 
         <ImageView
