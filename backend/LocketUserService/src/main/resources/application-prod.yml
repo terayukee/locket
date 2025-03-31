@@ -26,6 +26,12 @@ spring:
       port: 6379
       password: ${REDIS_PASSWORD}
 
+  # ✅ ReceiptService 호출용 WebClient base URL 설정 추가
+  locket:
+    spending-pattern:
+      service:
+        url: https://j12d204.p.ssafy.io:8085
+
 eureka:
   instance:
     instance-id: ${HOSTNAME}:${spring.application.name}:${server.port}

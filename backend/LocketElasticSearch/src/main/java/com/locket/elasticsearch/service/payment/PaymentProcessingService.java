@@ -27,17 +27,17 @@ public class PaymentProcessingService {
 
         try {
             // FastAPI 호출 - Map으로 직접 요청/응답 처리
-//            log.info("📤 Sending category classification request for store: {}", event.getStoreName());
-//            Map<String, String> request = Map.of("storeName", event.getStoreName());
-//
-//            Map<String, Object> response = webClient.post()
-//                    .uri("/api/category/classify")
-//                    .bodyValue(Map.of("storeName", event.getStoreName()))
-//                    .retrieve()
-//                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-//                    .block();
-//            log.info("📥 Received category classification response: {}", response);
-//            log.info("📥 Category from response: {}", response.get("paymentCategory"));
+            log.info("📤 Sending category classification request for store: {}", event.getStoreName());
+            Map<String, String> request = Map.of("storeName", event.getStoreName());
+
+            Map<String, Object> response = webClient.post()
+                    .uri("/api/category/classify")
+                    .bodyValue(Map.of("storeName", event.getStoreName()))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .block();
+            log.info("📥 Received category classification response: {}", response);
+            log.info("📥 Category from response: {}", response.get("paymentCategory"));
 
             // 초기 categoryAmount 설정 (단일 카테고리)
             Map<String, Integer> categoryAmount = Map.of(

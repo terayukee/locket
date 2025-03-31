@@ -15,6 +15,12 @@ spring:
     username: ${ELASTICSEARCH_USERNAME}
     password: ${ELASTICSEARCH_PASSWORD}
 
+  # ✅ ReceiptService 호출용 WebClient base URL 설정 추가
+  locket:
+    receipt:
+      service:
+        url: https://j12d204.p.ssafy.io:8084
+
 eureka:
   instance:
     instance-id: ${HOSTNAME}:${spring.application.name}:${server.port}
