@@ -16,6 +16,7 @@ import androidx.core.app.ActivityCompat
 import androidx.fragment.app.Fragment
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
+import kotlin.math.log
 
 private const val TAG = "PermissionChecker"
 fun interface OnGrantedListener {
@@ -41,6 +42,7 @@ class PermissionChecker(activityOrFragment: Any) {
 
     val requestPermissionLauncher: ActivityResultLauncher<Array<String>> = when (activityOrFragment) {
         is AppCompatActivity -> {
+            Log.d(TAG, "checkPermission is activity: ")
             activityOrFragment.registerForActivityResult(
                 ActivityResultContracts.RequestMultiplePermissions()){
                 resultChecking(it)
@@ -48,9 +50,12 @@ class PermissionChecker(activityOrFragment: Any) {
         }
 
         is Fragment -> {
+            Log.d(TAG, "checkPermission is fragment: ")
             activityOrFragment.registerForActivityResult(
                 ActivityResultContracts.RequestMultiplePermissions()){
+                Log.d(TAG, "checkPermission check 5: ")
                 resultChecking(it)
+                Log.d(TAG, "checkPermission check 6: ")
             }
         }
 
@@ -60,11 +65,12 @@ class PermissionChecker(activityOrFragment: Any) {
     }
 
 
-    private fun resultChecking(result: Map<String, Boolean>){
+    private fun resultChecking(result: Map<String, Boolean>) {
 //        if(result.values.contains(false) == false) permitted.onGranted()
         if(result.values.contains(false)){
-//            moveToSettings()
-        }else{
+            result.keys.forEach { Log.d(TAG, "checkPermission: $it") }
+            moveToSettings()
+        } else {
             permitted.onGranted()
         }
     }

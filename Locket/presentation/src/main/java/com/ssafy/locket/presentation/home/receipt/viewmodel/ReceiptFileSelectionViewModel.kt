@@ -28,6 +28,7 @@ class ReceiptFileSelectionViewModel @Inject constructor() : ViewModel() {
     }
 
     fun selectType(type: FileTypeSelectionUiState) {
+        Log.d(TAG, "selectType: $type")
         _selectedType.value = type
     }
 

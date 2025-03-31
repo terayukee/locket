@@ -24,6 +24,7 @@ class ReceiptUploadDialog: DialogFragment() {
         get() = _binding!!
     private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
     lateinit var mContext: Context
+    private lateinit var checker: PermissionChecker
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -42,40 +43,46 @@ class ReceiptUploadDialog: DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         setDialog()
+        var isCamera = false
 
         binding.btnUploadImg.setOnClickListener {
+            isCamera = false
             receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Image)
             dismiss()
         }
 
         binding.btnUploadPdf.setOnClickListener {
+            isCamera = false
             receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Pdf)
             dismiss()
         }
 
         binding.btnCamera.setOnClickListener {
             checkPermission()
-            dismiss()
+            isCamera = true
         }
 
         binding.btnClose.setOnClickListener {
             findNavController().popBackStack()
         }
-    }
 
-    private val checker = PermissionChecker(this)
+        checker = PermissionChecker(this).apply {
+            setOnGrantedListener {
+                if(isCamera) receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Camera)
+                dismiss()
+            }
+        }
+    }
 
     private val runtimePermission =
         arrayOf(Manifest.permission.CAMERA)
 
     private fun checkPermission() {
-//        Log.d(TAG, "checkPermission: checkPermission called")
         if (!checker.checkPermission(mContext, runtimePermission)) {
-//            Log.d(TAG, "checkPermission: checkPermission not permitted")
             checker.requestPermissionLauncher.launch(runtimePermission)
         } else {
-//            Log.d(TAG, "checkPermission: checkPermission permitted")
             receiptFileSelectionViewModel.selectType(FileTypeSelectionUiState.Camera)
+            dismiss()
         }
     }
 

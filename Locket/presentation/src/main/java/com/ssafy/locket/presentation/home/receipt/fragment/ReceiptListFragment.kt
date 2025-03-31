@@ -71,7 +71,6 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
                 }
             }
         }
-
     }
 
     private fun imageCapture() {
@@ -143,6 +142,11 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
+        receiptFileSelectionViewModel.clearSelectedType()
+    }
+
+    override fun onResume() {
+        super.onResume()
         receiptFileSelectionViewModel.clearSelectedType()
     }
 }

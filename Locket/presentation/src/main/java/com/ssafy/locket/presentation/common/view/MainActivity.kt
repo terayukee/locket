@@ -48,11 +48,13 @@ class MainActivity : AppCompatActivity() {
     private fun checkPermission() {
         if (!checker.checkPermission(this, runtimePermissions)) {
             checker.setOnGrantedListener {
+                Log.d(TAG, "checkPermission: notification check")
                 initNotification()
             }
 
             checker.requestPermissionLauncher.launch(runtimePermissions)
         } else {
+            Log.d(TAG, "checkPermission: notification check2")
             initNotification()
         }
     }
