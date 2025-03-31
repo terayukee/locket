@@ -118,7 +118,7 @@
         android:label="fragment_character"
         tools:layout="@layout/fragment_character_initial" >
         <action
-            android:id="@+id/action_characterFragment_to_characterGrowthFragment"
+            android:id="@+id/action_characterInitialFragment_to_characterGrowthFragment"
             app:destination="@id/characterGrowthFragment"
             app:popUpTo="@id/characterInitialFragment"
             app:popUpToInclusive="true"/>

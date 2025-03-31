@@ -28,6 +28,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onViewCreated(view, savedInstanceState)
         val today = LocalDate.now()
 
+        binding.logoLocket.setOnClickListener {
+            CommonUtils.showMultiLineCustomToast(requireContext(), "유효하지 않은 입력이에요","1900 - 2025년 사이로 입력해주세요")
+        }
+
         binding.ivCharacterBg.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
         }

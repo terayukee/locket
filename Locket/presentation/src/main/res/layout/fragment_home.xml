@@ -7,7 +7,7 @@
     android:background="@color/background"
     android:paddingHorizontal="24dp"
     android:paddingTop="16dp"
-    tools:context=".presentation.home.HomeFragment">
+    tools:context=".home.HomeFragment">
 
     <ImageView
         android:id="@+id/logo_locket"

@@ -20,6 +20,13 @@ class GiftCardListFragment : BaseFragment<FragmentGiftCardListBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         initAdapter()
+        initUI()
+    }
+
+    private fun initUI() {
+        binding.btnBack.setOnClickListener {
+            findNavController().popBackStack()
+        }
     }
 
     private fun initAdapter() {

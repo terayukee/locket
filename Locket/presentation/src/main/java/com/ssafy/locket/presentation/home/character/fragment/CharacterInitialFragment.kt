@@ -17,13 +17,10 @@ class CharacterInitialFragment : BaseFragment<FragmentCharacterInitialBinding>(
         initEvent()
     }
 
+
     fun initEvent(){
         binding.btnCharacterInit.setOnClickListener {
-            val navOptions = NavOptions.Builder()
-                .setPopUpTo(R.id.characterInitialFragment, true)  // 현재 스택에서 지정한 프래그먼트를 제거
-                .setLaunchSingleTop(true)              // 새 프래그먼트가 스택에 중복해서 쌓이지 않도록 설정
-                .build()
-            findNavController().navigate(R.id.characterGrowthFragment, null, navOptions)
+            findNavController().navigate(R.id.action_characterInitialFragment_to_characterGrowthFragment)
         }
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
