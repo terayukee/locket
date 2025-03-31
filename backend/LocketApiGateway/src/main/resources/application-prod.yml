@@ -21,12 +21,11 @@ springdoc:
   swagger-ui:
     urls:
       - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
+        url: https://j12d204.p.ssafy.io:8081/api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: /api/users/v3/api-docs
-      - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch 추가
-        url: /api/elasticsearch/v3/api-docs
-    disable-swagger-default-url: true
+        url: https://j12d204.p.ssafy.io:8082/api/users/v3/api-docs
+      - name: "Locket ElasticSearch Service"
+        url: https://j12d204.p.ssafy.io:8083/api/elasticsearch/v3/api-docs
 
 management:
   endpoints:
