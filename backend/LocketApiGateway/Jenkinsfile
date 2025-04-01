@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-locket-api-gateway'
+        DOCKER_IMAGE = 'spring-locket_api-gateway'
         DOCKER_PORT = 8080
 
         EC2_USER = credentials('EC2_USER')
@@ -88,6 +88,8 @@ pipeline {
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
                             "docker service update \
+                                --env-rm SPRING_PROFILES_ACTIVE \
+                                --env-add SPRING_PROFILES_ACTIVE=prod \
                                 --env-add EUREKA_SERVER=$EUREKA_SERVER \
                                 --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
                                 ${DOCKER_IMAGE}"

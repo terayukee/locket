@@ -1,5 +1,12 @@
 server:
   port: 8083
+  tomcat:
+    relaxed-host-chars: "_"
+
+ELASTICSEARCH:
+  URIS: ${ELASTICSEARCH_URIS}
+  USERNAME: ${ELASTICSEARCH_USERNAME}
+  PASSWORD: ${ELASTICSEARCH_PASSWORD}
 
 spring:
   config:
@@ -15,10 +22,16 @@ spring:
     username: ${ELASTICSEARCH_USERNAME}
     password: ${ELASTICSEARCH_PASSWORD}
 
+  locket:
+    receipt:
+      service:
+        url: ${LOCKET_RECEIPT_SERVICE_URL}
+
 eureka:
   instance:
-    instance-id: ${HOSTNAME}:${spring.application.name}:${server.port}
-    prefer-ip-address: true
+    instance-id: elasticsearch-service:${server.port}
+    prefer-ip-address: false
+    hostname: elasticsearch-service
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -44,3 +57,12 @@ management:
       enabled: true
     livenessstate:
       enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /elasticsearch-docs
+  swagger-ui:
+    path: /elasticsearch-docs/swagger-ui.html
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

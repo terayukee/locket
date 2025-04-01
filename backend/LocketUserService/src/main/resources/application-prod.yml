@@ -1,5 +1,12 @@
 server:
   port: 8082
+  tomcat:
+    relaxed-host-chars: "_"
+
+DB:
+  URL_USER: ${DB_URL_USER}
+  USERNAME: ${DB_USERNAME}
+  PASSWORD: ${DB_PASSWORD}
 
 spring:
   config:
@@ -28,8 +35,9 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${HOSTNAME}:${spring.application.name}:${server.port}
-    prefer-ip-address: true
+    instance-id: user-service:${server.port}
+    prefer-ip-address: false
+    hostname: user-service
   client:
     register-with-eureka: true
     fetch-registry: true
@@ -55,3 +63,12 @@ management:
       enabled: true
     livenessstate:
       enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /users-docs
+  swagger-ui:
+    path: /users-docs/swagger-ui.html
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json

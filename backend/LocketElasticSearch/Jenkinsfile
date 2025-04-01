@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-locket-elasticsearch'
+        DOCKER_IMAGE = 'spring-locket_elasticsearch'
         DOCKER_PORT = 8083
 
         EC2_USER = credentials('EC2_USER')
@@ -95,11 +95,14 @@ pipeline {
                         echo "🚀 Updating Docker Swarm service..."
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
                             "docker service update \
+                                --env-rm SPRING_PROFILES_ACTIVE \
+                                --env-add SPRING_PROFILES_ACTIVE=prod \
                                 --env-add ELASTICSEARCH_URIS=$ELASTICSEARCH_URIS \
                                 --env-add ELASTICSEARCH_USERNAME=$ELASTICSEARCH_USERNAME \
                                 --env-add ELASTICSEARCH_PASSWORD=$ELASTICSEARCH_PASSWORD \
                                 --env-add KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS \
                                 --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
+                                --env-add LOCKET_RECEIPT_SERVICE_URL=https://j12d204.p.ssafy.io:8500 \
                                 ${DOCKER_IMAGE}"
                     '''
                 }

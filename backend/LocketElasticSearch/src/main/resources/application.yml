@@ -25,16 +25,25 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
-  health:
-    livenessstate:
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
       enabled: true
-    readinessstate:
+    gateway:
       enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 springdoc:
   api-docs:
     enabled: true
     path: /elasticsearch-docs
+#    path: /api/elasticsearch/v3/api-docs
+  swagger-ui:
+    path: /elasticsearch-docs/swagger-ui.html
+    enabled: true
+#    path: /elasticsearch-docs
   default-consumes-media-type: application/json
   default-produces-media-type: application/json

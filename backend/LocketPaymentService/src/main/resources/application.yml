@@ -43,12 +43,23 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 springdoc:
   api-docs:
     enabled: true
-    path: /api/payment/v3/api-docs
+    path: /payment-docs
+  swagger-ui:
+    path: /payment-docs/swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 

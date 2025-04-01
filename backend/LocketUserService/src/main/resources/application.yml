@@ -1,5 +1,7 @@
 server:
   port: 0  # 랜덤 포트 사용
+  tomcat:
+    relaxed-host-chars: "_"
 
 spring:
   application:
@@ -43,14 +45,37 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 springdoc:
   api-docs:
     enabled: true
     path: /users-docs
+  swagger-ui:
+    path: /users-docs/swagger-ui.html
+    display-request-duration: true
+    filter: true
+    use-root-path: true
+  model-converters:
+    pageable-converter:
+      enabled: true
+  models:
+    schema-format: JSON_SCHEMA
+    show-actuator: false
+    override-with-generic-response: false
+    use-fqn: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
 
 jwt:
   secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}
