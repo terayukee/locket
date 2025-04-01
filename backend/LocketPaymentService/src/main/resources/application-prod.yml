@@ -32,8 +32,8 @@ spring:
 eureka:
   instance:
     instance-id: payment-service:${server.port}
-    prefer-ip-address: true
-#    hostname: payment-service
+    prefer-ip-address: false
+    hostname: payment-service
   client:
     register-with-eureka: true
     fetch-registry: true
