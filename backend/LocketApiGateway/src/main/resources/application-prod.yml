@@ -76,7 +76,7 @@ eureka:
   instance:
     instance-id: api-gateway:${server.port}
     prefer-ip-address: false
-    hostname: api-gateway
+    hostname: j12d204.p.ssafy.io
   client:
     register-with-eureka: true
     fetch-registry: true

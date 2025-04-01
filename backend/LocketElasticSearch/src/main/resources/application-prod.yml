@@ -30,8 +30,8 @@ spring:
 eureka:
   instance:
     instance-id: elasticsearch-service:${server.port}
-    prefer-ip-address: false
-    hostname: elasticsearch-service
+    prefer-ip-address: true
+#    hostname: elasticsearch-service
   client:
     register-with-eureka: true
     fetch-registry: true
