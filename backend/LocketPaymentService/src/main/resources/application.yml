@@ -6,7 +6,7 @@ spring:
     name: payment-service
   datasource:
     hikari:
-      maximum-pool-size: 100   # 병렬 요청 수 대비 충분한 값
+      maximum-pool-size: 15   # 병렬 요청 수 대비 충분한 값
       minimum-idle: 30
       idle-timeout: 300000     # 5분
       max-lifetime: 1800000    # 30분
