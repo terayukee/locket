@@ -69,6 +69,7 @@ spring:
           filters:
             - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
             - RemoveRequestHeader=Host
+            - AddRequestHeader=Host, j12d204.p.ssafy.io
           order: 1
 
 eureka:
