@@ -24,27 +24,18 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
-          filters:
-            - StripPrefix=2
-            - RemoveRequestHeader=X-Forwarded-Prefix, ""
           order: 10
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
-          filters:
-            - StripPrefix=2
-            - RemoveRequestHeader=X-Forwarded-Prefix, ""
           order: 10
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
-          filters:
-            - StripPrefix=2
-            - RemoveRequestHeader=X-Forwarded-Prefix, ""
           order: 10
 
         # 서비스별 Swagger 문서 라우팅

@@ -20,7 +20,7 @@ import java.util.List;
 @Tag(name = "Locket ElasticSearch Service")
 @Slf4j
 @RestController
-@RequestMapping("/api/elasticsearch/payment")
+@RequestMapping("/payment")
 @RequiredArgsConstructor
 public class PaymentQueryController {
 

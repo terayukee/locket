@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "📊 소비 피드백", description = "소비 패턴 분석 결과를 조회합니다.")
 @RestController
-@RequestMapping("/api/feedback")
+@RequestMapping("/feedback")
 @RequiredArgsConstructor
 public class FeedbackController {
 

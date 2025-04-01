@@ -5,7 +5,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/payment/history")
+@RequestMapping("/payment/history")
 @RequiredArgsConstructor
 public class PaymentHistoryController {
 
