@@ -14,6 +14,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -58,20 +59,26 @@ public class BudgetFeedbackService {
                         .build();
             }
 
-            // 가장 최근 결제 내역의 categoryAmount 사용
-            Map<String, Integer> categoryAmount = histories.get(0).getCategoryAmount();
-            log.debug("사용자 {} 카테고리별 지출: {}", userId, categoryAmount);
+            // 모든 결제 내역의 카테고리별 금액 합산
+            Map<String, Integer> totalCategoryAmount = new HashMap<>();
+            for (PaymentHistoryDto payment : histories) {
+                String category = payment.getPaymentCategory();
+                int amount = payment.getTotalAmount().intValue();
+                totalCategoryAmount.merge(category, amount, Integer::sum);
+            }
+
+            log.debug("사용자 {} 이번 달 전체 카테고리별 지출: {}", userId, totalCategoryAmount);
 
             // 4. 피드백 요청 DTO 생성
             BudgetFeedbackRequest request = BudgetFeedbackRequest.builder()
-                    .categoryAmount(categoryAmount)
+                    .totalCategoryAmount(totalCategoryAmount)
                     .budgetStatus(budgetStatus.getBudget().getMonthly())
                     .userJob(user.getUserJob().toString())
                     .build();
 
             // 요청 데이터 로깅 추가
-            log.info("Receipt 서비스로 전송하는 데이터: categoryAmount={}, budgetStatus={}, userJob={}",
-                    request.getCategoryAmount(),
+            log.info("Receipt 서비스로 전송하는 데이터: totalCategoryAmount={}, budgetStatus={}, userJob={}",
+                    request.getTotalCategoryAmount(),
                     request.getBudgetStatus(),
                     request.getUserJob());
 
