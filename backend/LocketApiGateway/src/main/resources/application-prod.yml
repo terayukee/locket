@@ -24,17 +24,23 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
+          filters:
+            - StripPrefix=1
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
+          filters:
+            - StripPrefix=1
           order: 100
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
+          filters:
+            - StripPrefix=1
 
         # 서비스별 Swagger 문서 라우팅
         - id: payment-service-docs
@@ -42,14 +48,14 @@ spring:
           predicates:
             - Path=/api/payment/v3/api-docs/**
           filters:
-            - RewritePath=/api/payment/v3/api-docs(?<segment>/.*), /payment-docs${segment}
+            - RewritePath=/api/payment/v3/api-docs/?(.*), /payment-docs/$1
 
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/v3/api-docs/**
           filters:
-            - RewritePath=/api/users/v3/api-docs(?<segment>/.*), /users-docs${segment}
+            - RewritePath=/api/users/v3/api-docs/?(.*), /users-docs/$1
           order: 1
 
         - id: elasticsearch-service-docs
@@ -57,7 +63,7 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/.*), /elasticsearch-docs${segment}
+            - RewritePath=/api/elasticsearch/v3/api-docs/?(.*), /elasticsearch-docs/$1
 
 eureka:
   instance:
@@ -73,6 +79,8 @@ server:
   port: 8080
 
 springdoc:
+  api-docs:
+    enabled: false
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
@@ -107,5 +115,5 @@ management:
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.web: DEBUG
+    org.springframework.cloud.gateway: TRACE
+    reactor.netty.http.client: DEBUG
