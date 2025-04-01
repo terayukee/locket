@@ -26,6 +26,12 @@ public class Goals {
     @Column(name = "goal_amount", nullable = false)
     private Integer goalAmount;  // 예산 목표 금액
 
+    @Column(name = "goal_year", nullable = false)
+    private Integer goalYear;
+
+    @Column(name = "goal_month", nullable = false)
+    private Integer goalMonth;
+
     @Column(name = "is_achieved", nullable = false)
     private Boolean isAchieved;  // 기본값 false
 

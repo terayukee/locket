@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from .api import receipt, category
+from .api import receipt, category, feedback
 import logging
 import uvicorn
 
@@ -13,6 +13,7 @@ logging.basicConfig(
 app = FastAPI(title="Locket Receipt Service")
 app.include_router(receipt.router, prefix="/api/receipt", tags=["영수증 등록"])
 app.include_router(category.router, prefix="/api/category", tags=["카테고리 분류"])
+app.include_router(feedback.router, prefix="/api/feedback", tags=["소비 패턴 피드백"])
 
 
 if __name__ == "__main__":

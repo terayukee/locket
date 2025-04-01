@@ -3,8 +3,10 @@ package com.locket.user.controller.budget;
 import com.locket.user.domain.budget.dto.BudgetSetRequestDto;
 import com.locket.user.domain.budget.dto.BudgetSetResponseDto;
 import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
+import com.locket.user.domain.budget.dto.BudgetFeedbackResponse;
 import com.locket.user.exception.ErrorResponse;
 import com.locket.user.service.budget.BudgetService;
+import com.locket.user.service.budget.BudgetFeedbackService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
@@ -14,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 public class BudgetController {
 
     private final BudgetService budgetService;
+    private final BudgetFeedbackService budgetFeedbackService;
 
     @Operation(summary = "예산 목표 설정", description = "이미 존재하는 목표가 있으면 갱신, 없으면 신규 생성합니다.")
     @ApiResponses({
@@ -113,4 +117,16 @@ public class BudgetController {
     ) {
         return budgetService.getBudgetMonthlyStatus(userId, year, month);
     }
-}
+
+    @Operation(summary = "소비 패턴 피드백 조회", description = "사용자의 소비 패턴을 분석하여 간단한 피드백을 제공합니다")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "SUCCESS"),
+            @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND"),
+            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
+            @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
+    })
+    @GetMapping("/feedback/{userId}")
+    public ResponseEntity<BudgetFeedbackResponse> getFeedback(@PathVariable Long userId) {
+        return ResponseEntity.ok(budgetFeedbackService.getFeedback(userId));
+    }
+

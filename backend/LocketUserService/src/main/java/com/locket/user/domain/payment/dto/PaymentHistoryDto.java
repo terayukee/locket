@@ -38,6 +38,8 @@ public class PaymentHistoryDto {
     private Map<String, Integer> categoryAmount; // ✅ 추가
 
     private List<OrderDetailDto> orders;
+    private List<ReceiptItemDto> receiptItems;
+    private Map<String, Integer> categoryAmount;
 
     @Getter
     @Setter

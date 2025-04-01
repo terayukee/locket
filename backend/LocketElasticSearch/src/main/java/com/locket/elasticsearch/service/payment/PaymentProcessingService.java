@@ -13,6 +13,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.HashMap;
 
 @Slf4j
 @Service
@@ -39,10 +40,11 @@ public class PaymentProcessingService {
             log.info("📥 Received category classification response: {}", response);
             log.info("📥 Category from response: {}", response.get("paymentCategory"));
 
-            // 초기 categoryAmount 설정 (단일 카테고리)
-            Map<String, Integer> categoryAmount = Map.of(
-                (String) response.get("paymentCategory"),
-                event.getTotalAmount().intValue()
+            // 초기 categoryAmount 설정
+            Map<String, Integer> categoryAmount = new HashMap<>();
+            categoryAmount.put(
+                    (String) response.get("paymentCategory"),
+                    event.getTotalAmount().intValue()
             );
 
             // DTO -> Elasticsearch Entity로 변환
@@ -62,8 +64,10 @@ public class PaymentProcessingService {
                     .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부
                     .paymentStatus(event.getPaymentStatus())
                     .createdAt(event.getCreatedAt())
+                    .year(event.getYear())
+                    .month(event.getMonth())
+                    .day(event.getDay())
                     .orders(convertOrderDetails(event.getOrders()))
-                    .paymentCategory((String) response.get("paymentCategory"))
                     .categoryAmount(categoryAmount)
                     .build();
 

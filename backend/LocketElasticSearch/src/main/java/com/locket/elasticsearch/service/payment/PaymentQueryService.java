@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.ArrayList;
 
 
 @Service
@@ -136,4 +138,70 @@ public class PaymentQueryService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+
+    private Map<String, Integer> calculateCategoryAmounts(List<PaymentHistory> payments) {
+        Map<String, Integer> totalCategoryAmount = new HashMap<>();
+
+        for (PaymentHistory payment : payments) {
+            String category = payment.getPaymentCategory();
+            int amount = payment.getTotalAmount().intValue();
+
+            // 기존 금액에 현재 금액을 더함
+            totalCategoryAmount.merge(category, amount, Integer::sum);
+
+            log.info("Adding payment: category={}, amount={}, running total={}",
+                    category, amount, totalCategoryAmount.get(category));
+        }
+
+        log.info("Final category totals: {}", totalCategoryAmount);
+        return totalCategoryAmount;
+    }
+
+    /**
+     * 카테고리별 지출 합계를 위한 결제 내역 조회
+     */
+    private List<PaymentHistory> getAllPaymentsInMonth(long userId, int year, int month) {
+        // 1. year, month 기반 조회
+        List<PaymentHistory> yearMonthResults =
+                paymentHistoryRepository.findByBuyerIdAndYearAndMonthCustomQuery(userId, year, month);
+        log.info("Year/Month query results: {}", yearMonthResults.size());
+
+        // 2. createdAt 기반 조회
+        DateRange range = DateTimeUtil.getMonthRangeUtc(year, month);
+        List<PaymentHistory> dateRangeResults =
+                paymentHistoryRepository.findByBuyerIdAndCreatedAtBetween(userId, range.getStart(), range.getEnd());
+        log.info("Date range query results: {}", dateRangeResults.size());
+
+        // 3. 두 결과를 합치고 중복 제거
+        List<PaymentHistory> allResults = new ArrayList<>();
+        allResults.addAll(yearMonthResults);
+        allResults.addAll(dateRangeResults);
+
+        return allResults.stream()
+                .collect(Collectors.collectingAndThen(
+                        Collectors.toMap(
+                                PaymentHistory::getTransactionId,
+                                payment -> payment,
+                                (p1, p2) -> p1
+                        ),
+                        map -> new ArrayList<>(map.values())
+                ));
+    }
+
+    /**
+     * 월별 카테고리별 지출 합계 조회
+     */
+    public Map<String, Integer> getCategoryAmountsByMonth(long userId, int year, int month) {
+        List<PaymentHistory> payments = getAllPaymentsInMonth(userId, year, month);
+        log.info("Found {} total payments for user {} in {}-{}",
+                payments.size(), userId, year, month);
+
+        Map<String, Integer> categoryAmounts = calculateCategoryAmounts(payments);
+        log.info("Category amounts for user {} in {}-{}: {}",
+                userId, year, month, categoryAmounts);
+
+        return categoryAmounts;
+    }
+
 }

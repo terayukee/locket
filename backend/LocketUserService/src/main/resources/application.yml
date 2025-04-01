@@ -81,3 +81,8 @@ jwt:
   secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}
   access-exp: ${JWT_ACCESS_EXP:86400000}   # 24시간
   refresh-exp: ${JWT_REFRESH_EXP:604800000} # 7일
+
+
+receipt:
+  service:
+    url: http://localhost:8000 # Receipt 서비스 URL
