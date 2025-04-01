@@ -69,7 +69,3 @@ springdoc:
     path: /users-docs/swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
-  cache:
-    disabled: true
-    show-actuator: false
-    auto-tag-classes: false

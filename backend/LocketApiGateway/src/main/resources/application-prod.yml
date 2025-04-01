@@ -23,14 +23,14 @@ spring:
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/api/payment/**
+            - Path=/api/payment
           filters:
             - StripPrefix=1
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/**
+            - Path=/api/users
           filters:
             - StripPrefix=1
           order: 100
@@ -38,7 +38,7 @@ spring:
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
-            - Path=/api/elasticsearch/**
+            - Path=/api/elasticsearch
           filters:
             - StripPrefix=1
 
@@ -46,16 +46,24 @@ spring:
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/api/payment/v3/api-docs
+            - Path=/api/payment/v3/api-docs/**
           filters:
-            - SetPath=/payment-docs
+            - StripPrefix=2
+#            - RewritePath=/api/payment/v3/api-docs(?<segment>/?.*), /payment-docs${segment}
+#            - RewritePath=/api/payment/v3/api-docs, /payment-docs
+            - RewritePath=/v3/api-docs(?<segment>/?.*), /payment-docs${segment}
+            - RewritePath=/v3/api-docs, /payment-docs
 
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/v3/api-docs
           filters:
-            - SetPath=/users-docs
+            - StripPrefix=2
+#            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
+#            - RewritePath=/api/users/v3/api-docs, /users-docs
+            - RewritePath=/v3/api-docs(?<segment>/?.*), /users-docs${segment}
+            - RewritePath=/v3/api-docs, /users-docs
           order: 1
 
         - id: elasticsearch-service-docs
@@ -63,8 +71,11 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
           filters:
+            - StripPrefix=2
+#            - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/?.*), /elasticsearch-docs${segment}
 #            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/?.*), /v3/api-docs${segment}
+            - RewritePath=/v3/api-docs(?<segment>/?.*), /elasticsearch-docs${segment}
+            - RewritePath=/v3/api-docs, /elasticsearch-docs
 
 eureka:
   instance:
