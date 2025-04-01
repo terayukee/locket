@@ -50,6 +50,8 @@ public class BudgetService {
             goalEntity = Goals.builder()
                     .userId(requestDto.getUserId())
                     .goalAmount(requestDto.getAmount())
+                    .goalYear(currentYear)
+                    .goalMonth(currentMonth)
                     .isAchieved(false)
                     .createdAt(now)
                     .build();
