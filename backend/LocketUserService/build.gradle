@@ -88,6 +88,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
 
+    // WebClient 사용
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
     // ✅ 커스텀 공용 모듈 의존성 추가
     implementation project(':LocketCommon')
 }

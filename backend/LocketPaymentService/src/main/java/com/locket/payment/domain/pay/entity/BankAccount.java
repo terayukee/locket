@@ -31,7 +31,8 @@ public class BankAccount {
     private BigDecimal balance;
 
     @Column(nullable = false)
-    private String currency;
+    @Builder.Default
+    private String currency = "KRW";;
 
     @Column(nullable = false)
     private LocalDateTime createdAt;
@@ -41,6 +42,9 @@ public class BankAccount {
 
     @OneToMany(mappedBy = "bankAccount", fetch = FetchType.LAZY)
     private List<CardInfo> cardInfoList; // ✅ (선택) 연결된 카드들
+
+    @Version
+    private Long version; // ✅ 낙관적 락을 위한 버전 필드
 
     public void withdraw(BigDecimal amount) {
         if (this.balance.compareTo(amount) < 0) {

@@ -28,6 +28,7 @@ public class PaymentLedger {
     private BigDecimal amount;
 
     @Column(length = 10, nullable = false)
+    @Builder.Default
     private String currency = "KRW";
 
     @Column(name = "debit_account", nullable = false)

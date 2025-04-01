@@ -15,5 +15,4 @@ public class RewardDto {
     private Long rewardId;
     private String rewardName;
     private LocalDateTime receivedAt;
-    private String imageUrl;
 }

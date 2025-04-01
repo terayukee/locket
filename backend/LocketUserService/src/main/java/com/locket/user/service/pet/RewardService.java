@@ -44,7 +44,6 @@ public class RewardService {
         return RewardDto.builder()
                 .rewardId(saved.getRewardId())
                 .rewardName(saved.getRewardName())
-                .imageUrl(saved.getImageUrl())
                 .receivedAt(saved.getReceivedAt())
                 .build();
     }
@@ -59,7 +58,6 @@ public class RewardService {
                 .map(reward -> RewardDto.builder()
                         .rewardId(reward.getRewardId())
                         .rewardName(reward.getRewardName())
-                        .imageUrl(reward.getImageUrl())
                         .receivedAt(reward.getReceivedAt())
                         .build())
                 .collect(Collectors.toList());

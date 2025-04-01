@@ -45,7 +45,6 @@ public class CharacterService {
 
         ToyInfoDto toyInfo = ToyInfoDto.builder()
                 .isAvailable(toyAvailable)
-                .nextAvailableTime(nextAvailableTime)
                 .remainingTimeMinutes(remainingMinutes)
                 .build();
 
@@ -198,7 +197,7 @@ public class CharacterService {
     private String generateRandomCharacterName() {
         String personality = PetConstants.PERSONALITY_LIST.get(random.nextInt(PetConstants.PERSONALITY_LIST.size()));
         String adjective = PetConstants.ADJECTIVE_LIST.get(random.nextInt(PetConstants.ADJECTIVE_LIST.size()));
-        return personality + " " + adjective;
+        return personality + " " + adjective + "냥";
     }
 
     // 레벨 계산

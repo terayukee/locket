@@ -1,8 +1,8 @@
 package com.locket.payment.domain.pay.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 
 import java.math.BigDecimal;
 
@@ -11,10 +11,11 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 public class PaymentRequest {
     private int cardId;
-    private long buyerId;
     private long sellerId;
     private String paymentCategory;
     private String paymentMerchant;
     private BigDecimal amount;
     private String storeName;
+    private String paymentKey; // ✅ 중복 방지 키 추가
 }
+

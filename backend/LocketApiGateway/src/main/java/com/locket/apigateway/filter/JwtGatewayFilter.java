@@ -1,6 +1,7 @@
 package com.locket.apigateway.filter;
 
 import com.locket.common.jwt.JwtUtil;
+import com.locket.common.jwt.JwtUtil.TokenStatus;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
@@ -35,6 +36,13 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/webjars/.*$")
     );
 
+    // 사용자 관련 API 패턴
+    private final List<Pattern> userApiPatterns = Arrays.asList(
+            Pattern.compile("^/api/users/(\\d+)(?:/.*)?$"),       // 사용자 리소스
+            Pattern.compile("^/api/user-profiles/(\\d+)(?:/.*)?$"), // 사용자 프로필
+            Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$")     // 사용자 계정
+    );
+
     public JwtGatewayFilter(JwtUtil jwtUtil) {
         super(Config.class);
         this.jwtUtil = jwtUtil;
@@ -67,9 +75,15 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             String token = authHeaders.get(0).substring(7);
 
             try {
-                // 토큰 유효성 검증
-                if (!jwtUtil.validateToken(token)) {
-                    return onError(exchange, "유효하지 않은 토큰입니다.", HttpStatus.UNAUTHORIZED);
+                // 토큰 유효성 검증 (개선된 방식)
+                TokenStatus tokenStatus = jwtUtil.validateTokenWithStatus(token);
+
+                if (tokenStatus != TokenStatus.VALID) {
+                    if (tokenStatus == TokenStatus.EXPIRED) {
+                        return onError(exchange, "만료된 토큰입니다. 토큰을 갱신해주세요.", HttpStatus.UNAUTHORIZED);
+                    } else {
+                        return onError(exchange, "유효하지 않은 토큰입니다: " + tokenStatus, HttpStatus.UNAUTHORIZED);
+                    }
                 }
 
                 // 액세스 토큰 타입 확인
@@ -106,17 +120,17 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
                 .anyMatch(pattern -> pattern.matcher(path).matches());
     }
 
+    // 사용자 ID 추출
     private Long extractUserIdFromPath(String path) {
-
-        String pattern = "^/api/[^/]+/(\\d+)(?:/.*)?$";
-        Pattern r = Pattern.compile(pattern);
-        Matcher m = r.matcher(path);
-
-        if (m.matches()) {
-            try {
-                return Long.parseLong(m.group(1));
-            } catch (NumberFormatException e) {
-                log.warn("Failed to parse user ID from path: {}", path);
+        // 사용자 관련 API 패턴만 처리
+        for (Pattern pattern : userApiPatterns) {
+            Matcher matcher = pattern.matcher(path);
+            if (matcher.matches()) {
+                try {
+                    return Long.parseLong(matcher.group(1));
+                } catch (NumberFormatException e) {
+                    log.warn("Failed to parse user ID from path: {} - {}", path, e.getMessage());
+                }
             }
         }
         return null;

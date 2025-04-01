@@ -56,9 +56,9 @@ public class PaymentProcessingService {
                     .birthDate(event.getBirthDate())
                     .totalAmount(event.getTotalAmount())
                     .currency(event.getCurrency())
-                    .paymentCategory((String) response.get("paymentCategory"))  // API 응답으로 받은 카테고리 사용
-                    //.paymentCategory(event.getPaymentCategory())
-                    .needItemCheck((Boolean) response.get("needItemCheck"))
+//                    .paymentCategory((String) response.get("paymentCategory"))  // API 응답으로 받은 카테고리 사용
+                    .paymentCategory(event.getPaymentCategory())
+//                    .needItemCheck((Boolean) response.get("needItemCheck"))
                     .paymentMerchant(event.getPaymentMerchant())
                     .storeName(event.getStoreName())                  // ✅ 매장명
                     .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부

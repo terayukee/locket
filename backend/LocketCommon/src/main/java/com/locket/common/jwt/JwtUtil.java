@@ -8,6 +8,9 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -28,6 +31,16 @@ public class JwtUtil {
 
     @Value("${jwt.refresh-exp}")
     private long refreshTokenValidity; // 604800000 (7일)
+
+    // 토큰 상태
+    public enum TokenStatus {
+        VALID,           // 유효한 토큰
+        EXPIRED,         // 만료된 토큰
+        INVALID_SIGNATURE, // 서명이 유효하지 않음
+        MALFORMED,       // 잘못된 형식
+        UNSUPPORTED,     // 지원되지 않는 토큰
+        INVALID          // 기타 오류
+    }
 
     private Key getSigningKey() {
         byte[] keyBytes = Decoders.BASE64.decode(this.secret);
@@ -63,7 +76,6 @@ public class JwtUtil {
                 .compact();
     }
 
-
     public Claims getClaimsFromToken(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(this.getSigningKey())
@@ -71,7 +83,6 @@ public class JwtUtil {
                 .parseClaimsJws(token)
                 .getBody();
     }
-
 
     // 토큰에서 사용자 ID 추출 (클레임 기반)
     public Long getUserIdFromToken(String token) {
@@ -89,34 +100,53 @@ public class JwtUtil {
         return getClaimsFromToken(token).getExpiration();
     }
 
-    // 토큰 유효성 검증
-    public boolean validateToken(String token) {
+    // 개선된 토큰 검증 메서드 - 상태값 반환
+    public TokenStatus validateTokenWithStatus(String token) {
         try {
             getClaimsFromToken(token);
-            return true;
+            return TokenStatus.VALID;
         } catch (ExpiredJwtException e) {
-            // 만료된 토큰에 대한 별도 처리 가능
-            return false;
+            return TokenStatus.EXPIRED;
+        } catch (SignatureException e) {
+            return TokenStatus.INVALID_SIGNATURE;
+        } catch (MalformedJwtException e) {
+            return TokenStatus.MALFORMED;
+        } catch (UnsupportedJwtException e) {
+            return TokenStatus.UNSUPPORTED;
         } catch (JwtException e) {
-            return false;
+            return TokenStatus.INVALID;
         }
+    }
+
+    // 기존 메서드와의 호환성 유지
+    public boolean validateToken(String token) {
+        return validateTokenWithStatus(token) == TokenStatus.VALID;
     }
 
     // 리프레시 토큰 검증
     public void validateRefreshToken(String token) throws JwtAuthException {
         try {
+            // 토큰 유효성 검증
+            TokenStatus status = validateTokenWithStatus(token);
 
-            if (!validateToken(token)) {
-                throw new JwtAuthException("유효하지 않은 리프레시 토큰입니다.");
+            if (status == TokenStatus.EXPIRED) {
+                throw new JwtAuthException("만료된 리프레시 토큰입니다. 다시 로그인해주세요.");
+            } else if (status != TokenStatus.VALID) {
+                throw new JwtAuthException("유효하지 않은 리프레시 토큰입니다: " + status);
             }
 
-            // 리프레시 토큰 타입 확인
-            if (isAccessToken(token)) {
+            // 토큰 타입 검증
+            Claims claims = getClaimsFromToken(token);
+            String tokenType = claims.get("type", String.class);
+
+            if (!"refresh_token".equals(tokenType)) {
                 throw new JwtAuthException("액세스 토큰이 전달되었습니다. 리프레시 토큰을 전달해주세요.");
             }
 
         } catch (ExpiredJwtException e) {
             throw new JwtAuthException("만료된 리프레시 토큰입니다. 다시 로그인해주세요.");
+        } catch (JwtAuthException e) {
+            throw e;
         } catch (JwtException e) {
             throw new JwtAuthException("유효하지 않은 토큰 형식입니다: " + e.getMessage());
         }

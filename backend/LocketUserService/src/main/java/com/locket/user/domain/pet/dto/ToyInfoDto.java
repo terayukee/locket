@@ -13,6 +13,5 @@ import java.time.LocalDateTime;
 @Builder
 public class ToyInfoDto {
     private boolean isAvailable;
-    private LocalDateTime nextAvailableTime;
     private long remainingTimeMinutes;
 }
