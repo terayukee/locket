@@ -17,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -61,11 +60,11 @@ public class FeedbackService {
             List<FeedbackCategoryStatDto> categoryStats = feedbackStatFeignClient.getCategoryStats(userId, year, month);
             FeedbackDayOfWeekDto dayOfWeekStats = feedbackStatFeignClient.getDayOfWeekStats(userId, year, month);
             List<FeedbackCardStatDto> cardStats = feedbackStatFeignClient.getCardStats(userId, year, month);
-            String topStore = feedbackStatFeignClient.getTopSpendingStore(userId, year, month);
-            var ageCompare = feedbackStatFeignClient.getAgeComparison(userId, user.getBirthYear(), year, month);
-            var monthCompare = feedbackStatFeignClient.getPreviousMonthComparison(userId, year, month);
-            List<String> hotCategories = feedbackStatFeignClient.getHotCategories(userId, year, month);
-            Double entropy = feedbackStatFeignClient.getSpendingEntropy(userId, year, month);
+            TopStoreStatDto topStore = feedbackStatFeignClient.getTopSpendingStore(userId, year, month);
+            FeedbackAgeGroupComparisonDto ageCompare = feedbackStatFeignClient.getAgeComparison(userId, user.getBirthYear(), year, month);
+            FeedbackMonthlyChangeDto monthCompare = feedbackStatFeignClient.getPreviousMonthComparison(userId, year, month);
+            HotCategoriesDto hotCategories = feedbackStatFeignClient.getHotCategories(userId, year, month);
+            SpendingEntropyDto entropy = feedbackStatFeignClient.getSpendingEntropy(userId, year, month);
 
             // 공통 DTO 매핑
             FeedbackUserDto userDto = FeedbackUserDto.builder()
@@ -96,18 +95,18 @@ public class FeedbackService {
                     .categoryStats(categoryStats)
                     .dayOfWeekStats(dayOfWeekStats)
                     .cardStats(cardStats)
-                    .topStoreName(topStore)
-                    .userSpending((Map<String, Integer>) ageCompare.get("userSpending"))
-                    .ageGroupAverage((Map<String, Double>) ageCompare.get("ageGroupAverage"))
-                    .currentMonthTotal((Integer) monthCompare.get("currentMonthTotal"))
-                    .previousMonthTotal((Integer) monthCompare.get("previousMonthTotal"))
-                    .totalChangeRate((Double) monthCompare.get("totalChangeRate"))
-                    .categoryChangeRate((Map<String, Double>) monthCompare.get("categoryChangeRate"))
-                    .hotCategories(hotCategories)
-                    .entropy(entropy)
+                    .topStoreName(topStore.getStoreName())
+                    .userSpending(ageCompare.getUserSpending())
+                    .ageGroupAverage(ageCompare.getAgeGroupAverage())
+                    .currentMonthTotal(monthCompare.getCurrentMonthTotal())
+                    .previousMonthTotal(monthCompare.getPreviousMonthTotal())
+                    .totalChangeRate(monthCompare.getTotalChangeRate())
+                    .categoryChangeRate(monthCompare.getCategoryChangeRate())
+                    .hotCategories(hotCategories.getCategories())
+                    .entropy(entropy.getEntropy())
                     .build();
 
-            log.info("📦 분석 요청 페이로드: {}", payload);
+            log.info("\uD83D\uDCE6 분석 요청 페이로드: {}", payload);
 
             // Python 서비스로 분석 요청
             String feedbackJson = feedbackWebClient.post()

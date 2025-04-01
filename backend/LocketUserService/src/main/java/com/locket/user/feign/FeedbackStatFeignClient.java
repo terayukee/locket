@@ -1,14 +1,11 @@
 package com.locket.user.feign;
 
-import com.locket.elastic.dto.FeedbackCardStatDto;
-import com.locket.elastic.dto.FeedbackCategoryStatDto;
-import com.locket.elastic.dto.FeedbackDayOfWeekDto;
+import com.locket.elastic.dto.*;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
-import java.util.Map;
 
 @FeignClient(name = "elasticsearch-service", contextId = "feedbackStatClient")
 public interface FeedbackStatFeignClient {
@@ -35,14 +32,14 @@ public interface FeedbackStatFeignClient {
     );
 
     @GetMapping("/api/elasticsearch/feedback/top-store")
-    String getTopSpendingStore(
+    TopStoreStatDto getTopSpendingStore(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
     @GetMapping("/api/elasticsearch/feedback/category-compare-age")
-    Map<String, Object> getAgeComparison(
+    FeedbackAgeGroupComparisonDto getAgeComparison(
             @RequestParam("userId") long userId,
             @RequestParam("birthYear") int birthYear,
             @RequestParam("year") int year,
@@ -50,21 +47,21 @@ public interface FeedbackStatFeignClient {
     );
 
     @GetMapping("/api/elasticsearch/feedback/compare-previous-month")
-    Map<String, Object> getPreviousMonthComparison(
+    FeedbackMonthlyChangeDto getPreviousMonthComparison(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
     @GetMapping("/api/elasticsearch/feedback/hot-categories")
-    List<String> getHotCategories(
+    HotCategoriesDto getHotCategories(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
     @GetMapping("/api/elasticsearch/feedback/spending-entropy")
-    Double getSpendingEntropy(
+    SpendingEntropyDto getSpendingEntropy(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
