@@ -24,18 +24,24 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
+          filters:
+            - RewritePath=/api/payment/(?<segment>/?.*), /${segment}
           order: 10
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
           order: 10
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
+          filters:
+            - RewritePath=/api/elasticsearch/(?<segment>/?.*), /${segment}
           order: 10
 
         # 서비스별 Swagger 문서 라우팅
