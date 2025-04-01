@@ -124,10 +124,10 @@ public class PayService {
             }
 
             // 1️⃣Redis에서 사용자 정보 가져오기
+            long buyerId = cardInfo.getUserId();
+
             int birthYear = 1998;
             String userJob = "학생";
-
-            long buyerId = cardInfo.getUserId();
 
             try {
                 String redisKey = "user:" + buyerId;
