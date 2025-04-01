@@ -1,9 +1,14 @@
 package com.ssafy.locket.presentation.home
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
@@ -13,14 +18,18 @@ import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
+@AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind,
     R.layout.fragment_home
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
 
+    private val viewModel: HomeViewModel by viewModels()
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
 
@@ -58,7 +67,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             findNavController().navigate(R.id.action_homeFragment_to_expenseAnalysisFragment)
         }
 
-        binding.tvUserName.text = getString(R.string.home_name, "아영")
+        //binding.tvUserName.text = getString(R.string.home_name, "아영")
         binding.tvPaymentTitle.text = getString(R.string.home_payment_month, today.monthValue)
         binding.tvBudgetAiFeedback.text = "목표 소비 금액 70% 달성 \uD83C\uDFAF"
 
@@ -70,9 +79,22 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.tvBudgetFeedback.text = "100,000원 남았어요"
 
-        (requireContext() as MainActivity).changeBackgroundColor(R.color.background)
+       // (requireContext() as MainActivity).changeBackgroundColor(R.color.background)
         binding.icProfile.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
+        }
+
+        viewModel.fetchUser(1)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.user.collect { user ->
+                    user?.let {
+                        Log.d("UserFragment", "User: $it")
+                        binding.tvUserName.text = it.nickname
+                    }
+                }
+            }
         }
 
         backEvent()

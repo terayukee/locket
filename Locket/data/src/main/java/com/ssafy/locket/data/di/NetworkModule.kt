@@ -46,6 +46,7 @@ object NetworkModule {
         }.build()
     }
 
+    @BaseRetrofit
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {

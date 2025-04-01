@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
+    implementation(libs.firebase.messaging.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -87,6 +88,9 @@ dependencies {
     implementation ("androidx.biometric:biometric:1.2.0-alpha05")
     //파이어베이스
     implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+
+    // FCM 사용 위한 plugins
+    implementation("com.google.firebase:firebase-messaging-ktx")
 }
 
 kapt {

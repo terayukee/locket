@@ -30,6 +30,14 @@ internal class ApiModule {
         return retrofit.create(CharacterService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun provideUserService(
+        @BaseRetrofit retrofit: Retrofit
+    ): UserService {
+        return retrofit.create(UserService::class.java)
+    }
+
 //    @Provides
 //    @Singleton
 //    fun provideAnalysisService(retrofit: Retrofit): AnalysisService {
@@ -58,12 +66,6 @@ internal class ApiModule {
 //    @Singleton
 //    fun provideReceiptService(retrofit: Retrofit): ReceiptService {
 //        return retrofit.create(ReceiptService::class.java)
-//    }
-//
-//    @Provides
-//    @Singleton
-//    fun provideUserService(retrofit: Retrofit): UserService {
-//        return retrofit.create(UserService::class.java)
 //    }
 //
 //    @Provides

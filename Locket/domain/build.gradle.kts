@@ -8,7 +8,7 @@ plugins {
 
 android {
     namespace = "com.ssafy.locket"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         minSdk = 24
