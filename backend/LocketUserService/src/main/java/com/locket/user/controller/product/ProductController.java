@@ -15,9 +15,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.locket.user.domain.product.dto.ProductLikeRequestDTO;
+import com.locket.user.domain.product.dto.ProductLikeResponseDTO;
+import com.locket.user.domain.product.dto.ProductAlertRequestDTO;
+import com.locket.user.domain.product.dto.ProductAlertResponseDTO;
 
 @RestController
-@RequestMapping("/api/products")
+@RequestMapping("/products")
 @RequiredArgsConstructor
 @Tag(name = "🛒 Product", description = "상품 관련 API")
 public class ProductController {
@@ -189,4 +193,51 @@ public class ProductController {
         ProductDetailResponseDTO response = productService.getProductDetail(productId, userId);
         return ResponseEntity.ok(response);
     }
+
+    // 상품 찜하기
+    @Operation(summary = "상품 찜하기/찜 해제", description = "상품을 찜 목록에 추가하거나 제거합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    @PostMapping("/{productId}/like")
+    public ResponseEntity<ProductLikeResponseDTO> toggleProductLike(
+            @PathVariable Integer productId,
+            @RequestBody ProductLikeRequestDTO requestDTO
+    ) {
+        ProductLikeResponseDTO response = productService.toggleProductLike(
+                productId,
+                requestDTO.getUserId(),
+                requestDTO.getIsLiked()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+    // 상품 가격 알림
+    @Operation(summary = "상품 가격 알림 설정/해제", description = "상품의 가격 알림을 설정하거나 해제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "요청 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+    })
+    @PostMapping("/{productId}/alert")
+    public ResponseEntity<ProductAlertResponseDTO> setProductPriceAlert(
+            @PathVariable Integer productId,
+            @RequestBody ProductAlertRequestDTO requestDTO
+    ) {
+        ProductAlertResponseDTO response = productService.setProductPriceAlert(
+                productId,
+                requestDTO.getUserId(),
+                requestDTO.getIsAlert(),
+                requestDTO.getAlertPrice()
+        );
+        return ResponseEntity.ok(response);
+    }
+
+
 }
