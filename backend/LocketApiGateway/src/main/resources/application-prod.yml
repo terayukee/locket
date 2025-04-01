@@ -71,8 +71,9 @@ spring:
 
 eureka:
   instance:
-    instance-id: ${HOSTNAME}:${spring.application.name}:${server.port}
-    prefer-ip-address: true
+    instance-id: api-gateway:${server.port}
+    prefer-ip-address: false
+    hostname: api-gateway
   client:
     register-with-eureka: true
     fetch-registry: true
