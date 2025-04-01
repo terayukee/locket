@@ -228,4 +228,17 @@ public class CharacterService {
         }
         return PetConstants.LEVEL_THRESHOLDS[level] - PetConstants.LEVEL_THRESHOLDS[level - 1];
     }
+
+    @Transactional
+    public CharacterDeleteResponseDto deleteCharacter(Long userId) {
+        Character character = characterRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
+
+        characterRepository.delete(character);
+
+        return CharacterDeleteResponseDto.builder()
+                .userId(userId)
+                .deleted(true)
+                .build();
+    }
 }
