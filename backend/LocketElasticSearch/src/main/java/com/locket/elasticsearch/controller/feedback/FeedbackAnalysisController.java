@@ -18,7 +18,7 @@ import java.util.Map;
 @Tag(name = "소비 분석 서비스")
 @Slf4j
 @RestController
-@RequestMapping("/api/elasticsearch/feedback")
+@RequestMapping("/feedback")
 @RequiredArgsConstructor
 public class FeedbackAnalysisController {
 

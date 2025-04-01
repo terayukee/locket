@@ -1,9 +1,6 @@
 package com.locket.user.service.product;
 
-import com.locket.user.domain.product.dto.PriceHistoryDTO;
-import com.locket.user.domain.product.dto.ProductDetailResponseDTO;
-import com.locket.user.domain.product.dto.ProductListResponseDTO;
-import com.locket.user.domain.product.dto.ProductSummaryDTO;
+import com.locket.user.domain.product.dto.*;
 import com.locket.user.domain.product.entity.*;
 import com.locket.user.domain.product.repository.*;
 import com.locket.user.exception.CategoryNotFoundException;
@@ -105,4 +102,57 @@ public class ProductService {
                 .priceHistory(priceHistoryDTOs)
                 .build();
     }
+
+    // 상품 찜하기
+    @Transactional
+    public ProductLikeResponseDTO toggleProductLike(Integer productId, Long userId, Boolean isLiked) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        ProductUserPreference preference = productUserPreferenceRepository
+                .findByProductIdAndUserId(productId, userId)
+                .orElse(new ProductUserPreference(null, product, userId, false, false, null));
+
+        preference.setLiked(isLiked);
+
+        if (preference.getId() == null) {
+            // 새로운 선호도 정보면 저장
+            productUserPreferenceRepository.save(preference);
+        }
+
+        return ProductLikeResponseDTO.builder()
+                .isLiked(isLiked)
+                .build();
+    }
+
+    // 상품 가격 알림
+    @Transactional
+    public ProductAlertResponseDTO setProductPriceAlert(Integer productId, Long userId, Boolean isAlert, Integer alertPrice) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        // isAlert가 true인데 alertPrice가 null이면 예외 발생
+        if (Boolean.TRUE.equals(isAlert) && alertPrice == null) {
+            throw new InvalidRequestException("알림 설정 시 알림 가격(alertPrice)은 필수입니다.");
+        }
+
+        ProductUserPreference preference = productUserPreferenceRepository
+                .findByProductIdAndUserId(productId, userId)
+                .orElse(new ProductUserPreference(null, product, userId, false, false, null));
+
+        preference.setAlert(isAlert);
+        preference.setAlertPrice(isAlert ? alertPrice : null);  // 알림 해제 시 알림 가격도 null로 설정
+
+        if (preference.getId() == null) {
+            // 새로운 선호도 정보면 저장
+            productUserPreferenceRepository.save(preference);
+        }
+
+        return ProductAlertResponseDTO.builder()
+                .isAlert(isAlert)
+                .alertPrice(alertPrice)
+                .build();
+    }
+
+
 }
