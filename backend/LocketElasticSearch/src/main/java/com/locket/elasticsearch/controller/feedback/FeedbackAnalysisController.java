@@ -1,9 +1,7 @@
 package com.locket.elasticsearch.controller.feedback;
 
 
-import com.locket.elastic.dto.FeedbackCardStatDto;
-import com.locket.elastic.dto.FeedbackCategoryStatDto;
-import com.locket.elastic.dto.FeedbackDayOfWeekDto;
+import com.locket.elastic.dto.*;
 import com.locket.elasticsearch.service.feedback.FeedbackStatService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -58,7 +56,7 @@ public class FeedbackAnalysisController {
 
     @GetMapping("/top-store")
     @Operation(summary = "가장 많이 소비한 가게", description = "해당 월 사용자 기준 가장 많이 소비한 storeName을 반환합니다.")
-    public ResponseEntity<String> getTopSpendingStore(
+    public ResponseEntity<TopStoreStatDto> getTopSpendingStore(
             @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month
@@ -66,44 +64,41 @@ public class FeedbackAnalysisController {
         return ResponseEntity.ok(feedbackStatService.getTopSpendingStore(userId, year, month));
     }
 
+
     @GetMapping("/category-compare-age")
     @Operation(summary = "카테고리별 연령대 평균 비교", description = "사용자의 연령대와 같은 그룹과 카테고리별 소비 평균을 비교합니다.")
-    public ResponseEntity<Map<String, Object>> getCategoryComparisonWithAgeGroup(
+    public ResponseEntity<FeedbackAgeGroupComparisonDto> getCategoryComparisonWithAgeGroup(
             @RequestParam long userId,
             @RequestParam int birthYear,
             @RequestParam int year,
-            @RequestParam int month
-    ) {
+            @RequestParam int month) {
         return ResponseEntity.ok(feedbackStatService.compareWithAgeGroup(userId, birthYear, year, month));
     }
 
     @GetMapping("/compare-previous-month")
     @Operation(summary = "전월 대비 지출 증감률 분석", description = "사용자의 전월 대비 전체 및 카테고리별 소비 증감률을 반환합니다.")
-    public ResponseEntity<Map<String, Object>> getMonthlyChange(
+    public ResponseEntity<FeedbackMonthlyChangeDto> getMonthlyChange(
             @RequestParam long userId,
             @RequestParam int year,
-            @RequestParam int month
-    ) {
+            @RequestParam int month) {
         return ResponseEntity.ok(feedbackStatService.getMonthlyChange(userId, year, month));
     }
 
     @GetMapping("/hot-categories")
     @Operation(summary = "지속적으로 증가한 소비 카테고리", description = "최근 3개월간 소비가 지속적으로 증가한 카테고리를 반환합니다.")
-    public ResponseEntity<List<String>> getHotCategories(
+    public ResponseEntity<HotCategoriesDto> getHotCategories(
             @RequestParam long userId,
             @RequestParam int year,
-            @RequestParam int month
-    ) {
+            @RequestParam int month) {
         return ResponseEntity.ok(feedbackStatService.getHotCategories(userId, year, month));
     }
 
     @GetMapping("/spending-entropy")
     @Operation(summary = "지출 다양성 지수", description = "카테고리별 소비 분산도를 바탕으로 Shannon entropy 값을 반환합니다.")
-    public ResponseEntity<Double> getSpendingEntropy(
+    public ResponseEntity<SpendingEntropyDto> getSpendingEntropy(
             @RequestParam long userId,
             @RequestParam int year,
-            @RequestParam int month
-    ) {
+            @RequestParam int month) {
         return ResponseEntity.ok(feedbackStatService.getSpendingDiversityEntropy(userId, year, month));
     }
 }
