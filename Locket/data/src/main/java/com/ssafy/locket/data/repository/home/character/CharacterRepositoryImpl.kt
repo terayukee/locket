@@ -4,7 +4,7 @@ import com.ssafy.locket.data.network.api.CharacterService
 import com.ssafy.locket.data.network.common.ApiResponse
 import com.ssafy.locket.data.network.common.ApiResponseHandler
 import com.ssafy.locket.data.network.common.ErrorResponse.Companion.toDomainModel
-import com.ssafy.locket.data.network.response.CharacterInfoResponse.Companion.toDomainModel
+import com.ssafy.locket.data.network.response.home.character.CharacterInfoResponse.Companion.toDomainModel
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.CharacterInfo
 import com.ssafy.locket.repository.home.character.CharacterRepository

@@ -1,14 +1,7 @@
-package com.ssafy.locket.di
+package com.ssafy.locket.data.di
 
-import com.ssafy.locket.data.di.BaseRetrofit
-import com.ssafy.locket.data.di.DataStoreModule
-import com.ssafy.locket.data.di.NetworkModule
-import com.ssafy.locket.data.network.api.AnalysisService
-import com.ssafy.locket.data.network.api.BudgetService
+import com.ssafy.locket.data.network.api.AuthService
 import com.ssafy.locket.data.network.api.CharacterService
-import com.ssafy.locket.data.network.api.PaymentService
-import com.ssafy.locket.data.network.api.ProductService
-import com.ssafy.locket.data.network.api.ReceiptService
 import com.ssafy.locket.data.network.api.UserService
 import dagger.Module
 import dagger.Provides
@@ -17,7 +10,6 @@ import dagger.hilt.components.SingletonComponent
 import retrofit2.Retrofit
 import javax.inject.Singleton
 
-
 @Module(includes = [NetworkModule::class, DataStoreModule::class])
 @InstallIn(SingletonComponent::class)
 internal class ApiModule {
@@ -25,7 +17,7 @@ internal class ApiModule {
     @Provides
     @Singleton
     fun provideCharacterService(
-        @BaseRetrofit retrofit: Retrofit
+        @InterceptorRetrofit retrofit: Retrofit
     ): CharacterService {
         return retrofit.create(CharacterService::class.java)
     }
@@ -33,9 +25,17 @@ internal class ApiModule {
     @Provides
     @Singleton
     fun provideUserService(
-        @BaseRetrofit retrofit: Retrofit
+        @InterceptorRetrofit retrofit: Retrofit
     ): UserService {
         return retrofit.create(UserService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideAuthService(
+        @NoInterceptorRetrofit retrofit: Retrofit
+    ): AuthService {
+        return retrofit.create(AuthService::class.java)
     }
 
 //    @Provides

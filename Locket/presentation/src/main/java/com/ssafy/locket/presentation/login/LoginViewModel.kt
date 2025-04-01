@@ -1,26 +1,16 @@
 package com.ssafy.locket.presentation.login
 
-import android.app.Activity
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kakao.sdk.auth.model.OAuthToken
-import com.kakao.sdk.common.model.ClientError
-import com.kakao.sdk.common.model.ClientErrorCause
-import com.kakao.sdk.user.UserApiClient
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
-import com.ssafy.locket.model.ApiResponse
-import com.ssafy.locket.model.login.UserLoginRequest
+import com.ssafy.locket.data.network.request.user.UserLoginRequest
 import com.ssafy.locket.repository.finance.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.suspendCancellableCoroutine
 import javax.inject.Inject
-import kotlin.coroutines.resumeWithException
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(

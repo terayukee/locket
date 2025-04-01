@@ -3,11 +3,10 @@ package com.ssafy.locket.data.repository.finance
 import android.util.Log
 import com.ssafy.locket.data.network.api.UserService
 import com.ssafy.locket.data.network.response.emitApiResponse
-import com.ssafy.locket.model.ApiResponse
-import com.ssafy.locket.model.login.JwtTokenResponse
-import com.ssafy.locket.model.login.UserInfoResponse
-import com.ssafy.locket.model.login.UserJoinRequest
-import com.ssafy.locket.model.login.UserLoginRequest
+import com.ssafy.locket.data.network.response.user.JwtTokenResponse
+import com.ssafy.locket.data.network.response.user.UserInfoResponse
+import com.ssafy.locket.data.network.request.user.UserJoinRequest
+import com.ssafy.locket.data.network.request.user.UserLoginRequest
 import com.ssafy.locket.repository.finance.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow

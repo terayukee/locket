@@ -1,4 +1,4 @@
-package com.ssafy.locket.model.login
+package com.ssafy.locket.data.network.response.user
 
 data class UserInfoResponse(
     val birthYear: Int,

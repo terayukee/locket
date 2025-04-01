@@ -3,8 +3,7 @@ package com.ssafy.locket.presentation.home
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssafy.locket.model.ApiResponse
-import com.ssafy.locket.model.login.UserInfoResponse
+import com.ssafy.locket.data.network.response.user.UserInfoResponse
 import com.ssafy.locket.repository.finance.UserRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

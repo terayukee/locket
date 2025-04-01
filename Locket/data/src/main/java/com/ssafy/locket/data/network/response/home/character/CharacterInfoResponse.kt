@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.network.response
+package com.ssafy.locket.data.network.response.home.character
 
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper

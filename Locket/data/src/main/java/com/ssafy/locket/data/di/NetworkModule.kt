@@ -31,9 +31,10 @@ object NetworkModule {
             .create()
     }
 
+    @InterceptorOkHttpClient
     @Singleton
     @Provides
-    fun provideOkHttp(requestInterceptor: RequestInterceptor): OkHttpClient {
+    fun provideInterceptorOkHttp(requestInterceptor: RequestInterceptor): OkHttpClient {
         return OkHttpClient.Builder().apply {
             connectTimeout(10, TimeUnit.SECONDS)
             readTimeout(10, TimeUnit.SECONDS)
@@ -46,10 +47,36 @@ object NetworkModule {
         }.build()
     }
 
-    @BaseRetrofit
+    @NoInterceptorOkHttpClient
+    @Singleton
+    @Provides
+    fun provideOkHttp(): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            connectTimeout(10, TimeUnit.SECONDS)
+            readTimeout(10, TimeUnit.SECONDS)
+            writeTimeout(10, TimeUnit.SECONDS)
+            addInterceptor(
+                HttpLoggingInterceptor(LocketApiLogger())
+                    .apply { setLevel(HttpLoggingInterceptor.Level.BODY) }
+            )
+        }.build()
+    }
+
+    @InterceptorRetrofit
     @Provides
     @Singleton
-    fun provideRetrofit(okHttpClient: OkHttpClient, gson: Gson): Retrofit {
+    fun provideInterceptorRetrofit(@InterceptorOkHttpClient okHttpClient: OkHttpClient, gson: Gson): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl(SERVER_URL)
+            .addConverterFactory(GsonConverterFactory.create(gson))
+            .client(okHttpClient)
+            .build()
+    }
+
+    @NoInterceptorRetrofit
+    @Provides
+    @Singleton
+    fun provideRetrofit(@NoInterceptorOkHttpClient okHttpClient: OkHttpClient, gson: Gson): Retrofit {
         return Retrofit.Builder()
             .baseUrl(SERVER_URL)
             .addConverterFactory(GsonConverterFactory.create(gson))

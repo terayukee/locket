@@ -12,7 +12,6 @@ val properties = Properties().apply {
 }
 
 val nativeApiKey: String = properties.getProperty("native_api_key") ?: ""
-val baseUrl: String = properties.getProperty("base_url") ?: ""
 val manifestNativeAppKey: String = properties.getProperty("manifest_native_app_key") ?: ""
 
 android {
@@ -30,7 +29,6 @@ android {
         renderscriptSupportModeEnabled = true
 
         buildConfigField("String", "NATIVE_API_KEY", nativeApiKey)
-        buildConfigField("String", "BASE_URL", baseUrl)
     }
 
     buildTypes {
@@ -83,14 +81,8 @@ dependencies {
 
     implementation ("com.kakao.sdk:v2-user:2.20.1")
 
-    //지문인식
-    implementation ("androidx.biometric:biometric:1.0.1")
-    implementation ("androidx.biometric:biometric:1.2.0-alpha05")
     //파이어베이스
     implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
-
-    // FCM 사용 위한 plugins
-    implementation("com.google.firebase:firebase-messaging-ktx")
 }
 
 kapt {

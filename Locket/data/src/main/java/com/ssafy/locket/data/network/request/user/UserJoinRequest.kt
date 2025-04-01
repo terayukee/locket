@@ -1,4 +1,4 @@
-package com.ssafy.locket.model.login
+package com.ssafy.locket.data.network.request.user
 
 data class UserJoinRequest(
     val birthYear: Int,

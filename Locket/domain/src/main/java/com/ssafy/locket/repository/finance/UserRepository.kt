@@ -1,17 +1,15 @@
 package com.ssafy.locket.repository.finance
 
-import com.ssafy.locket.model.ApiResponse
-import com.ssafy.locket.model.login.JwtTokenResponse
-import com.ssafy.locket.model.login.UserInfoResponse
-import com.ssafy.locket.model.login.UserJoinRequest
-import com.ssafy.locket.model.login.UserLoginRequest
+import com.ssafy.locket.data.network.response.JwtTokenResponse
+import com.ssafy.locket.data.network.response.UserInfoResponse
+import com.ssafy.locket.data.network.response.UserJoinRequest
+import com.ssafy.locket.data.network.response.UserLoginRequest
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
 
 interface UserRepository {
-    suspend fun join(userJoinRequest: UserJoinRequest, ): Flow<ApiResponse<JwtTokenResponse>>
-    suspend fun getUserInfo(user_id: Int) : Flow<ApiResponse<UserInfoResponse>>
-    suspend fun login(userLoginRequest: UserLoginRequest) : Flow<ApiResponse<JwtTokenResponse>>
+    suspend fun join(userJoinRequest: com.ssafy.locket.data.network.response.UserJoinRequest, ): Flow<ApiResponse<com.ssafy.locket.data.network.response.JwtTokenResponse>>
+    suspend fun getUserInfo(user_id: Int) : Flow<ApiResponse<com.ssafy.locket.data.network.response.UserInfoResponse>>
+    suspend fun login(userLoginRequest: com.ssafy.locket.data.network.response.UserLoginRequest) : Flow<ApiResponse<com.ssafy.locket.data.network.response.JwtTokenResponse>>
 
 
 }
