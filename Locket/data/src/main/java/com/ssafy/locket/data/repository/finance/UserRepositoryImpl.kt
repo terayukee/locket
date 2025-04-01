@@ -41,7 +41,7 @@ constructor(private val userService: UserService) : UserRepository {
                 apiResponse = { userService.login(userLoginRequest) },
                 default = JwtTokenResponse("", ""),
             )
-            Log.d("UserRepository", "login sdsdf: $response")
+            Log.d("SignInFragment", "login sdsdf: $response")
             emit(response)
         }
 }

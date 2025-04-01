@@ -33,15 +33,25 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
     @Inject
     lateinit var userDataStoreSource: UserDataStoreSource
 
+    private var isClick = false // 중복 클릭 방지 변수
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
         observeLoginState()
     }
 
+    override fun onResume() {
+        super.onResume()
+        isClick = false // 화면이 다시 활성화될 때 클릭 가능하도록 초기화
+    }
+
     fun initEvent(){
         binding.ivKakaoMove.setOnClickListener {
-            kakaoLogin()
+            if (!isClick) {
+                isClick = true // 클릭 방지 활성화
+                kakaoLogin()
+            }
         }
     }
 
@@ -52,10 +62,12 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                 if (error != null) {
                     Log.e(TAG, "카카오톡으로 로그인 실패", error)
                     if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
+                        isClick = false // 클릭 가능 상태로 변경
                         return@loginWithKakaoTalk
                     }
                     Log.e(TAG, "에러 타입: ${error::class.java.simpleName}")
                     showToast("카카오톡 로그인에 실패했습니다. 다시 시도해주세요.")
+                    isClick = false // 클릭 가능 상태로 변경
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공: ${token.accessToken}")
                     lifecycleScope.launch {
@@ -69,18 +81,29 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
         } else {
             Log.e(TAG, "카카오톡이 설치되어 있지 않습니다.")
             showToast("카카오톡이 설치되어 있지 않습니다. 앱을 설치한 후 다시 시도해주세요.")
+            isClick = false // 클릭 가능 상태로 변경
         }
     }
 
     private fun observeLoginState() {
         lifecycleScope.launchWhenStarted {
             loginViewModel.loginState.collect { isRegistered ->
-                if (isRegistered) {
-                    Log.d(TAG,"홈화면으로 갑니다")
-                } else {
-                    findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment) // 가입 필요하면 회원가입 화면으로 이동
+                when (isRegistered) {
+                    true -> Log.d(TAG, "홈 화면으로 갑니다")
+                    false -> {
+                        Log.d(TAG, "회원가입 화면으로 이동")
+                        val currentDestination = findNavController().currentDestination?.id
+                        if (currentDestination == R.id.signInFragment) { // ✅ 현재 Fragment가 signInFragment인지 확인
+                            findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment)
+                        }
+                        loginViewModel.resetLoginState()
+                    }
+                    null -> Unit // 🔥 초기 상태(null)일 경우 아무 동작 안 함
                 }
+                isClick = false // 네비게이션 처리 후 다시 클릭 가능하게 변경
             }
         }
     }
+
+
 }

@@ -17,34 +17,35 @@ class LoginViewModel @Inject constructor(
     private val userRepository: UserRepository,
     private val userDataStoreSource: UserDataStoreSource,
 ) : ViewModel() {
-
-    // 로그인 결과 상태 (true: 가입 완료, false: 가입 필요)
-    private val _loginState = MutableSharedFlow<Boolean>()
-    val loginState = _loginState.asSharedFlow()
+    // 로그인 상태 Flow (이전 값을 유지하지 않음)
+    private val _loginState = MutableStateFlow<Boolean?>(null) // 🔥 null 기본값 추가
+    val loginState = _loginState.asStateFlow()
 
     fun performKakaoLogin(accessToken: String, fcmToken: String) {
         viewModelScope.launch {
             try {
-                userRepository.login(UserLoginRequest(accessToken, fcmToken))
-                    .collect { response -> // ✅ Flow 수집
-                        when (response) {
-                            is ApiResponse.Success -> {
-                                val isRegistered = false // 실제로 API에서 받은 데이터로 처리
-                                Log.d("SignInFragment","${isRegistered}")
-                                if (isRegistered) {
-                                    _loginState.emit(true)  // ✅ 가입된 경우 홈 화면 이동
-                                } else {
-                                    _loginState.emit(false) // ✅ 회원가입 필요
-                                }
-                            }
-                            is ApiResponse.Error -> {
-                                Log.e("LoginViewModel", "서버 응답 실패: ${response.message}")
+                userRepository.login(UserLoginRequest(accessToken, fcmToken)).collect { response ->
+                    when (response) {
+                        is ApiResponse.Success -> {
+                            Log.d("LoginViewModel", "✅ 로그인 성공 → 홈 화면 이동")
+                            _loginState.value = true // ✅ 최신 값 유지
+                        }
+                        is ApiResponse.Error -> {
+                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.code}")
+                            if (response.code == "401") {
+                                Log.d("LoginViewModel", "회원가입이 필요함 → 회원가입 화면 이동")
+                                _loginState.value = false // ✅ 최신 값 유지
                             }
                         }
                     }
+                }
             } catch (e: Exception) {
-                Log.e("LoginViewModel", "로그인 처리 중 예외 발생: ${e.message}")
+                Log.e("LoginViewModel", "❌ 로그인 처리 중 예외 발생: ${e.message}")
             }
         }
+    }
+
+    fun resetLoginState() {
+        _loginState.value = null
     }
 }
