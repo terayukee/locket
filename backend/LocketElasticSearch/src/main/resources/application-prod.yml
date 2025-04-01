@@ -25,7 +25,7 @@ spring:
   locket:
     receipt:
       service:
-        url: ${LOCKET_RECEIPT_SERVICE_URL}
+        url: https://j12d204.p.ssafy.io:8500
 
 eureka:
   instance:
