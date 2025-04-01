@@ -23,6 +23,8 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
+          filters:
+            - RewritePath=/api/payment/(?<segment>.*), /${segment}
 
         - id: user-service
           uri: lb://USER-SERVICE
