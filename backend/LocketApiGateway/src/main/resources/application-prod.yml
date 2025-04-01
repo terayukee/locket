@@ -85,11 +85,11 @@ springdoc:
     disable-swagger-default-url: true
     urls:
       - name: "Locket Payment Service"
-        url: http://j12d204.p.ssafy.io:8081/payment-docs
+        url: https://j12d204.p.ssafy.io:8081/payment-docs
       - name: "Locket User Service"
-        url: http://j12d204.p.ssafy.io:8082/users-docs
+        url: https://j12d204.p.ssafy.io:8082/users-docs
       - name: "Locket ElasticSearch Service"
-        url: http://j12d204.p.ssafy.io:8083/elasticsearch-docs
+        url: https://j12d204.p.ssafy.io:8083/elasticsearch-docs
 
 management:
   endpoints:
