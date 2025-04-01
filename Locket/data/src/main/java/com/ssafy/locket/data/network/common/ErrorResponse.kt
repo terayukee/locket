@@ -16,7 +16,7 @@ class ErrorResponse(
         override fun ErrorResponse.toDomainModel(): NetworkError {
             return NetworkError(
                 error = error ?: "NO_ERROR",
-                code = code ?: "401",
+                code = code ?: "NO_CODE",
                 status  = status ?: "NO_STATUS",
                 message = message ?: "알 수 없는 에러"
             )
