@@ -1,5 +1,7 @@
 server:
   port: 8082
+  tomcat:
+    relaxed-host-chars: "_"
 
 DB:
   URL_USER: ${DB_URL_USER}
