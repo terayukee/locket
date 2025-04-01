@@ -59,7 +59,7 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /users-docs
+    path: /v3/api-docs
   swagger-ui:
     path: /users-docs/swagger-ui.html
     display-request-duration: true

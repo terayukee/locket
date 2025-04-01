@@ -30,11 +30,15 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
+          filters:
+            - RewritePath=/api/elasticsearch/(?<segment>.*), /${segment}
 
         # 서비스별 API 문서 경로
         - id: payment-service-docs
@@ -49,7 +53,7 @@ spring:
           predicates:
             - Path=/api/users/v3/api-docs
           filters:
-            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
+            - RewritePath=/api/users/v3/api-docs, /users-docs
 
 
         - id: elasticsearch-service-docs
