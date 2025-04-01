@@ -1,5 +1,7 @@
 server:
   port: 0  # 랜덤 포트 사용
+  tomcat:
+    relaxed-host-chars: "_"
 
 spring:
   application:
