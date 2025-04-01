@@ -39,7 +39,7 @@ eureka:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://spring-locket_discovery:8761/eureka
+      defaultZone: http://j12d204.p.ssafy.io:8761/eureka
 
 management:
   endpoints:
