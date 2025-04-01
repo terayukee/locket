@@ -3,8 +3,8 @@ version: '3.8'
 services:
   discovery:
     image: maru1203/spring-locket-discovery:latest
-#    ports:
-#      - "8761:8761"
+    ports:
+      - "8761:8761"
     networks:
       - spring-locket
 
@@ -26,8 +26,8 @@ services:
 
   api-gateway:
     image: maru1203/spring-locket-api-gateway:latest
-#    ports:
-#      - "8080:8080"
+    ports:
+      - "8080:8080"
     networks:
       - spring-locket
 
