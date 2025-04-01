@@ -57,9 +57,9 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /api/payment/v3/api-docs
+    path: /payment-docs
   swagger-ui:
-    path: /swagger-ui.html
+    path: /payment-docs/swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 
