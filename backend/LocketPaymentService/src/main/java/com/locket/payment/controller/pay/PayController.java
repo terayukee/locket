@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
-@RequestMapping("/payment")
 @RequiredArgsConstructor
 @Tag(name = "결제 API", description = "결제 관련 API")
 public class PayController {
