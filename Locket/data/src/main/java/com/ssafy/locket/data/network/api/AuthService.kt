@@ -1,8 +1,8 @@
 package com.ssafy.locket.data.network.api
 
-import com.ssafy.locket.data.network.request.user.UserJoinRequest
-import com.ssafy.locket.data.network.request.user.UserLoginRequest
-import com.ssafy.locket.data.network.response.user.JwtTokenResponse
+import com.ssafy.locket.data.network.request.auth.UserJoinRequest
+import com.ssafy.locket.data.network.request.auth.UserLoginRequest
+import com.ssafy.locket.data.network.response.auth.JwtTokenResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.POST

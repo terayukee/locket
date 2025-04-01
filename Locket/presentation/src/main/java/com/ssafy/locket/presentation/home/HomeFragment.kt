@@ -88,10 +88,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.user.collect { user ->
-                    user?.let {
-                        Log.d("UserFragment", "User: $it")
-                        binding.tvUserName.text = it.nickname
+                viewModel.userInfo.collect { user ->
+                    if(user is UserInfoState.Success) {
+                        Log.d("UserFragment", "User: ${user.userInfo.nickname}")
+                        binding.tvUserName.text = user.userInfo.nickname
                     }
                 }
             }

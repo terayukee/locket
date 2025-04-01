@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.network.request.user
+package com.ssafy.locket.data.network.request.auth
 
 data class UserLoginRequest(
     val accessToken: String,

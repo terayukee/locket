@@ -1,5 +1,6 @@
-package com.ssafy.locket.data.repository.finance
+package com.ssafy.locket.data.repository.user
 
+import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.data.network.api.UserService
 import com.ssafy.locket.data.network.common.ApiResponse
 import com.ssafy.locket.data.network.common.ApiResponseHandler
@@ -14,9 +15,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
-class UserRepositoryImpl @Inject constructor(
-    private val userService: UserService
-) : UserRepository {
+internal class UserRepositoryImpl @Inject constructor(
+    private val userService: UserService,
+    private val dataStore: UserDataStoreSource
+): UserRepository {
     override suspend fun getUserInfo(userId: Long): Flow<ResponseStatus<UserInfo>> {
         return flow {
             ApiResponseHandler().handle {

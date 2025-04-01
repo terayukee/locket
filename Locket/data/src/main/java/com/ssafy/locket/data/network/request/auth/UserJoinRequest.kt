@@ -1,4 +1,6 @@
-package com.ssafy.locket.data.network.request.user
+package com.ssafy.locket.data.network.request.auth
+
+import com.ssafy.locket.model.base.BaseModel
 
 data class UserJoinRequest(
     val birthYear: Int,
