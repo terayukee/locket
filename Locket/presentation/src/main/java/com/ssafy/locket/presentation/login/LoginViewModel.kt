@@ -31,7 +31,7 @@ class LoginViewModel @Inject constructor(
                             _loginState.value = true // ✅ 최신 값 유지
                         }
                         is ResponseStatus.Error -> {
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.code}")
+                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error}")
                             if (response.error.code == "401") {
                                 Log.d("LoginViewModel", "회원가입이 필요함 → 회원가입 화면 이동")
                                 _loginState.value = false // ✅ 최신 값 유지
