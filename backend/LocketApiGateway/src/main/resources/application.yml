@@ -87,10 +87,3 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    urls:
-      - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
-      - name: "Locket User Service"
-        url: /api/users/v3/api-docs
-      - name: "Locket ElasticSearch Service"
-        url: /api/elasticsearch/v3/api-docs

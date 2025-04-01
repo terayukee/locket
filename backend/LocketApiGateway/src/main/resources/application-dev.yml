@@ -18,11 +18,11 @@ springdoc:
   swagger-ui:
     urls:
       - name: "Locket Payment Service"
-        url: http://localhost:8080/api/payment/v3/api-docs
+        url: /api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: http://localhost:8080/api/users/v3/api-docs
+        url: /api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
-        url: http://localhost:8080/api/elasticsearch/v3/api-docs
+        url: /api/elasticsearch/v3/api-docs
 
 management:
   endpoints:
