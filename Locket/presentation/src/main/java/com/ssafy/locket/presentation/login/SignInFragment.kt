@@ -5,44 +5,52 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.lifecycleScope
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
 import com.kakao.sdk.user.UserApiClient
+import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.databinding.FragmentSignInBinding
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 
 private const val TAG = "SignInFragment"
+@AndroidEntryPoint
 class SignInFragment : BaseFragment<FragmentSignInBinding>(
     FragmentSignInBinding::bind,
     R.layout.fragment_sign_in
 ) {
+    private val loginViewModel: LoginViewModel by viewModels()
+    @Inject
+    lateinit var userDataStoreSource: UserDataStoreSource
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
+        observeLoginState()
     }
 
     fun initEvent(){
         binding.ivKakaoMove.setOnClickListener {
             kakaoLogin()
-            //findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment)
         }
     }
 
     private fun kakaoLogin() {
-        // 카카오톡이 설치되어 있는지 확인
         if (UserApiClient.instance.isKakaoTalkLoginAvailable(requireContext())) {
             // 카카오톡으로만 로그인 시도
             UserApiClient.instance.loginWithKakaoTalk(requireContext()) { token, error ->
                 if (error != null) {
                     Log.e(TAG, "카카오톡으로 로그인 실패", error)
-                    // 사용자가 로그인 취소한 경우 아무 작업도 하지 않음
                     if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
                         return@loginWithKakaoTalk
                     }
@@ -50,7 +58,12 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                     showToast("카카오톡 로그인에 실패했습니다. 다시 시도해주세요.")
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공: ${token.accessToken}")
-                    performKakaoLogin(token.accessToken)
+                    lifecycleScope.launch {
+                        val fcmToken = userDataStoreSource.fcmToken.first() // Flow에서 값 가져오기
+                        Log.d(TAG,"로그인 관련"+token.accessToken)
+                        Log.d(TAG,"fcm 관련"+fcmToken)
+                        loginViewModel.performKakaoLogin(token.accessToken, fcmToken ?: "")
+                    }
                 }
             }
         } else {
@@ -59,44 +72,14 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
         }
     }
 
-    /**
-     * 카카오 SDK로 받은 accessToken을 서버에 전달하여 로그인 처리하는 함수
-     */
-    private fun performKakaoLogin(accessToken: String) {
-        lifecycleScope.launch {
-            try {
-                //val response = RetrofitUtil.userService.kakaoLogin(accessToken)
-
-                /*
-                if (response.isSuccessful) {
-                    // Retrofit의 Response 객체에서 HTTP 응답 헤더를 추출
-                    val httpHeaders = response.headers().toMultimap()
-                    // "Set-Cookie" 헤더에 들어있는 쿠키 값들을 추출
-                    val httpCookies = response.headers().values("Set-Cookie")
-
-                    // HTTP 응답 헤더와 쿠키 로그 출력
-                    Log.d(TAG, "HTTP 응답 헤더: $httpHeaders")
-                    Log.d(TAG, "HTTP 응답 쿠키: $httpCookies")
-
-                    val sharedPref = requireContext().getSharedPreferences(prefsName, Context.MODE_PRIVATE)
-                    val saveToken = sharedPref.getString(KeyAccessToken, "") ?: ""
-                    Log.d(TAG, "${httpHeaders["access"]?.get(0)}")
-                    val userToken = httpHeaders["access"]?.get(0)
-                    SharedPreferencesUtil.saveAccessToken(userToken!!)
-                    with(sharedPref.edit()) {
-                        putString(KeyAccessToken, userToken)
-                        apply()
-                    }
-                    val intent = Intent(requireContext(), MainActivity::class.java)
-                    startActivity(intent)
-
+    private fun observeLoginState() {
+        lifecycleScope.launchWhenStarted {
+            loginViewModel.loginState.collect { isRegistered ->
+                if (isRegistered) {
+                    Log.d(TAG,"홈화면으로 갑니다")
                 } else {
-                    Log.e(TAG, "서버 카카오 로그인 실패: ${response.errorBody()?.string()}")
-                }*/
-                val intent = Intent(requireContext(), MainActivity::class.java)
-                startActivity(intent)
-            } catch (e: Exception) {
-                Log.e(TAG, "서버 통신 중 에러 발생", e)
+                    findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment) // 가입 필요하면 회원가입 화면으로 이동
+                }
             }
         }
     }
