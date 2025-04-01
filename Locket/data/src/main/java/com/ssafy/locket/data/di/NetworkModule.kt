@@ -3,6 +3,7 @@ package com.ssafy.locket.data.di
 import dagger.Module
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.ssafy.locket.data.BuildConfig
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.data.network.interceptor.RequestInterceptor
 import com.ssafy.locket.data.network.logger.LocketApiLogger
@@ -19,7 +20,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object NetworkModule {
-    private const val SERVER_URL = "server_url"
+    private const val SERVER_URL = BuildConfig.BASE_URL
 
     @Provides
     @Singleton
@@ -38,7 +39,7 @@ object NetworkModule {
             readTimeout(10, TimeUnit.SECONDS)
             writeTimeout(10, TimeUnit.SECONDS)
             addInterceptor(requestInterceptor)
-            addInterceptor( // Http 요청/응답 중 Body만 로깅
+            addInterceptor(
                 HttpLoggingInterceptor(LocketApiLogger())
                     .apply { setLevel(HttpLoggingInterceptor.Level.BODY) }
             )

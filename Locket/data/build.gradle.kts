@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.library)
     alias(libs.plugins.kotlin.android)
@@ -5,6 +7,12 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
+
+val properties = Properties().apply {
+    load(rootProject.file("apikey.properties").inputStream())
+}
+
+val baseUrl: String = properties.getProperty("base_url") ?: ""
 
 android {
     namespace = "com.ssafy.locket.data"
@@ -15,6 +23,8 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "BASE_URL", baseUrl)
     }
 
     buildTypes {
@@ -32,6 +42,9 @@ android {
     }
     kotlinOptions {
         jvmTarget = "1.8"
+    }
+    buildFeatures {
+        buildConfig = true
     }
 }
 

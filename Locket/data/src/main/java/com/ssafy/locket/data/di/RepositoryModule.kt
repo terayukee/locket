@@ -1,17 +1,22 @@
 package com.ssafy.locket.data.di
 
-import android.app.Activity
-import com.ssafy.locket.data.repository.finance.FinanceRepositoryImpl
-import com.ssafy.locket.repository.finance.FinanceRepository
-import dagger.Binds
+import com.ssafy.locket.data.network.api.CharacterService
+import com.ssafy.locket.data.repository.home.character.CharacterRepositoryImpl
+import com.ssafy.locket.repository.home.character.CharacterRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.components.SingletonComponent
+import javax.inject.Singleton
 
-@Module
-@InstallIn(ActivityComponent::class)
-abstract class RepositoryModule {
-
+@Module(includes = [NetworkModule::class, DataStoreModule::class])
+@InstallIn(SingletonComponent::class)
+internal class RepositoryModule {
+    @Singleton
+    @Provides
+    fun provideCharacterRepository(
+        characterService: CharacterService,
+    ): CharacterRepository {
+        return CharacterRepositoryImpl(characterService)
+    }
 }
