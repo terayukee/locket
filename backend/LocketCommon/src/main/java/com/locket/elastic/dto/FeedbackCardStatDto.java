@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class FeedbackCardStatDto {
     private String cardName;
     private Integer usageCount;
-    private Integer totalAmount;
+    private Double totalAmount;
 }

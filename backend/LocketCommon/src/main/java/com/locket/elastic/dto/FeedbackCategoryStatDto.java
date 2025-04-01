@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FeedbackCategoryStatDto {
     private String category;
-    private Integer amount;
+    private Double amount;
     private Double ratio;
 }

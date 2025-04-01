@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Union, Dict
 from pydantic import BaseModel
 
 class OrderDetail(BaseModel):
@@ -13,7 +13,7 @@ class PaymentHistoryDto(BaseModel):
     sellerId: int
     userJob: str
     birthDate: int
-    totalAmount: int
+    totalAmount: float
     paymentCategory: Optional[str]
     paymentMerchant: str
     cardId: int
@@ -22,7 +22,7 @@ class PaymentHistoryDto(BaseModel):
     paymentStatus: str
     createdAt: str
     orders: List[OrderDetail]
-    categoryAmount: dict
+    categoryAmount: Dict[str, float]
 
 class GoalDto(BaseModel):
     goalAmount: int
@@ -41,13 +41,12 @@ class FeedbackCategoryStatDto(BaseModel):
     ratio: float  # 전체 지출 대비 비율
 
 class FeedbackDayOfWeekDto(BaseModel):
-    dayOfWeekStats: dict[str, float]
+    dayOfWeekStats: Dict[str, float]
 
 class FeedbackCardStatDto(BaseModel):
     cardName: str
     usageCount: int
     totalAmount: float
-
 
 class FeedbackRequestDto(BaseModel):
     user: UserDto
@@ -61,15 +60,14 @@ class FeedbackRequestDto(BaseModel):
 
     # 메타 정보
     topStoreName: Optional[str]
-    userSpending: Optional[dict[str, float]]
-    ageGroupAverage: Optional[dict[str, float]]
+    userSpending: Optional[Dict[str, Union[int, float]]]
+    ageGroupAverage: Optional[Dict[str, Union[int, float]]]
     currentMonthTotal: Optional[float]
     previousMonthTotal: Optional[float]
     totalChangeRate: Optional[float]
-    categoryChangeRate: Optional[dict[str, float]]
+    categoryChangeRate: Optional[Dict[str, Union[int, float]]]
     hotCategories: Optional[List[str]]
     entropy: Optional[float]
-
 
 class FeedbackResponseDto(BaseModel):
     summary: str

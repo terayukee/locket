@@ -12,5 +12,5 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FeedbackDayOfWeekDto {
-    private Map<String, Integer> dayOfWeekStats;
+    private Map<String, Double> dayOfWeekStats;
 }

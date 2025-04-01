@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class FeedbackGoalDto {
     private Long goalId;
-    private Integer goalAmount;
+    private Double goalAmount;
 }

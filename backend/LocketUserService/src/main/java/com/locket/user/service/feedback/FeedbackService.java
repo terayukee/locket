@@ -14,10 +14,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,10 +29,8 @@ public class FeedbackService {
     private final GoalRepository goalRepository;
     private final PaymentHistoryFeignClient paymentHistoryFeignClient;
     private final FeedbackStatFeignClient feedbackStatFeignClient;
-    private final WebClient feedbackWebClient;
 
     public ResponseEntity<?> handleFeedbackRequest(Long userId, Integer year, Integer month) {
-
         Optional<Feedback> existing = feedbackRepository.findByUserIdAndFeedbackYearAndFeedbackMonth(userId, year, month);
         boolean isCurrentMonth = isCurrentYearMonth(year, month);
 
@@ -51,12 +48,9 @@ public class FeedbackService {
             User user = userRepository.findById(userId)
                     .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
 
-            Goal goal = goalRepository.findByUserIdAndGoalYearAndGoalMonth(userId, year, month)
-                    .orElse(null); // 목표는 선택적
+            Goal goal = goalRepository.findByUserIdAndGoalYearAndGoalMonth(userId, year, month).orElse(null);
 
             List<PaymentHistoryDto> paymentHistories = paymentHistoryFeignClient.getPaymentHistories(userId, year, month);
-
-            // ElasticSearch 분석 API 호출
             List<FeedbackCategoryStatDto> categoryStats = feedbackStatFeignClient.getCategoryStats(userId, year, month);
             FeedbackDayOfWeekDto dayOfWeekStats = feedbackStatFeignClient.getDayOfWeekStats(userId, year, month);
             List<FeedbackCardStatDto> cardStats = feedbackStatFeignClient.getCardStats(userId, year, month);
@@ -66,66 +60,106 @@ public class FeedbackService {
             HotCategoriesDto hotCategories = feedbackStatFeignClient.getHotCategories(userId, year, month);
             SpendingEntropyDto entropy = feedbackStatFeignClient.getSpendingEntropy(userId, year, month);
 
-            // 공통 DTO 매핑
-            FeedbackUserDto userDto = FeedbackUserDto.builder()
-                    .userId(user.getUserId())
-                    .nickname(user.getNickname())
-                    .birthYear(user.getBirthYear())
-                    .userJob(user.getUserJob().toString())
-                    .build();
+            double totalSpent = paymentHistories.stream().mapToDouble(p -> p.getTotalAmount().doubleValue()).sum();
+            List<String> insights = new ArrayList<>();
+            List<String> recommendations = new ArrayList<>();
 
-            FeedbackGoalDto goalDto = goal != null ? FeedbackGoalDto.builder()
-                    .goalId(goal.getGoalId())
-                    .goalAmount(goal.getGoalAmount())
-                    .build() : null;
+            // 1. 과소비 항목
+            categoryStats.stream()
+                    .filter(stat -> stat.getRatio() > 0.3)
+                    .map(stat -> stat.getCategory())
+                    .reduce((a, b) -> a + ", " + b)
+                    .ifPresent(overspent -> insights.add("🔥 '" + overspent + "' 카테고리에 전체 지출의 30% 이상이 몰렸습니다."));
 
-            List<FeedbackPaymentDto> payments = paymentHistories.stream()
-                    .map(p -> FeedbackPaymentDto.builder()
-                            .paymentCategory(p.getPaymentCategory())
-                            .storeName(p.getStoreName())
-                            .totalAmount(p.getTotalAmount())
-                            .createdAt(p.getCreatedAt())
-                            .build())
-                    .collect(Collectors.toList());
+            // 2. 연령대 평균 비교
+            ageCompare.getUserSpending().forEach((category, myAmt) -> {
+                Double avgAmt = ageCompare.getAgeGroupAverage().get(category);
+                if (avgAmt != null) {
+                    if (myAmt > avgAmt) {
+                        insights.add("🧍‍♂️ " + category + " 항목에서 연령대 평균(" + Math.round(avgAmt) + "원)보다 많이 소비했습니다.");
+                    } else {
+                        insights.add("🧍‍♂️ " + category + " 항목은 연령대 평균(" + Math.round(avgAmt) + "원)보다 적게 사용했습니다.");
+                    }
+                }
+            });
 
-            FeedbackAnalysisPayload payload = FeedbackAnalysisPayload.builder()
-                    .user(userDto)
-                    .goal(goalDto)
-                    .payments(payments)
-                    .categoryStats(categoryStats)
-                    .dayOfWeekStats(dayOfWeekStats)
-                    .cardStats(cardStats)
-                    .topStoreName(topStore.getStoreName())
-                    .userSpending(ageCompare.getUserSpending())
-                    .ageGroupAverage(ageCompare.getAgeGroupAverage())
-                    .currentMonthTotal(monthCompare.getCurrentMonthTotal())
-                    .previousMonthTotal(monthCompare.getPreviousMonthTotal())
-                    .totalChangeRate(monthCompare.getTotalChangeRate())
-                    .categoryChangeRate(monthCompare.getCategoryChangeRate())
-                    .hotCategories(hotCategories.getCategories())
-                    .entropy(entropy.getEntropy())
-                    .build();
+            // 3. 목표 초과 여부
+            if (goal != null) {
+                int goalAmount = goal.getGoalAmount();
+                if (totalSpent > goalAmount) {
+                    double over = totalSpent - goalAmount;
+                    double rate = over / goalAmount * 100;
+                    insights.add(String.format("🎯 목표(%d원)를 %.1f%% 초과한 %,.0f원 지출했습니다.", goalAmount, rate, totalSpent));
+                } else {
+                    insights.add(String.format("🎯 목표 지출 %d원 이하로 소비하였습니다.", goalAmount));
+                }
+            }
 
-            log.info("\uD83D\uDCE6 분석 요청 페이로드: {}", payload);
+            // 4. 요일별 소비 패턴
+            Map<String, Double> dayStats = dayOfWeekStats.getDayOfWeekStats();
+            if (!dayStats.isEmpty()) {
+                String maxDay = Collections.max(dayStats.entrySet(), Map.Entry.comparingByValue()).getKey();
+                insights.add("📊 " + maxDay + "에 가장 많은 지출이 있었습니다.");
+            }
 
-            // Python 서비스로 분석 요청
-            String feedbackJson = feedbackWebClient.post()
-                    .uri("/api/feedback/spending")
-                    .bodyValue(payload)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            // 5. 전월 대비 증감 분석
+            if (monthCompare.getPreviousMonthTotal() > 0) {
+                double delta = monthCompare.getTotalChangeRate() * 100;
+                String trend = delta > 0 ? "증가" : "감소";
+                insights.add(String.format("🏷️ 전월 대비 총 지출이 %.1f%% %s했습니다.", Math.abs(delta), trend));
+                monthCompare.getCategoryChangeRate().forEach((cat, rate) -> {
+                    if (Math.abs(rate) > 0.2) {
+                        String symbol = rate > 0 ? "▲" : "▼";
+                        insights.add(String.format(" - %s 지출 %s %.1f%%", cat, symbol, rate * 100));
+                    }
+                });
+            }
+
+            // 6. 카드 사용 집중도
+            if (!cardStats.isEmpty()) {
+                FeedbackCardStatDto mostUsed = Collections.max(cardStats, Comparator.comparingInt(FeedbackCardStatDto::getUsageCount));
+                int totalUsage = cardStats.stream().mapToInt(FeedbackCardStatDto::getUsageCount).sum();
+                if (mostUsed.getUsageCount() > 0.7 * totalUsage) {
+                    insights.add("⚖️ '" + mostUsed.getCardName() + "' 카드에 소비가 집중되었습니다.");
+                }
+            }
+
+            // 7. 자주 간 가게
+            if (topStore != null && topStore.getStoreName() != null) {
+                insights.add("🏪 가장 많이 간 매장은 '" + topStore.getStoreName() + "'입니다.");
+            }
+
+            // 8. Hot 카테고리
+            if (!hotCategories.getCategories().isEmpty()) {
+                insights.add("🔥 최근 3개월간 소비가 증가한 카테고리: " + String.join(", ", hotCategories.getCategories()));
+            }
+
+            // 9. 소비 다양성 지수
+            insights.add(String.format("📈 소비 다양성 지수(Shannon entropy)는 %.2f입니다.", entropy.getEntropy()));
+
+            // 추천: 절약 가능한 상위 카테고리
+            categoryStats.stream()
+                    .sorted(Comparator.comparingDouble(FeedbackCategoryStatDto::getAmount).reversed())
+                    .limit(3)
+                    .forEach(cat -> recommendations.add(cat.getCategory() + " 항목에서 " + String.format("%,.0f원", cat.getAmount()) + " 지출하였습니다. 절약 가능성을 검토해보세요."));
+
+            String summary = String.format("%s님의 이번 달 총 지출은 %,.0f원입니다.", user.getNickname(), totalSpent);
+            Map<String, Object> result = Map.of(
+                    "summary", summary,
+                    "insights", insights,
+                    "recommendations", recommendations
+            );
 
             Feedback feedback = Feedback.builder()
                     .userId(userId)
                     .goalId(goal != null ? goal.getGoalId() : null)
-                    .feedbackText(feedbackJson)
+                    .feedbackText(result.toString())
                     .feedbackYear(year)
                     .feedbackMonth(month)
                     .build();
 
             feedbackRepository.save(feedback);
-            return ResponseEntity.ok(feedbackJson);
+            return ResponseEntity.ok(result);
 
         } catch (Exception e) {
             log.error("❌ 피드백 분석 중 오류 발생: {}", e.getMessage(), e);
@@ -134,7 +168,7 @@ public class FeedbackService {
     }
 
     private boolean isCurrentYearMonth(int year, int month) {
-        java.time.LocalDate now = java.time.LocalDate.now();
+        LocalDate now = LocalDate.now();
         return now.getYear() == year && now.getMonthValue() == month;
     }
 }

@@ -9,5 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class TopStoreStatDto {
     private String storeName;
-    private int totalAmount;
+    private Double totalAmount;
 }
