@@ -1,5 +1,7 @@
 server:
   port: 8083
+  tomcat:
+    relaxed-host-chars: "_"
 
 ELASTICSEARCH:
   URIS: ${ELASTICSEARCH_URIS}

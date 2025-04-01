@@ -1,5 +1,7 @@
 server:
   port: 8081
+  tomcat:
+    relaxed-host-chars: "_"
 
 DB:
   URL_PAYMENT: ${DB_URL_PAYMENT}
