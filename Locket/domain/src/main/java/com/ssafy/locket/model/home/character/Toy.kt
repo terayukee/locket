@@ -1,7 +1,10 @@
 package com.ssafy.locket.model.home.character
 
-data class Toy(
+import com.ssafy.locket.model.base.BaseModel
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
+class Toy(
     val isAvailable: Boolean,
-    val nextAvailableTime: Any,
-    val remainingTimeMinutes: Int
-)
+    val remainingTimeMinutes: Long
+): BaseModel
