@@ -78,3 +78,6 @@ springdoc:
     path: /users-docs/swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+swagger:
+  server-url: https://j12d204.p.ssafy.io/api/payment
