@@ -42,6 +42,7 @@ spring:
             - Path=/api/elasticsearch/**
           filters:
             - RewritePath=/api/elasticsearch/(?<segment>/?.*), /${segment}
+            - RemoveRequestHeader=Host
           order: 10
 
         # 서비스별 Swagger 문서 라우팅
@@ -67,6 +68,7 @@ spring:
             - Path=/api/elasticsearch/v3/api-docs/**
           filters:
             - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
+            - RemoveRequestHeader=Host
           order: 1
 
 eureka:
