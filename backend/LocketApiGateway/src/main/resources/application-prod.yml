@@ -48,31 +48,26 @@ spring:
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/api/payment/v3/api-docs
+            - Path=/api/payment/v3/api-docs/**
           filters:
-            - StripPrefix=2
-            - RewritePath=/api/payment/v3/api-docs(?<segment>/?.*), /payment-docs${segment}
-            - RewritePath=/api/payment/v3/api-docs, /payment-docs
+            - RewritePath=/api/payment/v3/api-docs(?<remaining>/?.*), /payment-docs${remaining}
           order: 1
 
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs
+            - Path=/api/users/v3/api-docs/**
           filters:
-            - StripPrefix=2
-            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
-            - RewritePath=/api/users/v3/api-docs, /users-docs
+            - RewritePath=/api/users/v3/api-docs(?<remaining>/?.*), /users-docs${remaining}
           order: 1
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
-            - Path=/api/elasticsearch/v3/api-docs
+            - Path=/api/elasticsearch/v3/api-docs/**
           filters:
-            - StripPrefix=2
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/?.*), /elasticsearch-docs${segment}
-            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
+          order: 1
 
 eureka:
   instance:
