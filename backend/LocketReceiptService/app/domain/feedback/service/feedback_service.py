@@ -5,6 +5,8 @@ import statistics
 
 class FeedbackService:
     async def analyze_feedback(self, request: FeedbackRequestDto) -> FeedbackResponseDto:
+
+
         payments = request.payments
         user = request.user
         goal = request.goal
@@ -56,10 +58,14 @@ class FeedbackService:
                 insights.append(f"🎯 목표 지출 {goal.goalAmount:,}원 이하로 소비하였습니다.")
 
         # 🔸 4. 요일별 소비 패턴
-        max_day = max(day_of_week_stats, key=day_of_week_stats.get)
-        insights.append(f"📊 '{max_day}'에 지출이 가장 많았습니다.")
+        if day_of_week_stats:
+            max_day = max(day_of_week_stats, key=day_of_week_stats.get)
+            insights.append(f"📊 {max_day}에 가장 많은 지출이 있었습니다.")
+        else:
+            insights.append("📊 요일별 소비 통계를 분석할 수 없습니다.")
 
-        # 🔸 5. 전월 대비 증감 분석
+
+# 🔸 5. 전월 대비 증감 분석
         if previous_total > 0:
             delta = total_change * 100
             trend = "증가" if delta > 0 else "감소"

@@ -15,11 +15,13 @@ feedback_service = FeedbackService()
 )
 async def analyze_feedback(request: FeedbackRequestDto):
     try:
+        print("소비 패턴 분석 시작")
+        print("[DEBUG] 📥 request data:", request.model_dump())
         return await feedback_service.analyze_feedback(request)
     except FeedbackAnalyzeException:
         raise
     except Exception as e:
         raise FeedbackAnalyzeException(
-            message=ErrorMessage.FEEDBACK_ANALYZE_ERROR,
+            message=ErrorMessage.FEEDBACK_ANALYZE_ERROR.value,
             detail=f"소비 피드백 분석 중 오류 발생: {str(e)}"
         )

@@ -1,5 +1,5 @@
 server:
-  port: 0  # 랜덤 포트 사용
+  port: 8083  # 랜덤 포트 사용
 
 spring:
   application:
@@ -34,6 +34,9 @@ management:
 
 springdoc:
   api-docs:
+    enabled: true
+    path: /api/elasticsearch/v3/api-docs
+  swagger-ui:
     enabled: true
     path: /elasticsearch-docs
   default-consumes-media-type: application/json

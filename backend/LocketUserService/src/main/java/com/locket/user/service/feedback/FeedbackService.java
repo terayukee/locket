@@ -107,6 +107,8 @@ public class FeedbackService {
                     .entropy(entropy)
                     .build();
 
+            log.info("📦 분석 요청 페이로드: {}", payload);
+
             // Python 서비스로 분석 요청
             String feedbackJson = feedbackWebClient.post()
                     .uri("/api/feedback/spending")
