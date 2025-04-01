@@ -46,30 +46,30 @@ spring:
           order: 10
 
         # 서비스별 Swagger 문서 라우팅
-#        - id: payment-service-docs
-#          uri: lb://PAYMENT-SERVICE
-#          predicates:
-#            - Path=/api/payment/v3/api-docs/**
-#          filters:
-#            - RewritePath=/api/payment/v3/api-docs(?<remaining>/?.*), /payment-docs${remaining}
-#          order: 1
-#
-#        - id: user-service-docs
-#          uri: lb://USER-SERVICE
-#          predicates:
-#            - Path=/api/users/v3/api-docs/**
-#          filters:
-#            - RewritePath=/api/users/v3/api-docs(?<remaining>/?.*), /users-docs${remaining}
-#          order: 1
-#
-#        - id: elasticsearch-service-docs
-#          uri: lb://ELASTICSEARCH-SERVICE
-#          predicates:
-#            - Path=/api/elasticsearch/v3/api-docs/**
-#          filters:
-#            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
-#            - RemoveRequestHeader=Host
-#          order: 1
+        - id: payment-service-docs
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/v3/api-docs/**
+          filters:
+            - RewritePath=/api/payment/v3/api-docs(?<remaining>/?.*), /payment-docs${remaining}
+          order: 1
+
+        - id: user-service-docs
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/v3/api-docs/**
+          filters:
+            - RewritePath=/api/users/v3/api-docs(?<remaining>/?.*), /users-docs${remaining}
+          order: 1
+
+        - id: elasticsearch-service-docs
+          uri: lb://ELASTICSEARCH-SERVICE
+          predicates:
+            - Path=/api/elasticsearch/v3/api-docs/**
+          filters:
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
+            - RemoveRequestHeader=Host
+          order: 1
 
 eureka:
   instance:
