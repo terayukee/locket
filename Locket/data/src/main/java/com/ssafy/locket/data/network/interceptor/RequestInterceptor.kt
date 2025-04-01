@@ -11,10 +11,6 @@ import okhttp3.Interceptor
 import okhttp3.Response
 
 class RequestInterceptor constructor(private val dataStore: UserDataStoreSource): Interceptor {
-    companion object {
-        private val ACCESS_TOKEN = stringPreferencesKey("access_token")
-    }
-
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking {
             dataStore.accessToken.first() ?: ""

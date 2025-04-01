@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.network.response
+package com.ssafy.locket.data.network.common
 
 import android.os.Parcelable
 

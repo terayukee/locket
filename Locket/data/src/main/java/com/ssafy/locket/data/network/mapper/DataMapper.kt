@@ -1,6 +1,6 @@
 package com.ssafy.locket.data.network.mapper
 
-import com.ssafy.locket.data.network.response.BaseResponse
+import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.model.base.BaseModel
 
 /**

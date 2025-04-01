@@ -1,9 +1,7 @@
-package com.ssafy.locket.data.network
+package com.ssafy.locket.data.network.common
 
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.ssafy.locket.data.network.response.ApiResponse
-import com.ssafy.locket.data.network.response.ErrorResponse
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import retrofit2.Response
