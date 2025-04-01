@@ -48,14 +48,14 @@ spring:
           predicates:
             - Path=/api/payment/v3/api-docs/**
           filters:
-            - RewritePath=/api/payment/v3/api-docs/?(.*), /payment-docs/$1
+            - SetPath=/payment-docs
 
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/v3/api-docs/**
           filters:
-            - RewritePath=/api/users/v3/api-docs/?(.*), /users-docs/$1
+            - SetPath=/users-docs
           order: 1
 
         - id: elasticsearch-service-docs
@@ -63,7 +63,7 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs/?(.*), /elasticsearch-docs/$1
+            - SetPath=/elasticsearch-docs
 
 eureka:
   instance:
@@ -87,11 +87,11 @@ springdoc:
     disable-swagger-default-url: true
     urls:
       - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
+        url: http://j12d204.p.ssafy.io:8081/payment-docs
       - name: "Locket User Service"
-        url: /api/users/v3/api-docs
+        url: http://j12d204.p.ssafy.io:8082/users-docs
       - name: "Locket ElasticSearch Service"
-        url: /api/elasticsearch/v3/api-docs
+        url: http://j12d204.p.ssafy.io:8083/elasticsearch-docs
 
 management:
   endpoints:
