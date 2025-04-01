@@ -10,7 +10,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.ssafy.locket.model.home.ReceiptDetail
+import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.databinding.ItemReceiptEditBinding
 import com.ssafy.locket.presentation.utils.CommonUtils
 

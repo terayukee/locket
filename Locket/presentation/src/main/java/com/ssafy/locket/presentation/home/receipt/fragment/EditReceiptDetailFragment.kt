@@ -4,12 +4,11 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ssafy.locket.model.home.ReceiptDetail
+import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditReceiptDetailBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailEditRVAdapter
-import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailRVAdapter
 
 class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>(
     FragmentEditReceiptDetailBinding::bind,

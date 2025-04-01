@@ -2,7 +2,7 @@ package com.ssafy.locket.presentation.home.receipt.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.ssafy.locket.model.finance.Payment
-import com.ssafy.locket.model.home.ReceiptDetail
+import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

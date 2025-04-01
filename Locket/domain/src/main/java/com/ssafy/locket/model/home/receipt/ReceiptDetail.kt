@@ -1,4 +1,4 @@
-package com.ssafy.locket.model.home
+package com.ssafy.locket.model.home.receipt
 
 data class ReceiptDetail(
     val itemId: Long,

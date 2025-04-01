@@ -1,4 +1,4 @@
-package com.ssafy.locket.model.home
+package com.ssafy.locket.model.home.receipt
 
 data class Receipt(
     val amount: Int,

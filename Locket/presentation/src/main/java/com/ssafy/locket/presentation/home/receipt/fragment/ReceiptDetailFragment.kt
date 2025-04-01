@@ -7,15 +7,12 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ssafy.locket.model.finance.Payment
-import com.ssafy.locket.model.home.ReceiptDetail
+import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentReceiptDetailBinding
-import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailRVAdapter
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
-import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionUiState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptViewModel
 import kotlinx.coroutines.launch
