@@ -12,6 +12,7 @@ import android.nfc.Tag
 import android.nfc.tech.NfcA
 import android.nfc.tech.NfcB
 import android.nfc.tech.NfcF
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -22,33 +23,37 @@ import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.databinding.FragmentNfcPaymentBinding
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 private const val TAG = "MainActivity_NFC"
 class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     FragmentNfcPaymentBinding::bind,
     R.layout.fragment_nfc_payment
 ) {
-    private val handler = Handler(Looper.getMainLooper())
     private var timeRemaining = 30  // 30초 설정
-    private lateinit var vibrator: Vibrator
     private var isVibrating = false
 
-    //nfc어댑터
-    private lateinit var nfcAdapter: NfcAdapter
-
-    val vibrationPattern = longArrayOf(100, 200, 100, 200)
+    private lateinit var vibrator: Vibrator
+    private val vibrationPattern = longArrayOf(100, 200, 100, 200)
     private val vibrationAmplitude = intArrayOf(
         VibrationEffect.DEFAULT_AMPLITUDE,
         0,
         VibrationEffect.DEFAULT_AMPLITUDE,
         0
     )
+
+    //nfc어댑터
+    private lateinit var nfcAdapter: NfcAdapter
 
     override fun onResume() {
         super.onResume()
@@ -67,6 +72,7 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
         stopVibration()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -80,50 +86,40 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner) {
             stopVibration()
             applyCardRotationExitAnimation()
-            handler.removeCallbacksAndMessages(null)
         }
     }
 
+    private fun startTimer() {
+        CoroutineScope(Dispatchers.Main).launch {
+            while (timeRemaining >= 0) {
+                binding.tvTimer.text = timeRemaining.toString()  // 남은 시간 업데이트
+                delay(1000)  // 1초 대기
+                timeRemaining--
+            }
+            stopVibration()
+            applyCardRotationExitAnimation()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun startContinuousVibration() {
         isVibrating = true
-        val vibrationRunnable = object : Runnable {
-            @SuppressLint("NewApi")
-            override fun run() {
-                if (isVibrating) {
-                    val vibrationEffect = VibrationEffect.createWaveform(
-                        vibrationPattern,
-                        vibrationAmplitude,
-                        -1  // Repeat indefinitely
-                    )
-                    vibrator.vibrate(vibrationEffect)
-                    handler.postDelayed(this, 800) // Schedule the next vibration cycle
-                }
+        CoroutineScope(Dispatchers.Main).launch {
+            while (isVibrating) {
+                val vibrationEffect = VibrationEffect.createWaveform(
+                    vibrationPattern,
+                    vibrationAmplitude,
+                    -1  // Repeat indefinitely
+                )
+                vibrator.vibrate(vibrationEffect)
+                delay(800)  // 800ms 후 반복
             }
         }
-        handler.post(vibrationRunnable)  // Start vibration immediately
     }
 
     private fun stopVibration() {
         isVibrating = false
         vibrator.cancel()
-        handler.removeCallbacksAndMessages(null)
-    }
-
-    private fun startTimer() {
-        val timerRunnable = object : Runnable {
-            override fun run() {
-                if (timeRemaining >= 0) {
-                    binding.tvTimer.text = timeRemaining.toString()  // 남은 시간 업데이트
-                    timeRemaining--
-
-                    handler.postDelayed(this, 1000)  // 1초 후 다시 실행
-                } else {
-                    stopVibration()
-                    applyCardRotationExitAnimation()
-                }
-            }
-        }
-        handler.postDelayed(timerRunnable, 1000)  // 1초 후 시작
     }
 
     private fun applyCardRotationAnimation() {

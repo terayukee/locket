@@ -17,12 +17,19 @@ class UserDataStoreSource @Inject constructor(
         val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
         val NICKNAME = stringPreferencesKey("nickname")
         val USER_ID = longPreferencesKey("user_id")
+        val FCM_TOKEN = stringPreferencesKey("fcm_token")
     }
 
     // 데이터 저장
     suspend fun saveAccessToken(accessToken: String) {
         dataStore.edit { preferences ->
             preferences[ACCESS_TOKEN] = accessToken
+        }
+    }
+
+    suspend fun saveFcmToken(fcmToken: String){
+        dataStore.edit{preferences ->
+            preferences[FCM_TOKEN] = fcmToken
         }
     }
 
@@ -60,6 +67,11 @@ class UserDataStoreSource @Inject constructor(
     val userId: Flow<Long?> = dataStore.data.map { preferences ->
         preferences[USER_ID]
     }
+
+    val fcmToken : Flow<String?> = dataStore.data.map{preferences->
+        preferences[FCM_TOKEN]
+    }
+
 
     // 모든 데이터 초기화
     suspend fun clearAll() {

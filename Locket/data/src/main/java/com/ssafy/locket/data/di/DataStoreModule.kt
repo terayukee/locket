@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStoreFile
+import com.google.firebase.messaging.FirebaseMessaging
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import dagger.Module
 import dagger.Provides
@@ -34,4 +35,8 @@ object DataStoreModule {
     ): UserDataStoreSource {
         return UserDataStoreSource(dataStore)
     }
+
+    @Singleton
+    @Provides
+    fun provideFirebaseMessaging(): FirebaseMessaging = FirebaseMessaging.getInstance()
 }
