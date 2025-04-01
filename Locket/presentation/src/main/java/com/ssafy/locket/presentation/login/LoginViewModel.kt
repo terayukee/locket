@@ -3,9 +3,7 @@ package com.ssafy.locket.presentation.login
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ssafy.locket.data.network.request.auth.UserLoginRequest
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.usecase.auth.LoginUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,16 +19,18 @@ class LoginViewModel @Inject constructor(
     private val _loginState = MutableStateFlow<Boolean?>(null) // 🔥 null 기본값 추가
     val loginState = _loginState.asStateFlow()
 
-    fun performKakaoLogin(accessToken: String, fcmToken: String) {
+    fun performKakaoLogin(accessToken: String) {
         viewModelScope.launch {
             try {
-                loginUseCase(accessToken, fcmToken).collect { response ->
+                loginUseCase(accessToken).collect { response ->
                     when (response) {
                         is ResponseStatus.Success -> {
                             Log.d("LoginViewModel", "✅ 로그인 성공 → 홈 화면 이동")
                             _loginState.value = true // ✅ 최신 값 유지
                         }
                         is ResponseStatus.Error -> {
+                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.status}")
+                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.message}")
                             Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.code}")
                             if (response.error.code == "401") {
                                 Log.d("LoginViewModel", "회원가입이 필요함 → 회원가입 화면 이동")

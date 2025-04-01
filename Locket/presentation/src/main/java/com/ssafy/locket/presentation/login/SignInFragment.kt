@@ -62,19 +62,17 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                 if (error != null) {
                     Log.e(TAG, "카카오톡으로 로그인 실패", error)
                     if (error is ClientError && error.reason == ClientErrorCause.Cancelled) {
-                        isClick = false // 클릭 가능 상태로 변경
+                        isClick = false
                         return@loginWithKakaoTalk
                     }
                     Log.e(TAG, "에러 타입: ${error::class.java.simpleName}")
                     showToast("카카오톡 로그인에 실패했습니다. 다시 시도해주세요.")
-                    isClick = false // 클릭 가능 상태로 변경
+                    isClick = false
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공: ${token.accessToken}")
                     lifecycleScope.launch {
-                        val fcmToken = userDataStoreSource.fcmToken.first() // Flow에서 값 가져오기
-                        Log.d(TAG,"로그인 관련"+token.accessToken)
-                        Log.d(TAG,"fcm 관련"+fcmToken)
-                        loginViewModel.performKakaoLogin(token.accessToken, fcmToken ?: "")
+                        Log.d(TAG,"로그인 관련 ${token.accessToken}")
+                        loginViewModel.performKakaoLogin(token.accessToken)
                     }
                 }
             }

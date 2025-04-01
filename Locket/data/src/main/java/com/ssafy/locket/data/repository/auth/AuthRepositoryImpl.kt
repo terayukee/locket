@@ -29,17 +29,17 @@ internal class AuthRepositoryImpl @Inject constructor(
         fingerprintRegistered: Boolean,
         nickname: String,
         paymentPassword: Int,
-        userJob: String
+        userJob: String,
+        kakaoAccessToken: String
     ): Flow<ResponseStatus<JwtToken>> {
         return flow {
             ApiResponseHandler().handle {
                 val fcmToken = dataStore.fcmToken.first() ?: ""
-                val kakaoId = dataStore.userId.first() ?: -1 // TODO 추후에 kakaoId로 변경
                 authService.signUp(UserJoinRequest(
                     birthYear = birthYear,
                     fcmToken = fcmToken,
                     fingerprintRegistered = fingerprintRegistered,
-                    kakaoId = kakaoId.toInt(),
+                    kakaoAccessToken = kakaoAccessToken,
                     nickname = nickname,
                     paymentPassword = paymentPassword,
                     userJob = userJob
@@ -57,11 +57,12 @@ internal class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun login(accessToken: String, fcmToken: String): Flow<ResponseStatus<JwtToken>> {
+    override suspend fun login(accessToken: String): Flow<ResponseStatus<JwtToken>> {
         return flow {
             ApiResponseHandler().handle {
+                val fcmToken = dataStore.fcmToken.first() ?: ""
                 authService.login(UserLoginRequest(
-                    accessToken = accessToken, // TODO 체크사항: 이건 카카오 accessToken인가?
+                    accessToken = accessToken,
                     fcmToken = fcmToken
                 ))
             }.onEach { result ->

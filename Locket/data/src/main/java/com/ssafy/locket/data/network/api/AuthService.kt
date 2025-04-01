@@ -14,3 +14,8 @@ interface AuthService {
     @POST("users/login")
     suspend fun login(@Body userLoginRequest: UserLoginRequest) : Response<JwtTokenResponse>
 }
+
+// https://j12d204.p.ssafy.io/api/users/api/users/login
+// https://j12d204.p.ssafy.io/api/users/api/users/login
+// accessToken accessToken
+// fcmToken fcmToken

@@ -17,6 +17,7 @@ import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentRegisterUserInfoBinding
 import com.ssafy.locket.presentation.databinding.PopupJobMenuBinding
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
     FragmentRegisterUserInfoBinding::bind,
@@ -68,7 +69,8 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
                 if(binding.etBirth.text.toString().toInt()<=1930||binding.etBirth.text.toString().toInt()>=2026){
                     isBirthValid = false
                     binding.etBirth.text.clear()
-                    Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 밑으로 입력해주세요",Toast.LENGTH_LONG).show()
+                    CommonUtils.showMultiLineCustomToast(requireContext(), "유효하지 않은 입력입니다", "연도를 1930년도 이후나 2025년도 밑으로 입력해주세요")
+//                    Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 밑으로 입력해주세요",Toast.LENGTH_LONG).show()
                 }
                 else{
                     findNavController().navigate(R.id.action_registerUserInfoFragment_to_registerPasswordFragment)

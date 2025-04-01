@@ -16,14 +16,16 @@ class SignUpUseCase @Inject constructor(
         fingerprintRegisterd: Boolean,
         nickname: String,
         paymentPassword: Int,
-        userJob: String
+        userJob: String,
+        kakaoAccessToken: String
     ): Flow<ResponseStatus<JwtToken>> {
         return authRepository.join(
             birthYear,
             fingerprintRegisterd,
             nickname,
             paymentPassword,
-            userJob
+            userJob,
+            kakaoAccessToken
         )
     }
 }

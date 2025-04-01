@@ -11,7 +11,7 @@ import javax.inject.Inject
 class LoginUseCase @Inject constructor(
     private val authRepository: AuthRepository
 ) {
-    suspend operator fun invoke(accessToken: String, fcmToken: String): Flow<ResponseStatus<JwtToken>> {
-        return authRepository.login(accessToken, fcmToken)
+    suspend operator fun invoke(accessToken: String): Flow<ResponseStatus<JwtToken>> {
+        return authRepository.login(accessToken)
     }
 }
