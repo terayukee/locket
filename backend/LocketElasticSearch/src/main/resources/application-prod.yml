@@ -55,6 +55,7 @@ springdoc:
     enabled: true
     path: /elasticsearch-docs
   swagger-ui:
-    path: /elasticsearch-docs/swagger-ui.html
+#    path: /elasticsearch-docs/swagger-ui.html
+    path: /swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json

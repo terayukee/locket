@@ -23,14 +23,14 @@ spring:
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
-            - Path=/api/payment
+            - Path=/api/payment/**
           filters:
             - StripPrefix=1
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users
+            - Path=/api/users/**
           filters:
             - StripPrefix=1
           order: 100
@@ -38,32 +38,58 @@ spring:
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
-            - Path=/api/elasticsearch
+            - Path=/api/elasticsearch/**
           filters:
             - StripPrefix=1
 
         # 서비스별 Swagger 문서 라우팅
+#        - id: payment-service-docs
+#          uri: lb://PAYMENT-SERVICE
+#          predicates:
+#            - Path=/api/payment/v3/api-docs
+#          filters:
+#            - SetPath=/payment-docs
+#
+#        - id: user-service-docs
+#          uri: lb://USER-SERVICE
+#          predicates:
+#            - Path=/api/users/v3/api-docs
+#          filters:
+#            - SetPath=/users-docs
+#          order: 1
+#
+#        - id: elasticsearch-service-docs
+#          uri: lb://ELASTICSEARCH-SERVICE
+#          predicates:
+#            - Path=/api/elasticsearch/v3/api-docs
+#          filters:
+#            - SetPath=/elasticsearch-docs
+
         - id: payment-service-docs
-          uri: lb://PAYMENT-SERVICE
+          uri: http://j12d204.p.ssafy.io:8081
           predicates:
-            - Path=/api/payment/v3/api-docs
+            - Path=/docs/payment/**
           filters:
-            - SetPath=/payment-docs
+            - RewritePath=/docs/payment/(?<segment>.*), /payment-docs/$1
 
         - id: user-service-docs
-          uri: lb://USER-SERVICE
+          uri: http://j12d204.p.ssafy.io:8082
           predicates:
-            - Path=/api/users/v3/api-docs
+            - Path=/docs/users/**
           filters:
-            - SetPath=/users-docs
-          order: 1
+            - RewritePath=/docs/users/(?<segment>.*), /users-docs/$1
 
         - id: elasticsearch-service-docs
-          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://j12d204.p.ssafy.io:8083
           predicates:
-            - Path=/api/elasticsearch/v3/api-docs
+            - Path=/docs/elasticsearch/**
           filters:
-            - SetPath=/elasticsearch-docs
+            - RewritePath=/docs/elasticsearch/(?<segment>.*), /elasticsearch-docs/$1
+
+        - id: swagger-ui
+          uri: http://localhost:${server.port}
+          predicates:
+            - Path=/swagger-ui.html,/swagger-ui/**
 
 eureka:
   instance:
@@ -84,12 +110,18 @@ springdoc:
     path: /swagger-ui.html
     disable-swagger-default-url: true
     urls:
+#      - name: "Locket Payment Service"
+#        url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
+#      - name: "Locket User Service"
+#        url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
+#      - name: "Locket ElasticSearch Service"
+#        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
       - name: "Locket Payment Service"
-        url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
+        url: /docs/payment
       - name: "Locket User Service"
-        url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
+        url: /docs/users
       - name: "Locket ElasticSearch Service"
-        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
+        url: /docs/elasticsearch
 
 management:
   endpoints:
