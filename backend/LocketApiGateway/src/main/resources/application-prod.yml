@@ -63,7 +63,8 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
           filters:
-            - SetPath=/elasticsearch-docs
+#            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/?.*), /v3/api-docs${segment}
 
 eureka:
   instance:
