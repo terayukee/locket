@@ -197,11 +197,75 @@ public class ProductController {
     // 상품 찜하기
     @Operation(summary = "상품 찜하기/찜 해제", description = "상품을 찜 목록에 추가하거나 제거합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            @ApiResponse(responseCode = "200", description = "SUCCESS"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "BAD_REQUEST",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "error": "Bad Request",
+                                              "message": "유효하지 않은 요청입니다.",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "error": "Unauthorized",
+                                              "message": "인증되지 않은 요청",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT_FOUND",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "error": "Not Found",
+                                              "message": "요청한 데이터 없음",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 500,
+                                              "error": "Internal Server Error",
+                                              "message": "서버 오류가 발생했습니다.",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            )
     })
     @PostMapping("/{productId}/like")
     public ResponseEntity<ProductLikeResponseDTO> toggleProductLike(
@@ -219,11 +283,75 @@ public class ProductController {
     // 상품 가격 알림
     @Operation(summary = "상품 가격 알림 설정/해제", description = "상품의 가격 알림을 설정하거나 해제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "요청 성공"),
-            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음"),
-            @ApiResponse(responseCode = "500", description = "서버 내부 오류")
+            @ApiResponse(responseCode = "200", description = "SUCCESS"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "BAD_REQUEST",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 400,
+                                              "error": "Bad Request",
+                                              "message": "유효하지 않은 요청입니다.",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "UNAUTHORIZED",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 401,
+                                              "error": "Unauthorized",
+                                              "message": "인증되지 않은 요청",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "NOT_FOUND",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "error": "Not Found",
+                                              "message": "요청한 데이터 없음",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "INTERNAL_SERVER_ERROR",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 500,
+                                              "error": "Internal Server Error",
+                                              "message": "서버 오류가 발생했습니다.",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            )
     })
     @PostMapping("/{productId}/alert")
     public ResponseEntity<ProductAlertResponseDTO> setProductPriceAlert(
