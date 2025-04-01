@@ -25,7 +25,6 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.concurrent.TimeUnit;
 
 @RestController
-@RequestMapping("/api/users")
 @RequiredArgsConstructor
 @Slf4j
 @Tag(name = "\uD83D\uDE4BUser", description = "회원가입, 로그인, 정보 조회/수정/삭제 API")
