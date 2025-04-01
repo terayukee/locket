@@ -199,7 +199,6 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             showToast("이 기기는 NFC를 지원하지 않습니다.")
             return
         }
-
         if (!nfcAdapter.isEnabled) {
             AlertDialog.Builder(requireContext())
                 .setTitle("NFC가 꺼져 있음")
