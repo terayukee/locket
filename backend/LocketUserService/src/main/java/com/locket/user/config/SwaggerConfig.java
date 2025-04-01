@@ -98,7 +98,7 @@ public class SwaggerConfig {
                 .addSecurityItem(securityRequirement)
                 .servers(List.of(
                         new io.swagger.v3.oas.models.servers.Server()
-                                .url("https://j12d204.p.ssafy.io/api/users")
+                                .url(serverUrl)
                 ))
                 .info(new Info()
                         .title("Locket User API")

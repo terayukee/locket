@@ -39,7 +39,7 @@ management:
 springdoc:
   api-docs:
     enabled: true
-    path: /api/elasticsearch/v3/api-docs
+    path: /v3/api-docs
   swagger-ui:
     enabled: true
     path: /elasticsearch-docs

@@ -23,16 +23,22 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
+          filters:
+            - RewritePath=/api/payment/(?<segment>.*), /${segment}
 
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/**
+          filters:
+            - RewritePath=/api/elasticsearch/(?<segment>.*), /${segment}
 
         # 서비스별 API 문서 경로
         - id: payment-service-docs
@@ -47,7 +53,7 @@ spring:
           predicates:
             - Path=/api/users/v3/api-docs
           filters:
-            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
+            - RewritePath=/api/users/v3/api-docs, /users-docs
 
 
         - id: elasticsearch-service-docs
@@ -85,10 +91,3 @@ springdoc:
   swagger-ui:
     enabled: true
     path: /swagger-ui.html
-    urls:
-      - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
-      - name: "Locket User Service"
-        url: /api/users/v3/api-docs
-      - name: "Locket ElasticSearch Service"
-        url: /api/elasticsearch/v3/api-docs
