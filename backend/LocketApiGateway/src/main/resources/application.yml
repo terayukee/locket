@@ -6,16 +6,13 @@ spring:
 
   cloud:
     gateway:
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Origin
       globalcors:
+        add-to-simple-url-handler-mapping: true
         corsConfigurations:
           '[/**]':
-            allowedOriginPatterns: "*"
+            allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
-            allowCredentials: true
-            exposedHeaders: "Authorization, Content-Disposition"
       routes:
         # 서비스 라우팅
         - id: payment-service
@@ -27,7 +24,6 @@ spring:
           uri: lb://USER-SERVICE
           predicates:
             - Path=/api/users/**
-          order: 100
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
@@ -39,24 +35,17 @@ spring:
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/v3/api-docs
-          filters:
-            - RewritePath=/api/payment/v3/api-docs, /payment-docs
 
         - id: user-service-docs
           uri: lb://USER-SERVICE
           predicates:
-            - Path=/api/users/v3/api-docs/**
-          filters:
-            - RewritePath=/api/users/v3/api-docs(?<segment>/?.*), /users-docs${segment}
-          order: 1
+            - Path=/api/users/v3/api-docs
 
         - id: elasticsearch-service-docs
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs
-          filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs, /elasticsearch-docs
-#            - RewritePath=/api/elasticsearch/v3/api-docs(?<segment>/?.*), /v3/api-docs${segment}
+
 
 management:
   endpoints:
@@ -88,9 +77,8 @@ springdoc:
     path: /swagger-ui.html
     urls:
       - name: "Locket Payment Service"
-        url: /api/payment/v3/api-docs
+        url: http://localhost:8080/api/payment/v3/api-docs
       - name: "Locket User Service"
-        url: /api/users/v3/api-docs
+        url: http://localhost:8080/api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
-        url: /api/elasticsearch/v3/api-docs
-    disable-swagger-default-url: true
+        url: http://localhost:8080/api/elasticsearch/v3/api-docs
