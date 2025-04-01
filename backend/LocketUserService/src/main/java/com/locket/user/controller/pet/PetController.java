@@ -367,4 +367,66 @@ public class PetController {
         FoodResponseDto response = characterService.addFood(userId);
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "테스트용: 캐릭터 삭제", description = "개발 테스트용으로 사용자의 캐릭터를 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "캐릭터 삭제 성공"),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "캐릭터를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 404,
+                                          "error": "Not Found",
+                                          "message": "캐릭터를 찾을 수 없습니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 401,
+                                          "error": "Unauthorized",
+                                          "message": "인증되지 않은 사용자입니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 내부 오류",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 500,
+                                          "error": "Internal Server Error",
+                                          "message": "서버 내부 오류가 발생했습니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            )
+    })
+    @DeleteMapping("/{userId}")
+    public ResponseEntity<CharacterDeleteResponseDto> deleteCharacter(@PathVariable("userId") Long userId) {
+        CharacterDeleteResponseDto response = characterService.deleteCharacter(userId);
+        return ResponseEntity.ok(response);
+    }
+
 }
