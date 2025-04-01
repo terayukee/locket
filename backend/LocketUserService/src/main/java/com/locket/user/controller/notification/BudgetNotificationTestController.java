@@ -29,7 +29,7 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/notification/test")
+@RequestMapping("/notification/test")
 @Tag(name = "🔔 FCM 알림 테스트", description = "FCM 예산 초과 알림 테스트용 API")
 public class BudgetNotificationTestController {
 
