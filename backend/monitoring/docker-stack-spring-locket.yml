@@ -3,6 +3,7 @@ version: '3.8'
 services:
   discovery:
     image: maru1203/spring-locket-discovery:latest
+    hostname: "spring-locket-discovery"
     ports:
       - "8761:8761"
     networks:
@@ -10,6 +11,7 @@ services:
 
   user-service:
     image: maru1203/spring-locket-user-service:latest
+    hostname: "spring-locket-user-service"
 #    environment:
 #      - DB_URL_USER=${DB_URL_USER}
 #      - DB_USERNAME=${DB_USERNAME}
@@ -23,6 +25,7 @@ services:
 
   payment-service:
     image: maru1203/spring-locket-payment-service:latest
+    hostname: "spring-locket-payment-service"
 #    environment:
 #      - DB_URL_PAYMENT=${DB_URL_PAYMENT}
 #      - DB_USERNAME=${DB_USERNAME}
@@ -34,6 +37,7 @@ services:
 
   api-gateway:
     image: maru1203/spring-locket-api-gateway:latest
+    hostname: "spring-locket-api-gateway"
     ports:
       - "8080:8080"
     networks:
@@ -41,6 +45,7 @@ services:
 
   elasticsearch:
     image: maru1203/spring-locket-elasticsearch:latest
+    hostname: "spring-locket-elasticsearch"
 #    environment:
 #      - ELASTICSEARCH_URIS=${ELASTICSEARCH_URIS}
 #      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
