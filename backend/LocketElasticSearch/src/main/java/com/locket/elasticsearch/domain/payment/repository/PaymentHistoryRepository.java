@@ -1,11 +1,16 @@
 package com.locket.elasticsearch.domain.payment.repository;
 
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
+import org.springframework.data.elasticsearch.annotations.Query;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Repository
 public interface PaymentHistoryRepository extends ElasticsearchRepository<PaymentHistory, String> {
@@ -29,11 +34,4 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
     // 사용자의 전체 결제 내역 조회
     List<PaymentHistory> findByBuyerId(long buyerId);
 
-    // ✅ 연령대 사용자들의 해당 월 결제 내역 조회
-    List<PaymentHistory> findByBirthDateBetweenAndYearAndMonth(
-            int birthDateStart,
-            int birthDateEnd,
-            int year,
-            int month
-    );
 }

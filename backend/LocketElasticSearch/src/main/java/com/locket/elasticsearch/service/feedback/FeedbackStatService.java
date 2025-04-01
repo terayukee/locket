@@ -1,10 +1,15 @@
 package com.locket.elasticsearch.service.feedback;
 
+import co.elastic.clients.elasticsearch._types.query_dsl.Query;
+import co.elastic.clients.json.JsonData;
 import com.locket.elastic.dto.*;
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
 import com.locket.elasticsearch.domain.payment.repository.PaymentHistoryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.SearchHit;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -17,6 +22,7 @@ import java.util.stream.Collectors;
 public class FeedbackStatService {
 
     private final PaymentHistoryRepository paymentHistoryRepository;
+    private final ElasticsearchOperations elasticsearchOperations;
 
     public List<FeedbackCategoryStatDto> getCategoryStats(long userId, int year, int month) {
         List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
@@ -80,8 +86,9 @@ public class FeedbackStatService {
     }
 
     public FeedbackAgeGroupComparisonDto compareWithAgeGroup(long userId, int birthYear, int year, int month) {
-        int ageStart = (birthYear / 10) * 10;
-        int ageEnd = ageStart + 9;
+        // 위 아래 3살 차이까지
+        int ageStart = birthYear - 3;
+        int ageEnd = birthYear + 3;
 
         List<PaymentHistory> userPayments = paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
         Map<String, Integer> userCategorySpend = userPayments.stream()
@@ -89,13 +96,34 @@ public class FeedbackStatService {
                 .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
                         Collectors.summingInt(p -> p.getTotalAmount().intValue())));
 
-        List<PaymentHistory> groupPayments = paymentHistoryRepository.findByBirthDateBetweenAndYearAndMonth(ageStart, ageEnd, year, month);
+        List<PaymentHistory> groupPayments = findByAgeGroupAndMonth(ageStart, ageEnd, year, month);
         Map<String, Double> groupAverageSpend = groupPayments.stream()
                 .filter(p -> p.getPaymentCategory() != null)
                 .collect(Collectors.groupingBy(PaymentHistory::getPaymentCategory,
                         Collectors.averagingInt(p -> p.getTotalAmount().intValue())));
 
         return new FeedbackAgeGroupComparisonDto(userCategorySpend, groupAverageSpend);
+    }
+
+    // ✅ 연령대 사용자들의 해당 월 결제 내역 조회
+    public List<PaymentHistory> findByAgeGroupAndMonth(int birthStart, int birthEnd, int year, int month) {
+        NativeQuery query = NativeQuery.builder()
+                .withQuery(Query.of(q -> q
+                        .bool(b -> b
+                                .must(
+                                        Query.of(q1 -> q1.range(r -> r.field("birthDate").gte(JsonData.of(birthStart)).lte(JsonData.of(birthEnd)))),
+                                        Query.of(q2 -> q2.term(t -> t.field("year").value(year))),
+                                        Query.of(q3 -> q3.term(t -> t.field("month").value(month)))
+                                )
+                        )
+                ))
+                .build();
+
+        return elasticsearchOperations
+                .search(query, PaymentHistory.class)
+                .stream()
+                .map(SearchHit::getContent)
+                .collect(Collectors.toList());
     }
 
     public FeedbackMonthlyChangeDto getMonthlyChange(long userId, int year, int month) {
