@@ -1,6 +1,7 @@
 package com.locket.elasticsearch.domain.payment.repository;
 
 import com.locket.elasticsearch.domain.payment.entity.PaymentHistory;
+import org.springframework.data.elasticsearch.annotations.Query;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
@@ -15,7 +16,7 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
     List<PaymentHistory> findByBuyerIdAndYearAndMonthAndDay(long buyerId, int year, int month, int day);
 
     // 기본적으로 자동으로 파싱해서 날짜 range 쿼리 수행해줌
-    List<PaymentHistory> findByBuyerIdAndCreatedAtBetween(int buyerId, Instant from, Instant to);
+    List<PaymentHistory> findByBuyerIdAndCreatedAtBetween(long buyerId, Instant from, Instant to);
 
 
     // 영수증 등록 가능한 전체 결제 내역 조회
@@ -28,5 +29,13 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
 
     // 사용자의 전체 결제 내역 조회
     List<PaymentHistory> findByBuyerId(long buyerId);
+
+
+    @Query("{\"bool\": {\"must\": [" +
+            "{\"term\": {\"buyerId\": ?0}}," +
+            "{\"term\": {\"year\": ?1}}," +
+            "{\"term\": {\"month\": ?2}}" +
+            "]}}")
+    List<PaymentHistory> findByBuyerIdAndYearAndMonthCustomQuery(long buyerId, int year, int month);
 
 }
