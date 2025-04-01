@@ -45,7 +45,6 @@ public class CharacterService {
 
         ToyInfoDto toyInfo = ToyInfoDto.builder()
                 .isAvailable(toyAvailable)
-                .nextAvailableTime(nextAvailableTime)
                 .remainingTimeMinutes(remainingMinutes)
                 .build();
 

@@ -1,2 +1,12 @@
-package com.locket.user.domain.product.repository;public class PriceHistoryRepository {
+package com.locket.user.domain.product.repository;
+
+import com.locket.user.domain.product.entity.PriceHistory;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
+
+@Repository
+public interface PriceHistoryRepository extends JpaRepository<PriceHistory, Long> {
+    List<PriceHistory> findByProductIdOrderByPriceDateAsc(Integer productId);
 }

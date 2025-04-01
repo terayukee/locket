@@ -62,8 +62,20 @@ springdoc:
     path: /users-docs
   swagger-ui:
     path: /users-docs/swagger-ui.html
+    display-request-duration: true
+    filter: true
+    use-root-path: true
+  model-converters:
+    pageable-converter:
+      enabled: true
+  models:
+    schema-format: JSON_SCHEMA
+    show-actuator: false
+    override-with-generic-response: false
+    use-fqn: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
 
 jwt:
   secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}
