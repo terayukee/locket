@@ -34,3 +34,6 @@ class ErrorMessage(Enum):
     OCR_PROCESSING_ERROR = "OCR 처리 중 오류가 발생했습니다."
     OCR_PARSING_ERROR = "영수증 데이터 파싱 중 오류가 발생했습니다."
     CLASSIFICATION_ERROR = "품목 분류 중 오류가 발생했습니다."
+
+    # 소비 패턴 분석 관련 메시지
+    FEEDBACK_ANALYZE_ERROR = "소비 패턴 분석 중 오류가 발생했습니다."
