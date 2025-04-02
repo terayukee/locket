@@ -6,16 +6,11 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets:
-#          - 'spring-locket_discovery:8761'             # LocketDiscovery
-#          - 'spring-locket_user-service:8082'          # LocketUserService
-#          - 'spring-locket_payment-service:8081'       # LocketPaymentService
-#          - 'spring-locket_api-gateway:8080'           # LocketApiGateway
-#          - 'spring-locket_elasticsearch:8083'         # LocketElasticService
-          - 'spring-locket-discovery:8761'             # LocketDiscovery
-          - 'spring-locket-user-service:8082'          # LocketUserService
-          - 'spring-locket-payment-service:8081'       # LocketPaymentService
-          - 'spring-locket-api-gateway:8080'           # LocketApiGateway
-          - 'spring-locket-elasticsearch:8083'         # LocketElasticService
+          - 'spring-locket_discovery:8761'             # LocketDiscovery
+          - 'spring-locket_user-service:8082'          # LocketUserService
+          - 'spring-locket_payment-service:8081'       # LocketPaymentService
+          - 'spring-locket_api-gateway:8080'           # LocketApiGateway
+          - 'spring-locket_elasticsearch:8083'         # LocketElasticService=
     relabel_configs:
       - source_labels: [ __address__ ]
         target_label: __host__  # Host 헤더로 사용
@@ -26,8 +21,7 @@ scrape_configs:
 
   - job_name: 'cadvisor'
     static_configs:
-#      - targets: ['monitoring_cadvisor:8080']
-      - targets: ['monitoring-cadvisor:8080']
+      - targets: ['monitoring_cadvisor:8080']
 
   - job_name: 'node-exporter'
     static_configs:
