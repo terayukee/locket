@@ -45,7 +45,7 @@ services:
 
   elasticsearch:
     image: maru1203/spring-locket-elasticsearch:latest
-    hostname: "spring-locket-elasticsearch"
+#    hostname: "spring-locket-elasticsearch"
 #    environment:
 #      - ELASTICSEARCH_URIS=${ELASTICSEARCH_URIS}
 #      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
