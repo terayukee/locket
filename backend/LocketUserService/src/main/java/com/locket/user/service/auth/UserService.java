@@ -87,10 +87,10 @@ public class UserService {
         // 사용자 생성
         User newUser = User.builder()
                 .kakaoId(kakaoId)
-                .nickname(request.getNickname())
+                .nickname(kakaoUserInfo.getNickname())
                 .birthYear(request.getBirthYear())
-                .userJob(userJob)  // 검증된 UserJob 사용
-                .paymentPassword(request.getPaymentPassword())  // 암호화 필요
+                .userJob(userJob)
+                .paymentPassword(request.getPaymentPassword())
                 .fingerprintRegistered(request.getFingerprintRegistered())
                 .fcmToken(request.getFcmToken())
                 .createdAt(LocalDateTime.now())
@@ -106,10 +106,6 @@ public class UserService {
     private void validateRequiredFields(SignupRequest request) {
         if (request.getAccessToken() == null || request.getAccessToken().isEmpty()) {
             throw new IllegalArgumentException("카카오 액세스 토큰은 필수 입력값입니다.");
-        }
-
-        if (request.getNickname() == null || request.getNickname().isEmpty()) {
-            throw new IllegalArgumentException("닉네임은 필수 입력값입니다.");
         }
     }
 
@@ -128,18 +124,6 @@ public class UserService {
                 throw new IllegalArgumentException("결제 비밀번호는 4자리 숫자여야 합니다.");
             }
         }
-    }
-
-    // 신규 사용자 응답 생성
-    public NewUserResponse createNewUserResponse(KakaoUserInfoDto kakaoUserInfo, String accessToken) {
-        log.info("신규 회원 응답 생성: kakaoId={}", kakaoUserInfo.getId());
-
-        return NewUserResponse.builder()
-                .message("회원가입이 필요합니다")
-                .nickname(kakaoUserInfo.getNickname())
-                .accessToken(accessToken)
-                .isNewUser(true)
-                .build();
     }
 
     // 로그인, JWT 토큰 발급

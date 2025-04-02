@@ -22,6 +22,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
 
 @RestController
@@ -93,9 +94,13 @@ public class UserController {
         // 회원이 아닌 경우 회원가입 필요
         if (user == null) {
             // 401 Unauthorized
-            NewUserResponse newUserResponse = userService.createNewUserResponse(
-                    kakaoUserInfo, request.getAccessToken());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(newUserResponse);
+            ErrorResponse errorResponse = ErrorResponse.builder()
+                    .status(HttpStatus.UNAUTHORIZED.value())
+                    .error("Unauthorized")
+                    .message("회원가입이 필요합니다.")
+                    .timestamp(LocalDateTime.now())
+                    .build();
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse);
         }
 
         // 로그인 처리 및 JWT 발급

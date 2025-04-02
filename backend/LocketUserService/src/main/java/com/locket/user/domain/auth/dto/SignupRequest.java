@@ -20,9 +20,6 @@ public class SignupRequest {
     @Schema(example = "kakao_access_token_value", description = "카카오 액세스 토큰")
     private String accessToken;
 
-    @Schema(example = "홍길동", description = "사용자 닉네임")
-    private String nickname;
-
     @Schema(example = "1990", description = "사용자 입력 출생년도")
     private Integer birthYear;
 
