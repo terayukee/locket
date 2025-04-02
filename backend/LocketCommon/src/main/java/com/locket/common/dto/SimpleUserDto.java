@@ -1,0 +1,17 @@
+package com.locket.common.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
+public class SimpleUserDto {
+    private Long userId;
+    private String nickname;
+    private int birthYear;
+    private String userJob;
+}

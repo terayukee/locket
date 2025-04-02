@@ -10,35 +10,35 @@ import java.util.List;
 @FeignClient(name = "elasticsearch-service", contextId = "feedbackStatClient")
 public interface FeedbackStatFeignClient {
 
-    @GetMapping("/api/elasticsearch/feedback/category-stat")
+    @GetMapping("/feedback/category-stat")
     List<FeedbackCategoryStatDto> getCategoryStats(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/day-of-week")
+    @GetMapping("/feedback/day-of-week")
     FeedbackDayOfWeekDto getDayOfWeekStats(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/card-stat")
+    @GetMapping("/feedback/card-stat")
     List<FeedbackCardStatDto> getCardStats(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/top-store")
+    @GetMapping("/feedback/top-store")
     TopStoreStatDto getTopSpendingStore(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/category-compare-age")
+    @GetMapping("/feedback/category-compare-age")
     FeedbackAgeGroupComparisonDto getAgeComparison(
             @RequestParam("userId") long userId,
             @RequestParam("birthYear") int birthYear,
@@ -46,21 +46,21 @@ public interface FeedbackStatFeignClient {
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/compare-previous-month")
+    @GetMapping("/feedback/compare-previous-month")
     FeedbackMonthlyChangeDto getPreviousMonthComparison(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/hot-categories")
+    @GetMapping("/feedback/hot-categories")
     HotCategoriesDto getHotCategories(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
 
-    @GetMapping("/api/elasticsearch/feedback/spending-entropy")
+    @GetMapping("/feedback/spending-entropy")
     SpendingEntropyDto getSpendingEntropy(
             @RequestParam("userId") long userId,
             @RequestParam("year") int year,
