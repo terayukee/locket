@@ -13,22 +13,26 @@ import lombok.AllArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private String productName;
 
-    @Column(nullable = false)
     private String imageUrl;
 
-    @Column(nullable = false)
     private String currentPrice;
 
-    @Column(nullable = false)
     private String discountRate;
+
+    private String highestPrice;
+    private String discountAmount;
+    private String unitPrice;
+    private String shippingType;
+    private String reviewCount;
+    private String reviewRating;
+    private String coupangUrl;
+    private Integer averagePrice;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

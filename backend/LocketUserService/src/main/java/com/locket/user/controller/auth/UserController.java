@@ -49,7 +49,7 @@ public class UserController {
             ),
             @ApiResponse(
                     responseCode = "401",
-                    description = "회원가입 필요 (신규 사용자)",
+                    description = "회원가입 필요 (신규 사용자 or 탈퇴 회원)",
                     content = @Content(
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
@@ -60,7 +60,7 @@ public class UserController {
                                       "message": "회원가입이 필요합니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -77,7 +77,7 @@ public class UserController {
                                       "message": "요청한 리소스를 찾을 수 없습니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
@@ -88,12 +88,11 @@ public class UserController {
         // 카카오 액세스 토큰으로 사용자 정보 가져오기
         KakaoUserInfoDto kakaoUserInfo = kakaoService.getUserInfo(request.getAccessToken());
 
-        // 사용자 확인 (기존 회원인지 확인)
+        // 사용자 확인 (기존 회원인지, 탈퇴 회원인지 등)
         User user = userService.processKakaoLogin(kakaoUserInfo, request.getFcmToken());
 
-        // 회원이 아닌 경우 회원가입 필요
+        // 회원이 아닌 경우 (탈퇴회원 포함) => 회원가입 필요
         if (user == null) {
-            // 401 Unauthorized
             ErrorResponse errorResponse = ErrorResponse.builder()
                     .status(HttpStatus.UNAUTHORIZED.value())
                     .error("Unauthorized")
@@ -106,7 +105,7 @@ public class UserController {
         // 로그인 처리 및 JWT 발급
         LoginResponseDto loginResponse = userService.login(user);
 
-        // 플래그 추가 (기존 회원)
+        // isNewUser = false로 세팅 (기존 회원)
         loginResponse = LoginResponseDto.builder()
                 .userId(loginResponse.getUserId())
                 .accessToken(loginResponse.getAccessToken())
@@ -137,7 +136,7 @@ public class UserController {
                                       "message": "인증이 필요한 API입니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -154,7 +153,7 @@ public class UserController {
                                       "message": "요청한 리소스를 찾을 수 없습니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
@@ -164,7 +163,7 @@ public class UserController {
         // 회원가입 처리
         User newUser = userService.registerUser(request);
 
-        // 로그인 처리 및 JWT 발급
+        // 회원가입 후 자동 로그인
         LoginResponseDto loginResponse = userService.login(newUser);
 
         return ResponseEntity.ok(loginResponse);
@@ -190,7 +189,7 @@ public class UserController {
                                       "message": "인증이 필요한 API입니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -207,7 +206,7 @@ public class UserController {
                                       "message": "사용자를 찾을 수 없습니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
@@ -246,7 +245,7 @@ public class UserController {
                                       "message": "인증이 필요한 API입니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -263,7 +262,7 @@ public class UserController {
                                       "message": "해당 유저를 찾을 수 없습니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
@@ -305,7 +304,7 @@ public class UserController {
                                       "message": "인증이 필요한 API입니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -322,7 +321,7 @@ public class UserController {
                                       "message": "탈퇴 대상 사용자를 찾을 수 없습니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
@@ -361,7 +360,7 @@ public class UserController {
                                       "message": "인증이 필요한 API입니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -378,14 +377,13 @@ public class UserController {
                                       "message": "사용자를 찾을 수 없습니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
     })
     @PostMapping("/test/redis/{user_id}")
     public ResponseEntity<SuccessResponse> saveUserInfoToRedis(@PathVariable("user_id") Long userId) {
-
         User user = userService.findById(userId);
 
         redisTemplate.opsForValue().set("user:" + userId + ":paymentPassword",
@@ -430,7 +428,7 @@ public class UserController {
                                       "message": "리프레시 토큰이 유효하지 않습니다. 다시 로그인해주세요.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             ),
@@ -447,7 +445,7 @@ public class UserController {
                                       "message": "탈퇴한 사용자입니다.",
                                       "timestamp": "2025-04-01T12:34:56.789Z"
                                     }
-                                """
+                                    """
                             )
                     )
             )
@@ -463,15 +461,10 @@ public class UserController {
             String storedRefreshToken = redisTemplate.opsForValue().get("user:" + userId + ":refreshToken");
 
             if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
-                // 401
                 throw new UnauthorizedException("리프레시 토큰이 유효하지 않습니다. 다시 로그인해주세요.");
             }
 
             User user = userService.findById(userId);
-            if (user.getIsDeleted()) {
-                // 404
-                throw new ResourceNotFoundException("탈퇴한 사용자입니다.");
-            }
 
             // 새 액세스 토큰 발급
             String newAccessToken = jwtUtil.createAccessToken(userId, user.getNickname());
@@ -497,7 +490,6 @@ public class UserController {
         } catch (UnauthorizedException | ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
-            // 401 처리
             throw new UnauthorizedException("토큰 갱신 중 오류가 발생했습니다: " + e.getMessage());
         }
     }

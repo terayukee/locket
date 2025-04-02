@@ -1,10 +1,7 @@
 package com.locket.user.domain.auth.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -34,9 +31,11 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserJob userJob;
 
+    @Setter
     @Column(name = "payment_password")
     private Integer paymentPassword;
 
+    @Setter
     @Column(name = "fingerprint_registered", nullable = false)
     private Boolean fingerprintRegistered;
 
@@ -46,10 +45,10 @@ public class User {
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
+    @Setter
     @Column(name = "is_deleted", nullable = false)
     private Boolean isDeleted;
 
-    // FCM 토큰 업데이트
     public void updateFcmToken(String fcmToken) {
         this.fcmToken = fcmToken;
     }

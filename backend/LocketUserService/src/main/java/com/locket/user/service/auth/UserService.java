@@ -12,15 +12,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j  // 로깅 추가
+@Slf4j
 public class UserService {
 
     private final KakaoService kakaoService;
@@ -39,11 +39,8 @@ public class UserService {
     public User processKakaoLogin(KakaoUserInfoDto kakaoUserInfo, String fcmToken) {
         log.info("카카오 로그인 처리: kakaoId={}", kakaoUserInfo.getId());
 
-        User user = userRepository.findByKakaoId(kakaoUserInfo.getId()).orElse(null);
-
-        // 사용자가 존재하고 탈퇴하지 않았다면 FCM 토큰 업데이트 후 반환
-        if (user != null && !user.getIsDeleted()) {
-            // FCM 토큰 업데이트 (변경된 경우에만)
+        User user = userRepository.findByKakaoIdAndIsDeletedFalse(kakaoUserInfo.getId()).orElse(null);
+        if (user != null) {
             if (fcmToken != null && !fcmToken.isEmpty() && !fcmToken.equals(user.getFcmToken())) {
                 log.info("FCM 토큰 업데이트: userId={}", user.getUserId());
                 user.updateFcmToken(fcmToken);
@@ -52,41 +49,76 @@ public class UserService {
             return user;
         }
 
-        if (user != null && user.getIsDeleted()) {
+        // 탈퇴된 사용자 확인
+        User deletedUser = userRepository.findByKakaoId(kakaoUserInfo.getId())
+                .filter(u -> u.getIsDeleted())
+                .orElse(null);
+
+        if (deletedUser != null) {
             log.info("탈퇴한 사용자 로그인 시도: kakaoId={}", kakaoUserInfo.getId());
         } else {
             log.info("신규 사용자 로그인 시도: kakaoId={}", kakaoUserInfo.getId());
         }
 
-        // 탈퇴한 사용자거나 없는 사용자면 null 반환
         return null;
     }
 
-    // 회원가입
     @Transactional
     public User registerUser(SignupRequest request) {
-        log.info("회원가입 요청 처리 시작");
+        log.info("회원가입(또는 탈퇴계정 복구) 요청 처리 시작");
 
-        // 카카오 액세스 토큰으로 사용자 정보 가져오기
         KakaoUserInfoDto kakaoUserInfo = kakaoService.getUserInfo(request.getAccessToken());
         Long kakaoId = kakaoUserInfo.getId();
 
-        // 중복 가입 확인
-        userRepository.findByKakaoId(kakaoId).ifPresent(user -> {
-            log.warn("이미 가입된 사용자: kakaoId={}", kakaoId);
+        // 계정이 존재하면 오류
+        Optional<User> existingActiveUser = userRepository.findByKakaoIdAndIsDeletedFalse(kakaoId);
+        if (existingActiveUser.isPresent()) {
+            log.warn("이미 가입된 활성 사용자: kakaoId={}", kakaoId);
             throw new IllegalArgumentException("이미 가입된 사용자입니다.");
-        });
+        }
 
+        // 탈퇴된 사용자 복구
+        Optional<User> deletedUser = userRepository.findByKakaoId(kakaoId)
+                .filter(u -> u.getIsDeleted());
+        if (deletedUser.isPresent()) {
+            User user = deletedUser.get();
+            log.info("탈퇴한 사용자 재가입(복구): userId={}, kakaoId={}", user.getUserId(), kakaoId);
+
+            // 새 결제 비밀번호, 지문등록여부 입력
+            validateRequiredFields(request);
+            validateBirthYear(request.getBirthYear());
+            validatePaymentPassword(request.getPaymentPassword());
+            if (request.getFingerprintRegistered() == null) {
+                throw new IllegalArgumentException("지문 등록 여부는 필수 입력값입니다.");
+            }
+
+            UserJob userJob = UserJob.fromString(request.getUserJob());
+
+
+            user.update(kakaoUserInfo.getNickname(), request.getBirthYear(), userJob);
+            user.updateFcmToken(request.getFcmToken());
+
+            user.setPaymentPassword(request.getPaymentPassword());
+            user.setFingerprintRegistered(request.getFingerprintRegistered());
+
+            // 탈퇴 해제
+            user.setIsDeleted(false);
+
+            User savedUser = userRepository.save(user);
+            log.info("탈퇴 사용자 계정 복구 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
+            return savedUser;
+        }
+
+        // 완전히 새로운 가입
         validateRequiredFields(request);
         validateBirthYear(request.getBirthYear());
-        UserJob userJob = UserJob.fromString(request.getUserJob());
         validatePaymentPassword(request.getPaymentPassword());
-
         if (request.getFingerprintRegistered() == null) {
             throw new IllegalArgumentException("지문 등록 여부는 필수 입력값입니다.");
         }
 
-        // 사용자 생성
+        UserJob userJob = UserJob.fromString(request.getUserJob());
+
         User newUser = User.builder()
                 .kakaoId(kakaoId)
                 .nickname(kakaoUserInfo.getNickname())
@@ -101,7 +133,7 @@ public class UserService {
 
         try {
             User savedUser = userRepository.save(newUser);
-            log.info("회원가입 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
+            log.info("신규 회원가입 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
             return savedUser;
         } catch (DataIntegrityViolationException e) {
             log.error("사용자 저장 중 데이터 무결성 위반: {}", e.getMessage());
@@ -125,8 +157,6 @@ public class UserService {
         }
     }
 
-    // UserJob.fromString()으로 대체됨
-
     private void validatePaymentPassword(Integer paymentPassword) {
         if (paymentPassword != null) {
             if (paymentPassword < 100000 || paymentPassword > 999999) {
@@ -135,28 +165,24 @@ public class UserService {
         }
     }
 
-    // 로그인, JWT 토큰 발급
+    // 로그인 시 JWT 발급 후 Redis에 저장
     public LoginResponseDto login(User user) {
         log.info("로그인 처리: userId={}", user.getUserId());
 
-        // 1. JWT 토큰 생성
         String accessToken = jwtUtil.createAccessToken(user.getUserId(), user.getNickname());
         String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
 
         Long userId = user.getUserId();
         String userIdKey = REDIS_USER_PREFIX + userId;
 
-        // 2. Redis 저장
+
         redisTemplate.opsForValue().set(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX,
                 String.valueOf(user.getPaymentPassword()));
         redisTemplate.opsForValue().set(userIdKey + REDIS_FINGERPRINT_SUFFIX,
                 String.valueOf(user.getFingerprintRegistered()));
-
-        // Refresh Token 저장 (7일 TTL)
         redisTemplate.opsForValue().set(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX,
                 refreshToken, 7, TimeUnit.DAYS);
 
-        // 엘라스틱서치 결제 트랜잭션 저장 시 활용할 데이터
         redisTemplate.opsForValue().set(userIdKey + REDIS_BIRTH_YEAR_SUFFIX,
                 String.valueOf(user.getBirthYear()));
         redisTemplate.opsForValue().set(userIdKey + REDIS_USER_JOB_SUFFIX,
@@ -165,7 +191,7 @@ public class UserService {
         log.info("로그인 완료 및 토큰 발급: userId={}", userId);
 
         return LoginResponseDto.builder()
-                .userId(user.getUserId())
+                .userId(userId)
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .isNewUser(false)
@@ -175,31 +201,23 @@ public class UserService {
     public User findById(Long userId) {
         log.info("사용자 조회: userId={}", userId);
 
-        User user = userRepository.findById(userId)
+        return userRepository.findByUserIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> {
                     log.warn("사용자를 찾을 수 없음: userId={}", userId);
                     return new ResourceNotFoundException("사용자를 찾을 수 없습니다.");
                 });
-
-        return user;
     }
 
     @Transactional
     public User updateUser(Long userId, UserUpdateRequest request) {
         log.info("사용자 정보 업데이트 요청: userId={}", userId);
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> {
                     log.warn("업데이트할 사용자를 찾을 수 없음: userId={}", userId);
                     return new ResourceNotFoundException("사용자를 찾을 수 없습니다.");
                 });
 
-        if (user.getIsDeleted()) {
-            log.warn("탈퇴한 사용자 정보 업데이트 시도: userId={}", userId);
-            throw new ResourceNotFoundException("탈퇴한 사용자입니다.");
-        }
-
-        // 유효성 검사
         if (request.getBirthYear() != null) {
             validateBirthYear(request.getBirthYear());
         }
@@ -209,31 +227,32 @@ public class UserService {
             userJob = UserJob.fromString(request.getUserJob());
         }
 
-        // 사용자 정보 업데이트
         user.update(request.getNickname(), request.getBirthYear(), userJob);
+
+        // 회원 정보 수정 시 결제비밀번호/지문도 수정할지 고민
+
         User updatedUser = userRepository.save(user);
-
         log.info("사용자 정보 업데이트 완료: userId={}", userId);
-
         return updatedUser;
     }
 
-    // 회원 탈퇴
     @Transactional
     public void deleteUser(Long userId) {
         log.info("회원 탈퇴 요청: userId={}", userId);
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByUserIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> {
                     log.warn("탈퇴할 사용자를 찾을 수 없음: userId={}", userId);
                     return new ResourceNotFoundException("사용자를 찾을 수 없습니다.");
                 });
 
-        // soft delete
+        // 결제 비밀번호, 지문 등록 여부 초기화
+        user.setPaymentPassword(null);
+        user.setFingerprintRegistered(false);
+
         user.markAsDeleted();
         userRepository.save(user);
 
-        // Redis에서 사용자 데이터 정리
         String userIdKey = REDIS_USER_PREFIX + userId;
         redisTemplate.delete(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX);
         redisTemplate.delete(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX);
@@ -241,6 +260,6 @@ public class UserService {
         redisTemplate.delete(userIdKey + REDIS_BIRTH_YEAR_SUFFIX);
         redisTemplate.delete(userIdKey + REDIS_USER_JOB_SUFFIX);
 
-        log.info("회원 탈퇴 처리 완료: userId={}", userId);
+        log.info("회원 탈퇴 처리 완료 (논리적 삭제): userId={}", userId);
     }
 }

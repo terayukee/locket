@@ -7,6 +7,7 @@ import com.locket.user.exception.CategoryNotFoundException;
 import com.locket.user.exception.InvalidRequestException;
 import com.locket.user.exception.ProductNotFoundException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,11 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ProductService {
 
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
-    private final ProductDetailRepository productDetailRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final ProductUserPreferenceRepository productUserPreferenceRepository;
 
@@ -66,10 +67,6 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        // 상품 상세 정보 조회
-        ProductDetail productDetail = productDetailRepository.findByProductId(productId)
-                .orElseThrow(() -> new ProductNotFoundException(productId));
-
         // 사용자 상품 선호도 정보 조회 (찜, 알림 등)
         ProductUserPreference userPreference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
@@ -81,7 +78,6 @@ public class ProductService {
                 .map(ProductPriceHistoryDTO::fromEntity)
                 .collect(Collectors.toList());
 
-        // 응답 DTO 생성 및 반환
         return ProductDetailResponseDTO.builder()
                 .userId(userId)
                 .productId(product.getId())
@@ -89,17 +85,18 @@ public class ProductService {
                 .imageUrl(product.getImageUrl())
                 .currentPrice(product.getCurrentPrice())
                 .discountRate(product.getDiscountRate())
-                .highestPrice(productDetail.getHighestPrice())
-                .discountAmount(productDetail.getDiscountAmount())
-                .unitPrice(productDetail.getUnitPrice())
-                .shippingType(productDetail.getShippingType())
-                .reviewCount(productDetail.getReviewCount())
-                .reviewRating(productDetail.getReviewRating())
+                // [수정] ProductDetail 대신 Product에서 필드 가져오기
+                .highestPrice(product.getHighestPrice())
+                .discountAmount(product.getDiscountAmount())
+                .unitPrice(product.getUnitPrice())
+                .shippingType(product.getShippingType())
+                .reviewCount(product.getReviewCount())
+                .reviewRating(product.getReviewRating())
                 .isLiked(userPreference.isLiked())
                 .isAlert(userPreference.isAlert())
                 .alertPrice(userPreference.getAlertPrice())
-                .coupangUrl(productDetail.getCoupangUrl())
-                .averagePrice(productDetail.getAveragePrice())
+                .coupangUrl(product.getCoupangUrl())
+                .averagePrice(product.getAveragePrice())
                 .priceHistory(priceHistoryDTOs)
                 .build();
     }
@@ -130,13 +127,17 @@ public class ProductService {
     // 찜한 상품 리스트
     @Transactional(readOnly = true)
     public ProductLikedListResponseDTO getLikedProducts(Long userId) {
+        log.info("찜한 상품 목록 조회 - 사용자 ID: {}", userId);
 
         // 조회
         List<ProductUserPreference> likedPreferences = productUserPreferenceRepository
                 .findByUserIdAndIsLikedTrue(userId);
 
+        log.info("조회된 찜 상품 수: {}", likedPreferences.size());
+
         // 찜한 상품이 없는 경우
         if (likedPreferences.isEmpty()) {
+            log.info("찜한 상품이 없습니다.");
             return ProductLikedListResponseDTO.builder()
                     .userId(userId)
                     .likedProductCount(0)
@@ -144,10 +145,23 @@ public class ProductService {
                     .build();
         }
 
+        // [추가] 찜한 상품 정보 로깅
+        for (ProductUserPreference pref : likedPreferences) {
+            Product product = pref.getProduct();
+            if (product == null) {
+                log.warn("상품 정보가 없습니다. 선호도 ID: {}", pref.getId());
+            } else {
+                log.info("찜한 상품: ID={}, 이름={}", product.getId(), product.getProductName());
+            }
+        }
+
         // ProductSummaryDTO
         List<ProductSummaryDTO> likedProducts = likedPreferences.stream()
+                .filter(preference -> preference.getProduct() != null) // [추가] null 상품 필터링
                 .map(preference -> ProductSummaryDTO.fromEntity(preference.getProduct()))
                 .collect(Collectors.toList());
+
+        log.info("변환된 상품 DTO 수: {}", likedProducts.size());
 
         return ProductLikedListResponseDTO.builder()
                 .userId(userId)
@@ -155,7 +169,6 @@ public class ProductService {
                 .likedProducts(likedProducts)
                 .build();
     }
-
 
     // 상품 가격 알림
     @Transactional
@@ -186,6 +199,4 @@ public class ProductService {
                 .alertPrice(savedPreference.getAlertPrice())
                 .build();
     }
-
-
 }
