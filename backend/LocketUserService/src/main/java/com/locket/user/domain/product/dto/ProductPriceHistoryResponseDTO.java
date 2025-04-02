@@ -10,14 +10,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductPriceHistoryDTO {
+public class ProductPriceHistoryResponseDTO {
     // 가격 히스토리 정보
     private String priceDate;
     private Integer highestPrice;
     private Integer lowestPrice;
 
-    public static ProductPriceHistoryDTO fromEntity(PriceHistory priceHistory) {
-        return ProductPriceHistoryDTO.builder()
+    public static ProductPriceHistoryResponseDTO fromEntity(PriceHistory priceHistory) {
+        return ProductPriceHistoryResponseDTO.builder()
                 .priceDate(priceHistory.getPriceDate())
                 .highestPrice(priceHistory.getHighestPrice())
                 .lowestPrice(priceHistory.getLowestPrice())
