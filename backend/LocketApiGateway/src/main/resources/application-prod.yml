@@ -67,7 +67,7 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs${remaining}
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs/${remaining}
 #            - RemoveRequestHeader=Host
           order: 1
 
@@ -97,7 +97,7 @@ springdoc:
         url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
 #        url: https://j12d204.p.ssafy.io/elasticsearch-docs
-        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
+        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs/
 #        url: https://j12d204.p.ssafy.io:8083/elasticsearch-docs
 
 management:
