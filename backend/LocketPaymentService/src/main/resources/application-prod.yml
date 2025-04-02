@@ -54,6 +54,10 @@ management:
       show-details: always
       probes:
         enabled: true
+  metrics:
+    export:
+      prometheus:
+        enabled: true
   health:
     readinessstate:
       enabled: true
