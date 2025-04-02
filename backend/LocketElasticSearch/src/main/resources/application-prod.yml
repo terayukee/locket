@@ -89,5 +89,5 @@ springdoc:
     path: /swagger-ui.html
     config-url: /v3/api-docs/swagger-config
 
-#swagger:
-#  server-url: https://j12d204.p.ssafy.io/api/elasticsearch
+swagger:
+  server-url: https://j12d204.p.ssafy.io/api/elasticsearch
