@@ -8,6 +8,7 @@ services:
       - "8761:8761"
     networks:
       - spring-locket
+      - monitoring
 
   user-service:
     image: maru1203/spring-locket-user-service:latest
@@ -16,6 +17,7 @@ services:
       - "8082:8082"
     networks:
       - spring-locket
+      - monitoring
     depends_on:
       - discovery
 
@@ -26,6 +28,7 @@ services:
       - "8081:8081"
     networks:
       - spring-locket
+      - monitoring
 
   api-gateway:
     image: maru1203/spring-locket-api-gateway:latest
@@ -34,6 +37,7 @@ services:
       - "8080:8080"
     networks:
       - spring-locket
+      - monitoring
 
   elasticsearch:
     image: maru1203/spring-locket-elasticsearch:latest
@@ -42,7 +46,10 @@ services:
       - "8083:8083"
     networks:
       - spring-locket
+      - monitoring
 
 networks:
   spring-locket:
+    external: true
+  monitoring:
     external: true
