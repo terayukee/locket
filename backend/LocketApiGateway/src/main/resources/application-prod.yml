@@ -66,8 +66,10 @@ spring:
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
+            - Path=/api/elasticsearch/v3/api-docs
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs/${remaining}
+            - RewritePath=/api/elasticsearch/v3/api-docs/?(?<remaining>.*), /v3/api-docs${remaining}
+#            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs/${remaining}
 #            - RemoveRequestHeader=Host
           order: 1
 
