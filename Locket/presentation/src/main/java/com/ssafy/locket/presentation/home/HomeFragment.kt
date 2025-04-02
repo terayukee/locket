@@ -26,6 +26,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
+private const val TAG = "HomeFragment"
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind,
@@ -33,7 +34,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private val homeViewModel: HomeViewModel by viewModels()
+    private val userInfoViewModel: UserInfoViewModel by activityViewModels()
 
     private val characterViewModel: CharacterViewModel by activityViewModels()
 
@@ -46,14 +47,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         initUI()
 
-        homeViewModel.fetchUser(1)
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                homeViewModel.userInfo.collect { user ->
+                userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
                         Log.d("UserFragment", "User: ${user.userInfo.nickname}")
-                        binding.tvUserName.text = user.userInfo.nickname
+                        binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
                     }
                 }
             }
@@ -70,17 +69,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
-    }
-
     private fun initUI() {
         val today = LocalDate.now()
-        Log.d("SignInFragment","sdf"+userDataStoreSource.userId)
-        Log.d("SignInFragment","sdsadfadsf"+userDataStoreSource.jwtToken)
-
-        backEvent()
 
         binding.ivCharacterBg.setOnClickListener {
             characterViewModel.checkCharacter()
@@ -122,6 +112,36 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.icProfile.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
+        }
+
+        observeModel()
+        initEvent()
+        backEvent()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        //(requireContext() as MainActivity).changeBackgroundColor(R.color.white)
+    }
+
+    fun initEvent(){
+        lifecycleScope.launch {
+            userDataStoreSource.userId.collect { id ->
+                userInfoViewModel.fetchUser(id?:0)
+            }
+        }
+    }
+
+    fun observeModel(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                userInfoViewModel.userInfo.collect { user ->
+                    if(user is UserInfoState.Success) {
+                        Log.d("UserFragment", "User: ${user.userInfo.nickname}")
+                        binding.tvUserName.text = user.userInfo.nickname
+                    }
+                }
+            }
         }
     }
 
