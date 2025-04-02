@@ -8,9 +8,11 @@ import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -87,29 +89,32 @@ public class UserService {
         // 사용자 생성
         User newUser = User.builder()
                 .kakaoId(kakaoId)
-                .nickname(request.getNickname())
+                .nickname(kakaoUserInfo.getNickname())
                 .birthYear(request.getBirthYear())
-                .userJob(userJob)  // 검증된 UserJob 사용
-                .paymentPassword(request.getPaymentPassword())  // 암호화 필요
+                .userJob(userJob)
+                .paymentPassword(request.getPaymentPassword())
                 .fingerprintRegistered(request.getFingerprintRegistered())
                 .fcmToken(request.getFcmToken())
                 .createdAt(LocalDateTime.now())
                 .isDeleted(false)
                 .build();
 
-        User savedUser = userRepository.save(newUser);
-        log.info("회원가입 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
-
-        return savedUser;
+        try {
+            User savedUser = userRepository.save(newUser);
+            log.info("회원가입 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
+            return savedUser;
+        } catch (DataIntegrityViolationException e) {
+            log.error("사용자 저장 중 데이터 무결성 위반: {}", e.getMessage());
+            if (e.getMessage().contains("duplicate key") && e.getMessage().contains("users_pkey")) {
+                throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다. 다시 시도해주세요.");
+            }
+            throw e;
+        }
     }
 
     private void validateRequiredFields(SignupRequest request) {
         if (request.getAccessToken() == null || request.getAccessToken().isEmpty()) {
             throw new IllegalArgumentException("카카오 액세스 토큰은 필수 입력값입니다.");
-        }
-
-        if (request.getNickname() == null || request.getNickname().isEmpty()) {
-            throw new IllegalArgumentException("닉네임은 필수 입력값입니다.");
         }
     }
 
@@ -124,22 +129,10 @@ public class UserService {
 
     private void validatePaymentPassword(Integer paymentPassword) {
         if (paymentPassword != null) {
-            if (paymentPassword < 1000 || paymentPassword > 9999) {
-                throw new IllegalArgumentException("결제 비밀번호는 4자리 숫자여야 합니다.");
+            if (paymentPassword < 100000 || paymentPassword > 999999) {
+                throw new IllegalArgumentException("결제 비밀번호는 6자리 숫자여야 합니다.");
             }
         }
-    }
-
-    // 신규 사용자 응답 생성
-    public NewUserResponse createNewUserResponse(KakaoUserInfoDto kakaoUserInfo, String accessToken) {
-        log.info("신규 회원 응답 생성: kakaoId={}", kakaoUserInfo.getId());
-
-        return NewUserResponse.builder()
-                .message("회원가입이 필요합니다")
-                .nickname(kakaoUserInfo.getNickname())
-                .accessToken(accessToken)
-                .isNewUser(true)
-                .build();
     }
 
     // 로그인, JWT 토큰 발급

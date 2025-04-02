@@ -81,3 +81,6 @@ springdoc:
 
 swagger:
   server-url: https://j12d204.p.ssafy.io/api/users
+
+PERPLEXITY:
+  API_KEY: ${PERPLEXITY_API_KEY}

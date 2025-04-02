@@ -10,7 +10,14 @@ scrape_configs:
           - 'spring-locket_user-service:8082'          # LocketUserService
           - 'spring-locket_payment-service:8081'       # LocketPaymentService
           - 'spring-locket_api-gateway:8080'           # LocketApiGateway
-          - 'spring-locket_elasticsearch:8083'         # LocketElasticService
+          - 'spring-locket_elasticsearch:8083'         # LocketElasticService=
+    relabel_configs:
+      - source_labels: [ __address__ ]
+        target_label: __host__  # Host 헤더로 사용
+      - source_labels: [ __address__ ]
+        regex: (.*)
+        target_label: Host
+        replacement: ${1}  # 서비스 이름 그대로 Host 헤더로 사용
 
   - job_name: 'cadvisor'
     static_configs:
@@ -18,4 +25,5 @@ scrape_configs:
 
   - job_name: 'node-exporter'
     static_configs:
-      - targets: ['monitoring_node-exporter:9100']
+#      - targets: ['monitoring_node-exporter:9100']
+      - targets: ['monitoring-node-exporter:9100']

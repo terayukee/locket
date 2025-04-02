@@ -1,4 +1,4 @@
-package com.locket.user.domain.payment.dto;
+package com.locket.payment.dto;
 
 import lombok.*;
 

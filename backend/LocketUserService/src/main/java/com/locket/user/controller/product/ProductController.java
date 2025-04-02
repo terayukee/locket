@@ -1,7 +1,6 @@
 package com.locket.user.controller.product;
 
-import com.locket.user.domain.product.dto.ProductDetailResponseDTO;
-import com.locket.user.domain.product.dto.ProductListResponseDTO;
+import com.locket.user.domain.product.dto.*;
 import com.locket.user.exception.ErrorResponse;
 import com.locket.user.service.product.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,10 +14,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.locket.user.domain.product.dto.ProductLikeRequestDTO;
-import com.locket.user.domain.product.dto.ProductLikeResponseDTO;
-import com.locket.user.domain.product.dto.ProductAlertRequestDTO;
-import com.locket.user.domain.product.dto.ProductAlertResponseDTO;
 
 @RestController
 @RequestMapping("/products")
@@ -280,6 +275,71 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
+    @Operation(summary = "사용자 찜 상품 목록 조회", description = "사용자가 찜한 상품 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "찜 상품 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "잘못된 요청",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 400,
+                                          "error": "Bad Request",
+                                          "message": "유효하지 않은 요청입니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 401,
+                                          "error": "Unauthorized",
+                                          "message": "인증되지 않은 사용자입니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 내부 오류",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 500,
+                                          "error": "Internal Server Error",
+                                          "message": "서버 내부 오류가 발생했습니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/liked")
+    public ResponseEntity<ProductLikedListResponseDTO> getLikedProducts(
+            @Parameter(description = "사용자 ID", required = true)
+            @RequestParam Long userId
+    ) {
+        ProductLikedListResponseDTO response = productService.getLikedProducts(userId);
+        return ResponseEntity.ok(response);
+    }
+
+
     // 상품 가격 알림
     @Operation(summary = "상품 가격 알림 설정/해제", description = "상품의 가격 알림을 설정하거나 해제합니다.")
     @ApiResponses(value = {
@@ -366,6 +426,7 @@ public class ProductController {
         );
         return ResponseEntity.ok(response);
     }
+
 
 
 }

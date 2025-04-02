@@ -1,11 +1,11 @@
 package com.locket.user.service.budget;
 
+import com.locket.payment.dto.PaymentHistoryDto;
 import com.locket.user.domain.auth.entity.User;
 import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.domain.budget.dto.BudgetFeedbackRequest;
 import com.locket.user.domain.budget.dto.BudgetFeedbackResponse;
 import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
-import com.locket.user.domain.payment.dto.PaymentHistoryDto;
 import com.locket.user.feign.ReceiptFeignClient;
 import com.locket.user.service.payment.PaymentQueryService;
 import lombok.RequiredArgsConstructor;

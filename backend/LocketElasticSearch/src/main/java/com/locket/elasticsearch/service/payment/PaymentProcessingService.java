@@ -68,12 +68,14 @@ public class PaymentProcessingService {
                     .month(event.getMonth())
                     .day(event.getDay())
                     .orders(convertOrderDetails(event.getOrders()))
+                    .cardId(event.getCardId())
+                    .cardName(event.getCardName())
                     .categoryAmount(categoryAmount)
                     .build();
 
             log.info("💾 Saving payment with category: {}", history.getPaymentCategory());
             paymentHistoryRepository.save(history);
-            log.info("✅ Saved PaymentHistory to Elasticsearch with ID: {}", history.getTransactionId());
+            log.info("✅ Saved PaymentHistory to Elasticsearch with ID: {}", history);
         } catch (Exception e) {
             log.error("Error processing payment with store name {}: {}", event.getStoreName(), e.getMessage());
             throw e;  // 상위(PaymentEventConsumer)에서 처리하도록 예외 전파

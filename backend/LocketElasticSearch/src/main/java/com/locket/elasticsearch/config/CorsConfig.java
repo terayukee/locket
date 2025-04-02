@@ -16,7 +16,11 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**") // Swagger 포함한 전체 경로 허용
-                        .allowedOrigins("https://j12d204.p.ssafy.io", "http://localhost:8080")
+                        .allowedOrigins(
+                                "https://j12d204.p.ssafy.io",
+                                "https://j12d204.p.ssafy.io:8083",
+                                "http://localhost:8080"
+                        )
                         .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                         .allowedHeaders("*")
                         .allowCredentials(true);

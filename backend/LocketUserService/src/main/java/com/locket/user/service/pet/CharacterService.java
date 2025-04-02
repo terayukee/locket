@@ -107,7 +107,15 @@ public class CharacterService {
             levelUp = true;
         }
 
-        // 저장
+        // 장난감 남은 시간 계산
+        long remainingMinutes = 0;
+        boolean toyAvailable = character.isToyAvailableNow();
+
+        if (!toyAvailable && character.getNextToyAvailableTime() != null) {
+            remainingMinutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), character.getNextToyAvailableTime());
+            if (remainingMinutes < 0) remainingMinutes = 0;
+        }
+
         characterRepository.save(character);
 
         return ExpActionResponse.builder()
@@ -118,6 +126,8 @@ public class CharacterService {
                 .level(level)
                 .expPercentage(expPercentage)
                 .levelUp(levelUp)
+                .toyRemainingTimeMinutes(remainingMinutes)
+                .toyAvailable(toyAvailable)
                 .build();
     }
 
@@ -128,15 +138,6 @@ public class CharacterService {
         }
         createNewCharacter(userId);
         return getCharacterInfo(userId);
-    }
-
-    // (단순히 캐릭터만 생성하고 싶다면 이 메서드를 직접 호출)
-    @Transactional
-    public void createCharacter(Long userId) {
-        if (characterRepository.existsByUserId(userId)) {
-            throw new IllegalArgumentException("이미 캐릭터를 보유하고 있습니다.");
-        }
-        createNewCharacter(userId);
     }
 
     private Character createNewCharacter(Long userId) {
@@ -164,13 +165,9 @@ public class CharacterService {
             throw new IllegalArgumentException("캐릭터가 최대 레벨에 도달하지 않았습니다.");
         }
 
-        // 보상 생성 로직을 RewardService로 위임
+        //보상 후 삭제
         RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD);
-
-        // 캐릭터 리셋
-        String newCharacterName = generateRandomCharacterName();
-        character.resetCharacter(newCharacterName);
-        characterRepository.save(character);
+        characterRepository.delete(character);
 
         return rewardDto;
     }

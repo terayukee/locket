@@ -17,6 +17,7 @@ import java.util.Map;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Document(indexName = "payment_history")
 public class PaymentHistory {
 
