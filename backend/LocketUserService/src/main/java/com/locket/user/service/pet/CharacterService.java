@@ -107,7 +107,15 @@ public class CharacterService {
             levelUp = true;
         }
 
-        // 저장
+        // 장난감 남은 시간 계산
+        long remainingMinutes = 0;
+        boolean toyAvailable = character.isToyAvailableNow();
+
+        if (!toyAvailable && character.getNextToyAvailableTime() != null) {
+            remainingMinutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), character.getNextToyAvailableTime());
+            if (remainingMinutes < 0) remainingMinutes = 0;
+        }
+
         characterRepository.save(character);
 
         return ExpActionResponse.builder()
@@ -118,6 +126,8 @@ public class CharacterService {
                 .level(level)
                 .expPercentage(expPercentage)
                 .levelUp(levelUp)
+                .toyRemainingTimeMinutes(remainingMinutes)
+                .toyAvailable(toyAvailable)
                 .build();
     }
 

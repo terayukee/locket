@@ -17,4 +17,6 @@ public class ExpActionResponse {
     private Double expPercentage; // 다음 레벨까지의 경험치 진행 백분율
     private Integer level;
     private Boolean levelUp;
+    private Long toyRemainingTimeMinutes; // 남은 시간
+    private Boolean toyAvailable; // 가능여부
 }

@@ -13,6 +13,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -125,6 +126,36 @@ public class ProductService {
                 .isLiked(savedPreference.isLiked())
                 .build();
     }
+
+    // 찜한 상품 리스트
+    @Transactional(readOnly = true)
+    public ProductLikedListResponseDTO getLikedProducts(Long userId) {
+
+        // 조회
+        List<ProductUserPreference> likedPreferences = productUserPreferenceRepository
+                .findByUserIdAndIsLikedTrue(userId);
+
+        // 찜한 상품이 없는 경우
+        if (likedPreferences.isEmpty()) {
+            return ProductLikedListResponseDTO.builder()
+                    .userId(userId)
+                    .likedProductCount(0)
+                    .likedProducts(Collections.emptyList())
+                    .build();
+        }
+
+        // ProductSummaryDTO
+        List<ProductSummaryDTO> likedProducts = likedPreferences.stream()
+                .map(preference -> ProductSummaryDTO.fromEntity(preference.getProduct()))
+                .collect(Collectors.toList());
+
+        return ProductLikedListResponseDTO.builder()
+                .userId(userId)
+                .likedProductCount(likedProducts.size())
+                .likedProducts(likedProducts)
+                .build();
+    }
+
 
     // 상품 가격 알림
     @Transactional
