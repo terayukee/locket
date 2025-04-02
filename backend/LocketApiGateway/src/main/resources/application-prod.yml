@@ -93,6 +93,8 @@ springdoc:
     enabled: true
     path: /swagger-ui.html
     disable-swagger-default-url: true
+    cache:
+      disabled: true
     urls:
       - name: "1. Locket User Service"
         url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
