@@ -19,7 +19,7 @@ public final class PetConstants {
     public static final int PLAY_EXP_GAIN = 8;
 
     // 장난감 쿨타임 (분)
-    public static final int TOY_COOLDOWN_MINUTES = 180;
+    public static final int TOY_COOLDOWN_MINUTES = 3;
 
     // 리워드
     public static final String DEFAULT_REWARD = "스타벅스 아메리카노";
