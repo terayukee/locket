@@ -8,9 +8,11 @@ import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -97,10 +99,17 @@ public class UserService {
                 .isDeleted(false)
                 .build();
 
-        User savedUser = userRepository.save(newUser);
-        log.info("회원가입 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
-
-        return savedUser;
+        try {
+            User savedUser = userRepository.save(newUser);
+            log.info("회원가입 완료: userId={}, kakaoId={}", savedUser.getUserId(), kakaoId);
+            return savedUser;
+        } catch (DataIntegrityViolationException e) {
+            log.error("사용자 저장 중 데이터 무결성 위반: {}", e.getMessage());
+            if (e.getMessage().contains("duplicate key") && e.getMessage().contains("users_pkey")) {
+                throw new IllegalArgumentException("이미 존재하는 사용자 ID입니다. 다시 시도해주세요.");
+            }
+            throw e;
+        }
     }
 
     private void validateRequiredFields(SignupRequest request) {
