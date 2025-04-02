@@ -28,6 +28,18 @@ public class BudgetFeedbackService {
     private final PaymentQueryService paymentQueryService;
     private final ReceiptFeignClient receiptFeignClient;
 
+    private Map<String, Integer> calculateCategoryAmounts(List<PaymentHistoryDto> histories) {
+        Map<String, Integer> totalCategoryAmount = new HashMap<>();
+        for (PaymentHistoryDto payment : histories) {
+            String category = payment.getPaymentCategory();
+            // null 카테고리를 "기타"로 대체
+            category = (category == null || category.trim().isEmpty()) ? "기타" : category;
+            int amount = payment.getTotalAmount().intValue();
+            totalCategoryAmount.merge(category, amount, Integer::sum);
+        }
+        return totalCategoryAmount;
+    }
+
     @Cacheable(value = "budgetFeedback", key = "#userId")
     public BudgetFeedbackResponse getFeedback(Long userId) {
         log.info("사용자 {} 피드백 생성 시작", userId);
@@ -55,22 +67,12 @@ public class BudgetFeedbackService {
                 log.info("사용자 {}의 결제 내역이 없습니다.", userId);
                 return BudgetFeedbackResponse.builder()
                         .nickname(user.getNickname())
-                        .feedback("이번 달 결제 내역이 아직 없네요. 첫 결제를 기다릴게요!")
+                        .feedback("이번 달은 소비를 아직 안하셨네요!")
                         .build();
             }
 
-            // 모든 결제 내역의 카테고리별 금액 합산
-            Map<String, Integer> totalCategoryAmount = new HashMap<>();
-            for (PaymentHistoryDto payment : histories) {
-                String category = payment.getPaymentCategory();
-                int amount = payment.getTotalAmount().intValue();
-
-                if (category != null) {
-                    totalCategoryAmount.merge(category, amount, Integer::sum);
-                } else {
-                    log.warn("userId={}의 결제 항목 중 카테고리가 null인 항목이 존재합니다. 해당 항목은 무시됩니다.", userId);
-                }
-            }
+            // 카테고리별 금액 계산 (null 처리가 포함된 메서드 사용)
+            Map<String, Integer> totalCategoryAmount = calculateCategoryAmounts(histories);
 
             log.debug("사용자 {} 이번 달 전체 카테고리별 지출: {}", userId, totalCategoryAmount);
 
