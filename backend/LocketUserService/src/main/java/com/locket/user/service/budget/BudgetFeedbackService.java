@@ -64,7 +64,12 @@ public class BudgetFeedbackService {
             for (PaymentHistoryDto payment : histories) {
                 String category = payment.getPaymentCategory();
                 int amount = payment.getTotalAmount().intValue();
-                totalCategoryAmount.merge(category, amount, Integer::sum);
+
+                if (category != null) {
+                    totalCategoryAmount.merge(category, amount, Integer::sum);
+                } else {
+                    log.warn("userId={}의 결제 항목 중 카테고리가 null인 항목이 존재합니다. 해당 항목은 무시됩니다.", userId);
+                }
             }
 
             log.debug("사용자 {} 이번 달 전체 카테고리별 지출: {}", userId, totalCategoryAmount);

@@ -18,7 +18,7 @@ public class PaymentEventConsumer {
     private final PaymentProcessingService paymentProcessingService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "payment.success")
+    @KafkaListener(topics = "payment.success.inhyeok")
     public void listenPaymentSuccess(ConsumerRecord<String, PaymentSuccessEvent> record, Acknowledgment ack) {
         log.info("🌀 KafkaListener triggered with record: {}", record); // try 밖
         System.out.println("🌀 KafkaListener triggered with record:" + record);
