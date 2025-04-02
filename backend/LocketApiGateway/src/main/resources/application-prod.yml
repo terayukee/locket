@@ -91,17 +91,18 @@ server:
 springdoc:
   swagger-ui:
     enabled: true
-    path: /swagger-ui.html
-    disable-swagger-default-url: true
-    cache:
-      disabled: true
-    urls:
-      - name: "1. Locket User Service"
-        url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
-      - name: "2. Locket Payment Service"
-        url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
-      - name: "3. Locket ElasticSearch Service"
-        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs/
+    url: ''
+#    path: /swagger-ui.html
+#    disable-swagger-default-url: true
+#    cache:
+#      disabled: true
+#    urls:
+#      - name: "1. Locket User Service"
+#        url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
+#      - name: "2. Locket Payment Service"
+#        url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
+#      - name: "3. Locket ElasticSearch Service"
+#        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs/
 #        url: https://j12d204.p.ssafy.io/elasticsearch-docs
 #        url: https://j12d204.p.ssafy.io:8083/elasticsearch-docs
 
