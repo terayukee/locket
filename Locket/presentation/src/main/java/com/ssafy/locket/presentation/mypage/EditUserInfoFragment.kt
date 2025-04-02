@@ -6,19 +6,32 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.DisplayMetrics
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditUserInfoBinding
 import com.ssafy.locket.presentation.databinding.PopupJobMenuBinding
+import com.ssafy.locket.presentation.home.UserInfoState
+import com.ssafy.locket.presentation.home.UserInfoViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
+import java.time.LocalDate
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
     FragmentEditUserInfoBinding::bind,
     R.layout.fragment_edit_user_info
@@ -27,8 +40,14 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
     var isJobSelected = false
     var isBirthValid = true
 
+    //회원 정보 받아오기
+    private val userInfoViewModel: UserInfoViewModel by activityViewModels()
+    @Inject
+    lateinit var userDataStoreSource: UserDataStoreSource
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initView()
         initEvent()
     }
 
@@ -107,9 +126,9 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
 
         val clickListener = View.OnClickListener { clickedView ->
             val jobTitle = when (clickedView.id) {
-                R.id.popupItemStudent -> "학생/주부/무직"
+                R.id.popupItemStudent -> "무직"
                 R.id.popupItemEmployee -> "직장인"
-                R.id.popupItemSelfEmployed -> "자영업"
+                R.id.popupItemSelfEmployed -> "자영업자"
                 else -> return@OnClickListener
             }
             binding.tvJobSelect.text = jobTitle
@@ -140,4 +159,17 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
             binding.layoutJob.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
         }
     }
+
+    fun initView(){
+        lifecycleScope.launch {
+            userInfoViewModel.userInfo.collect { user ->
+                if(user is UserInfoState.Success) {
+                    binding.tvNickname.text = user.userInfo.nickname
+                    binding.tvJobSelect.text = user.userInfo.userJob
+                    binding.editAge.setText(user.userInfo.birthYear.toString())
+                }
+            }
+        }
+    }
+
 }

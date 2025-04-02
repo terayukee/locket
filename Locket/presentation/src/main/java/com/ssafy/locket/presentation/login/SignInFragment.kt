@@ -90,16 +90,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                 when (isRegistered) {
                     true -> {
                         Log.d(TAG, "홈 화면으로 갑니다")
-                        lifecycleScope.launch {
-                            userDataStoreSource.jwtToken.collect { token ->
-                                Log.d(TAG,"JWT 토큰"+token)
-                            }
-                        }
-                        lifecycleScope.launch {
-                            userDataStoreSource.userId.collect { token ->
-                                Log.d(TAG,token.toString())
-                            }
-                        }
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
