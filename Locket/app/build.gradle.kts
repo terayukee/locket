@@ -13,6 +13,7 @@ val properties = Properties().apply {
 
 val nativeApiKey: String = properties.getProperty("native_api_key") ?: ""
 val manifestNativeAppKey: String = properties.getProperty("manifest_native_app_key") ?: ""
+val serverurl: String = properties.getProperty("base_url") ?: ""
 
 android {
     namespace = "com.ssafy.locket"
@@ -29,6 +30,7 @@ android {
         renderscriptSupportModeEnabled = true
 
         buildConfigField("String", "NATIVE_API_KEY", nativeApiKey)
+        buildConfigField("String", "BASE_URL", serverurl)
     }
 
     buildTypes {

@@ -1,5 +1,6 @@
 package com.ssafy.locket.data.network.common
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.flow.Flow
@@ -16,6 +17,7 @@ class ApiResponseHandler {
                 val errorBody = response.errorBody()?.string()
                 val type = object : TypeToken<ErrorResponse>() {}.type
                 val errorResponse: ErrorResponse? = Gson().fromJson(errorBody, type)
+                Log.d("loginview",errorBody.toString())
 
                 if (errorResponse != null) {
                     emit(ApiResponse.Error(errorResponse))

@@ -18,6 +18,7 @@ class UserDataStoreSource @Inject constructor(
         val NICKNAME = stringPreferencesKey("nickname")
         val USER_ID = longPreferencesKey("user_id")
         val FCM_TOKEN = stringPreferencesKey("fcm_token")
+        val JWT_TOKEN =  stringPreferencesKey("jwt_token")
     }
 
     suspend fun saveAccessToken(accessToken: String) {
@@ -50,6 +51,12 @@ class UserDataStoreSource @Inject constructor(
         }
     }
 
+    suspend fun saveJwtToken(jwtToken: String) {
+        dataStore.edit { preferences ->
+            preferences[JWT_TOKEN] = jwtToken
+        }
+    }
+
     val accessToken: Flow<String?> = dataStore.data.map { preferences ->
         preferences[ACCESS_TOKEN]
     }
@@ -68,6 +75,10 @@ class UserDataStoreSource @Inject constructor(
 
     val fcmToken : Flow<String?> = dataStore.data.map{preferences->
         preferences[FCM_TOKEN]
+    }
+
+    val jwtToken : Flow<String?> = dataStore.data.map{preferences->
+        preferences[JWT_TOKEN]
     }
 
     suspend fun clearAll() {

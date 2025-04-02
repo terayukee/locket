@@ -4,10 +4,12 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentConfirmPasswordBinding
+import com.ssafy.locket.presentation.login.LoginViewModel
 
 class ConfirmPasswordFragment : BaseFragment<FragmentConfirmPasswordBinding>(
     FragmentConfirmPasswordBinding::bind,
@@ -15,6 +17,9 @@ class ConfirmPasswordFragment : BaseFragment<FragmentConfirmPasswordBinding>(
 ) {
     private lateinit var passwordInputHandler: PasswordInputHandler
     private var savedPassword: String? = null
+    //회원가입 위한 변수
+    private val loginViewModel: LoginViewModel by activityViewModels()
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -58,6 +63,7 @@ class ConfirmPasswordFragment : BaseFragment<FragmentConfirmPasswordBinding>(
     private fun checkPassword(inputPassword: String) {
         if (inputPassword == savedPassword) {
             // 비밀번호가 맞으면 다음 화면으로 이동
+            loginViewModel.updatePaymentPassword(savedPassword!!.toInt()?:0)
             findNavController().navigate(R.id.action_confirmPasswordFragment_to_registerBiometricsFragment)
         } else {
             Toast.makeText(requireContext(), "다시 처음부터 비밀 번호를 입력하세요.", Toast.LENGTH_SHORT).show()

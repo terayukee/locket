@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.lifecycleScope
@@ -29,7 +30,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
     FragmentSignInBinding::bind,
     R.layout.fragment_sign_in
 ) {
-    private val loginViewModel: LoginViewModel by viewModels()
+    private val loginViewModel: LoginViewModel by activityViewModels()
     @Inject
     lateinit var userDataStoreSource: UserDataStoreSource
 
@@ -65,13 +66,13 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                         isClick = false
                         return@loginWithKakaoTalk
                     }
-                    Log.e(TAG, "에러 타입: ${error::class.java.simpleName}")
                     showToast("카카오톡 로그인에 실패했습니다. 다시 시도해주세요.")
                     isClick = false
                 } else if (token != null) {
                     Log.i(TAG, "카카오톡으로 로그인 성공: ${token.accessToken}")
                     lifecycleScope.launch {
                         Log.d(TAG,"로그인 관련 ${token.accessToken}")
+                        userDataStoreSource.saveAccessToken(token.accessToken)
                         loginViewModel.performKakaoLogin(token.accessToken)
                     }
                 }
@@ -87,9 +88,24 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
         lifecycleScope.launchWhenStarted {
             loginViewModel.loginState.collect { isRegistered ->
                 when (isRegistered) {
-                    true -> Log.d(TAG, "홈 화면으로 갑니다")
+                    true -> {
+                        Log.d(TAG, "홈 화면으로 갑니다")
+                        lifecycleScope.launch {
+                            userDataStoreSource.jwtToken.collect { token ->
+                                Log.d(TAG,"JWT 토큰"+token)
+                            }
+                        }
+                        val intent = Intent(requireContext(), MainActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                        startActivity(intent)
+                    }
                     false -> {
                         Log.d(TAG, "회원가입 화면으로 이동")
+                        lifecycleScope.launch {
+                            userDataStoreSource.accessToken.collect { token ->
+                                loginViewModel.updateAccessToken(token?:"")
+                            }
+                        }
                         val currentDestination = findNavController().currentDestination?.id
                         if (currentDestination == R.id.signInFragment) { // ✅ 현재 Fragment가 signInFragment인지 확인
                             findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment)
@@ -102,6 +118,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
             }
         }
     }
+
+
 
 
 }

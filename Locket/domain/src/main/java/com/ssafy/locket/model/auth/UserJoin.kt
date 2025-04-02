@@ -5,11 +5,9 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class UserJoin (
+    val accesstoken: String,
     val birthYear: Int,
-    val fcmToken: String?,
     val fingerprintRegistered: Boolean,
-    val kakaoId: Int?,
-    val nickname: String,
     val paymentPassword: Int,
     val userJob: String
 ): BaseModel

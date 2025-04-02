@@ -8,19 +8,25 @@ import androidx.biometric.BiometricManager
 import androidx.navigation.fragment.findNavController
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
+import androidx.fragment.app.activityViewModels
 import javax.crypto.KeyGenerator
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentRegisterBiometricsBinding
+import com.ssafy.locket.presentation.login.LoginViewModel
 
 class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBinding>(
     FragmentRegisterBiometricsBinding::bind,
     R.layout.fragment_register_biometrics
 ) {
+    //회원 가입 위한 변수
+    private val loginViewModel: LoginViewModel by activityViewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
@@ -28,6 +34,8 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
 
     private fun initEvent() {
         binding.btnLater.setOnClickListener {
+            loginViewModel.updateFingerprintRegistered(false)
+            Log.d("SignInFragment",loginViewModel.userJoin.value.toString())
             moveToMainActivity()
         }
         binding.ivBack.setOnClickListener {
@@ -60,6 +68,8 @@ class RegisterBiometricsFragment : BaseFragment<FragmentRegisterBiometricsBindin
     }
 
     private fun moveToMainActivity() {
+        loginViewModel.updateFingerprintRegistered(true)
+        loginViewModel.userJoin(loginViewModel.userJoin.value)
         val intent = Intent(requireContext(), MainActivity::class.java)
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)

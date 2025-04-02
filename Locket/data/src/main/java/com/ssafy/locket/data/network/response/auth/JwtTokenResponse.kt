@@ -7,8 +7,10 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class JwtTokenResponse(
+    val userId: Int,
     val accessToken: String,
-    val refreshToken: String
+    val refreshToken: String,
+    val newUser: Boolean
 ): BaseResponse {
     companion object: DataMapper<JwtTokenResponse, JwtToken> {
         override fun JwtTokenResponse.toDomainModel(): JwtToken {

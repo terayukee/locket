@@ -10,6 +10,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -21,6 +22,7 @@ import com.ssafy.locket.presentation.utils.ToastType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
@@ -32,10 +34,14 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private val viewModel: HomeViewModel by viewModels()
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
+    @Inject
+    lateinit var userDataStoreSource: UserDataStoreSource
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val today = LocalDate.now()
+        Log.d("SignInFragment","sdf"+userDataStoreSource.userId)
+        Log.d("SignInFragment","sdsadfadsf"+userDataStoreSource.jwtToken)
 
         binding.logoLocket.setOnClickListener {
             CommonUtils.showMultiLineCustomToast(requireContext(), "유효하지 않은 입력이에요","1900 - 2025년 사이로 입력해주세요")

@@ -8,7 +8,6 @@ data class UserJoinRequest(
     val fcmToken: String,
     val fingerprintRegistered: Boolean,
     @SerializedName("accessToken") val kakaoAccessToken: String,
-    val nickname: String,
     val paymentPassword: Int,
     val userJob: String
 )
