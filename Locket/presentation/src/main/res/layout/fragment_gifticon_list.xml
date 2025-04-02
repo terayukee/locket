@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".home.character.fragment.GiftCardListFragment">
+    tools:context=".home.character.fragment.GifticonListFragment">
 
     <ImageView
         android:id="@+id/btn_back"
@@ -44,4 +44,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4"
         app:spanCount="2"/>
+
+    <TextView
+        android:id="@+id/tv_empty_list"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="캐릭터를 키워서\n기프티콘을 획득하세요 🐱"
+        android:letterSpacing="-0.02"
+        android:textStyle="bold"
+        android:textColor="@color/text"
+        android:textSize="28sp"
+        android:textAlignment="center"
+        android:gravity="center"
+        app:layout_constraintVertical_bias="0.3"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/textView4"
+        app:layout_constraintStart_toStartOf="@+id/textView4"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

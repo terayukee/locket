@@ -26,25 +26,24 @@ class CharacterInitialFragment : BaseFragment<FragmentCharacterInitialBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
+        initUI()
+    }
 
+    private fun initUI() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 characterViewModel.navigationEvent.collect { uiState ->
                     if(uiState is NavigationEvent.MoveToFragment) {
-                        Log.d(TAG, "onViewCreated: move initail to growth")
                         findNavController().navigate(R.id.action_characterInitialFragment_to_characterGrowthFragment)
                     }
                 }
             }
         }
-
     }
 
-
-    fun initEvent(){
+    private fun initEvent(){
         binding.btnCharacterInit.setOnClickListener {
             characterViewModel.createCharacter()
-//            findNavController().navigate(R.id.action_characterInitialFragment_to_characterGrowthFragment)
         }
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()

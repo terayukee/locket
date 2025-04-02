@@ -138,8 +138,8 @@
             app:popUpTo="@id/characterGrowthFragment"
             app:popUpToInclusive="true"/>
         <action
-            android:id="@+id/action_characterGrowthFragment_to_giftCardListFragment"
-            app:destination="@id/giftCardListFragment" />
+            android:id="@+id/action_characterGrowthFragment_to_gifticonListFragment"
+            app:destination="@id/gifticonListFragment" />
     </fragment>
     <dialog
         android:id="@+id/receiptUploadDialog"
@@ -251,12 +251,12 @@
         android:label="fragment_character_done"
         tools:layout="@layout/fragment_character_done" />
     <fragment
-        android:id="@+id/giftCardListFragment"
-        android:name="com.ssafy.locket.presentation.home.character.fragment.GiftCardListFragment"
-        android:label="fragment_gift_card_list"
-        tools:layout="@layout/fragment_gift_card_list" >
+        android:id="@+id/gifticonListFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.GifticonListFragment"
+        android:label="fragment_gifticon_list"
+        tools:layout="@layout/fragment_gifticon_list" >
         <action
-            android:id="@+id/action_giftCardListFragment_to_characterDoneFragment"
+            android:id="@+id/action_gifticonListFragment_to_characterDoneFragment"
             app:destination="@id/characterDoneFragment" />
     </fragment>
 </navigation>

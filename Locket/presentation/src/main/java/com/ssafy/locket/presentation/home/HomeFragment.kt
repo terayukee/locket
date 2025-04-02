@@ -5,7 +5,6 @@ import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -48,30 +47,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         initUI()
 
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                userInfoViewModel.userInfo.collect { user ->
-                    if(user is UserInfoState.Success) {
-                        Log.d("UserFragment", "User: ${user.userInfo.nickname}")
-                        binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
-                    }
-                }
-            }
-        }
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                characterViewModel.navigationEvent.collect { uiState ->
-                    if(uiState is NavigationEvent.MoveToFragment) {
-                        Log.d(TAG, "onViewCreated: move home to growth")
-                        findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
-                    } else if(uiState is NavigationEvent.MoveToInitial) {
-                        Log.d(TAG, "onViewCreated: move home to initial")
-                        findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
-                    }
-                }
-            }
-        }
     }
 
     private fun initUI() {
@@ -79,7 +54,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.ivCharacterBg.setOnClickListener {
             characterViewModel.checkCharacter()
-//            findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
         }
 
         binding.layoutReceipt.setOnClickListener {
@@ -122,6 +96,28 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         observeModel()
         initEvent()
         backEvent()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                userInfoViewModel.userInfo.collect { user ->
+                    if(user is UserInfoState.Success) {
+                        binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                characterViewModel.navigationEvent.collect { uiState ->
+                    if(uiState is NavigationEvent.MoveToFragment) {
+                        findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
+                    } else if(uiState is NavigationEvent.MoveToInitial) {
+                        findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {

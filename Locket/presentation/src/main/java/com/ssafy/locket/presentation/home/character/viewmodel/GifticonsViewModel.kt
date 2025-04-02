@@ -1,9 +1,9 @@
 package com.ssafy.locket.presentation.home.character.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.model.home.character.Gifticon
 import com.ssafy.locket.model.home.character.GifticonList
 import com.ssafy.locket.usecase.character.GetAllGifticonsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +16,9 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "GifticonsViewModel"
 @HiltViewModel
-class GifticonViewModel @Inject constructor(
+class GifticonsViewModel @Inject constructor(
     private val getAllGifticonsUseCase: GetAllGifticonsUseCase
 ): ViewModel() {
     private var _gifticonList = MutableStateFlow<GifticonState>(GifticonState.Initial)
@@ -28,7 +29,7 @@ class GifticonViewModel @Inject constructor(
             getAllGifticonsUseCase()
                 .onStart { _gifticonList.value = GifticonState.Loading }
                 .catch { e ->
-
+                    Log.d(TAG, "getAllGifticons: ${e.message}")
                 }
                 .collect { status ->
                     when(status) {
@@ -39,7 +40,6 @@ class GifticonViewModel @Inject constructor(
                             _gifticonList.value = GifticonState.Error(status.error.message)
                         }
                     }
-
                 }
         }
     }

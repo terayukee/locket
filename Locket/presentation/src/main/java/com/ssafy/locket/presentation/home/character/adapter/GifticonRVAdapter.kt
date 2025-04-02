@@ -8,9 +8,10 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.locket.model.home.character.Gifticon
 import com.ssafy.locket.presentation.databinding.ItemGifticonBinding
 
-class GifticonRVAdapter: ListAdapter<String, GifticonRVAdapter.CustomViewHolder>(
+class GifticonRVAdapter: ListAdapter<Gifticon, GifticonRVAdapter.CustomViewHolder>(
     GifticonRVAdapter
 )  {
     lateinit var itemClickListener: ItemClickListener
@@ -20,19 +21,20 @@ class GifticonRVAdapter: ListAdapter<String, GifticonRVAdapter.CustomViewHolder>
         fun onClick(view: View, position: Int)
     }
 
-    companion object CustomComparator : DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem.hashCode() == newItem.hashCode()
+    companion object CustomComparator : DiffUtil.ItemCallback<Gifticon>() {
+        override fun areItemsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
+            return oldItem.id == newItem.id
         }
 
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
+        override fun areContentsTheSame(oldItem: Gifticon, newItem: Gifticon): Boolean {
             return oldItem == newItem
         }
     }
 
     inner class CustomViewHolder(private val binding: ItemGifticonBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: String) {
+        fun bind(item: Gifticon) {
+            binding.tvGifticonName.text = item.name
             binding.root.setOnClickListener{
                 itemClickListener.onClick(it, adapterPosition)
             }

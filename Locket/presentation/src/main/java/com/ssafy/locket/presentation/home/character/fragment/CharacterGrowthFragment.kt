@@ -29,7 +29,6 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        startTimer()
         initUI()
 
     }
@@ -43,16 +42,14 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         }
 
         binding.btnGifticonBox.setOnClickListener {
-            findNavController().navigate(R.id.action_characterGrowthFragment_to_giftCardListFragment)
+            findNavController().navigate(R.id.action_characterGrowthFragment_to_gifticonListFragment)
         }
 
         binding.ivMissionFoodBg.setOnClickListener {
-            Log.d(TAG, "initUI: food clicked!")
             characterViewModel.growCharacter(CharacterAction.Feed)
         }
 
         binding.ivMissionToyBg.setOnClickListener {
-            Log.d(TAG, "initUI: play clicked!")
             characterViewModel.growCharacter(CharacterAction.Play)
             binding.ivMissionToyBg.isEnabled = false
             startTimer()
@@ -61,6 +58,7 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             characterViewModel.characterInfo.collect { uiState ->
                 if(uiState is CharacterInfoState.Success) {
+                    if(uiState.characterInfo.level == 3) characterViewModel.completeCharacter()
                     binding.tvCharacterName.text = uiState.characterInfo.name
                     minRemain = uiState.characterInfo.toy.remainingTimeMinutes
                     binding.tvMissionToyQuantity.text = if(minRemain > 0) getString(R.string.home_character_toy_remain_time, minRemain) else "사용 가능"
@@ -69,13 +67,23 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                     binding.tvMissionFoodQuantity.text = getString(R.string.home_character_food_remain_count, uiState.characterInfo.foodCount)
                     binding.progressBar.progress = uiState.characterInfo.expPercentage.toInt()
                     if(uiState.characterInfo.foodCount == 0) binding.ivMissionFoodBg.isEnabled = false
-                    if(uiState.characterInfo.toy.remainingTimeMinutes > 0) binding.ivMissionToyBg.isEnabled = false
+                    if(uiState.characterInfo.toy.remainingTimeMinutes > 0) {
+                        binding.ivMissionToyBg.isEnabled = false
+                        startTimer()
+                    }
 
                 } else {
                     // TODO 캐릭터 정보 불러오지 못했을 때 예외처리
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            characterViewModel.completeGift.collect {
+                if (it) findNavController().navigate(R.id.action_characterGrowthFragment_to_characterDoneFragment)
+            }
+        }
+
     }
 
     private fun startTimer() {
