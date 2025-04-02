@@ -55,8 +55,6 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         binding.ivMissionToyBg.setOnClickListener {
             characterViewModel.growCharacter(CharacterAction.Play)
             binding.ivMissionToyBg.isEnabled = false
-            minRemain = testCharacterCoolTime
-            binding.tvMissionToyQuantity.text = getString(R.string.home_character_toy_remain_time, minRemain)
             startTimer()
         }
 
@@ -65,8 +63,7 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                 if(uiState is CharacterInfoState.Success) {
                     if(uiState.characterInfo.level == 3) characterViewModel.completeCharacter()
                     binding.tvCharacterName.text = uiState.characterInfo.name
-                    minRemain = uiState.characterInfo.toy.remainingTimeMinutes
-                    Log.d(TAG, "initUI: minRemain ${minRemain}") // TODO api 수정되는 대로 viewModel에 값 할당하는 부분 수정해서 확인하기
+                    minRemain = uiState.characterInfo.toy.remainingTimeMinutes + 1
                     binding.tvMissionToyQuantity.text = if(minRemain > 0) getString(R.string.home_character_toy_remain_time, minRemain) else "사용 가능"
                     binding.tvCharacterLevel.text = getString(R.string.home_character_level, uiState.characterInfo.level)
                     binding.tvCharacterPercent.text = getString(R.string.home_character_exp_percent, uiState.characterInfo.expPercentage)
@@ -76,8 +73,9 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                     if(uiState.characterInfo.toy.remainingTimeMinutes > 0) {
                         binding.ivMissionToyBg.isEnabled = false
                         startTimer()
+                    } else {
+                        binding.ivMissionToyBg.isEnabled = true
                     }
-
                 } else {
                     // TODO 캐릭터 정보 불러오지 못했을 때 예외처리
                 }
@@ -97,7 +95,6 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
 
         timerRunnable = object : Runnable {
             override fun run() {
-                Log.d(TAG, "run: minRemain $minRemain  isTimerRunning $isTimerRunning")
                 if (isTimerRunning && minRemain > 0) {
                     binding.tvMissionToyQuantity.text =
                         getString(R.string.home_character_toy_remain_time, minRemain)
@@ -106,20 +103,19 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                     handler.postDelayed(this, 60000)
                 } else {
                     stopTimer() // 타이머 종료
+                    binding.ivMissionToyBg.isEnabled = true
                     binding.tvMissionToyQuantity.text = "사용 가능"
                 }
             }
         }
 
         handler.post(timerRunnable)
-//        handler.postDelayed(timerRunnable, 60000)
     }
 
     private fun stopTimer() {
         if (isTimerRunning) {
             isTimerRunning = false
             handler.removeCallbacks(timerRunnable)
-            Log.d(TAG, "stopTimer: Timer stopped")
         }
     }
 

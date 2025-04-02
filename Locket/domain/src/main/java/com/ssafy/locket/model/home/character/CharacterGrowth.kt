@@ -9,5 +9,7 @@ data class CharacterGrowth(
     val currentExp: Int,
     val expPercentage: Double,
     val level: Int,
-    val levelUp: Boolean
+    val levelUp: Boolean,
+    val minRemain: Int,
+    val toyAvailable: Boolean
 ): BaseModel

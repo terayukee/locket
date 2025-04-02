@@ -13,7 +13,9 @@ data class CharacterActionResponse(
     val expPercentage: Double,
     val level: Int,
     val levelUp: Boolean,
-    val previousExp: Int
+    val previousExp: Int,
+    val toyRemainingTimeMinutes: Int,
+    val toyAvailable: Boolean
 ): BaseResponse {
     companion object: DataMapper<CharacterActionResponse,CharacterGrowth> {
         override fun CharacterActionResponse.toDomainModel(): CharacterGrowth {
@@ -22,7 +24,9 @@ data class CharacterActionResponse(
                 currentExp = this.currentExp,
                 expPercentage = this.expPercentage,
                 level = this.level,
-                levelUp = this.levelUp
+                levelUp = this.levelUp,
+                minRemain = this.toyRemainingTimeMinutes,
+                toyAvailable = this.toyAvailable
             )
         }
 

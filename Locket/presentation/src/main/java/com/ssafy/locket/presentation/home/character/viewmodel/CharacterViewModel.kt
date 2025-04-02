@@ -100,7 +100,8 @@ class CharacterViewModel @Inject constructor(
                                         level = status.data.level,
                                         exp = status.data.currentExp,
                                         expPercentage = status.data.expPercentage,
-                                        foodCount = newFoodCount
+                                        foodCount = newFoodCount,
+                                        toy = Toy(status.data.toyAvailable, status.data.minRemain)
                                     )
                                     CharacterInfoState.Success(updateInfo)
                                 } else currentState
