@@ -164,13 +164,9 @@ public class CharacterService {
             throw new IllegalArgumentException("캐릭터가 최대 레벨에 도달하지 않았습니다.");
         }
 
-        // 보상 생성 로직을 RewardService로 위임
+        //보상 후 삭제
         RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD);
-
-        // 캐릭터 리셋
-        String newCharacterName = generateRandomCharacterName();
-        character.resetCharacter(newCharacterName);
-        characterRepository.save(character);
+        characterRepository.delete(character);
 
         return rewardDto;
     }
