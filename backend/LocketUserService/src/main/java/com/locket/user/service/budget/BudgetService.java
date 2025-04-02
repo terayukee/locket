@@ -1,5 +1,6 @@
 package com.locket.user.service.budget;
 
+import com.locket.payment.dto.PaymentHistoryDto;
 import com.locket.user.domain.budget.dto.BudgetMonthlyStatusDto;
 import com.locket.user.domain.budget.dto.BudgetSetRequestDto;
 import com.locket.user.domain.budget.dto.BudgetSetResponseDto;
@@ -7,7 +8,6 @@ import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
 import com.locket.user.domain.budget.entity.Goals;
 import com.locket.user.domain.budget.repository.GoalsRepository;
 import com.locket.user.domain.budget.repository.PaymentTransactionRepository;
-import com.locket.user.domain.payment.dto.PaymentHistoryDto;
 import com.locket.user.feign.PaymentHistoryFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

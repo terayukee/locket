@@ -1,6 +1,6 @@
 package com.locket.user.service.payment;
 
-import com.locket.user.domain.payment.dto.PaymentHistoryDto;
+import com.locket.payment.dto.PaymentHistoryDto;
 import com.locket.user.feign.PaymentHistoryFeignClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

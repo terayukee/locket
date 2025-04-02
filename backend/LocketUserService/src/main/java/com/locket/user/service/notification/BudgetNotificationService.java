@@ -1,6 +1,7 @@
 package com.locket.user.service.notification;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
+import com.locket.payment.dto.PaymentHistoryDto;
 import com.locket.user.domain.auth.entity.User;
 import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.domain.goal.entity.Goal;
@@ -8,7 +9,6 @@ import com.locket.user.domain.goal.repository.GoalRepository;
 import com.locket.user.domain.goalalert.entity.GoalAlert;
 import com.locket.user.domain.goalalert.repository.GoalAlertRepository;
 import com.locket.user.domain.notification.dto.FcmMessageDto;
-import com.locket.user.domain.payment.dto.PaymentHistoryDto;
 import com.locket.user.feign.PaymentHistoryFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
