@@ -1,6 +1,6 @@
 package com.ssafy.locket.model.home.character
 
-enum class CharacterAction(name: String) {
+enum class CharacterAction(val actionName: String) {
     Feed("feed"),
     Play("play"),
 }

@@ -54,17 +54,20 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         binding.ivMissionToyBg.setOnClickListener {
             Log.d(TAG, "initUI: play clicked!")
             characterViewModel.growCharacter(CharacterAction.Play)
+            binding.ivMissionToyBg.isEnabled = false
+            startTimer()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             characterViewModel.characterInfo.collect { uiState ->
                 if(uiState is CharacterInfoState.Success) {
-                    binding.tvCharacterName.text = getString(R.string.home_character_gifticon_character, uiState.characterInfo.name)
+                    binding.tvCharacterName.text = uiState.characterInfo.name
                     minRemain = uiState.characterInfo.toy.remainingTimeMinutes
-                    binding.tvMissionToyQuantity.text = getString(R.string.home_character_toy_remain_time, minRemain)
+                    binding.tvMissionToyQuantity.text = if(minRemain > 0) getString(R.string.home_character_toy_remain_time, minRemain) else "사용 가능"
                     binding.tvCharacterLevel.text = getString(R.string.home_character_level, uiState.characterInfo.level)
                     binding.tvCharacterPercent.text = getString(R.string.home_character_exp_percent, uiState.characterInfo.expPercentage)
                     binding.tvMissionFoodQuantity.text = getString(R.string.home_character_food_remain_count, uiState.characterInfo.foodCount)
+                    binding.progressBar.progress = uiState.characterInfo.expPercentage.toInt()
                     if(uiState.characterInfo.foodCount == 0) binding.ivMissionFoodBg.isEnabled = false
                     if(uiState.characterInfo.toy.remainingTimeMinutes > 0) binding.ivMissionToyBg.isEnabled = false
 

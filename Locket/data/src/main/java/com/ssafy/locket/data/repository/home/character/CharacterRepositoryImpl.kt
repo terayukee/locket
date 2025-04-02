@@ -1,5 +1,6 @@
 package com.ssafy.locket.data.repository.home.character
 
+import android.util.Log
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.data.network.api.CharacterService
 import com.ssafy.locket.data.network.common.ApiResponse
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.runBlocking
 import javax.inject.Inject
 
+private const val TAG = "CharacterRepositoryImpl"
 internal class CharacterRepositoryImpl @Inject constructor(
     private val characterService: CharacterService,
     private val dataStore: UserDataStoreSource
@@ -70,13 +72,16 @@ internal class CharacterRepositoryImpl @Inject constructor(
         return flow {
             ApiResponseHandler().handle {
                 val userId = dataStore.userId.first() ?: -1
+                Log.d(TAG, "createCharacter: $userId")
                 characterService.createCharacter(userId)
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {
+                        Log.d(TAG, "createCharacter Success in impl: ${result.data.userId} ${result.data.characterName} characterId ${result.data.characterId}")
                         emit(ResponseStatus.Success(result.data.toDomainModel()))
                     }
                     is ApiResponse.Error -> {
+                        Log.d(TAG, "createCharacter Error in impl: ${result.error.message}")
                         emit(ResponseStatus.Error(result.error.toDomainModel()))
                     }
                 }

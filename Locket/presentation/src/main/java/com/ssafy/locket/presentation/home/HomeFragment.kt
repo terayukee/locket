@@ -19,6 +19,7 @@ import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterInfoState
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterViewModel
+import com.ssafy.locket.presentation.home.character.viewmodel.NavigationEvent
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import dagger.hilt.android.AndroidEntryPoint
@@ -59,11 +60,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            characterViewModel.characterInfo.collect { uiState ->
-                if(uiState is CharacterInfoState.Success) {
-                    findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
-                } else if(uiState is CharacterInfoState.Empty) {
-                    findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                characterViewModel.navigationEvent.collect { uiState ->
+                    if(uiState is NavigationEvent.MoveToFragment) {
+                        Log.d(TAG, "onViewCreated: move home to growth")
+                        findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
+                    } else if(uiState is NavigationEvent.MoveToInitial) {
+                        Log.d(TAG, "onViewCreated: move home to initial")
+                        findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+                    }
                 }
             }
         }
@@ -74,7 +79,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.ivCharacterBg.setOnClickListener {
             characterViewModel.checkCharacter()
-            findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+//            findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
         }
 
         binding.layoutReceipt.setOnClickListener {

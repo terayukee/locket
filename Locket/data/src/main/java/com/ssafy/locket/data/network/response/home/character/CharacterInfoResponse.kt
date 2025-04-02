@@ -1,5 +1,6 @@
 package com.ssafy.locket.data.network.response.home.character
 
+import com.google.gson.annotations.SerializedName
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
 import com.ssafy.locket.model.home.character.CharacterInfo
@@ -8,16 +9,16 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 class CharacterInfoResponse(
-    val characterId: Long,
-    val characterName: String,
-    val createdAt: String,
-    val exp: Int,
-    val expPercentage: Double,
-    val foodCount: Int,
-    val level: Int,
-    val totalExpForNextLevel: Int,
-    val toy: Toy,
-    val userId: Long
+    @SerializedName("characterId") val characterId: Long,
+    @SerializedName("characterName") val characterName: String,
+    @SerializedName("createdAt") val createdAt: String,
+    @SerializedName("exp") val exp: Int,
+    @SerializedName("expPercentage") val expPercentage: Double,
+    @SerializedName("foodCount") val foodCount: Int,
+    @SerializedName("level") val level: Int,
+    @SerializedName("totalExpForNextLevel")  val totalExpForNextLevel: Int,
+    @SerializedName("toy") val toy: Toy,
+    @SerializedName("userId") val userId: Long
 ): BaseResponse {
     companion object: DataMapper<CharacterInfoResponse, CharacterInfo> {
         override fun CharacterInfoResponse.toDomainModel(): CharacterInfo {

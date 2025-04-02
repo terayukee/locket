@@ -17,7 +17,6 @@ class ApiResponseHandler {
                 val errorBody = response.errorBody()?.string()
                 val type = object : TypeToken<ErrorResponse>() {}.type
                 val errorResponse: ErrorResponse? = Gson().fromJson(errorBody, type)
-                Log.d("loginview",errorBody.toString())
 
                 if (errorResponse != null) {
                     emit(ApiResponse.Error(errorResponse))

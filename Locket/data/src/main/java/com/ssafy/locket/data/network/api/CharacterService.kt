@@ -14,21 +14,21 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 internal interface CharacterService {
-    @GET("pet")
+    @GET("users/pet")
     suspend fun isCharacterExist(@Query("userId") userId: Long): Response<CharacterStatusResponse>
 
-    @GET("pet")
+    @POST("users/pet")
     suspend fun createCharacter(@Query("userId") userId: Long): Response<CharacterInfoResponse>
 
-    @GET("pet/{userId}")
+    @GET("users/pet/{userId}")
     suspend fun getCharacterInfo(@Path("userId") userId: Long): Response<CharacterInfoResponse>
 
-    @GET("pet/info/{userId}/rewards")
+    @GET("users/pet/info/{userId}/rewards")
     suspend fun getAllGifticons(@Path("userId") userId: Long): Response<GifticonListResponse>
 
-    @POST("pet/{userId}/experience")
+    @POST("users/pet/{userId}/experience")
     suspend fun growCharacter(@Path("userId") userId: Long, @Body characterActionRequest: CharacterActionRequest): Response<CharacterActionResponse>
 
-    @POST("pet/{userId}/complete")
+    @POST("users/pet/{userId}/complete")
     suspend fun completeCharacter(@Path("userId") userId: Long): Response<GifticonResponse>
 }
