@@ -4,3 +4,7 @@ enum class CharacterAction(val actionName: String) {
     Feed("feed"),
     Play("play"),
 }
+
+val characterCoolTime = 179
+
+val testCharacterCoolTime = 2

@@ -9,6 +9,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.model.home.character.CharacterAction
+import com.ssafy.locket.model.home.character.characterCoolTime
+import com.ssafy.locket.model.home.character.testCharacterCoolTime
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentCharacterGrowthBinding
@@ -21,9 +23,10 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
     FragmentCharacterGrowthBinding::bind,
     R.layout.fragment_character_growth
 ){
-
+    private var isTimerRunning = false
+    private lateinit var timerRunnable: Runnable
     private val handler = Handler(Looper.getMainLooper())
-    private var minRemain = 180
+    private var minRemain = testCharacterCoolTime
     private val characterViewModel: CharacterViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,6 +55,8 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         binding.ivMissionToyBg.setOnClickListener {
             characterViewModel.growCharacter(CharacterAction.Play)
             binding.ivMissionToyBg.isEnabled = false
+            minRemain = testCharacterCoolTime
+            binding.tvMissionToyQuantity.text = getString(R.string.home_character_toy_remain_time, minRemain)
             startTimer()
         }
 
@@ -61,6 +66,7 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                     if(uiState.characterInfo.level == 3) characterViewModel.completeCharacter()
                     binding.tvCharacterName.text = uiState.characterInfo.name
                     minRemain = uiState.characterInfo.toy.remainingTimeMinutes
+                    Log.d(TAG, "initUI: minRemain ${minRemain}") // TODO api 수정되는 대로 viewModel에 값 할당하는 부분 수정해서 확인하기
                     binding.tvMissionToyQuantity.text = if(minRemain > 0) getString(R.string.home_character_toy_remain_time, minRemain) else "사용 가능"
                     binding.tvCharacterLevel.text = getString(R.string.home_character_level, uiState.characterInfo.level)
                     binding.tvCharacterPercent.text = getString(R.string.home_character_exp_percent, uiState.characterInfo.expPercentage)
@@ -87,21 +93,38 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
     }
 
     private fun startTimer() {
-        val timerRunnable = object : Runnable {
+        isTimerRunning = true
+
+        timerRunnable = object : Runnable {
             override fun run() {
-                if (minRemain > 0) {
-                    Log.d(TAG, "run: time reduce")
-                    binding.tvMissionToyQuantity.text = getString(R.string.home_character_toy_remain_time, minRemain)
+                Log.d(TAG, "run: minRemain $minRemain  isTimerRunning $isTimerRunning")
+                if (isTimerRunning && minRemain > 0) {
+                    binding.tvMissionToyQuantity.text =
+                        getString(R.string.home_character_toy_remain_time, minRemain)
                     minRemain--
 
                     handler.postDelayed(this, 60000)
                 } else {
-                    Log.d(TAG, "run: handler removed")
-                    handler.removeCallbacks(this)
+                    stopTimer() // 타이머 종료
                     binding.tvMissionToyQuantity.text = "사용 가능"
                 }
             }
         }
-        handler.postDelayed(timerRunnable, 60000)
+
+        handler.post(timerRunnable)
+//        handler.postDelayed(timerRunnable, 60000)
+    }
+
+    private fun stopTimer() {
+        if (isTimerRunning) {
+            isTimerRunning = false
+            handler.removeCallbacks(timerRunnable)
+            Log.d(TAG, "stopTimer: Timer stopped")
+        }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        stopTimer()
     }
 }

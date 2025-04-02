@@ -7,6 +7,8 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.CharacterAction
 import com.ssafy.locket.model.home.character.CharacterInfo
 import com.ssafy.locket.model.home.character.CharacterResult
+import com.ssafy.locket.model.home.character.Toy
+import com.ssafy.locket.model.home.character.characterCoolTime
 import com.ssafy.locket.usecase.character.CheckCharacterUseCase
 import com.ssafy.locket.usecase.character.CompleteCharacterUseCase
 import com.ssafy.locket.usecase.character.CreateCharacterUseCase
@@ -90,11 +92,15 @@ class CharacterViewModel @Inject constructor(
                         is ResponseStatus.Success -> {
                             _characterInfo.update { currentState ->
                                 if(currentState is CharacterInfoState.Success) {
+                                    var newFoodCount = currentState.characterInfo.foodCount
+                                    if(actionType.actionName == "feed") {
+                                        newFoodCount = currentState.characterInfo.foodCount -1
+                                    }
                                     val updateInfo = currentState.characterInfo.copy(
                                         level = status.data.level,
                                         exp = status.data.currentExp,
                                         expPercentage = status.data.expPercentage,
-                                        foodCount = currentState.characterInfo.foodCount - 1,
+                                        foodCount = newFoodCount
                                     )
                                     CharacterInfoState.Success(updateInfo)
                                 } else currentState
