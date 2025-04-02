@@ -11,8 +11,8 @@ public final class PetConstants {
     }
 
     // 레벨별 필요 경험치 (4단계)
-    public static final int[] LEVEL_THRESHOLDS = {0, 100, 300, 600};
-    public static final int MAX_LEVEL = 4;
+    public static final int[] LEVEL_THRESHOLDS = {0, 150, 400};
+    public static final int MAX_LEVEL = 3;
 
     // 경험치 증가량
     public static final int FEED_EXP_GAIN = 10;
