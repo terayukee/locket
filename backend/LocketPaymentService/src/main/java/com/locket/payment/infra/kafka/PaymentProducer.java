@@ -17,7 +17,7 @@ public class PaymentProducer {
     public void sendPaymentSuccessEvent(PaymentSuccessEvent event) {
         try {
             // ✅ JSON 변환 없이 객체 그대로 전송
-            kafkaTemplate.send("payment.success.inhyeok", event);
+            kafkaTemplate.send("payment.success", event);
 
             log.info("✅ Sent PaymentSuccessEvent: {}", event);
         } catch (Exception e) {

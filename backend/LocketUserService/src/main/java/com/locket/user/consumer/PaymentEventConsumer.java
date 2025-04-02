@@ -18,7 +18,7 @@ public class PaymentEventConsumer {
     private final PaymentProcessingService paymentProcessingService;
     private final ObjectMapper objectMapper;
 
-    @KafkaListener(topics = "payment.success.inhyeok")
+    @KafkaListener(topics = "payment.success")
     public void listenPaymentSuccess(ConsumerRecord<String, PaymentSuccessEvent> record, Acknowledgment ack) {
         try {
             PaymentSuccessEvent paymentEvent = record.value();
