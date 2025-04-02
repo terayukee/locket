@@ -1,6 +1,5 @@
 package com.locket.user.service.feedback;
 
-import com.locket.common.dto.*;
 import com.locket.elastic.dto.FeedbackAnalysisData;
 import com.locket.elastic.dto.FeedbackCardStatDto;
 import com.locket.elastic.dto.FeedbackCategoryStatDto;

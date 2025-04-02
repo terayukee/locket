@@ -1,8 +1,8 @@
 package com.locket.user.service.feedback;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.locket.common.dto.SimpleGoalDto;
-import com.locket.common.dto.SimpleUserDto;
+import com.locket.user.dto.SimpleGoalDto;
+import com.locket.user.dto.SimpleUserDto;
 import com.locket.elastic.dto.*;
 import com.locket.payment.dto.PaymentHistoryDto;
 import com.locket.user.domain.auth.entity.User;

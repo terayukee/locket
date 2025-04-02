@@ -76,15 +76,15 @@ public class ProductService {
 
         // 가격 히스토리 조회
         List<PriceHistory> priceHistories = priceHistoryRepository.findByProductIdOrderByPriceDateAsc(productId);
-        List<PriceHistoryDTO> priceHistoryDTOs = priceHistories.stream()
-                .map(PriceHistoryDTO::fromEntity)
+        List<ProductPriceHistoryDTO> priceHistoryDTOs = priceHistories.stream()
+                .map(ProductPriceHistoryDTO::fromEntity)
                 .collect(Collectors.toList());
 
         // 응답 DTO 생성 및 반환
         return ProductDetailResponseDTO.builder()
                 .userId(userId)
                 .productId(product.getId())
-                .productName(product.getName())
+                .productName(product.getProductName())
                 .imageUrl(product.getImageUrl())
                 .currentPrice(product.getCurrentPrice())
                 .discountRate(product.getDiscountRate())

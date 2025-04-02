@@ -1,7 +1,7 @@
 package com.locket.elastic.dto;
 
-import com.locket.common.dto.SimpleGoalDto;
-import com.locket.common.dto.SimpleUserDto;
+import com.locket.user.dto.SimpleGoalDto;
+import com.locket.user.dto.SimpleUserDto;
 import com.locket.payment.dto.PaymentHistoryDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

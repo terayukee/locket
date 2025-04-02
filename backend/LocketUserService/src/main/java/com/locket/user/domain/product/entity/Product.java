@@ -19,7 +19,7 @@ public class Product {
     private Integer id;
 
     @Column(nullable = false)
-    private String name;
+    private String productName;
 
     @Column(nullable = false)
     private String imageUrl;

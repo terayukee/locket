@@ -1,4 +1,4 @@
-package com.locket.common.dto;
+package com.locket.user.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
