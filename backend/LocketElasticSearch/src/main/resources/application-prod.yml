@@ -10,6 +10,8 @@ ELASTICSEARCH:
   PASSWORD: ${ELASTICSEARCH_PASSWORD}
 
 spring:
+  application:
+    name: ELASTICSEARCH-SERVICE
   config:
     activate:
       on-profile: prod
