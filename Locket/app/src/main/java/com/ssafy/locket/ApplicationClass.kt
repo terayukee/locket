@@ -30,7 +30,7 @@ class ApplicationClass : Application() {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     val token = task.result
-                    Log.d(TAG,token)
+                    Log.d("SignInFragment",token)
                     CoroutineScope(Dispatchers.IO).launch {
                         userDataStoreSource.saveFcmToken(token)
                     }

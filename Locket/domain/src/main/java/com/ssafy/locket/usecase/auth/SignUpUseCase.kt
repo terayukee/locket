@@ -14,7 +14,6 @@ class SignUpUseCase @Inject constructor(
     suspend operator fun invoke(
         birthYear: Int,
         fingerprintRegisterd: Boolean,
-        nickname: String,
         paymentPassword: Int,
         userJob: String,
         kakaoAccessToken: String
@@ -22,7 +21,6 @@ class SignUpUseCase @Inject constructor(
         return authRepository.join(
             birthYear,
             fingerprintRegisterd,
-            nickname,
             paymentPassword,
             userJob,
             kakaoAccessToken

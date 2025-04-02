@@ -27,7 +27,6 @@ internal class AuthRepositoryImpl @Inject constructor(
     override suspend fun join(
         birthYear: Int,
         fingerprintRegistered: Boolean,
-        nickname: String,
         paymentPassword: Int,
         userJob: String,
         kakaoAccessToken: String
@@ -40,13 +39,13 @@ internal class AuthRepositoryImpl @Inject constructor(
                     fcmToken = fcmToken,
                     fingerprintRegistered = fingerprintRegistered,
                     kakaoAccessToken = kakaoAccessToken,
-                    nickname = nickname,
                     paymentPassword = paymentPassword,
                     userJob = userJob
                 ))
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {
+                        dataStore.saveUserId(result.data.userId.toLong())
                         emit(ResponseStatus.Success(result.data.toDomainModel()))
                     }
                     is ApiResponse.Error -> {
@@ -68,6 +67,7 @@ internal class AuthRepositoryImpl @Inject constructor(
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {
+                        dataStore.saveUserId(result.data.userId.toLong())
                         emit(ResponseStatus.Success(result.data.toDomainModel()))
                     }
                     is ApiResponse.Error -> {

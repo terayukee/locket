@@ -8,10 +8,9 @@ interface AuthRepository {
     suspend fun join(
         birthYear: Int,
         fingerprintRegistered: Boolean,
-        nickname: String,
         paymentPassword: Int,
         userJob: String,
-        kakaoAccessToken: String
+        accessToken: String
     ): Flow<ResponseStatus<JwtToken>>
     suspend fun login(accessToken: String): Flow<ResponseStatus<JwtToken>>
 }

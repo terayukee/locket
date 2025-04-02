@@ -10,7 +10,7 @@ data class CharacterActionResponse(
     val characterName: String,
     val currentExp: Int,
     val expGained: Int,
-    val expPercentage: Int,
+    val expPercentage: Double,
     val level: Int,
     val levelUp: Boolean,
     val previousExp: Int

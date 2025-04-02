@@ -12,11 +12,13 @@ import android.view.ViewGroup
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentRegisterUserInfoBinding
 import com.ssafy.locket.presentation.databinding.PopupJobMenuBinding
+import com.ssafy.locket.presentation.login.LoginViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 
 class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
@@ -27,6 +29,9 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
     //버튼 색깔 지정하기 위한 변수
     var isJobSelected = false
     var isBirthValid = false
+    //회원가입 위한 변수
+    private val loginViewModel: LoginViewModel by activityViewModels()
+
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -73,6 +78,8 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
 //                    Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 밑으로 입력해주세요",Toast.LENGTH_LONG).show()
                 }
                 else{
+                    loginViewModel.updateUserJob(binding.tvJoblabel.text.toString())
+                    loginViewModel.updateBirthYear(binding.etBirth.text.toString().toInt())
                     findNavController().navigate(R.id.action_registerUserInfoFragment_to_registerPasswordFragment)
                     binding.etBirth.text.clear()
                 }
@@ -104,9 +111,9 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
 
         val clickListener = View.OnClickListener { clickedView ->
             val jobTitle = when (clickedView.id) {
-                R.id.popupItemStudent -> "학생/주부/무직"
+                R.id.popupItemStudent -> "무직"
                 R.id.popupItemEmployee -> "직장인"
-                R.id.popupItemSelfEmployed -> "자영업"
+                R.id.popupItemSelfEmployed -> "자영업자"
                 else -> return@OnClickListener
             }
             binding.tvJoblabel.text = jobTitle

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/job1" android:title="학생/주부/무직" />
+    <item android:id="@+id/job1" android:title="무직" />
     <item android:id="@+id/job2" android:title="직장인" />
-    <item android:id="@+id/job3" android:title="자영업" />
+    <item android:id="@+id/job3" android:title="자영업자" />
 </menu>
