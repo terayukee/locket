@@ -3,6 +3,7 @@ package com.locket.user.service.product;
 import com.locket.user.domain.product.dto.*;
 import com.locket.user.domain.product.entity.*;
 import com.locket.user.domain.product.repository.*;
+import com.locket.user.service.notification.ProductAlertNotificationService;
 import com.locket.user.exception.CategoryNotFoundException;
 import com.locket.user.exception.InvalidRequestException;
 import com.locket.user.exception.ProductNotFoundException;
@@ -27,6 +28,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final ProductUserPreferenceRepository productUserPreferenceRepository;
+    private final ProductAlertNotificationService productAlertNotificationService;
 
     @Transactional(readOnly = true)
     public ProductListResponseDTO getProductsByCategory(Integer categoryId, Integer page) {
@@ -198,5 +200,18 @@ public class ProductService {
                 .isAlert(savedPreference.isAlert())
                 .alertPrice(savedPreference.getAlertPrice())
                 .build();
+    }
+
+    // 상품 현재가 업데이트
+    @Transactional
+    public void updateProductPrice(Integer productId, String newPrice) {
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        product.setCurrentPrice(newPrice);
+        productRepository.save(product);
+
+        // ✅ 알림 트리거
+        productAlertNotificationService.notifyUsersIfPriceDrops(product);
     }
 }

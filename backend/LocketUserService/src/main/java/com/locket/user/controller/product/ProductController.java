@@ -428,5 +428,18 @@ public class ProductController {
     }
 
 
-
+    @Operation(summary = "상품 가격 변경", description = "상품 ID로 현재 가격을 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "가격 변경 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
+    })
+    @PatchMapping("/{productId}/price")
+    public ResponseEntity<Void> updateProductPrice(
+            @PathVariable Integer productId,
+            @RequestBody ProductPriceUpdateRequestDTO requestDTO
+    ) {
+        productService.updateProductPrice(productId, requestDTO.getNewPrice());
+        return ResponseEntity.ok().build();
+    }
 }
