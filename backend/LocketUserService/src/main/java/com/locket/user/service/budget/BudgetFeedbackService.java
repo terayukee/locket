@@ -28,6 +28,18 @@ public class BudgetFeedbackService {
     private final PaymentQueryService paymentQueryService;
     private final ReceiptFeignClient receiptFeignClient;
 
+    private Map<String, Integer> calculateCategoryAmounts(List<PaymentHistoryDto> histories) {
+        Map<String, Integer> totalCategoryAmount = new HashMap<>();
+        for (PaymentHistoryDto payment : histories) {
+            String category = payment.getPaymentCategory();
+            // null 카테고리를 "기타"로 대체
+            category = (category == null || category.trim().isEmpty()) ? "기타" : category;
+            int amount = payment.getTotalAmount().intValue();
+            totalCategoryAmount.merge(category, amount, Integer::sum);
+        }
+        return totalCategoryAmount;
+    }
+
     @Cacheable(value = "budgetFeedback", key = "#userId")
     public BudgetFeedbackResponse getFeedback(Long userId) {
         log.info("사용자 {} 피드백 생성 시작", userId);
@@ -59,13 +71,8 @@ public class BudgetFeedbackService {
                         .build();
             }
 
-            // 모든 결제 내역의 카테고리별 금액 합산
-            Map<String, Integer> totalCategoryAmount = new HashMap<>();
-            for (PaymentHistoryDto payment : histories) {
-                String category = payment.getPaymentCategory();
-                int amount = payment.getTotalAmount().intValue();
-                totalCategoryAmount.merge(category, amount, Integer::sum);
-            }
+            // 카테고리별 금액 계산 (null 처리가 포함된 메서드 사용)
+            Map<String, Integer> totalCategoryAmount = calculateCategoryAmounts(histories);
 
             log.debug("사용자 {} 이번 달 전체 카테고리별 지출: {}", userId, totalCategoryAmount);
 
