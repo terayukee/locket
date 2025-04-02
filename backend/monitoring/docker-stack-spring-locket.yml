@@ -12,10 +12,6 @@ services:
   user-service:
     image: maru1203/spring-locket-user-service:latest
 #    hostname: "spring-locket-user-service"
-#    environment:
-#      - DB_URL_USER=${DB_URL_USER}
-#      - DB_USERNAME=${DB_USERNAME}
-#      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "8082:8082"
     networks:
@@ -26,10 +22,6 @@ services:
   payment-service:
     image: maru1203/spring-locket-payment-service:latest
 #    hostname: "spring-locket-payment-service"
-#    environment:
-#      - DB_URL_PAYMENT=${DB_URL_PAYMENT}
-#      - DB_USERNAME=${DB_USERNAME}
-#      - DB_PASSWORD=${DB_PASSWORD}
     ports:
       - "8081:8081"
     networks:
@@ -46,10 +38,6 @@ services:
   elasticsearch:
     image: maru1203/spring-locket-elasticsearch:latest
 #    hostname: "spring-locket-elasticsearch"
-#    environment:
-#      - ELASTICSEARCH_URIS=${ELASTICSEARCH_URIS}
-#      - ELASTICSEARCH_USERNAME=${ELASTICSEARCH_USERNAME}
-#      - ELASTICSEARCH_PASSWORD=${ELASTICSEARCH_PASSWORD}
     ports:
       - "8083:8083"
     networks:

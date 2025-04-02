@@ -58,10 +58,6 @@ management:
   endpoint:
     prometheus:
       enabled: true
-  metrics:
-    export:
-      prometheus:
-        enabled: true
     gateway:
       enabled: true
     health:
