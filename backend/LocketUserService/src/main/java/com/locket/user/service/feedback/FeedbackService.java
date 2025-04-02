@@ -2,6 +2,8 @@ package com.locket.user.service.feedback;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.locket.user.client.PerplexityClient;
+import com.locket.user.domain.feedback.dto.FinalFeedbackResult;
+import com.locket.user.domain.feedback.dto.PerplexitySummaryResponse;
 import com.locket.user.dto.SimpleGoalDto;
 import com.locket.user.dto.SimpleUserDto;
 import com.locket.elastic.dto.*;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -113,16 +116,18 @@ public class FeedbackService {
 
             FeedbackResult result = feedbackAnalyzer.analyze(data);
 
-            // Perplexity 요약 결과 생성
-            String summaryText = perplexityClient.summarizeFeedback(result.getInsights(), result.getRecommendations());
+            // 🧠 퍼플렉시티 요약
+            PerplexitySummaryResponse summary = perplexityClient.summarizeFeedback(
+                    String.join("\n", result.getInsights()),
+                    String.join("\n", result.getRecommendations())
+            );
 
-            // 새로운 JSON 구조 생성
-            FeedbackResult summarized = FeedbackResult.builder()
+            FinalFeedbackResult summarized = FinalFeedbackResult.builder()
                     .totalAmount(result.getTotalAmount())
                     .categoryBreakdown(result.getCategoryBreakdown())
                     .summary(result.getSummary())
-                    .insights(List.of(summaryText))
-                    .recommendations(List.of())
+                    .insights(summary.getInsights())
+                    .recommendations(summary.getRecommendations())
                     .build();
 
             String jsonResult = objectMapper.writeValueAsString(summarized);
