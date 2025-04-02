@@ -22,7 +22,7 @@ public class ProductSummaryDTO {
     public static ProductSummaryDTO fromEntity(Product product) {
         return ProductSummaryDTO.builder()
                 .productId(product.getId())
-                .productName(product.getName())
+                .productName(product.getProductName())
                 .imageUrl(product.getImageUrl())
                 .currentPrice(product.getCurrentPrice())
                 .discountRate(product.getDiscountRate())

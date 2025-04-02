@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "price_histories")
+@Table(name = "product_price_history")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -16,7 +16,7 @@ public class PriceHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long priceId;
 
     @ManyToOne
     @JoinColumn(name = "product_id")
