@@ -24,6 +24,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
 
+private const val TAG = "HomeFragment"
 @AndroidEntryPoint
 class HomeFragment : BaseFragment<FragmentHomeBinding>(
     FragmentHomeBinding::bind,
@@ -31,7 +32,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private val viewModel: HomeViewModel by viewModels()
+    private val viewModel: UserInfoViewModel by activityViewModels()
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
     @Inject
@@ -40,8 +41,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val today = LocalDate.now()
-        Log.d("SignInFragment","sdf"+userDataStoreSource.userId)
-        Log.d("SignInFragment","sdsadfadsf"+userDataStoreSource.jwtToken)
 
         binding.logoLocket.setOnClickListener {
             CommonUtils.showMultiLineCustomToast(requireContext(), "유효하지 않은 입력이에요","1900 - 2025년 사이로 입력해주세요")
@@ -90,8 +89,25 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
         }
 
-        viewModel.fetchUser(1)
+        observeModel()
+        initEvent()
+        backEvent()
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        //(requireContext() as MainActivity).changeBackgroundColor(R.color.white)
+    }
+
+    fun initEvent(){
+        lifecycleScope.launch {
+            userDataStoreSource.userId.collect { id ->
+                viewModel.fetchUser(id?:0)
+            }
+        }
+    }
+
+    fun observeModel(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 viewModel.userInfo.collect { user ->
@@ -102,13 +118,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 }
             }
         }
-
-        backEvent()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
     }
 
     fun backEvent(){
