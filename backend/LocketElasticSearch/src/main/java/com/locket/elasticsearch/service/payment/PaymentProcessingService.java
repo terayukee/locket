@@ -29,23 +29,23 @@ public class PaymentProcessingService {
         try {
             // FastAPI 호출 - Map으로 직접 요청/응답 처리
             log.info("📤 Sending category classification request for store: {}", event.getStoreName());
-//            Map<String, String> request = Map.of("storeName", event.getStoreName());
-//
-//            Map<String, Object> response = webClient.post()
-//                    .uri("/api/category/classify")
-//                    .bodyValue(Map.of("storeName", event.getStoreName()))
-//                    .retrieve()
-//                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-//                    .block();
-//            log.info("📥 Received category classification response: {}", response);
-//            log.info("📥 Category from response: {}", response.get("paymentCategory"));
-//
-//            // 초기 categoryAmount 설정
-//            Map<String, Integer> categoryAmount = new HashMap<>();
-//            categoryAmount.put(
-//                    (String) response.get("paymentCategory"),
-//                    event.getTotalAmount().intValue()
-//            );
+            Map<String, String> request = Map.of("storeName", event.getStoreName());
+
+            Map<String, Object> response = webClient.post()
+                    .uri("/api/category/classify")
+                    .bodyValue(Map.of("storeName", event.getStoreName()))
+                    .retrieve()
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                    .block();
+            log.info("📥 Received category classification response: {}", response);
+            log.info("📥 Category from response: {}", response.get("paymentCategory"));
+
+            // 초기 categoryAmount 설정
+            Map<String, Integer> categoryAmount = new HashMap<>();
+            categoryAmount.put(
+                    (String) response.get("paymentCategory"),
+                    event.getTotalAmount().intValue()
+            );
 
             // DTO -> Elasticsearch Entity로 변환
             PaymentHistory history = PaymentHistory.builder()
@@ -56,9 +56,9 @@ public class PaymentProcessingService {
                     .birthDate(event.getBirthDate())
                     .totalAmount(event.getTotalAmount())
                     .currency(event.getCurrency())
-//                    .paymentCategory((String) response.get("paymentCategory"))  // API 응답으로 받은 카테고리 사용
-                    .paymentCategory(event.getPaymentCategory())
-//                    .needItemCheck((Boolean) response.get("needItemCheck"))
+                    .paymentCategory((String) response.get("paymentCategory"))  // API 응답으로 받은 카테고리 사용
+//                    .paymentCategory(event.getPaymentCategory())
+                    .needItemCheck((Boolean) response.get("needItemCheck"))
                     .paymentMerchant(event.getPaymentMerchant())
                     .storeName(event.getStoreName())                  // ✅ 매장명
                     .receiptUploaded(event.isReceiptUploaded())       // ✅ 영수증 업로드 여부
@@ -68,7 +68,7 @@ public class PaymentProcessingService {
                     .month(event.getMonth())
                     .day(event.getDay())
                     .orders(convertOrderDetails(event.getOrders()))
-//                    .categoryAmount(categoryAmount)
+                    .categoryAmount(categoryAmount)
                     .build();
 
             log.info("💾 Saving payment with category: {}", history.getPaymentCategory());
