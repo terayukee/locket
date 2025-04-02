@@ -120,8 +120,8 @@ public class UserService {
 
     private void validatePaymentPassword(Integer paymentPassword) {
         if (paymentPassword != null) {
-            if (paymentPassword < 1000 || paymentPassword > 9999) {
-                throw new IllegalArgumentException("결제 비밀번호는 4자리 숫자여야 합니다.");
+            if (paymentPassword < 100000 || paymentPassword > 999999) {
+                throw new IllegalArgumentException("결제 비밀번호는 6자리 숫자여야 합니다.");
             }
         }
     }

@@ -26,7 +26,7 @@ public class SignupRequest {
     @Schema(example = "직장인", description = "사용자 직업 (무직/직장인/자영업자)")
     private String userJob;
 
-    @Schema(example = "1234", description = "결제 비밀번호 (4자리)")
+    @Schema(example = "123456", description = "결제 비밀번호 (6자리)")
     private Integer paymentPassword;
 
     @Schema(example = "true", description = "지문 등록 여부")
