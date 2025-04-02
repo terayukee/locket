@@ -368,7 +368,7 @@ public class PetController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "테스트용: 캐릭터 삭제", description = "개발 테스트용으로 사용자의 캐릭터를 삭제합니다.")
+    @Operation(summary = "[테스트용] 캐릭터 삭제", description = "개발 테스트용으로 사용자의 캐릭터를 삭제합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "캐릭터 삭제 성공"),
             @ApiResponse(
