@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
+import com.google.gson.Gson
+import com.ssafy.locket.model.user.UserInfo
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject
@@ -19,7 +21,11 @@ class UserDataStoreSource @Inject constructor(
         val USER_ID = longPreferencesKey("user_id")
         val FCM_TOKEN = stringPreferencesKey("fcm_token")
         val JWT_TOKEN =  stringPreferencesKey("jwt_token")
+        val USER_OBJECT = stringPreferencesKey("user_object")
     }
+
+    private val gson = Gson()
+
 
     suspend fun saveAccessToken(accessToken: String) {
         dataStore.edit { preferences ->
@@ -57,6 +63,13 @@ class UserDataStoreSource @Inject constructor(
         }
     }
 
+    suspend fun saveUser(user: UserInfo) {
+        val userJson = gson.toJson(user)
+        dataStore.edit { preferences ->
+            preferences[USER_OBJECT] = userJson
+        }
+    }
+
     val accessToken: Flow<String?> = dataStore.data.map { preferences ->
         preferences[ACCESS_TOKEN]
     }
@@ -79,6 +92,11 @@ class UserDataStoreSource @Inject constructor(
 
     val jwtToken : Flow<String?> = dataStore.data.map{preferences->
         preferences[JWT_TOKEN]
+    }
+
+    val user: Flow<UserInfo?> = dataStore.data.map { preferences ->
+        val userJson = preferences[USER_OBJECT]
+        userJson?.let { gson.fromJson(it, UserInfo::class.java) }
     }
 
     suspend fun clearAll() {

@@ -5,7 +5,9 @@ import com.ssafy.locket.data.network.api.UserService
 import com.ssafy.locket.data.network.common.ApiResponse
 import com.ssafy.locket.data.network.common.ApiResponseHandler
 import com.ssafy.locket.data.network.common.ErrorResponse.Companion.toDomainModel
+import com.ssafy.locket.data.network.request.login.UpdateUserRequest
 import com.ssafy.locket.data.network.response.auth.UserInfoResponse.Companion.toDomainModel
+import com.ssafy.locket.data.network.response.mypage.DeleteUserResponse
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.user.UserInfo
 import com.ssafy.locket.repository.user.UserRepository
@@ -27,6 +29,44 @@ internal class UserRepositoryImpl @Inject constructor(
                 when(result) {
                     is ApiResponse.Success -> {
                         emit(ResponseStatus.Success(result.data.toDomainModel()))
+                    }
+                    is ApiResponse.Error -> {
+                        emit(ResponseStatus.Error(result.error.toDomainModel()))
+                    }
+                }
+            }.collect()
+        }
+    }
+
+    override suspend fun updateUserInfo(userId: Long, userInfo: UserInfo): Flow<ResponseStatus<UserInfo>> {
+        return flow {
+            ApiResponseHandler().handle {
+                userService.updateUser(userId, UpdateUserRequest(
+                    birthYear = userInfo.birthYear,
+                    nickname = userInfo.nickname,
+                    userJob = userInfo.userJob
+                ))
+            }.onEach { result ->
+                when(result) {
+                    is ApiResponse.Success -> {
+                        emit(ResponseStatus.Success(result.data))
+                    }
+                    is ApiResponse.Error -> {
+                        emit(ResponseStatus.Error(result.error.toDomainModel()))
+                    }
+                }
+            }.collect()
+        }
+    }
+
+    override suspend fun deleteUserInfo(userId: Long): Flow<ResponseStatus<Unit>> {
+        return flow {
+            ApiResponseHandler().handle {
+                userService.deleteUser(userId)
+            }.onEach { result ->
+                when(result) {
+                    is ApiResponse.Success -> {
+                        emit(ResponseStatus.Success(Unit))
                     }
                     is ApiResponse.Error -> {
                         emit(ResponseStatus.Error(result.error.toDomainModel()))

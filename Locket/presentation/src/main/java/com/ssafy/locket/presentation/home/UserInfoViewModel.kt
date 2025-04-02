@@ -5,7 +5,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.user.UserInfo
+import com.ssafy.locket.usecase.user.DeleteUserInfoUseCase
 import com.ssafy.locket.usecase.user.GetUserInfoUseCase
+import com.ssafy.locket.usecase.user.UpdateUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -17,7 +19,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class UserInfoViewModel @Inject constructor(
-    private val getUserInfoUseCase: GetUserInfoUseCase
+    private val getUserInfoUseCase: GetUserInfoUseCase,
+    private val updateUserInfoUseCase: UpdateUserInfoUseCase,
+    private val deleteUserInfoUseCase: DeleteUserInfoUseCase
 ) : ViewModel() {
 
     private val _userInfo = MutableStateFlow<UserInfoState>(UserInfoState.Initial)
@@ -48,6 +52,52 @@ class UserInfoViewModel @Inject constructor(
                 }
         }
     }
+
+    fun updateUser(userId: Long,userInfo: UserInfo) {
+        viewModelScope.launch {
+            updateUserInfoUseCase(userId,userInfo)
+                .onStart { setLoading() }
+                .catch { e ->
+                    Log.e("UserFragment", "에러 발생: ${e.message}", e)
+                }
+                .collect { uiState ->
+                    when(uiState) {
+                        is ResponseStatus.Success -> {
+                            _userInfo.value = UserInfoState.Success(uiState.data)
+                            Log.d("UserFragment", "User sdf: ${_userInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _userInfo.value = UserInfoState.Error(uiState.error.message)
+                            Log.d("UserFragment", "updateUser: ${_userInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+
+    fun deleteUser(userId: Long) {
+        viewModelScope.launch {
+            deleteUserInfoUseCase(userId)
+                .onStart { setLoading() }
+                .catch { e ->
+                    Log.e("UserFragment", "에러 발생: ${e.message}", e)
+                }
+                .collect { uiState ->
+                    when(uiState) {
+                        is ResponseStatus.Success -> {
+                            _userInfo.value = UserInfoState.Initial
+                            Log.d("UserFragment", "User sdf: ${_userInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _userInfo.value = UserInfoState.Error(uiState.error.message)
+                            Log.d("UserFragment", "updateUser: ${_userInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+
+
 }
 
 sealed class UserInfoState {
