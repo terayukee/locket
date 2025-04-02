@@ -4,13 +4,10 @@ import com.ssafy.locket.model.base.BaseModel
 import kotlinx.parcelize.Parcelize
 
 @Parcelize
-data class CharacterInfo(
-    val id: Long,
+data class CharacterGrowth(
     val name: String,
-    val exp: Int,
+    val currentExp: Int,
     val expPercentage: Double,
-    val foodCount: Int,
     val level: Int,
-    val totalExpForNextLevel: Int,
-    val toy: Toy
+    val levelUp: Boolean
 ): BaseModel

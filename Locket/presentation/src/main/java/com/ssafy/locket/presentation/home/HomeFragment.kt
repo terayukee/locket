@@ -16,6 +16,8 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
+import com.ssafy.locket.presentation.home.character.viewmodel.CharacterInfoState
+import com.ssafy.locket.presentation.home.character.viewmodel.CharacterViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import dagger.hilt.android.AndroidEntryPoint
@@ -29,19 +31,53 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private val viewModel: HomeViewModel by viewModels()
-    //뒤로 가기 이벤트
+    private val homeViewModel: HomeViewModel by viewModels()
+
+    private val characterViewModel: CharacterViewModel by activityViewModels()
+
     private var backPressedTime: Long = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val today = LocalDate.now()
 
-        binding.logoLocket.setOnClickListener {
-            CommonUtils.showMultiLineCustomToast(requireContext(), "유효하지 않은 입력이에요","1900 - 2025년 사이로 입력해주세요")
+        initUI()
+
+        homeViewModel.fetchUser(1)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeViewModel.userInfo.collect { user ->
+                    if(user is UserInfoState.Success) {
+                        Log.d("UserFragment", "User: ${user.userInfo.nickname}")
+                        binding.tvUserName.text = user.userInfo.nickname
+                    }
+                }
+            }
         }
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            characterViewModel.characterInfo.collect { uiState ->
+                if(uiState is CharacterInfoState.Success) {
+                    findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
+                } else if(uiState is CharacterInfoState.Empty) {
+                    findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+                }
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
+    }
+
+    private fun initUI() {
+        val today = LocalDate.now()
+
+        backEvent()
+
         binding.ivCharacterBg.setOnClickListener {
+            characterViewModel.checkCharacter()
             findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
         }
 
@@ -67,7 +103,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             findNavController().navigate(R.id.action_homeFragment_to_expenseAnalysisFragment)
         }
 
-        //binding.tvUserName.text = getString(R.string.home_name, "아영")
         binding.tvPaymentTitle.text = getString(R.string.home_payment_month, today.monthValue)
         binding.tvBudgetAiFeedback.text = "목표 소비 금액 70% 달성 \uD83C\uDFAF"
 
@@ -79,30 +114,9 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.tvBudgetFeedback.text = "100,000원 남았어요"
 
-       // (requireContext() as MainActivity).changeBackgroundColor(R.color.background)
         binding.icProfile.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
         }
-
-        viewModel.fetchUser(1)
-
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                viewModel.userInfo.collect { user ->
-                    if(user is UserInfoState.Success) {
-                        Log.d("UserFragment", "User: ${user.userInfo.nickname}")
-                        binding.tvUserName.text = user.userInfo.nickname
-                    }
-                }
-            }
-        }
-
-        backEvent()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        (requireContext() as MainActivity).changeBackgroundColor(R.color.white)
     }
 
     fun backEvent(){

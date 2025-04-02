@@ -6,5 +6,5 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 class Toy(
     val isAvailable: Boolean,
-    val remainingTimeMinutes: Long
+    val remainingTimeMinutes: Int
 ): BaseModel

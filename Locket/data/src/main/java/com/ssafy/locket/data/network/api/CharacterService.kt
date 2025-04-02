@@ -1,23 +1,34 @@
 package com.ssafy.locket.data.network.api
 
+import com.ssafy.locket.data.network.request.home.character.CharacterActionRequest
+import com.ssafy.locket.data.network.response.home.character.CharacterActionResponse
 import com.ssafy.locket.data.network.response.home.character.CharacterInfoResponse
 import com.ssafy.locket.data.network.response.home.character.CharacterStatusResponse
 import com.ssafy.locket.data.network.response.home.character.GifticonListResponse
+import com.ssafy.locket.data.network.response.home.character.GifticonResponse
 import retrofit2.Response
+import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 internal interface CharacterService {
     @GET("pet")
-    suspend fun isCharacterExist(@Path("userId") userId: Long): Response<CharacterStatusResponse>
+    suspend fun isCharacterExist(@Query("userId") userId: Long): Response<CharacterStatusResponse>
 
-    @GET("pet/info")
-    suspend fun getCharacterInfo(): Response<CharacterInfoResponse>
+    @GET("pet")
+    suspend fun createCharacter(@Query("userId") userId: Long): Response<CharacterInfoResponse>
+
+    @GET("pet/{userId}")
+    suspend fun getCharacterInfo(@Path("userId") userId: Long): Response<CharacterInfoResponse>
 
     @GET("pet/info/{userId}/rewards")
-    suspend fun getAllGifticons(): Response<GifticonListResponse>
+    suspend fun getAllGifticons(@Path("userId") userId: Long): Response<GifticonListResponse>
 
-//    @POST("pet/{userId}/food")
-//    suspend fun postFeed(): Response<>
+    @POST("pet/{userId}/experience")
+    suspend fun growCharacter(@Path("userId") userId: Long, @Body characterActionRequest: CharacterActionRequest): Response<CharacterActionResponse>
+
+    @POST("pet/{userId}/complete")
+    suspend fun completeCharacter(@Path("userId") userId: Long): Response<GifticonResponse>
 }
