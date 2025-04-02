@@ -138,7 +138,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
                         userDataStoreSource.saveUser(user.userInfo)
-                        binding.tvUserName.text = user.userInfo.nickname
                     }
                 }
             }

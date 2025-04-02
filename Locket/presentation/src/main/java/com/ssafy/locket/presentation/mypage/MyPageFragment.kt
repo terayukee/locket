@@ -15,6 +15,7 @@ import com.ssafy.locket.presentation.databinding.FragmentMyPageBinding
 import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.presentation.home.UserInfoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -24,7 +25,6 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
     FragmentMyPageBinding::bind,
     R.layout.fragment_my_page
 ) {
-    private val userInfoViewModel: UserInfoViewModel by activityViewModels()
     @Inject
     lateinit var userDataStoreSource: UserDataStoreSource
 
@@ -51,15 +51,15 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         }
     }
 
-    fun initView(){
+    fun initView() {
         lifecycleScope.launch {
-            userInfoViewModel.userInfo.collect { user ->
-                if(user is UserInfoState.Success) {
-                    binding.tvProfileName.text = user.userInfo.nickname
-                    binding.tvProfileJob.text = "직업 "+user.userInfo.userJob
-                    binding.tvProfileAge.text = "나이 "+(LocalDate.now().year+1-user.userInfo.birthYear).toString()+"세"
-                }
+            val user = userDataStoreSource.user.first() // 최초 값 한 번만 가져오기
+            user?.let {
+                binding.tvProfileName.text = it.nickname  // nickname을 TextView에 설정
+                binding.tvProfileJob.text = "직업 " + it.userJob
+                binding.tvProfileAge.text = "나이 " + (LocalDate.now().year + 1 - it.birthYear).toString() + "세"
             }
+            Log.d("SignFragment", "변한 값: $user")
         }
     }
 

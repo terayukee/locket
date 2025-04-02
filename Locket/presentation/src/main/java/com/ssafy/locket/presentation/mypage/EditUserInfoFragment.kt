@@ -20,6 +20,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
+import com.ssafy.locket.model.user.UserInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditUserInfoBinding
@@ -27,7 +28,10 @@ import com.ssafy.locket.presentation.databinding.PopupJobMenuBinding
 import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.presentation.home.UserInfoViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import javax.inject.Inject
 
@@ -85,17 +89,41 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
                     binding.editAge.text.clear()
                     Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 수정해 입력해주세요", Toast.LENGTH_LONG).show()
                 }
+                //정확한 값이 나왔을때
                 else{
-                    val navOptions = NavOptions.Builder()
-                        .setPopUpTo(R.id.editUserInfoFragment, true) // Remove current fragment from back stack
-                        .setLaunchSingleTop(true) // Ensure only one instance of the destination
-                        .build()
-                    findNavController().navigate(
-                        R.id.action_editUserInfoFragment_to_myPageFragment,
-                        null,
-                        navOptions
-                    )
-                    binding.editAge.text.clear()
+                    lifecycleScope.launch {
+                        // 최신 사용자 정보 가져오기
+                        val user = userDataStoreSource.user.first()
+
+                        user?.let {
+                            val updatedUser = it.copy(
+                                birthYear = binding.editAge.text.toString().toInt(),
+                                userJob = binding.tvJobSelect.text.toString()
+                            )
+                            Log.d("SignFragment", updatedUser.toString())
+
+                            // 데이터 저장 (IO 스레드에서 실행)
+                            withContext(Dispatchers.IO) {
+                                userDataStoreSource.saveUser(updatedUser)
+                                userInfoViewModel.updateUser(it.userId.toLong(),updatedUser)
+                            }
+
+                            // UI 업데이트는 Main 스레드에서 실행
+                            withContext(Dispatchers.Main) {
+                                binding.editAge.text.clear()
+                                val navOptions = NavOptions.Builder()
+                                    .setPopUpTo(R.id.editUserInfoFragment, true) // 현재 Fragment 제거
+                                    .setLaunchSingleTop(true)
+                                    .build()
+
+                                findNavController().navigate(
+                                    R.id.action_editUserInfoFragment_to_myPageFragment,
+                                    null,
+                                    navOptions
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -160,14 +188,13 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
         }
     }
 
-    fun initView(){
+    fun initView() {
         lifecycleScope.launch {
-            userInfoViewModel.userInfo.collect { user ->
-                if(user is UserInfoState.Success) {
-                    binding.tvNickname.text = user.userInfo.nickname
-                    binding.tvJobSelect.text = user.userInfo.userJob
-                    binding.editAge.setText(user.userInfo.birthYear.toString())
-                }
+            val user = userDataStoreSource.user.first() // 한 번만 가져옴
+            user?.let {
+                binding.tvNickname.text = it.nickname  // nickname을 TextView에 설정
+                binding.tvJobSelect.text = it.userJob
+                binding.editAge.setText(it.birthYear.toString())
             }
         }
     }
