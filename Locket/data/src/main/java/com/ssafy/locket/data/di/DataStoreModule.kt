@@ -30,7 +30,7 @@ object DataStoreModule {
 
     @Provides
     @Singleton
-    fun provideDataStoreRepository(
+    fun provideUserDataSource(
         dataStore: DataStore<Preferences>
     ): UserDataStoreSource {
         return UserDataStoreSource(dataStore)

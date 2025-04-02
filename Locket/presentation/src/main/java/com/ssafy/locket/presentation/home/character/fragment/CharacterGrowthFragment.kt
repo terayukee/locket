@@ -3,13 +3,11 @@ package com.ssafy.locket.presentation.home.character.fragment
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.model.home.character.CharacterAction
-import com.ssafy.locket.model.home.character.characterCoolTime
 import com.ssafy.locket.model.home.character.testCharacterCoolTime
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
