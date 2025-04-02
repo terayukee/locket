@@ -67,7 +67,7 @@ public class BudgetFeedbackService {
                 log.info("사용자 {}의 결제 내역이 없습니다.", userId);
                 return BudgetFeedbackResponse.builder()
                         .nickname(user.getNickname())
-                        .feedback("이번 달 결제 내역이 아직 없네요. 첫 결제를 기다릴게요!")
+                        .feedback("이번 달은 소비를 아직 안하셨네요!")
                         .build();
             }
 
