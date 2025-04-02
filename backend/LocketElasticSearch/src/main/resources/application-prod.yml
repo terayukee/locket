@@ -14,6 +14,19 @@ spring:
     activate:
       on-profile: prod
 
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            exposedHeaders: "Authorization, Content-Disposition"
+
   kafka:
     consumer:
       group-id: elastic-service-group-prod
