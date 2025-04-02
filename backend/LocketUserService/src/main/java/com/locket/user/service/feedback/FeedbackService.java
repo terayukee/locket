@@ -1,6 +1,7 @@
 package com.locket.user.service.feedback;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.locket.user.client.PerplexityClient;
 import com.locket.user.dto.SimpleGoalDto;
 import com.locket.user.dto.SimpleUserDto;
 import com.locket.elastic.dto.*;
@@ -34,6 +35,7 @@ public class FeedbackService {
     private final FeedbackStatFeignClient feedbackStatFeignClient;
     private final FeedbackAnalyzer feedbackAnalyzer;
     private final ObjectMapper objectMapper;
+    private final PerplexityClient perplexityClient;
 
     /**
      * 피드백 요청 처리 메서드
@@ -110,7 +112,20 @@ public class FeedbackService {
                     .build();
 
             FeedbackResult result = feedbackAnalyzer.analyze(data);
-            String jsonResult = objectMapper.writeValueAsString(result);
+
+            // Perplexity 요약 결과 생성
+            String summaryText = perplexityClient.summarizeFeedback(result.getInsights(), result.getRecommendations());
+
+            // 새로운 JSON 구조 생성
+            FeedbackResult summarized = FeedbackResult.builder()
+                    .totalAmount(result.getTotalAmount())
+                    .categoryBreakdown(result.getCategoryBreakdown())
+                    .summary(result.getSummary())
+                    .insights(List.of(summaryText))
+                    .recommendations(List.of())
+                    .build();
+
+            String jsonResult = objectMapper.writeValueAsString(summarized);
 
             // DB 저장
             Feedback feedback = Feedback.builder()
