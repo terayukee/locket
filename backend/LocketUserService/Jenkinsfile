@@ -18,6 +18,8 @@ pipeline {
         FIREBASE_KEY = credentials('FIREBASE_KEY_FILE') // 🔐 Firebase 서비스 계정 키 추가
         REDIS_PASSWORD = credentials('REDIS_PASSWORD')   // 🔐 Redis 비밀번호 추가
 
+        PERPLEXITY_API_KEY = credentials('PERPLEXITY_API_KEY')
+
         JAVA_HOME = '/opt/java/openjdk'
         GRADLE_HOME = '/opt/gradle/gradle-8.7'
         PATH = "${JAVA_HOME}/bin:${GRADLE_HOME}/bin:${env.PATH}"
@@ -118,6 +120,7 @@ pipeline {
                                 --env-add DB_PASSWORD=$DB_PASSWORD \
                                 --env-add KAFKA_BOOTSTRAP_SERVERS=$KAFKA_BOOTSTRAP_SERVERS \
                                 --env-add FIREBASE_KEY=$FIREBASE_KEY \
+                                --env-add PERPLEXITY_API_KEY=$PERPLEXITY_API_KEY \
                                 --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
                                 ${DOCKER_IMAGE}"
                     '''
