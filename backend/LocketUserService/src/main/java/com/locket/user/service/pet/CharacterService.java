@@ -130,15 +130,6 @@ public class CharacterService {
         return getCharacterInfo(userId);
     }
 
-    // (단순히 캐릭터만 생성하고 싶다면 이 메서드를 직접 호출)
-    @Transactional
-    public void createCharacter(Long userId) {
-        if (characterRepository.existsByUserId(userId)) {
-            throw new IllegalArgumentException("이미 캐릭터를 보유하고 있습니다.");
-        }
-        createNewCharacter(userId);
-    }
-
     private Character createNewCharacter(Long userId) {
         String characterName = generateRandomCharacterName();
         Character character = Character.builder()
