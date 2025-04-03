@@ -1,8 +1,12 @@
 from decouple import config
-from pydantic import BaseSettings
+from pydantic_settings  import BaseSettings
 from functools import lru_cache
 
 class Settings(BaseSettings):
+    # 환경변수 추가
+    ENV: str = "dev"
+    PORT: int = 8000
+
     # 모델 관련 설정
     MODEL_PATH: str = "app/domain/category/model"
     MODEL_VERSION: str = "v1"

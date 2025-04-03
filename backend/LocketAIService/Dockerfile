@@ -1,0 +1,26 @@
+# ---- Base image ----
+FROM python:3.10-slim
+
+# ---- Environment variables ----
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PORT=8500 \
+    EUREKA_SERVER=http://eureka-server:8761/eureka \
+    SERVICE_NAME=LOCKET-AI-SERVICE
+
+# ---- Working directory ----
+WORKDIR /app
+
+# ---- Install dependencies ----
+COPY requirements.txt .
+RUN pip install --upgrade pip && \
+    pip install -r requirements.txt
+
+# ---- Copy application code ----
+COPY . .
+
+# ---- Expose port ----
+EXPOSE ${PORT}
+
+# ---- Start application ----
+CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8500"]
