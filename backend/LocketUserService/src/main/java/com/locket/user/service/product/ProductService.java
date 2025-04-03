@@ -39,7 +39,7 @@ public class ProductService {
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
         int pageNumber = (page == null || page < 1) ? 0 : page - 1;
-        int pageSize = size;
+        int pageSize = (size == null || size <= 0) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
@@ -49,6 +49,11 @@ public class ProductService {
         List<ProductSummaryDTO> productDTOs = productPage.getContent().stream()
                 .map(ProductSummaryDTO::fromEntity)
                 .collect(Collectors.toList());
+
+        System.out.println("카테고리 조회: " + categoryId);
+        System.out.println("페이지 번호: " + pageNumber + ", 페이지 사이즈: " + pageSize);
+        System.out.println("조회된 상품 수: " + productPage.getContent().size());
+        System.out.println("전체 카테고리 상품 수: " + productRepository.countByCategoryId(categoryId));
 
         return ProductListResponseDTO.builder()
                 .category(categoryId)
