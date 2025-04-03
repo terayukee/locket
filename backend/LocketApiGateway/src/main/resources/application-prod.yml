@@ -66,11 +66,8 @@ spring:
           uri: lb://ELASTICSEARCH-SERVICE
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
-            - Path=/api/elasticsearch/v3/api-docs
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/.*)?, /v3/api-docs${remaining}
-#            - RewritePath=/api/elasticsearch/v3/api-docs/?(?<remaining>.*), /v3/api-docs${remaining}
-#            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs/${remaining}
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
 #            - RemoveRequestHeader=Host
           order: 1
 
@@ -99,8 +96,7 @@ springdoc:
       - name: "2. Locket Payment Service"
         url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
       - name: "3. Locket ElasticSearch Service"
-        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs/
-#        url: https://j12d204.p.ssafy.io/elasticsearch-docs
+        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
 #        url: https://j12d204.p.ssafy.io:8083/elasticsearch-docs
 
 management:
