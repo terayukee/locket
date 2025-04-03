@@ -8,9 +8,11 @@ import com.ssafy.locket.model.graph.Product
 import com.ssafy.locket.model.graph.ProductCategoryListInfo
 import com.ssafy.locket.model.graph.ProductHappyListInfo
 import com.ssafy.locket.model.graph.ProductLikeListInfo
+import com.ssafy.locket.model.graph.product_detail.ProductDetailInfo
 import com.ssafy.locket.model.user.UserInfo
 import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.usecase.product.ProductCategoryUseCase
+import com.ssafy.locket.usecase.product.ProductDetailUseCase
 import com.ssafy.locket.usecase.product.ProductHappyListUseCase
 import com.ssafy.locket.usecase.product.ProductLikeListUseCase
 import com.ssafy.locket.usecase.user.DeleteUserInfoUseCase
@@ -30,7 +32,8 @@ import javax.inject.Inject
 class ProductViewModel @Inject constructor(
     private val productCategoryUseCase: ProductCategoryUseCase,
     private val productLikeListUseCase: ProductLikeListUseCase,
-    private val productHappyListUseCase: ProductHappyListUseCase
+    private val productHappyListUseCase: ProductHappyListUseCase,
+    private val productDetailUseCase: ProductDetailUseCase
 ) : ViewModel() {
 
     private val _productCategoryInfo = MutableStateFlow<ProductCategoryListState>(ProductCategoryListState.Initial)
@@ -42,15 +45,21 @@ class ProductViewModel @Inject constructor(
     private val _productHappyListInfo = MutableStateFlow<ProductHappyListState>(ProductHappyListState.Initial)
     val productHappyListInfo :StateFlow<ProductHappyListState> = _productHappyListInfo.asStateFlow()
 
+    private val _productDetailInfo = MutableStateFlow<ProductDetailState>(ProductDetailState.Initial)
+    val productDetailInfo  :StateFlow<ProductDetailState> = _productDetailInfo .asStateFlow()
+
+
     fun productCategorySetLoading() {
         _productCategoryInfo.value = ProductCategoryListState.Loading
     }
     fun productLikeListSetLoading(){
         _productLikeListInfo.value = ProductLikeListState.Loading
     }
-
     fun productHappyListSetLoading(){
         _productHappyListInfo.value = ProductHappyListState.Loading
+    }
+    fun productDetailSetLoading(){
+        _productDetailInfo.value = ProductDetailState.Loading
     }
 
     fun getCategoryList(category: Int, page: Int)
@@ -108,7 +117,7 @@ class ProductViewModel @Inject constructor(
         viewModelScope.launch {
             productHappyListUseCase()
                 .onStart {
-                    productLikeListSetLoading() }
+                    productHappyListSetLoading() }
                 .catch { e ->
                     Log.e("ProductFragment", "Error fetching category list: ${e.message}")
                 }
@@ -117,11 +126,34 @@ class ProductViewModel @Inject constructor(
                     when (uiState) {
                         is ResponseStatus.Success -> {
                             _productHappyListInfo.value = ProductHappyListState.Success(uiState.data)
-                            Log.d("ProductFragment", "Product: ${ _productHappyListInfo.value}")
                         }
                         is ResponseStatus.Error -> {
                             _productHappyListInfo.value  = ProductHappyListState.Error(uiState.error.message)
-                            Log.d("ProductFragment", "error: ${ _productHappyListInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+
+    fun getDetailInfo(productId: Int,userId: Int)
+    {
+        viewModelScope.launch {
+            productDetailUseCase(productId,userId)
+                .onStart {
+                    productDetailSetLoading() }
+                .catch { e ->
+                    Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                }
+                .first()
+                .let { uiState ->
+                    when (uiState) {
+                        is ResponseStatus.Success -> {
+                            _productDetailInfo.value = ProductDetailState.Success(uiState.data)
+                            Log.d("ProductFragment", "Product: ${_productDetailInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _productDetailInfo.value  = ProductDetailState.Error(uiState.error.message)
+                            Log.d("ProductFragment", "error: ${ _productDetailInfo.value}")
                         }
                     }
                 }
@@ -155,4 +187,11 @@ sealed class ProductHappyListState {
     object Loading : ProductHappyListState ()
     data class Success(val productHappyListInfo: ProductHappyListInfo) : ProductHappyListState ()
     data class Error(val message: String) : ProductHappyListState ()
+}
+
+sealed class ProductDetailState {
+    object Initial : ProductDetailState ()
+    object Loading : ProductDetailState ()
+    data class Success(val productDetailInfo: ProductDetailInfo) : ProductDetailState ()
+    data class Error(val message: String) : ProductDetailState ()
 }

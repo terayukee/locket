@@ -1,6 +1,7 @@
 package com.ssafy.locket.presentation.graph.adapter
 
 import android.content.Context
+import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContentProviderCompat.requireContext
@@ -18,7 +19,8 @@ class MoneyHappyAdapter(var moneyHappyList: List<Product>, private val navContro
     inner class MoneyHappyViewHolder(private val binding: ItemMoneyHappyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
             binding.cvProduct.setOnClickListener {
-                navController.navigate(R.id.action_productListFragment_to_productDetailFragment)
+                val bundle = Bundle().apply { putInt("productId", product.productId)} // 데이터 전달
+                navController.navigate(R.id.action_productListFragment_to_productDetailFragment,bundle)
             }
             binding.tvProductName.text = product.productName
             binding.tvDiscountRate.text= product.discountRate+"%"
