@@ -30,4 +30,6 @@ public class PriceHistory {
 
     @Column(nullable = false)
     private Integer lowestPrice;
+
+    private Integer averagePrice;
 }

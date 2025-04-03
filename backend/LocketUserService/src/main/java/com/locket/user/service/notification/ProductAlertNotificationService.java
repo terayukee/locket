@@ -55,7 +55,6 @@ public class ProductAlertNotificationService {
 
             // 상품 알림 DB 저장
             productAlertService.saveAlert(ProductAlertDto.builder()
-                    .priceId(product.getId())
                     .userId(user.getUserId())
                     .message(content)
                     .isAlert(false)

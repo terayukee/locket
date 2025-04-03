@@ -14,7 +14,6 @@ public class ProductAlertService {
 
     public void saveAlert(ProductAlertDto dto) {
         ProductAlert alert = ProductAlert.builder()
-                .priceId(dto.getPriceId())
                 .userId(dto.getUserId())
                 .message(dto.getMessage())
                 .isAlert(dto.getIsAlert())

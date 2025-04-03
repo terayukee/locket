@@ -31,6 +31,5 @@ public class ProductDetailResponseDTO {
     private boolean isAlert;
     private Integer alertPrice;
     private String coupangUrl;
-    private Integer averagePrice;
     private List<ProductPriceHistoryResponseDTO> priceHistory;
 }

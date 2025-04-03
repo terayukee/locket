@@ -15,12 +15,14 @@ public class ProductPriceHistoryResponseDTO {
     private String priceDate;
     private Integer highestPrice;
     private Integer lowestPrice;
+    private Integer averagePrice;
 
     public static ProductPriceHistoryResponseDTO fromEntity(PriceHistory priceHistory) {
         return ProductPriceHistoryResponseDTO.builder()
                 .priceDate(priceHistory.getPriceDate())
                 .highestPrice(priceHistory.getHighestPrice())
                 .lowestPrice(priceHistory.getLowestPrice())
+                .averagePrice(priceHistory.getAveragePrice())
                 .build();
     }
 }

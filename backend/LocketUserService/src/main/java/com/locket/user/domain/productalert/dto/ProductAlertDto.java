@@ -8,7 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class ProductAlertDto {
-    private Long priceId;
     private Long userId;
     private String message;
     private Boolean isAlert;

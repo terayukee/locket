@@ -104,7 +104,6 @@ public class ProductService {
                 .isAlert(userPreference.isAlert())
                 .alertPrice(userPreference.getAlertPrice())
                 .coupangUrl(product.getCoupangUrl())
-//                .averagePrice(product.getAveragePrice())
                 .priceHistory(priceHistoryDTOs)
                 .build();
     }
