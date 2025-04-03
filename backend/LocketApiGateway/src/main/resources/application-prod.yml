@@ -45,6 +45,13 @@ spring:
             - RemoveRequestHeader=Host
           order: 10
 
+        - id: locket-ai-service
+          uri: lb://LOCKET-AI-SERVICE
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - StripPrefix=2
+
         # 서비스별 Swagger 문서 라우팅
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE

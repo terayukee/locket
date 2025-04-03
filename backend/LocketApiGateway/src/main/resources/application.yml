@@ -40,6 +40,13 @@ spring:
           filters:
             - RewritePath=/api/elasticsearch/(?<segment>.*), /${segment}
 
+        - id: locket-ai-service
+          uri: lb://LOCKET-AI-SERVICE
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - StripPrefix=2
+
         # 서비스별 API 문서 경로
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE
