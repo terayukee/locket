@@ -316,9 +316,14 @@ public class PayService {
         return cards.stream()
                 .map(card -> CardInfoDto.builder()
                         .cardId(card.getCardId())
+                        .userId(card.getUserId())                                  // 🔹 userId 추가
                         .cardNumber(card.getCardNumber())
                         .cardExpiry(card.getCardExpiry())
+                        .cardCvc(card.getCardCvc())                                // 🔹 CVC 추가
+                        .cardName(card.getCardName())                              // 🔹 카드 이름 추가
                         .accountNumber(card.getBankAccount().getAccountNumber())
+                        .createdAt(card.getCreatedAt())                            // 🔹 생성일
+                        .updatedAt(card.getUpdatedAt())                            // 🔹 수정일
                         .build())
                 .collect(Collectors.toList());
     }
