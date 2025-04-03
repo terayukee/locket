@@ -1,0 +1,158 @@
+package com.ssafy.locket.presentation.graph.viewmodel
+
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.ssafy.locket.model.base.ResponseStatus
+import com.ssafy.locket.model.graph.Product
+import com.ssafy.locket.model.graph.ProductCategoryListInfo
+import com.ssafy.locket.model.graph.ProductHappyListInfo
+import com.ssafy.locket.model.graph.ProductLikeListInfo
+import com.ssafy.locket.model.user.UserInfo
+import com.ssafy.locket.presentation.home.UserInfoState
+import com.ssafy.locket.usecase.product.ProductCategoryUseCase
+import com.ssafy.locket.usecase.product.ProductHappyListUseCase
+import com.ssafy.locket.usecase.product.ProductLikeListUseCase
+import com.ssafy.locket.usecase.user.DeleteUserInfoUseCase
+import com.ssafy.locket.usecase.user.GetUserInfoUseCase
+import com.ssafy.locket.usecase.user.UpdateUserInfoUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class ProductViewModel @Inject constructor(
+    private val productCategoryUseCase: ProductCategoryUseCase,
+    private val productLikeListUseCase: ProductLikeListUseCase,
+    private val productHappyListUseCase: ProductHappyListUseCase
+) : ViewModel() {
+
+    private val _productCategoryInfo = MutableStateFlow<ProductCategoryListState>(ProductCategoryListState.Initial)
+    val productCategoryInfo: StateFlow<ProductCategoryListState> = _productCategoryInfo.asStateFlow()
+
+    private val _productLikeListInfo = MutableStateFlow<ProductLikeListState>(ProductLikeListState.Initial)
+    val productLikeListInfo :StateFlow<ProductLikeListState> = _productLikeListInfo.asStateFlow()
+
+    private val _productHappyListInfo = MutableStateFlow<ProductHappyListState>(ProductHappyListState.Initial)
+    val productHappyListInfo :StateFlow<ProductHappyListState> = _productHappyListInfo.asStateFlow()
+
+    fun productCategorySetLoading() {
+        _productCategoryInfo.value = ProductCategoryListState.Loading
+    }
+    fun productLikeListSetLoading(){
+        _productLikeListInfo.value = ProductLikeListState.Loading
+    }
+
+    fun productHappyListSetLoading(){
+        _productHappyListInfo.value = ProductHappyListState.Loading
+    }
+
+    fun getCategoryList(category: Int, page: Int)
+    {
+        viewModelScope.launch {
+            productCategoryUseCase(category, page)
+                .onStart {
+                    productCategorySetLoading() }
+                    .catch { e ->
+                        Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                    }
+                    .first()
+                        .let { uiState ->
+                            when (uiState) {
+                                is ResponseStatus.Success -> {
+                                    _productCategoryInfo.value = ProductCategoryListState.Success(uiState.data)
+                                    Log.d("ProductFragment", "Product: ${_productCategoryInfo.value}")
+                                }
+                                is ResponseStatus.Error -> {
+                                    _productCategoryInfo.value  = ProductCategoryListState.Error(uiState.error.message)
+                                    Log.d("ProductFragment", "error: ${_productCategoryInfo.value}")
+                                }
+                            }
+                        }
+        }
+    }
+
+    fun getLikeList(userId :Int)
+    {
+        viewModelScope.launch {
+            productLikeListUseCase(userId)
+                .onStart {
+                    productLikeListSetLoading() }
+                .catch { e ->
+                    Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                }
+                .first()
+                .let { uiState ->
+                    when (uiState) {
+                        is ResponseStatus.Success -> {
+                            _productLikeListInfo.value = ProductLikeListState.Success(uiState.data)
+                            Log.d("ProductFragment", "Product: ${ _productLikeListInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _productLikeListInfo.value  = ProductLikeListState.Error(uiState.error.message)
+                            Log.d("ProductFragment", "error: ${ _productLikeListInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+
+    fun getHappyList()
+    {
+        viewModelScope.launch {
+            productHappyListUseCase()
+                .onStart {
+                    productLikeListSetLoading() }
+                .catch { e ->
+                    Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                }
+                .first()
+                .let { uiState ->
+                    when (uiState) {
+                        is ResponseStatus.Success -> {
+                            _productHappyListInfo.value = ProductHappyListState.Success(uiState.data)
+                            Log.d("ProductFragment", "Product: ${ _productHappyListInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _productHappyListInfo.value  = ProductHappyListState.Error(uiState.error.message)
+                            Log.d("ProductFragment", "error: ${ _productHappyListInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+}
+
+sealed class ProductInfoState {
+    object Initial: ProductInfoState()
+    object Loading: ProductInfoState()
+    data class Success(val product: Product): ProductInfoState()
+    data class Error(val message: String): ProductInfoState()
+}
+
+sealed class ProductCategoryListState {
+    object Initial : ProductCategoryListState()
+    object Loading : ProductCategoryListState()
+    data class Success(val productCategoryList: ProductCategoryListInfo) : ProductCategoryListState()
+    data class Error(val message: String) : ProductCategoryListState()
+}
+
+sealed class ProductLikeListState {
+    object Initial : ProductLikeListState()
+    object Loading : ProductLikeListState()
+    data class Success(val productLikeList: ProductLikeListInfo) : ProductLikeListState()
+    data class Error(val message: String) : ProductLikeListState()
+}
+
+sealed class ProductHappyListState {
+    object Initial : ProductHappyListState ()
+    object Loading : ProductHappyListState ()
+    data class Success(val productHappyListInfo: ProductHappyListInfo) : ProductHappyListState ()
+    data class Error(val message: String) : ProductHappyListState ()
+}

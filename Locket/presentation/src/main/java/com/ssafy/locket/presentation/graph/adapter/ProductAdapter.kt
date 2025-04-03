@@ -4,12 +4,12 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
-import com.ssafy.locket.model.graph.Product
+import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.presentation.databinding.ItemProductBinding
 
-class ProductAdapter(var productList: List<Product>, private val navController: NavController, private val action: Int) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>(){
+class ProductAdapter(var productList: List<ProductxInfo>, private val navController: NavController, private val action: Int) : RecyclerView.Adapter<ProductAdapter.ProductViewHolder>(){
     inner class ProductViewHolder(private val binding: ItemProductBinding) : RecyclerView.ViewHolder(binding.root) {
-        fun bind(product: Product) {
+        fun bind(product: ProductxInfo) {
             binding.cvProduct.setOnClickListener {
                 navController.navigate(action)
             }

@@ -13,6 +13,7 @@ import com.ssafy.locket.model.user.UserInfo
 import com.ssafy.locket.repository.user.UserRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
@@ -23,56 +24,43 @@ internal class UserRepositoryImpl @Inject constructor(
 ): UserRepository {
     override suspend fun getUserInfo(userId: Long): Flow<ResponseStatus<UserInfo>> {
         return flow {
-            ApiResponseHandler().handle {
+            val result = ApiResponseHandler().handle {
                 userService.getUser(userId)
-            }.onEach { result ->
-                when(result) {
-                    is ApiResponse.Success -> {
-                        emit(ResponseStatus.Success(result.data.toDomainModel()))
-                    }
-                    is ApiResponse.Error -> {
-                        emit(ResponseStatus.Error(result.error.toDomainModel()))
-                    }
-                }
-            }.collect()
+            }.first() // ✅ 첫 번째 값만 가져옴
+            when (result) {
+                is ApiResponse.Success -> emit(ResponseStatus.Success(result.data.toDomainModel()))
+                is ApiResponse.Error -> emit(ResponseStatus.Error(result.error.toDomainModel()))
+            }
         }
     }
 
     override suspend fun updateUserInfo(userId: Long, userInfo: UserInfo): Flow<ResponseStatus<UserInfo>> {
         return flow {
-            ApiResponseHandler().handle {
+            val result = ApiResponseHandler().handle {
                 userService.updateUser(userId, UpdateUserRequest(
                     birthYear = userInfo.birthYear,
                     nickname = userInfo.nickname,
                     userJob = userInfo.userJob
                 ))
-            }.onEach { result ->
-                when(result) {
-                    is ApiResponse.Success -> {
-                        emit(ResponseStatus.Success(result.data))
-                    }
-                    is ApiResponse.Error -> {
-                        emit(ResponseStatus.Error(result.error.toDomainModel()))
-                    }
-                }
-            }.collect()
+            }.first() // ✅ 첫 번째 값만 가져옴
+
+            when (result) {
+                is ApiResponse.Success -> emit(ResponseStatus.Success(result.data))
+                is ApiResponse.Error -> emit(ResponseStatus.Error(result.error.toDomainModel()))
+            }
         }
     }
 
     override suspend fun deleteUserInfo(userId: Long): Flow<ResponseStatus<Unit>> {
         return flow {
-            ApiResponseHandler().handle {
+            val result = ApiResponseHandler().handle {
                 userService.deleteUser(userId)
-            }.onEach { result ->
-                when(result) {
-                    is ApiResponse.Success -> {
-                        emit(ResponseStatus.Success(Unit))
-                    }
-                    is ApiResponse.Error -> {
-                        emit(ResponseStatus.Error(result.error.toDomainModel()))
-                    }
-                }
-            }.collect()
+            }.first() // ✅ 첫 번째 값만 가져옴
+
+            when (result) {
+                is ApiResponse.Success -> emit(ResponseStatus.Success(Unit))
+                is ApiResponse.Error -> emit(ResponseStatus.Error(result.error.toDomainModel()))
+            }
         }
     }
 }

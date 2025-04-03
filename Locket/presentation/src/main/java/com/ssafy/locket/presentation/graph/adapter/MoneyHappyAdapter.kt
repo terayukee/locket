@@ -1,20 +1,33 @@
 package com.ssafy.locket.presentation.graph.adapter
 
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContentProviderCompat.requireContext
 import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.ssafy.locket.model.graph.Product
+import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemMoneyHappyBinding
+import com.ssafy.locket.presentation.utils.CommonUtils
 
 
-class MoneyHappyAdapter(var moneyHappyList: List<Product>,private val navController: NavController) : RecyclerView.Adapter<MoneyHappyAdapter.MoneyHappyViewHolder>() {
+class MoneyHappyAdapter(var moneyHappyList: List<Product>, private val navController: NavController) : RecyclerView.Adapter<MoneyHappyAdapter.MoneyHappyViewHolder>() {
     inner class MoneyHappyViewHolder(private val binding: ItemMoneyHappyBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(product: Product) {
             binding.cvProduct.setOnClickListener {
                 navController.navigate(R.id.action_productListFragment_to_productDetailFragment)
             }
+            binding.tvProductName.text = product.productName
+            binding.tvDiscountRate.text= product.discountRate+"%"
+            binding.tvPrice.text= CommonUtils.makeComma(product.currentPrice.toInt())+"원"
+            Glide.with(binding.root.context)
+                .load(product.imageUrl) // 이미지 URL
+                .placeholder(R.drawable.ic_all_empty_heart) // 로딩 중 표시할 이미지
+                .error(R.drawable.ic_all_empty_heart) // 로드 실패 시 표시할 이미지
+                .into(binding.ivProduct)
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MoneyHappyViewHolder {

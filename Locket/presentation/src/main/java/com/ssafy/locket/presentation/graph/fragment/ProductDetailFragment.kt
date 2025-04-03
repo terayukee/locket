@@ -19,14 +19,21 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductDetailBinding
 import com.ssafy.locket.presentation.graph.PriceMarkerView
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
+import com.ssafy.locket.presentation.login.LoginViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     FragmentProductDetailBinding::bind,
     R.layout.fragment_product_detail
 ) {
     private val viewModel: EditPriceViewModel by activityViewModels()
     val bottomSheet = EditPriceBottomSheetFragment.newInstance()
+    //카테고리 번호 알기 위함
+    val productId = arguments?.getInt("productId") ?: -1
+
+    private val productViewModel: LoginViewModel by activityViewModels()
     //차트
     private lateinit var lineChart: LineChart
     //하트 색칠여부
@@ -203,4 +210,14 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             false
         }
     }
+
+    fun initView(){
+
+
+
+
+
+
+    }
+
 }

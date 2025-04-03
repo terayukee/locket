@@ -4,7 +4,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import com.ssafy.locket.model.graph.Product
+import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentRecommendProductListBinding
@@ -16,7 +16,7 @@ class RecommendProductListFragment : BaseFragment<FragmentRecommendProductListBi
 ) {
 
     private lateinit var productAdapter: ProductAdapter
-    private lateinit var productList: MutableList<Product>
+    private lateinit var productList: MutableList<ProductxInfo>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -33,12 +33,12 @@ class RecommendProductListFragment : BaseFragment<FragmentRecommendProductListBi
     fun initAdapter(){
         productList = mutableListOf()
         productAdapter = ProductAdapter(productList,findNavController(),R.id.action_recommendProductListFragment_to_productDetailFragment)
-        productList.add(Product(1000))
-        productList.add(Product(2000))
-        productList.add(Product(3000))
-        productList.add(Product(3200))
-        productList.add(Product(3100))
-        productList.add(Product(3040))
+        productList.add(ProductxInfo(1000))
+        productList.add(ProductxInfo(2000))
+        productList.add(ProductxInfo(3000))
+        productList.add(ProductxInfo(3200))
+        productList.add(ProductxInfo(3100))
+        productList.add(ProductxInfo(3040))
         binding.rvRecommandList.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.rvRecommandList.adapter = productAdapter
     }

@@ -160,6 +160,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_food_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_food"
@@ -188,6 +189,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_householditems_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_householditems"
@@ -216,6 +218,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_stationery_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_stationery"
@@ -244,6 +247,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_appliances_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_appliances"
@@ -283,6 +287,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_kitchenware_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_kitchenware"
@@ -311,6 +316,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_babyproducts_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_babyproducts"
@@ -339,6 +345,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_pet_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_pet"
@@ -367,6 +374,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_toys_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_toys"
@@ -395,6 +403,7 @@
                         android:background="@drawable/bg_graph_btn_circle">
 
                         <ImageView
+                            android:id="@+id/iv_health_move"
                             android:layout_width="40dp"
                             android:layout_height="40dp"
                             android:src="@drawable/ic_graph_health"
