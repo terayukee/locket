@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -61,6 +62,11 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         initViewModel()
         getDetailInfo()
         initChart()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        productViewModel.productLikeClick(productId,isHeartFilled)
     }
 
     fun initData(){
@@ -225,32 +231,24 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
     }
 
-    fun initView(){
-
-
-
-
-    }
-
     fun getDetailInfo(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 productViewModel.productDetailInfo.collect { productDetail ->
-                    Log.d(TAG,productDetail.toString())
-                    if(productDetail is ProductDetailState.Success) {
-                        Log.d(TAG,"디테일 한 정보")
-                        Log.d(TAG,productDetail.productDetailInfo.toString())
-                        binding.tvProductTitle.text = productDetail.productDetailInfo.productName
-                        binding.tvPrice.text = CommonUtils.makeComma(productDetail.productDetailInfo.currentPrice.toInt())+"원"
-                        Glide.with(requireContext())
-                            .load(productDetail.productDetailInfo.imageUrl) // imageUrl은 불러올 이미지의 URL 또는 로컬 파일 경로
-                            .placeholder(R.drawable.ic_all_empty_heart) // 로딩 중 보여줄 이미지
-                            .error(R.drawable.ic_all_empty_heart) // 로드 실패 시 보여줄 이미지
-                            .into(binding.ivProductImage)
-                        binding.tvReview.text = productDetail.productDetailInfo.reviewRating
-                        binding.tvHighestPrice.text= "6개월간 최고가 "+CommonUtils.makeComma(productDetail.productDetailInfo.highestPrice.toInt())+"원"
-                        binding.tvDiscount.text = productDetail.productDetailInfo.discountRate+"%"
-                        setupLineChart(productDetail.productDetailInfo.priceHistory)
+                    if (productDetail is ProductDetailState.Success) {
+                        launch { binding.tvProductTitle.text = productDetail.productDetailInfo.productName }
+                        launch { binding.tvPrice.text = CommonUtils.makeComma(productDetail.productDetailInfo.currentPrice.toInt()) + "원" }
+                        launch {
+                            Glide.with(requireContext())
+                                .load(productDetail.productDetailInfo.imageUrl)
+                                .thumbnail(0.1f)
+                                .diskCacheStrategy(DiskCacheStrategy.ALL)
+                                .into(binding.ivProductImage)
+                        }
+                        launch { binding.tvReview.text = productDetail.productDetailInfo.reviewRating }
+                        launch {
+                            setupLineChart(productDetail.productDetailInfo.priceHistory)
+                        }
                     }
                 }
             }

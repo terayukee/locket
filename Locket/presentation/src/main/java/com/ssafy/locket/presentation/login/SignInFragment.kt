@@ -113,7 +113,4 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
         }
     }
 
-
-
-
 }

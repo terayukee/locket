@@ -14,6 +14,7 @@ import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.usecase.product.ProductCategoryUseCase
 import com.ssafy.locket.usecase.product.ProductDetailUseCase
 import com.ssafy.locket.usecase.product.ProductHappyListUseCase
+import com.ssafy.locket.usecase.product.ProductLikeClickUseCase
 import com.ssafy.locket.usecase.product.ProductLikeListUseCase
 import com.ssafy.locket.usecase.user.DeleteUserInfoUseCase
 import com.ssafy.locket.usecase.user.GetUserInfoUseCase
@@ -33,7 +34,8 @@ class ProductViewModel @Inject constructor(
     private val productCategoryUseCase: ProductCategoryUseCase,
     private val productLikeListUseCase: ProductLikeListUseCase,
     private val productHappyListUseCase: ProductHappyListUseCase,
-    private val productDetailUseCase: ProductDetailUseCase
+    private val productDetailUseCase: ProductDetailUseCase,
+    private val productLikeClickUseCase: ProductLikeClickUseCase
 ) : ViewModel() {
 
     private val _productCategoryInfo = MutableStateFlow<ProductCategoryListState>(ProductCategoryListState.Initial)
@@ -48,6 +50,9 @@ class ProductViewModel @Inject constructor(
     private val _productDetailInfo = MutableStateFlow<ProductDetailState>(ProductDetailState.Initial)
     val productDetailInfo  :StateFlow<ProductDetailState> = _productDetailInfo .asStateFlow()
 
+    private val _productLikeClickInfo = MutableStateFlow<ProductLikeClickState>(ProductLikeClickState.Initial)
+    val productLikeClickInfo  :StateFlow<ProductLikeClickState> = _productLikeClickInfo.asStateFlow()
+
 
     fun productCategorySetLoading() {
         _productCategoryInfo.value = ProductCategoryListState.Loading
@@ -61,6 +66,11 @@ class ProductViewModel @Inject constructor(
     fun productDetailSetLoading(){
         _productDetailInfo.value = ProductDetailState.Loading
     }
+
+    fun productLikeClickSetLoading(){
+        _productLikeClickInfo.value = ProductLikeClickState.Loading
+    }
+
 
     fun getCategoryList(category: Int, page: Int)
     {
@@ -159,6 +169,31 @@ class ProductViewModel @Inject constructor(
                 }
         }
     }
+
+    fun productLikeClick(productId: Int,isLiked: Boolean)
+    {
+        viewModelScope.launch {
+            productLikeClickUseCase.invoke(productId,isLiked)
+                .onStart {
+                    productLikeClickSetLoading()}
+                .catch { e ->
+                    Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                }
+                .first()
+                .let { uiState ->
+                    when (uiState) {
+                        is ResponseStatus.Success -> {
+                            _productLikeClickInfo.value = ProductLikeClickState.Success(Unit)
+                            Log.d("ProductFragment", "Product: ${_productLikeClickInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _productLikeClickInfo.value  = ProductLikeClickState.Error(uiState.error.message)
+                            Log.d("ProductFragment", "error: ${ _productLikeClickInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
 }
 
 sealed class ProductInfoState {
@@ -194,4 +229,11 @@ sealed class ProductDetailState {
     object Loading : ProductDetailState ()
     data class Success(val productDetailInfo: ProductDetailInfo) : ProductDetailState ()
     data class Error(val message: String) : ProductDetailState ()
+}
+
+sealed class ProductLikeClickState {
+    object Initial : ProductLikeClickState ()
+    object Loading : ProductLikeClickState ()
+    data class Success(val unit: Unit) : ProductLikeClickState ()
+    data class Error(val message: String) : ProductLikeClickState ()
 }

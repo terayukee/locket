@@ -9,8 +9,8 @@ import com.ssafy.locket.model.graph.product_detail.ProductDetailInfo
 import kotlinx.coroutines.flow.Flow
 
 interface ProductRepository {
-    suspend fun addToFavorites(productId: Int) : Flow<ResponseStatus<ProductxInfo>>
-    suspend fun addAlarm(productId: Int) : Flow<ResponseStatus<ProductxInfo>>
+    suspend fun addToFavorites(productId: Int,isLiked :Boolean) : Flow<ResponseStatus<Unit>>
+    suspend fun addAlarm(productId: Int) : Flow<ResponseStatus<Unit>>
     suspend fun getCategoryList(category: Int,page: Int) :Flow<ResponseStatus<ProductCategoryListInfo>>
     suspend fun getDetailProductInfo(productId: Int,userId: Int) : Flow<ResponseStatus<ProductDetailInfo>>
     suspend fun getLikeProductList(userId:Int) :Flow<ResponseStatus<ProductLikeListInfo>>
