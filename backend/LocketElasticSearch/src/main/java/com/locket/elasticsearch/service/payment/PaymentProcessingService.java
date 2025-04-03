@@ -32,7 +32,7 @@ public class PaymentProcessingService {
             Map<String, String> request = Map.of("storeName", event.getStoreName());
 
             Map<String, Object> response = webClient.post()
-                    .uri("/api/category/classify")
+                    .uri("/api/ai/category/classify")
                     .bodyValue(Map.of("storeName", event.getStoreName()))
                     .retrieve()
                     .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})

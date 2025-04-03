@@ -1,20 +1,22 @@
-from decouple import config
-from pydantic_settings  import BaseSettings
+from pydantic_settings import BaseSettings
 from functools import lru_cache
 
 class Settings(BaseSettings):
-    # 환경변수 추가
+    # 서비스 환경 설정
     ENV: str = "dev"
     PORT: int = 8000
+    SERVICE_NAME: str = "LOCKET-AI-SERVICE"
+    SERVICE_HOST: str = "localhost"
+    EUREKA_SERVER: str = "http://localhost:8761/eureka"
 
     # 모델 관련 설정
     MODEL_PATH: str = "app/domain/category/model"
     MODEL_VERSION: str = "v1"
 
     # API 키 설정
-    CLOVA_OCR_URL: str = config('CLOVA_OCR_URL')
-    CLOVA_OCR_SECRET: str = config('CLOVA_OCR_SECRET')
-    OPENAI_API_KEY: str = config('OPENAI_API_KEY')
+    CLOVA_OCR_URL: str
+    CLOVA_OCR_SECRET: str
+    OPENAI_API_KEY: str
 
     # 카테고리 분류 관련 설정
     CATEGORY_CONFIDENCE_THRESHOLD: float = 0.7
@@ -25,7 +27,6 @@ class Settings(BaseSettings):
 
 @lru_cache()
 def get_settings() -> Settings:
-    """설정 객체를 캐시하여 반환"""
     return Settings()
 
 settings = get_settings()

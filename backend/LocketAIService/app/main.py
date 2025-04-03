@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 # 환경 변수에서 서비스 설정 읽기
 SERVICE_NAME = os.getenv("SERVICE_NAME", "LOCKET-AI-SERVICE")
 SERVICE_PORT = int(os.getenv("PORT", 8500))
-EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://localhost:8761/eureka")
-ENV = os.getenv("ENV", "prod")  # dev or prod
+EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://localhost:8761/eureka")  # 기본값은 로컬
+SERVICE_HOST = os.getenv("SERVICE_HOST", "localhost")  # EC2에서는 도메인 주소로 바뀜
+ENV = os.getenv("ENV", "prod")  # dev 또는 prod
 
 def create_app() -> FastAPI:
     """FastAPI 애플리케이션 생성 및 설정"""
@@ -39,17 +40,19 @@ def create_app() -> FastAPI:
     # 라우터 등록
     _register_routers(app)
 
-    # 유레카 등록 (⚠️ dev 포함)
+    # 유레카 등록 (dev 포함 모든 환경에서)
     @app.on_event("startup")
     async def register_to_eureka():
+        health_check_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/docs"
+        home_page_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/"
         logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
         await eureka_client.init_async(
             eureka_server=EUREKA_SERVER,
             app_name=SERVICE_NAME,
             instance_port=SERVICE_PORT,
-            instance_host=os.getenv("HOSTNAME", "localhost"),
-            health_check_url=f"http://localhost:{SERVICE_PORT}/docs",
-            home_page_url=f"http://localhost:{SERVICE_PORT}/",
+            instance_host=SERVICE_HOST,
+            health_check_url=health_check_url,
+            home_page_url=home_page_url,
             renewal_interval_in_secs=10,
             duration_in_secs=30
         )
@@ -73,4 +76,4 @@ app = create_app()
 if __name__ == "__main__":
     import uvicorn
     logger.info(f"🚀 Starting {SERVICE_NAME} on port {SERVICE_PORT} (env: {ENV})")
-    uvicorn.run("app.main:app", host="0.0.0.0", port=SERVICE_PORT, reload=True, env_file=".env")
+    uvicorn.run("app.main:app", host="0.0.0.0", port=SERVICE_PORT, reload=True)
