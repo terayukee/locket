@@ -98,7 +98,10 @@ public class PayController {
     ) {
         try {
             List<CardInfoDto> cards = payService.getCardsByUserId(userId);
-            return ResponseEntity.ok(cards);
+            return ResponseEntity.ok(Map.of(
+                    "cardList", cards,
+                    "count", cards.size() // 선택: 총 개수도 함께 제공
+            ));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(404).body(Map.of(
                     "status", 404,
