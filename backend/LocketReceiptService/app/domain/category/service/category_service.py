@@ -1,20 +1,31 @@
-import fasttext  # joblib 대신 fasttext import
+import fasttext
 import os
 from typing import Optional
 from app.config.settings import settings
 from ..constant.category_const import Category
 from ..dto.category_dto import CategoryRequestDto, CategoryResponseDto
 from ..exception.category_exception import ModelLoadException, ClassificationException
+from ..constant.category_error import CategoryErrorCode
+import logging
+
+logger = logging.getLogger(__name__)
 
 class CategoryService:
     def __init__(self):
-        self.MODEL_PATH = settings.MODEL_PATH
-        self._load_models()
+        try:
+            self.MODEL_PATH = settings.MODEL_PATH
+            self._load_models()
+        except Exception as e:
+            logger.error(f"모델 초기화 실패: {str(e)}")
+            raise ModelLoadException(
+                error_code=CategoryErrorCode.MODEL_LOAD_ERROR,
+                detail=f"모델 초기화 실패: {str(e)}"
+            )
 
     def _load_models(self):
         """모델 로드"""
         try:
-            print(f"모델 경로: {self.MODEL_PATH}")
+            logger.info(f"모델 경로: {self.MODEL_PATH}")
             model_files = {
                 "category": "category_classifier.bin",
                 "item_check": "item_check_classifier.bin"
@@ -23,33 +34,53 @@ class CategoryService:
             self.models = {}
             for key, filename in model_files.items():
                 path = os.path.join(self.MODEL_PATH, filename)
-                print(f"파일 존재 여부 ({filename}): {os.path.exists(path)}")
-                if not os.path.exists(path):
-                    raise FileNotFoundError(f"모델 파일을 찾을 수 없습니다: {path}")
-                try:
-                    # fasttext 모델 로드 방식 사용
-                    self.models[key] = fasttext.load_model(path)
-                except Exception as e:
-                    print(f"모델 로드 실패 ({filename}): {str(e)}")
-                    raise
+                logger.info(f"파일 존재 여부 ({filename}): {os.path.exists(path)}")
 
+                if not os.path.exists(path):
+                    raise ModelLoadException(
+                        error_code=CategoryErrorCode.MODEL_LOAD_ERROR,
+                        detail=f"모델 파일을 찾을 수 없습니다: {path}"
+                    )
+                try:
+                    self.models[key] = fasttext.load_model(path)
+                    logger.info(f"{filename} 모델 로드 성공")
+                except Exception as e:
+                    logger.error(f"모델 로드 실패 ({filename}): {str(e)}")
+                    raise ModelLoadException(
+                        error_code=CategoryErrorCode.MODEL_LOAD_ERROR,
+                        detail=f"모델 로드 실패 ({filename}): {str(e)}"
+                    )
+
+        except ModelLoadException:
+            raise
         except Exception as e:
-            raise ModelLoadException(f"모델 로드 중 오류 발생: {str(e)}")
+            logger.error(f"모델 로드 중 예상치 못한 오류: {str(e)}")
+            raise ModelLoadException(
+                error_code=CategoryErrorCode.MODEL_LOAD_ERROR,
+                detail=f"모델 로드 중 예상치 못한 오류 발생: {str(e)}"
+            )
 
     async def classify_store(self, request: CategoryRequestDto) -> CategoryResponseDto:
         """상점 분류 메인 로직"""
         try:
-            if not request.storeName.strip():
-                raise ClassificationException("상호명이 비어있습니다.")
+            if not request.storeName or not request.storeName.strip():
+                raise ClassificationException(
+                    error_code=CategoryErrorCode.CLASSIFICATION_VALIDATION_ERROR,
+                    detail="상호명이 비어있습니다"
+                )
+
+            logger.info(f"상점 분류 시작: {request.storeName}")
 
             # 1. 카테고리 분류
             category = self._classify_category(request.storeName)
+            logger.info(f"분류된 카테고리: {category}")
 
             # 2. 품목 체크 필요 여부 결정
             needs_item_check = self._determine_item_check(
                 category=category,
                 store_name=request.storeName
             )
+            logger.info(f"품목 체크 필요 여부: {needs_item_check}")
 
             return CategoryResponseDto(
                 paymentCategory=category,
@@ -59,28 +90,38 @@ class CategoryService:
         except ClassificationException:
             raise
         except Exception as e:
-            raise ClassificationException(f"분류 중 오류 발생: {str(e)}")
+            logger.error(f"분류 중 예상치 못한 오류: {str(e)}")
+            raise ClassificationException(
+                error_code=CategoryErrorCode.CLASSIFICATION_ERROR,
+                detail=f"분류 중 예상치 못한 오류 발생: {str(e)}"
+            )
 
     def _classify_category(self, store_name: str) -> str:
         """카테고리 분류"""
         try:
-            # fasttext predict 메서드는 (labels, probabilities) 튜플을 반환
             labels, probs = self.models['category'].predict([store_name])
-            # labels[0]에서 첫 번째 예측 레이블을 가져옴
             category = labels[0][0].replace('__label__', '')
+
+            logger.info(f"카테고리 분류 결과 - 상점: {store_name}, 카테고리: {category}, 확률: {probs[0][0]}")
+
             return category
         except Exception as e:
-            raise ClassificationException(f"카테고리 분류 실패: {str(e)}")
+            logger.error(f"카테고리 분류 실패: {str(e)}")
+            raise ClassificationException(
+                error_code=CategoryErrorCode.MODEL_PREDICT_ERROR,
+                detail=f"카테고리 분류 실패: {str(e)}"
+            )
 
     def _determine_item_check(self, category: str, store_name: str) -> bool:
         """품목 체크 필요 여부 결정"""
         try:
             # 1. 모델 기반 예측
             labels, probs = self.models['item_check'].predict([store_name])
-            # labels[0]에서 첫 번째 예측 레이블을 가져옴
             base_prediction = labels[0][0].replace('__label__', '') == 'True'
 
-            # 2. 규칙 기반 보정 (선택)
+            logger.info(f"품목 체크 모델 예측 - 상점: {store_name}, 예측: {base_prediction}, 확률: {probs[0][0]}")
+
+            # 2. 규칙 기반 보정
             # 항상 False인 카테고리들 (품목 체크 불필요)
             if category in [
                 Category.CAFE.value,     # 카페/디저트
@@ -88,6 +129,7 @@ class CategoryService:
                 Category.FOOD.value,     # 식비
                 Category.TRANSPORT.value # 교통
             ]:
+                logger.info(f"규칙 기반 보정: {category} 카테고리는 항상 False")
                 return False
 
             # 항상 True인 카테고리들 (품목 체크 필요)
@@ -95,9 +137,14 @@ class CategoryService:
                 Category.SHOPPING.value, # 쇼핑
                 Category.ETC.value      # 기타
             ]:
+                logger.info(f"규칙 기반 보정: {category} 카테고리는 항상 True")
                 return True
 
             return base_prediction
 
         except Exception as e:
-            raise ClassificationException(f"품목 체크 필요 여부 결정 실패: {str(e)}")
+            logger.error(f"품목 체크 필요 여부 결정 실패: {str(e)}")
+            raise ClassificationException(
+                error_code=CategoryErrorCode.CLASSIFICATION_PROCESSING_ERROR,
+                detail=f"품목 체크 필요 여부 결정 실패: {str(e)}"
+            )

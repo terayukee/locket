@@ -2,10 +2,14 @@ import requests
 import json
 from typing import Dict
 from app.config.settings import settings
-from app.common.constant.status import ErrorMessage
-from ..exception.exception import OCRProcessingException
+from ..exception.receipt_exception import OCRProcessingException
+from ..constant.receipt_error import ReceiptErrorCode
+import logging
+
+logger = logging.getLogger(__name__)
 
 class OCRService:
+    """영수증 OCR 서비스"""
     def __init__(self):
         self.api_url = settings.CLOVA_OCR_URL
         self.secret = settings.CLOVA_OCR_SECRET
@@ -15,6 +19,7 @@ class OCRService:
         }
 
     async def extract_text(self, image_data: str, file_format: str = 'jpg') -> Dict:
+        """이미지에서 텍스트 추출"""
         request_json = {
             'images': [
                 {
@@ -30,25 +35,22 @@ class OCRService:
         }
 
         try:
-            print("OCR 요청 URL:", self.api_url)
-            print("OCR 요청 헤더:", {k: '***' if k == 'X-OCR-SECRET' else v for k, v in self.headers.items()})
-            print("OCR 요청 데이터:", {
-                **request_json,
-                'images': [{**img, 'data': '...'} for img in request_json['images']]
-            })
+            # API 요청 로깅
+            logger.info(f"OCR 요청 URL: {self.api_url}")
+            logger.info(f"OCR 요청 헤더: {self._mask_secret(self.headers)}")
+            logger.info(f"OCR 요청 데이터: {self._mask_image_data(request_json)}")
 
+            # OCR API 호출
             response = requests.post(self.api_url, headers=self.headers, json=request_json)
-            print(f"OCR 응답 상태 코드: {response.status_code}")
+            logger.info(f"OCR 응답 상태 코드: {response.status_code}")
 
             result = response.json()
-            print(f"OCR 응답 데이터: {json.dumps(result, indent=2, ensure_ascii=False)}")
+            logger.info(f"OCR 응답 데이터: {json.dumps(result, indent=2, ensure_ascii=False)}")
 
             if response.status_code != 200:
-                error_detail = f"OCR API Error: {result.get('error', {}).get('message', '알 수 없는 오류')}"
-                print(f"OCR 오류: {error_detail}")
                 raise OCRProcessingException(
-                    message=ErrorMessage.OCR_PROCESSING_ERROR,
-                    detail=error_detail
+                    error_code=ReceiptErrorCode.OCR_API_ERROR,
+                    detail=f"OCR API Error: {result.get('error', {}).get('message', '알 수 없는 오류')}"
                 )
 
             return self._parse_receipt_data(result)
@@ -56,26 +58,24 @@ class OCRService:
         except OCRProcessingException:
             raise
         except Exception as e:
-            error_msg = f"OCR 처리 중 예상치 못한 오류 발생: {str(e)}"
-            print(error_msg)
+            logger.error(f"OCR 처리 중 오류 발생: {str(e)}")
             raise OCRProcessingException(
-                message=ErrorMessage.OCR_PROCESSING_ERROR,
-                detail=error_msg
+                error_code=ReceiptErrorCode.OCR_PROCESSING_ERROR,
+                detail=f"OCR 처리 중 오류 발생: {str(e)}"
             )
 
     def _parse_receipt_data(self, ocr_result: Dict) -> Dict:
-        """OCR 결과에서 영수증 데이터 파싱"""
+        """OCR 결과 파싱"""
         try:
-            print("OCR 결과 파싱 시작")
             receipt_data = ocr_result['images'][0]['receipt']['result']
 
-            # 상점명 추출
+            # 상호명 추출
             store_name = receipt_data.get('storeInfo', {}).get('name', {}).get('formatted', {}).get('value', '알 수 없음')
-            print(f"추출된 상호명: {store_name}")
+            logger.info(f"추출된 상호명: {store_name}")
 
-            # 상품 목록 추출
+            # 상품 정보 추출
             items = []
-            item_id = 1  # 아이템 ID 초기화
+            item_id = 1
             for subresult in receipt_data.get('subResults', []):
                 for item in subresult.get('items', []):
                     item_data = {
@@ -86,32 +86,42 @@ class OCRService:
                     }
                     items.append(item_data)
                     item_id += 1
-                    print(f"추출된 상품 정보:", item_data)
+                    logger.info(f"추출된 상품 정보: {item_data}")
 
             # 총액 추출
             total_amount = int(receipt_data['totalPrice']['price']['formatted']['value'])
-            print(f"추출된 총액: {total_amount}")
+            logger.info(f"추출된 총액: {total_amount}")
 
+            # 결과 데이터 구성
             parsed_data = {
                 'storeName': store_name,
                 'items': items,
                 'totalAmount': total_amount
             }
-            print("최종 파싱 결과:", json.dumps(parsed_data, indent=2, ensure_ascii=False))
+            logger.info(f"최종 파싱 결과: {json.dumps(parsed_data, indent=2, ensure_ascii=False)}")
 
             return parsed_data
 
         except KeyError as e:
-            error_msg = f"필수 필드를 찾을 수 없습니다: {str(e)}"
-            print(f"파싱 오류 (KeyError): {error_msg}")
+            logger.error(f"필수 필드를 찾을 수 없습니다: {str(e)}")
             raise OCRProcessingException(
-                message=ErrorMessage.OCR_PARSING_ERROR,
-                detail=error_msg
+                error_code=ReceiptErrorCode.OCR_PARSING_ERROR,
+                detail=f"필수 필드를 찾을 수 없습니다: {str(e)}"
             )
         except Exception as e:
-            error_msg = f"영수증 데이터 파싱 중 오류 발생: {str(e)}"
-            print(f"파싱 오류: {error_msg}")
+            logger.error(f"영수증 데이터 파싱 중 오류 발생: {str(e)}")
             raise OCRProcessingException(
-                message=ErrorMessage.OCR_PARSING_ERROR,
-                detail=error_msg
+                error_code=ReceiptErrorCode.OCR_PARSING_ERROR,
+                detail=f"영수증 데이터 파싱 중 오류 발생: {str(e)}"
             )
+
+    def _mask_secret(self, headers: Dict) -> Dict:
+        """민감한 헤더 정보 마스킹"""
+        return {k: '***' if k == 'X-OCR-SECRET' else v for k, v in headers.items()}
+
+    def _mask_image_data(self, request_json: Dict) -> Dict:
+        """이미지 데이터 마스킹"""
+        return {
+            **request_json,
+            'images': [{**img, 'data': '...'} for img in request_json['images']]
+        }
