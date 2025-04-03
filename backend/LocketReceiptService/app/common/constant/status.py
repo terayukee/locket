@@ -1,39 +1,17 @@
 from enum import Enum
 
 class StatusCode(Enum):
-    # 성공 코드
     SUCCESS = 200
     CREATED = 201
-
-    # 클라이언트 에러
     BAD_REQUEST = 400
     UNAUTHORIZED = 401
+    FORBIDDEN = 403
     NOT_FOUND = 404
+    INTERNAL_ERROR = 500
 
-    # 파일 관련 에러
-    FILE_NOT_FOUND = 4001
-    FILE_TOO_LARGE = 4002
-    INVALID_FILE_TYPE = 4003
-    INVALID_IMAGE_SIZE = 4004
-    MODEL_LOAD_ERROR = 4005
-
-    # OCR 관련 에러
-    OCR_PROCESSING_ERROR = 5001
-    OCR_PARSING_ERROR = 5002
-    CLASSIFICATION_ERROR = 5003
-
-class ErrorMessage(Enum):
-    # 파일 관련 메시지
-    FILE_NOT_FOUND = "파일이 업로드되지 않았습니다."
-    FILE_TOO_LARGE = "파일 크기가 5MB를 초과합니다."
-    INVALID_FILE_TYPE = "지원하지 않는 파일 형식입니다."
-    INVALID_IMAGE_SIZE = "이미지 해상도가 너무 낮습니다."
-    MODEL_LOAD_ERROR = "모델 로드 중 오류가 발생했습니다"
-
-    # OCR 관련 메시지
-    OCR_PROCESSING_ERROR = "OCR 처리 중 오류가 발생했습니다."
-    OCR_PARSING_ERROR = "영수증 데이터 파싱 중 오류가 발생했습니다."
-    CLASSIFICATION_ERROR = "품목 분류 중 오류가 발생했습니다."
-
-    # 소비 패턴 분석 관련 메시지
-    FEEDBACK_ANALYZE_ERROR = "소비 패턴 분석 중 오류가 발생했습니다."
+class CommonErrorMessage(Enum):
+    INTERNAL_SERVER_ERROR = "서버 내부 오류가 발생했습니다"
+    INVALID_REQUEST = "잘못된 요청입니다"
+    UNAUTHORIZED = "인증되지 않은 요청입니다"
+    FORBIDDEN = "권한이 없습니다"
+    NOT_FOUND = "리소스를 찾을 수 없습니다"

@@ -1,19 +1,27 @@
 from fastapi import HTTPException
-from ..constant.status import StatusCode, ErrorMessage
+from ..constant.status import StatusCode
 
 class BaseException(HTTPException):
     def __init__(
             self,
             status_code: StatusCode,
-            message: ErrorMessage,
+            error_code: int,
+            message: str,
             detail: str = None
     ):
-        http_status = 400 if status_code.value < 5000 else 500
         super().__init__(
-            status_code=http_status,
+            status_code=status_code.value,
             detail={
-                "code": status_code.value,
-                "message": message.value,
+                "code": error_code,
+                "message": message,
                 "detail": detail
             }
         )
+
+    @property
+    def error_response(self):
+        return {
+            "code": self.detail["code"],
+            "message": self.detail["message"],
+            "detail": self.detail.get("detail")
+        }
