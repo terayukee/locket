@@ -22,7 +22,6 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/payment")
 @Tag(name = "결제 API", description = "결제 관련 API")
 public class PayController {
 
@@ -37,9 +36,10 @@ public class PayController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     public ResponseEntity<PaymentResponse> processPayment(
+            @RequestHeader("X-User-Id") Long userId,
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
-        return payService.processPayment(request);
+        return payService.processPayment(request, userId);
     }
 
     @PostMapping("/validate-card")

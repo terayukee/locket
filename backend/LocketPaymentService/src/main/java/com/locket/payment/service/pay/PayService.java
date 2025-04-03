@@ -71,7 +71,7 @@ public class PayService {
     }
 
     @Transactional
-    public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
+    public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request, Long userId) {
         try {
             // ✅ 중복 결제 방지 - paymentKey Redis에 체크
 //            String redisPaymentKey = "payment:dup:" + request.getPaymentKey();
@@ -124,7 +124,7 @@ public class PayService {
             }
 
             // 1️⃣Redis에서 사용자 정보 가져오기
-            long buyerId = cardInfo.getUserId();
+            long buyerId = userId;
 
             int birthYear = 1998;
             String userJob = "학생";
