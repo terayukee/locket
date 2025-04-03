@@ -30,8 +30,8 @@ class NotificationListRVAdapter:
 
         fun bind(item: Notification) {
             val notificationImg : Int = when(item.type) {
-                "product" -> R.drawable.ic_notification_product
-                "finance" -> R.drawable.ic_notification_finance
+                "product" -> R.drawable.ic_notification_finance
+                "finance" -> R.drawable.ic_notification_product
                 else -> R.drawable.ic_finance_category_etc
             }
 
