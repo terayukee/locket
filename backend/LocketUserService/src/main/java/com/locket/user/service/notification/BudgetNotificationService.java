@@ -69,10 +69,10 @@ public class BudgetNotificationService {
             }
 
             String level = usageRatio >= 0.9 ? "90%" : "70%";
-            String body = "이번 달 예산의 " + level + "를 초과했습니다! 절약을 시도해보세요 💸";
+            String content = "이번 달 예산의 " + level + "를 초과했습니다! 절약을 시도해보세요 💸";
 
             // ✅ 중복 알림 확인
-            if (goalAlertRepository.existsByUserIdAndGoalIdAndMessage(userId, goal.getGoalId(), body)) {
+            if (goalAlertRepository.existsByUserIdAndGoalIdAndMessage(userId, goal.getGoalId(), content)) {
                 log.info("⛔ 이미 동일한 예산 초과 알림이 발송됨 - 중복 방지: userId={}, goalId={}", userId, goal.getGoalId());
                 return;
             }
@@ -81,12 +81,12 @@ public class BudgetNotificationService {
             FcmMessageDto dto = FcmMessageDto.builder()
                     .targetFcmToken(user.getFcmToken())
                     .title("💰 예산 초과 알림")
-                    .body(body)
+                    .content(content)
                     .build();
             notificationService.sendBudgetAlert(dto);
 
             // ✅ 알림 저장
-            GoalAlert alert = GoalAlert.create(userId, goal.getGoalId(), body);
+            GoalAlert alert = GoalAlert.create(userId, goal.getGoalId(), content);
             goalAlertRepository.save(alert);
             log.info("📌 알림 저장 완료: userId={}, goalId={}", userId, goal.getGoalId());
         }
@@ -156,20 +156,20 @@ public class BudgetNotificationService {
         }
 
         String level = usageRatio >= 0.9 ? "90%" : "70%";
-        String body = "이번 달 예산의 " + level + "를 초과했습니다! 절약을 시도해보세요 💸";
+        String content = "이번 달 예산의 " + level + "를 초과했습니다! 절약을 시도해보세요 💸";
 
-        if (goalAlertRepository.existsByUserIdAndGoalIdAndMessage(userId, goal.getGoalId(), body)) {
+        if (goalAlertRepository.existsByUserIdAndGoalIdAndMessage(userId, goal.getGoalId(), content)) {
             return new NotificationResult("ALREADY_SENT", "⛔ 이미 동일한 예산 초과 알림이 전송됨");
         }
 
         FcmMessageDto dto = FcmMessageDto.builder()
                 .targetFcmToken(user.getFcmToken())
                 .title("💰 예산 초과 알림")
-                .body(body)
+                .content(content)
                 .build();
         notificationService.sendBudgetAlert(dto);
 
-        goalAlertRepository.save(GoalAlert.create(userId, goal.getGoalId(), body));
+        goalAlertRepository.save(GoalAlert.create(userId, goal.getGoalId(), content));
 
         return new NotificationResult("SUCCESS", "✅ 알림 전송 및 저장 완료 (예산 사용률 " + Math.round(usageRatio * 100) + "%)");
     }

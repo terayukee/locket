@@ -28,11 +28,8 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final ProductUserPreferenceRepository productUserPreferenceRepository;
-<<<<<<< HEAD
     private final ProductAlertNotificationService productAlertNotificationService;
-=======
     private final UserRepository userRepository;
->>>>>>> backend
 
     @Transactional(readOnly = true)
     public ProductListResponseDTO getProductsByCategory(Integer categoryId, Integer page, Integer size) {
