@@ -39,7 +39,8 @@ public class ProductService {
                 .orElseThrow(() -> new CategoryNotFoundException(categoryId));
 
         int pageNumber = (page == null || page < 1) ? 0 : page - 1;
-        int pageSize = (size == null || size < 1) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
+        int pageSize = size;
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         // 페이징 처리된 상품 목록 조회
@@ -132,7 +133,8 @@ public class ProductService {
 
         // 페이지 처리
         int pageNumber = (page == null || page < 1) ? 0 : page - 1;
-        int pageSize = (size == null || size < 1) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
+        int pageSize = size;
+
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Page<ProductUserPreference> preferencesPage = productUserPreferenceRepository

@@ -102,13 +102,9 @@ public class ProductController {
             @RequestParam Integer category,
 
             @Parameter(description = "페이지 번호")
-            @RequestParam(required = false, defaultValue = "1") Integer page,
-
-            // 수정: 하드코딩된 값 대신 상수 사용
-            @Parameter(description = "페이지 크기")
-            @RequestParam(required = false, defaultValue = "" + PaginationConstants.DEFAULT_PAGE_SIZE) Integer size
+            @RequestParam(required = false) Integer page
     ) {
-        ProductListResponseDTO response = productService.getProductsByCategory(category, page, size);
+        ProductListResponseDTO response = productService.getProductsByCategory(category, page, PaginationConstants.DEFAULT_PAGE_SIZE);
         return ResponseEntity.ok(response);
     }
 
@@ -375,12 +371,9 @@ public class ProductController {
             @RequestParam Long userId,
 
             @Parameter(description = "페이지 번호")
-            @RequestParam(required = false, defaultValue = "" + PaginationConstants.DEFAULT_PAGE_NUMBER) Integer page,
-
-            @Parameter(description = "페이지 크기")
-            @RequestParam(required = false, defaultValue = "" + PaginationConstants.DEFAULT_PAGE_SIZE) Integer size
+            @RequestParam(required = false) Integer page
     ) {
-        ProductLikedListResponseDTO response = productService.getLikedProducts(userId, page, size);
+        ProductLikedListResponseDTO response = productService.getLikedProducts(userId, page, PaginationConstants.DEFAULT_PAGE_SIZE);
         return ResponseEntity.ok(response);
     }
 
