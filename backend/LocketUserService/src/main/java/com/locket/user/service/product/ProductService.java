@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -217,4 +218,31 @@ public class ProductService {
         return getProductsByCategory(categoryId, 1, 10);
     }
 
+    public ProductSearchResponseDTO searchProducts(String productName, int page) {
+        int pageIndex = (page < 1) ? 0 : page - 1;
+        int pageSize = 30; // 한 페이지에 보여줄 상품 개수
+
+        Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
+        Page<Product> productPage = productRepository.findByProductNameContaining(productName, pageable);
+
+        var productDtoList = productPage.getContent().stream()
+                .map(p -> new ProductSummaryDTO(
+                        p.getId(),
+                        p.getProductName(),
+                        p.getImageUrl(),
+                        p.getCurrentPrice(),
+                        p.getDiscountRate()
+                ))
+                .collect(Collectors.toList());
+
+        ProductSearchResponseDTO response = new ProductSearchResponseDTO();
+        response.setSearchKeyword(productName);
+        response.setPage(page);
+        response.setPageProductCount(productPage.getNumberOfElements());
+        response.setTotalPages(productPage.getTotalPages());
+        response.setSearchProductCount(productPage.getTotalElements());
+        response.setProducts(productDtoList);
+
+        return response;
+    }
 }
