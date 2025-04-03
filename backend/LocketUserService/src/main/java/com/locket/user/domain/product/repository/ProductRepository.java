@@ -19,4 +19,5 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     long countByCategoryId(@Param("categoryId") Integer categoryId);
 
     Optional<Product> findById(Integer id);
+
 }

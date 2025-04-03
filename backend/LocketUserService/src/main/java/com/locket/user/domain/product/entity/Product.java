@@ -34,7 +34,7 @@ public class Product {
 
     @Column(length = 1000)
     private String coupangUrl;
-    private Integer averagePrice;
+//    private Integer averagePrice;
 
     @ManyToOne
     @JoinColumn(name = "category_id")

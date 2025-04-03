@@ -13,6 +13,9 @@ import java.util.List;
 @NoArgsConstructor
 public class ProductLikedListResponseDTO {
     private Long userId;
-    private Integer likedProductCount;
+    private Integer page;
+    private Integer totalPages;
+    private Integer likedProductCount; // 현재 페이지에 포함된 찜 상품 수
+    private long totalLikedProducts;   // 전체 찜한 상품 수
     private List<ProductSummaryDTO> likedProducts;
 }

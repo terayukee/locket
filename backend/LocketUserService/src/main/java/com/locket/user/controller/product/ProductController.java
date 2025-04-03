@@ -1,5 +1,6 @@
 package com.locket.user.controller.product;
 
+import com.locket.user.domain.product.constant.PaginationConstants;
 import com.locket.user.domain.product.dto.*;
 import com.locket.user.exception.ErrorResponse;
 import com.locket.user.service.product.ProductService;
@@ -101,9 +102,9 @@ public class ProductController {
             @RequestParam Integer category,
 
             @Parameter(description = "페이지 번호")
-            @RequestParam(required = false, defaultValue = "1") Integer page
+            @RequestParam(required = false) Integer page
     ) {
-        ProductListResponseDTO response = productService.getProductsByCategory(category, page);
+        ProductListResponseDTO response = productService.getProductsByCategory(category, page, PaginationConstants.DEFAULT_PAGE_SIZE);
         return ResponseEntity.ok(response);
     }
 
@@ -275,7 +276,7 @@ public class ProductController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "사용자 찜 상품 목록 조회", description = "사용자가 찜한 상품 목록을 조회합니다.")
+    @Operation(summary = "사용자 찜 상품 목록 조회", description = "사용자가 찜한 상품 목록을 페이징하여 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "찜 상품 목록 조회 성공"),
             @ApiResponse(
@@ -313,6 +314,40 @@ public class ProductController {
                     )
             ),
             @ApiResponse(
+                    responseCode = "403",
+                    description = "접근 권한 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 403,
+                                          "error": "Forbidden",
+                                          "message": "다른 사용자의 찜 목록에 접근할 수 없습니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "status": 404,
+                                          "error": "Not Found",
+                                          "message": "해당 사용자를 찾을 수 없습니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
+                            )
+                    )
+            ),
+            @ApiResponse(
                     responseCode = "500",
                     description = "서버 내부 오류",
                     content = @Content(
@@ -333,12 +368,14 @@ public class ProductController {
     @GetMapping("/liked")
     public ResponseEntity<ProductLikedListResponseDTO> getLikedProducts(
             @Parameter(description = "사용자 ID", required = true)
-            @RequestParam Long userId
+            @RequestParam Long userId,
+
+            @Parameter(description = "페이지 번호")
+            @RequestParam(required = false) Integer page
     ) {
-        ProductLikedListResponseDTO response = productService.getLikedProducts(userId);
+        ProductLikedListResponseDTO response = productService.getLikedProducts(userId, page, PaginationConstants.DEFAULT_PAGE_SIZE);
         return ResponseEntity.ok(response);
     }
-
 
     // 상품 가격 알림
     @Operation(summary = "상품 가격 알림 설정/해제", description = "상품의 가격 알림을 설정하거나 해제합니다.")
@@ -442,4 +479,49 @@ public class ProductController {
         productService.updateProductPrice(productId, requestDTO.getNewPrice());
         return ResponseEntity.ok().build();
     }
+
+    @Operation(summary = "만원의 행복 목록 조회", description = "만원 이하 특별 상품 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                      "status": 401,
+                                      "error": "Unauthorized",
+                                      "message": "인증되지 않은 사용자입니다.",
+                                      "timestamp": "2025-04-01T12:34:56.789Z"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 내부 오류",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                      "status": 500,
+                                      "error": "Internal Server Error",
+                                      "message": "서버 내부 오류가 발생했습니다.",
+                                      "timestamp": "2025-04-01T12:34:56.789Z"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/happiness")
+    public ResponseEntity<ProductListResponseDTO> getHappinessProducts() {
+        ProductListResponseDTO response = productService.getHappinessProducts();
+        return ResponseEntity.ok(response);
+    }
+
 }
