@@ -19,10 +19,8 @@ public class NotificationService {
         try {
             Message message = Message.builder()
                     .setToken(dto.getTargetFcmToken())
-                    .setNotification(Notification.builder()
-                            .setTitle(dto.getTitle())
-                            .setBody(dto.getBody())
-                            .build())
+                    .putData("title", dto.getTitle())
+                    .putData("body", dto.getContent())
                     .build();
 
             firebaseMessaging.send(message);

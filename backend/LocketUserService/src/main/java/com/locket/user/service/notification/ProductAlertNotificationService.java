@@ -33,12 +33,12 @@ public class ProductAlertNotificationService {
             User user = userRepository.findById(preference.getUserId()).orElse(null);
             if (user == null || user.getFcmToken() == null) continue;
 
-            String body = String.format("💸 [%s] 상품이 %d원 이하로 떨어졌습니다! 지금 확인해보세요.", product.getProductName(), alertPrice);
+            String content = String.format("💸 [%s] 상품이 %d원 이하로 떨어졌습니다! 지금 확인해보세요.", product.getProductName(), alertPrice);
 
             FcmMessageDto dto = FcmMessageDto.builder()
                     .targetFcmToken(user.getFcmToken())
                     .title("📢 가격 알림 도착!")
-                    .body(body)
+                    .content(content)
                     .build();
 
             notificationService.sendBudgetAlert(dto);  // ✅ 재사용

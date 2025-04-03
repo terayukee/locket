@@ -8,5 +8,5 @@ import lombok.Getter;
 public class FcmMessageDto {
     private String targetFcmToken;
     private String title;
-    private String body;
+    private String content;
 }
