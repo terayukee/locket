@@ -6,6 +6,8 @@ import com.locket.user.domain.notification.dto.FcmMessageDto;
 import com.locket.user.domain.product.entity.Product;
 import com.locket.user.domain.product.entity.ProductUserPreference;
 import com.locket.user.domain.product.repository.ProductUserPreferenceRepository;
+import com.locket.user.domain.productalert.dto.ProductAlertDto;
+import com.locket.user.service.productalert.ProductAlertService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class ProductAlertNotificationService {
     private final ProductUserPreferenceRepository preferenceRepository;
     private final UserRepository userRepository;
     private final NotificationService notificationService;
+    private final ProductAlertService productAlertService;
 
     public void notifyUsersIfPriceDrops(Product product) {
         List<ProductUserPreference> alertUsers = preferenceRepository.findByProductIdAndIsAlertTrue(product.getId());
@@ -49,6 +52,16 @@ public class ProductAlertNotificationService {
             preference.setAlert(false);
             preference.setAlertPrice(null);
             preferenceRepository.save(preference);
+
+            // 상품 알림 DB 저장
+            productAlertService.saveAlert(ProductAlertDto.builder()
+                    .priceId(product.getId())
+                    .userId(user.getUserId())
+                    .message(content)
+                    .isAlert(false)
+                    .alertPrice(alertPrice)
+                    .build());
+
         }
     }
 
