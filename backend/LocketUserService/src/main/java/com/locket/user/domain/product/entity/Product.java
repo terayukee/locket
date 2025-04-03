@@ -31,6 +31,8 @@ public class Product {
     private String shippingType;
     private String reviewCount;
     private String reviewRating;
+
+    @Column(length = 1000)
     private String coupangUrl;
     private Integer averagePrice;
 

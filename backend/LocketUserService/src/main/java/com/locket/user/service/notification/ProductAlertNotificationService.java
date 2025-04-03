@@ -43,6 +43,11 @@ public class ProductAlertNotificationService {
 
             notificationService.sendBudgetAlert(dto);  // ✅ 재사용
             log.info("📲 상품 가격 알림 전송 완료: userId={}, productId={}", user.getUserId(), product.getId());
+
+            // 알림 발송 후 is_alert(알림 발송 희망) 필드를 false로 변경
+            preference.setAlert(false);
+            preference.setAlertPrice(null);
+            preferenceRepository.save(preference);
         }
     }
 
