@@ -19,7 +19,7 @@ public class PriceHistory {
     private Long priceId;
 
     @ManyToOne
-    @JoinColumn(name = "product_id")
+    @JoinColumn(name = "id")
     private Product product;
 
     @Column(nullable = false)

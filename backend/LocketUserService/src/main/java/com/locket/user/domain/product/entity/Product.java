@@ -35,6 +35,6 @@ public class Product {
     private Integer averagePrice;
 
     @ManyToOne
-    @JoinColumn(name = "category_id")
+    @JoinColumn(name = "category")
     private Category category;
 }
