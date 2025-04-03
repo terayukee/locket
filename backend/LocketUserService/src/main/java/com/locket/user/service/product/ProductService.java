@@ -187,4 +187,31 @@ public class ProductService {
                 .alertPrice(savedPreference.getAlertPrice())
                 .build();
     }
+
+    // 만원의 행복
+    @Transactional(readOnly = true)
+    public ProductListResponseDTO getHappinessProducts() {
+
+        Integer categoryId = 11;
+
+        Category category = categoryRepository.findById(categoryId)
+                .orElseThrow(() -> new CategoryNotFoundException(categoryId));
+
+        List<Product> products = productRepository.findByCategoryId(categoryId);
+
+        List<ProductSummaryDTO> productDTOs = products.stream()
+                .map(ProductSummaryDTO::fromEntity)
+                .collect(Collectors.toList());
+
+        return ProductListResponseDTO.builder()
+                .category(categoryId)
+                .categoryName(category.getName())
+                .page(1)
+                .pageProductCount(productDTOs.size())
+                .totalPages(1)
+                .categoryProductCount(productDTOs.size())
+                .products(productDTOs)
+                .build();
+    }
+
 }

@@ -463,4 +463,49 @@ public class ProductController {
         );
         return ResponseEntity.ok(response);
     }
+
+    @Operation(summary = "만원의 행복 목록 조회", description = "만원 이하 특별 상품 목록을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "상품 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증되지 않은 사용자",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                      "status": 401,
+                                      "error": "Unauthorized",
+                                      "message": "인증되지 않은 사용자입니다.",
+                                      "timestamp": "2025-04-01T12:34:56.789Z"
+                                    }
+                                    """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = "서버 내부 오류",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                    {
+                                      "status": 500,
+                                      "error": "Internal Server Error",
+                                      "message": "서버 내부 오류가 발생했습니다.",
+                                      "timestamp": "2025-04-01T12:34:56.789Z"
+                                    }
+                                    """
+                            )
+                    )
+            )
+    })
+    @GetMapping("/happiness")
+    public ResponseEntity<ProductListResponseDTO> getHappinessProducts() {
+        ProductListResponseDTO response = productService.getHappinessProducts();
+        return ResponseEntity.ok(response);
+    }
+
 }
