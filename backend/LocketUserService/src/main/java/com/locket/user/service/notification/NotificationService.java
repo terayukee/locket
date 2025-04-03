@@ -21,6 +21,8 @@ public class NotificationService {
                     .setToken(dto.getTargetFcmToken())
                     .putData("title", dto.getTitle())
                     .putData("body", dto.getContent())
+                    .putData("type", dto.getType())
+                    .putData("productId", String.valueOf(dto.getProductId()))
                     .build();
 
             firebaseMessaging.send(message);
