@@ -17,7 +17,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient() {
         return WebClient.builder()
-                .baseUrl(env.getProperty("locket.receipt.service.url", "http://localhost:8000"))
+                .baseUrl(env.getProperty("locket.ai.service.url", "http://localhost:8000"))
                 .build();
     }
 }
