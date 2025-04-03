@@ -9,4 +9,5 @@ public class FcmMessageDto {
     private String targetFcmToken;
     private String title;
     private String content;
+    private String type;
 }

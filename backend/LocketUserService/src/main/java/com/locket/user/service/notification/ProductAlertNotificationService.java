@@ -37,6 +37,7 @@ public class ProductAlertNotificationService {
 
             FcmMessageDto dto = FcmMessageDto.builder()
                     .targetFcmToken(user.getFcmToken())
+                    .type("price")
                     .title("📢 가격 알림 도착!")
                     .content(content)
                     .build();
