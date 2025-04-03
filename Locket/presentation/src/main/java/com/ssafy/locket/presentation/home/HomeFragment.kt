@@ -138,8 +138,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
-                        Log.d("UserFragment", "User: ${user.userInfo.nickname}")
-                        binding.tvUserName.text = user.userInfo.nickname
+                        userDataStoreSource.saveUser(user.userInfo)
                     }
                 }
             }
