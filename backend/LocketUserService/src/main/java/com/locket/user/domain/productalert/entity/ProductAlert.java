@@ -17,9 +17,6 @@ public class ProductAlert {
     @Column(name = "notification_id")
     private Long id;
 
-    @Column(name = "price_id", nullable = false)
-    private Long priceId; // Product ID
-
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
