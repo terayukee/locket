@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "결제 API", description = "결제 관련 API")
+@SecurityRequirement(name = "bearerAuth")
 public class PayController {
 
     private final PayService payService;
@@ -64,7 +66,6 @@ public class PayController {
         return payService.processPayment(request);
     }
 
-
     @PostMapping("/validate-card")
     @Operation(summary = "카드 유효성 및 잔액 확인", description = "카드번호와 결제 금액을 받아 유효성과 잔액을 확인합니다.")
     @ApiResponses({
@@ -91,7 +92,6 @@ public class PayController {
     ) {
         return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
     }
-
 
     @GetMapping("/cards")
     @Operation(summary = "내 카드 목록 조회", description = "사용자 ID를 기반으로 등록된 카드 목록을 조회합니다.")
