@@ -43,6 +43,7 @@ public class ProductAlertNotificationService {
                     .type("price")
                     .title("📢 가격 알림 도착!")
                     .content(content)
+                    .productId(product.getId())
                     .build();
 
             notificationService.sendBudgetAlert(dto);  // ✅ 재사용
