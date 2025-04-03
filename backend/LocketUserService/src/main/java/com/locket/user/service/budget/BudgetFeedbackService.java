@@ -43,7 +43,7 @@ public class BudgetFeedbackService {
 
     @Cacheable(value = "budgetFeedback", key = "#userId")
     public BudgetFeedbackResponse getFeedback(Long userId) {
-        log.info("사용자 {} 피드백 생성 시작", userId);
+        log.info("사용자 {} budgetFeedback 생성 시작", userId);
 
         try {
             // 1. 사용자 정보 조회
