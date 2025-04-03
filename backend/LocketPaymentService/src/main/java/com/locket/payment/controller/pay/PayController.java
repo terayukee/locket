@@ -36,6 +36,26 @@ public class PayController {
             @ApiResponse(responseCode = "500", description = "서버 내부 오류")
     })
     public ResponseEntity<PaymentResponse> processPayment(
+            @RequestBody(
+                    description = "결제 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "결제 예시",
+                                    summary = "기본 결제 요청 예시",
+                                    value = "{\n" +
+                                            "  \"cardId\": 1,\n" +
+                                            "  \"sellerId\": 2,\n" +
+                                            "  \"paymentCategory\": \"카페\",\n" +
+                                            "  \"paymentMerchant\": \"아메리카노\",\n" +
+                                            "  \"amount\": 2000,\n" +
+                                            "  \"storeName\": \"메가커피 구미인동점\",\n" +
+                                            "  \"paymentKey\": \"123e4567-e89b-12d3-a456-426614174000\"\n" +
+                                            "}"
+                            )
+                    )
+            )
             @RequestHeader("X-User-Id") Long userId,
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
@@ -49,6 +69,21 @@ public class PayController {
             @ApiResponse(responseCode = "400", description = "검증 실패")
     })
     public ResponseEntity<?> validateCard(
+            @RequestBody(
+                    description = "카드 유효성 요청 정보",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            examples = @ExampleObject(
+                                    name = "카드 검증 예시",
+                                    summary = "기본 카드 검증 요청 예시",
+                                    value = "{\n" +
+                                            "  \"cardId\": 1,\n" +
+                                            "  \"amount\": 2000\n" +
+                                            "}"
+                            )
+                    )
+            )
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
         return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
