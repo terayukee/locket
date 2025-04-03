@@ -32,7 +32,7 @@ public class Product {
     private String reviewCount;
     private String reviewRating;
     private String coupangUrl;
-    private Integer averagePrice;
+//    private Integer averagePrice;
 
     @ManyToOne
     @JoinColumn(name = "category_id")
