@@ -3,6 +3,8 @@ package com.locket.user.domain.productalert.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "products_alerts")
 @Getter
@@ -23,9 +25,12 @@ public class ProductAlert {
     @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 
-    @Column(name = "is_alert", nullable = false)
-    private Boolean isAlert;
+    @Column(name = "is_read", nullable = false)
+    private Boolean isRead;
 
     @Column(name = "alert_price", nullable = false)
     private Integer alertPrice;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

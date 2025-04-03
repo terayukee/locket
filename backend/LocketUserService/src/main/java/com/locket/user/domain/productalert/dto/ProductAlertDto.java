@@ -10,6 +10,6 @@ import lombok.*;
 public class ProductAlertDto {
     private Long userId;
     private String message;
-    private Boolean isAlert;
+    private Boolean isRead;
     private Integer alertPrice;
 }

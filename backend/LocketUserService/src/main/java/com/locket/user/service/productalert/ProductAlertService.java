@@ -6,6 +6,8 @@ import com.locket.user.domain.productalert.repository.ProductAlertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class ProductAlertService {
@@ -16,8 +18,9 @@ public class ProductAlertService {
         ProductAlert alert = ProductAlert.builder()
                 .userId(dto.getUserId())
                 .message(dto.getMessage())
-                .isAlert(dto.getIsAlert())
+                .isRead(dto.getIsRead())
                 .alertPrice(dto.getAlertPrice())
+                .createdAt(LocalDateTime.now())
                 .build();
 
         productAlertRepository.save(alert);

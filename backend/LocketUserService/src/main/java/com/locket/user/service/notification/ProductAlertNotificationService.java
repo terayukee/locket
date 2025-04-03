@@ -58,7 +58,7 @@ public class ProductAlertNotificationService {
             productAlertService.saveAlert(ProductAlertDto.builder()
                     .userId(user.getUserId())
                     .message(content)
-                    .isAlert(false)
+                    .isRead(false)
                     .alertPrice(alertPrice)
                     .build());
 
