@@ -19,7 +19,7 @@ public class ProductUserPreference {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id")
+    @JoinColumn(name = "product_id")
     private Product product;
 
     private Long userId;
