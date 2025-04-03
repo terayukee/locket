@@ -6,6 +6,7 @@ import com.locket.user.domain.auth.repository.UserRepository;
 import com.locket.user.domain.budget.dto.BudgetFeedbackRequest;
 import com.locket.user.domain.budget.dto.BudgetFeedbackResponse;
 import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
+import com.locket.user.domain.budget.dto.ReceiptFeedbackResponse;
 import com.locket.user.feign.ReceiptFeignClient;
 import com.locket.user.service.payment.PaymentQueryService;
 import lombok.RequiredArgsConstructor;
@@ -90,12 +91,12 @@ public class BudgetFeedbackService {
                     request.getUserJob());
 
             // 5. 피드백 생성 요청
-            String feedback = receiptFeignClient.generateFeedback(request);
+            ReceiptFeedbackResponse feedbackResponse = receiptFeignClient.generateFeedback(request);
             log.info("사용자 {} 피드백 생성 완료", userId);
 
             return BudgetFeedbackResponse.builder()
                     .nickname(user.getNickname())
-                    .feedback(feedback)
+                    .feedback(feedbackResponse.getFeedback())
                     .build();
 
         } catch (Exception e) {
