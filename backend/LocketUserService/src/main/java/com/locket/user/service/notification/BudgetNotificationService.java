@@ -80,6 +80,7 @@ public class BudgetNotificationService {
             // ✅ FCM 전송
             FcmMessageDto dto = FcmMessageDto.builder()
                     .targetFcmToken(user.getFcmToken())
+                    .type("budget")
                     .title("💰 예산 초과 알림")
                     .content(content)
                     .build();
@@ -164,6 +165,7 @@ public class BudgetNotificationService {
 
         FcmMessageDto dto = FcmMessageDto.builder()
                 .targetFcmToken(user.getFcmToken())
+                .type("budget")
                 .title("💰 예산 초과 알림")
                 .content(content)
                 .build();

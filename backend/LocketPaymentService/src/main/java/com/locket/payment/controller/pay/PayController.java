@@ -12,11 +12,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import com.locket.common.jwt.JwtUtil;
 
 import java.util.List;
 import java.util.Map;
@@ -28,7 +26,6 @@ import java.util.NoSuchElementException;
 public class PayController {
 
     private final PayService payService;
-    private final JwtUtil jwtUtil;
 
     @PostMapping("/nfc")
     @Operation(summary = "결제", description = "결제를 처리합니다.")
@@ -59,11 +56,11 @@ public class PayController {
                             )
                     )
             )
+            @RequestHeader("X-User-Id") Long userId,
             @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
-        return payService.processPayment(request);
+        return payService.processPayment(request, userId);
     }
-
 
     @PostMapping("/validate-card")
     @Operation(summary = "카드 유효성 및 잔액 확인", description = "카드번호와 결제 금액을 받아 유효성과 잔액을 확인합니다.")
@@ -92,12 +89,10 @@ public class PayController {
         return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
     }
 
-
     @GetMapping("/cards")
     @Operation(summary = "내 카드 목록 조회", description = "사용자 ID를 기반으로 등록된 카드 목록을 조회합니다.")
     public ResponseEntity<?> getMyCards(
-            @RequestHeader("Authorization") String token,
-            @RequestParam long userId
+            @RequestHeader("X-User-Id") Long userId
     ) {
         try {
             List<CardInfoDto> cards = payService.getCardsByUserId(userId);
@@ -120,8 +115,7 @@ public class PayController {
     @GetMapping("/auth-info/fingerprint")
     @Operation(summary = "지문 등록 여부 조회", description = "사용자 ID를 기반으로 Redis에서 지문 등록 여부를 조회합니다.")
     public ResponseEntity<?> checkFingerprintRegistered(
-            @RequestHeader("Authorization") String token,
-            @RequestParam long userId
+            @RequestHeader("X-User-Id") Long userId
     ) {
         try {
             boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
@@ -147,8 +141,7 @@ public class PayController {
     @PostMapping("/auth/verify-password")
     @Operation(summary = "간편 비밀번호 검증", description = "사용자 ID와 입력된 간편 비밀번호를 검증합니다.")
     public ResponseEntity<?> verifyPaymentPassword(
-            @RequestHeader("Authorization") String token,
-            @RequestParam long userId,
+            @RequestHeader("X-User-Id") Long userId,
             @RequestBody PaymentPasswordRequest passwordRequest
     ) {
         try {
@@ -177,5 +170,4 @@ public class PayController {
             ));
         }
     }
-
 }
