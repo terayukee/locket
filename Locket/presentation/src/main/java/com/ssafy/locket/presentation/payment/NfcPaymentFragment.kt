@@ -25,13 +25,18 @@ import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.databinding.FragmentNfcPaymentBinding
+import com.ssafy.locket.presentation.payment.viewmodel.PaymentState
+import com.ssafy.locket.presentation.payment.viewmodel.PaymentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,6 +47,8 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
 ) {
     private var timeRemaining = 30  // 30초 설정
     private var isVibrating = false
+    private var timerJob: Job? = null
+    private var vibrationJob: Job? = null
 
     private lateinit var vibrator: Vibrator
     private val vibrationPattern = longArrayOf(100, 200, 100, 200)
@@ -54,6 +61,7 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
 
     //nfc어댑터
     private lateinit var nfcAdapter: NfcAdapter
+    private val paymentViewModel: PaymentViewModel by viewModels()
 
     override fun onResume() {
         super.onResume()
@@ -65,10 +73,8 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
         if (nfcAdapter != null) {
             nfcAdapter.disableForegroundDispatch(requireActivity())
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        timerJob?.cancel()
+        vibrationJob?.cancel()
         stopVibration()
     }
 
@@ -87,10 +93,28 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
             stopVibration()
             applyCardRotationExitAnimation()
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            paymentViewModel.payment.collect { state ->
+                when (state) {
+                    is PaymentState.Success -> {
+                        // 결제 성공 처리하기, 카드 리스트 화면으로 이동시키기
+                        stopVibration()
+                        applyCardRotationExitAnimation()
+                    }
+                    is PaymentState.Error -> {
+                        // 결제 실패 처리하기
+                        stopVibration()
+                        applyCardRotationExitAnimation()
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun startTimer() {
-        CoroutineScope(Dispatchers.Main).launch {
+        timerJob = lifecycleScope.launch {
             while (timeRemaining >= 0) {
                 binding.tvTimer.text = timeRemaining.toString()  // 남은 시간 업데이트
                 delay(1000)  // 1초 대기
@@ -104,7 +128,7 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startContinuousVibration() {
         isVibrating = true
-        CoroutineScope(Dispatchers.Main).launch {
+        vibrationJob = lifecycleScope.launch {
             while (isVibrating) {
                 val vibrationEffect = VibrationEffect.createWaveform(
                     vibrationPattern,
@@ -210,6 +234,9 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
                             val payload = record.payload
                             val text = String(payload, charset("UTF-8"))
                             Log.d(TAG, "NDEF 데이터: $text")
+                            // TODO nfc에 데이터 넣어서 테스트해보기
+                            // paymentViewModel.pay 호출해서 해보기
+
                         }
                     }
                 } else {

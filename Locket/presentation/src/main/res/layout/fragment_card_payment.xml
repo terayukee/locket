@@ -29,34 +29,34 @@
 
     <TextView
         android:id="@+id/tv_card_name"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:text="국민행복 삼성카드 V2"
         android:letterSpacing="-0.02"
-        android:textColor="#000000"
+        android:textColor="@color/text"
         android:fontFamily="@font/pretendard_regular"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:gravity="center"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@id/viewpager" />
 
     <HorizontalScrollView
         android:id="@+id/dot_indicator_scroll"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:scrollbars="none"
-        app:layout_constraintWidth_percent="0.22"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@+id/viewpager"
+        app:layout_constraintStart_toStartOf="@+id/viewpager"
         app:layout_constraintTop_toBottomOf="@id/tv_card_name">
+
         <LinearLayout
             android:id="@+id/dot_indicator"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"/>
+            android:orientation="horizontal" />
     </HorizontalScrollView>
 
     <TextView
@@ -69,6 +69,7 @@
         android:fontFamily="@font/pretendard_medium"
         android:textSize="16sp"
         android:textStyle="bold"
+        android:textColor="@color/text"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dot_indicator_scroll" />
@@ -77,24 +78,22 @@
         android:id="@+id/tv_card_benefit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="48dp"
         android:layout_marginTop="16dp"
         android:letterSpacing="-0.02"
-        android:fontFamily="@font/pretendard_regular"
-        android:text="메가카페       30% 할인\nGS25           15% 할인"
+        android:text="메가커피\t\t\t30% 할인\nGS25\t\t\t\t\t15% 할인"
         android:textColor="#666666"
         android:textSize="14sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_balance_description"
-        app:layout_constraintWidth_percent="0.4" />
+        android:gravity="center"
+        app:layout_constraintEnd_toEndOf="@+id/viewpager"
+        app:layout_constraintStart_toStartOf="@+id/viewpager"
+        app:layout_constraintTop_toBottomOf="@+id/tv_balance_description" />
 
     <TextView
         android:id="@+id/tv_ssafy_cardbenefit_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:letterSpacing="-0.02"
-        android:text="씨피카드로 결제 시 캐릭터 사료 확득"
+        android:text="삼성카드로 결제 시 캐릭터 사료 확득"
         android:fontFamily="@font/pretendard_regular"
         android:textColor="#464646"
         android:textSize="14sp"

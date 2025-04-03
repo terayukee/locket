@@ -8,12 +8,14 @@ import android.widget.Button
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentPaymentPasswordBinding
 import com.ssafy.locket.presentation.login.register_user_info.PasswordInputHandler
+import com.ssafy.locket.presentation.payment.viewmodel.PaymentPasswordViewModel
 import com.ssafy.locket.ui.payment.viewmodel.RecertifyViewModel
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
@@ -24,6 +26,7 @@ class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
 ) {
     private lateinit var passwordInputHandler: PasswordInputHandler
     private val viewModel: RecertifyViewModel by activityViewModels()
+    private val paymentPasswordViewModel: PaymentPasswordViewModel by viewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
