@@ -1,7 +1,7 @@
 import joblib
 import os
 from ..dto.category_dto import CategoryRequestDto, CategoryResponseDto
-from ..exception.category_exception import ClassificationException
+from ..exception.category_exception import CategoryException
 
 class CategoryService:
     def __init__(self):
@@ -18,7 +18,7 @@ class CategoryService:
     async def classify_store(self, request: CategoryRequestDto) -> CategoryResponseDto:
         # 비즈니스 로직 구현
         if not request.store_name.strip():
-            raise ClassificationException(detail="상호명이 비어있습니다.")
+            raise CategoryException(detail="상호명이 비어있습니다.")
 
         category = self.category_model.predict([request.store_name])[0]
         needs_item_check = bool(self.item_check_model.predict([request.store_name])[0])

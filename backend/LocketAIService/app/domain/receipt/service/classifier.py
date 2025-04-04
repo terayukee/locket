@@ -1,7 +1,7 @@
 from typing import List, Dict
 from openai import AsyncOpenAI
 from app.config.settings import settings
-from ..exception.receipt_exception import ClassificationException
+from ..exception.receipt_exception import ReceiptException
 from ..constant.receipt_error import ReceiptErrorCode
 import logging
 
@@ -13,26 +13,20 @@ class ItemClassifier:
 
     def __init__(self):
         try:
-            # OpenAI 클라이언트 초기화
             self.client = AsyncOpenAI(
                 api_key=settings.OPENAI_API_KEY,
                 base_url="https://api.openai.com/v1"
             )
         except Exception as e:
             logger.error(f"OpenAI 클라이언트 초기화 실패: {str(e)}")
-            raise ClassificationException(
-                error_code=ReceiptErrorCode.CLASSIFICATION_INIT_ERROR,
-                detail=f"OpenAI 클라이언트 초기화 실패: {str(e)}"
-            )
+            raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
     async def classify_receipt(self, receipt_data: Dict) -> Dict:
         """영수증 품목 분류"""
         try:
             logger.info("품목 분류 시작")
-            # 품목 분류
             classified_items = await self._classify_items(receipt_data["items"])
 
-            # 결과 데이터 구성
             result = {
                 'items': classified_items,
                 'totalAmount': receipt_data['totalAmount']
@@ -42,19 +36,14 @@ class ItemClassifier:
 
         except Exception as e:
             logger.error(f"품목 분류 중 오류 발생: {str(e)}")
-            raise ClassificationException(
-                error_code=ReceiptErrorCode.CLASSIFICATION_ERROR,
-                detail=f"품목 분류 중 오류 발생: {str(e)}"
-            )
+            raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
     async def _classify_items(self, items: List[Dict]) -> List[Dict]:
         """개별 품목 분류"""
         try:
-            # 프롬프트 구성
             prompt = self._create_prompt([item['itemName'] for item in items])
             logger.info(f"GPT 요청 프롬프트: {prompt}")
 
-            # GPT 호출
             response = await self.client.chat.completions.create(
                 model="gpt-4o",
                 messages=[
@@ -65,24 +54,18 @@ class ItemClassifier:
                 max_tokens=100
             )
 
-            # 응답 파싱
             categories = self._parse_response(response.choices[0].message.content)
             logger.info(f"분류 결과: {categories}")
 
             if len(categories) != len(items):
-                raise ClassificationException(
-                    error_code=ReceiptErrorCode.CLASSIFICATION_MISMATCH_ERROR,
-                    detail=f"품목 수({len(items)})와 카테고리 수({len(categories)})가 일치하지 않습니다"
-                )
+                logger.error(f"품목 수({len(items)})와 카테고리 수({len(categories)})가 일치하지 않습니다")
+                raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
-            # 아이템에 카테고리 추가
             classified_items = []
             for item, category in zip(items, categories):
                 if category.strip() not in self.CATEGORIES:
-                    raise ClassificationException(
-                        error_code=ReceiptErrorCode.CLASSIFICATION_INVALID_CATEGORY,
-                        detail=f"유효하지 않은 카테고리입니다: {category}"
-                    )
+                    logger.error(f"유효하지 않은 카테고리입니다: {category}")
+                    raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
                 classified_item = {
                     'itemId': item['itemId'],
@@ -95,19 +78,15 @@ class ItemClassifier:
 
             return classified_items
 
-        except ClassificationException:
+        except ReceiptException:
             raise
         except Exception as e:
             logger.error(f"품목 분류 중 오류 발생: {str(e)}")
-            raise ClassificationException(
-                error_code=ReceiptErrorCode.CLASSIFICATION_ERROR,
-                detail=f"품목 분류 중 오류 발생: {str(e)}"
-            )
+            raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
     def _create_prompt(self, item_names: List[str]) -> str:
         """프롬프트 생성"""
         categories = ", ".join(self.CATEGORIES)
-
         return f"""
         다음 상품들을 카테고리로 분류해주세요:
         상품: {item_names}
@@ -127,9 +106,7 @@ class ItemClassifier:
         """LLM 응답을 파싱하여 카테고리 리스트 반환"""
         response = response.strip()
         if '|' not in response:
-            raise ClassificationException(
-                error_code=ReceiptErrorCode.CLASSIFICATION_PARSE_ERROR,
-                detail=f"잘못된 응답 형식입니다: {response}"
-            )
+            logger.error(f"잘못된 응답 형식입니다: {response}")
+            raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
         return [category.strip() for category in response.split('|')]

@@ -1,7 +1,7 @@
 from openai import AsyncOpenAI
 from app.config.settings import settings
 from ..dto.feedback_dto import FeedbackRequest
-from ..exception.feedback_exception import FeedbackException, InvalidRequestException
+from ..exception.feedback_exception import FeedbackException
 from ..constant.feedback_error import FeedbackErrorCode
 import logging
 
@@ -16,80 +16,63 @@ class FeedbackService:
             )
         except Exception as e:
             logger.error(f"OpenAI 클라이언트 초기화 실패: {str(e)}")
-            raise FeedbackException(
-                error_code=FeedbackErrorCode.GPT_API_ERROR,
-                detail=f"OpenAI 클라이언트 초기화 실패: {str(e)}"
-            )
+            raise FeedbackException(error_code=FeedbackErrorCode.MODEL_INIT_ERROR)
 
     async def generate_feedback(self, request: FeedbackRequest) -> str:
         try:
             # 필수 필드 검증
             if not request.userJob:
-                raise InvalidRequestException(
-                    error_code=FeedbackErrorCode.MISSING_REQUIRED_FIELD,
-                    detail="사용자 직업 정보가 없습니다"
-                )
+                logger.error("사용자 직업 정보가 없습니다")
+                raise FeedbackException(error_code=FeedbackErrorCode.MISSING_REQUIRED_FIELD)
 
             if not request.categoryAmount or not request.budgetStatus:
-                raise InvalidRequestException(
-                    error_code=FeedbackErrorCode.MISSING_REQUIRED_FIELD,
-                    detail="예산 데이터가 없습니다"
-                )
+                logger.error("예산 데이터가 없습니다")
+                raise FeedbackException(error_code=FeedbackErrorCode.MISSING_REQUIRED_FIELD)
 
             prompt = self._create_prompt(request)
             logger.info(f"OpenAI에 전송되는 프롬프트: {prompt}")
 
-            response = await self.client.chat.completions.create(
-                model="gpt-4o",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "당신은 사용자의 예산 현황과 카테고리별 지출을 분석하여, "
-                            "짧고 부드러운 제안형 메시지로 절약 아이디어를 주는 전문가입니다."
-                        )
-                    },
-                    {
-                        "role": "user",
-                        "content": prompt
-                    }
-                ],
-                temperature=0.7,
-                max_tokens=100
-            )
+            try:
+                response = await self.client.chat.completions.create(
+                    model="gpt-4",
+                    messages=[
+                        {"role": "system", "content": "당신은 사용자의 예산 현황과 카테고리별 지출을 분석하여, 짧고 부드러운 제안형 메시지로 절약 아이디어를 주는 전문가입니다."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.7,
+                    max_tokens=100
+                )
+            except Exception as e:
+                logger.error(f"GPT API 호출 실패: {str(e)}")
+                raise FeedbackException(error_code=FeedbackErrorCode.GPT_API_ERROR)
 
             feedback = response.choices[0].message.content.strip()
             logger.info(f"OpenAI로부터 받은 응답: {feedback}")
 
             if not feedback:
-                raise FeedbackException(
-                    error_code=FeedbackErrorCode.CONTENT_VALIDATION_ERROR,
-                    detail="빈 피드백이 생성되었습니다"
-                )
+                logger.error("피드백이 생성되지 않았습니다")
+                raise FeedbackException(error_code=FeedbackErrorCode.CONTENT_VALIDATION_ERROR)
 
             return feedback
 
-        except InvalidRequestException:
+        except FeedbackException:
             raise
         except Exception as e:
-            logger.error(f"피드백 생성 중 오류: {str(e)}")
-            raise FeedbackException(
-                error_code=FeedbackErrorCode.GENERATION_ERROR,
-                detail=f"피드백 생성 중 오류 발생: {str(e)}"
-            )
+            logger.error(f"피드백 생성 중 예상치 못한 오류: {str(e)}")
+            raise FeedbackException(error_code=FeedbackErrorCode.GENERATION_ERROR)
 
     def _create_prompt(self, request: FeedbackRequest) -> str:
         try:
             spent = request.budgetStatus.spent
             target = request.budgetStatus.target
             percent = int((spent / target) * 100) if target else 0
-
-            categories = "\n".join([f"- {k}: {v:,}원" for k, v in request.categoryAmount.items()])
             budget_info = (
                 f"- 목표 예산: {target:,}원\n"
                 f"- 현재 지출: {spent:,}원\n"
                 f"- 지출률: {percent}%"
             )
+
+            categories = "\n".join([f"- {cat}: {amount:,}원" for cat, amount in request.categoryAmount.items()])
 
             return f"""
             사용자 정보:
@@ -161,12 +144,8 @@ class FeedbackService:
             4. 반드시 위 조건 중 **하나만 적용**하세요. **두 가지 이상의 조건을 섞지 마세요.**
             """
         except AttributeError as e:
-            raise FeedbackException(
-                error_code=FeedbackErrorCode.INVALID_PARAMETERS,
-                detail=f"필수 데이터 구조가 올바르지 않습니다: {str(e)}"
-            )
+            logger.error(f"잘못된 요청 데이터 형식: {str(e)}")
+            raise FeedbackException(error_code=FeedbackErrorCode.INVALID_PARAMETERS)
         except Exception as e:
-            raise FeedbackException(
-                error_code=FeedbackErrorCode.INVALID_PARAMETERS,
-                detail=f"프롬프트 생성 중 오류 발생: {str(e)}"
-            )
+            logger.error(f"프롬프트 생성 중 오류: {str(e)}")
+            raise FeedbackException(error_code=FeedbackErrorCode.GENERATION_ERROR)
