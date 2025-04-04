@@ -94,7 +94,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 notificationCheckViewModel.isIconClicked.collect {
                     if(it) isNotification = true
-                    Log.d(TAG, "observeNotificationState: ${it} ${isNotification}")
                 }
             }
 
@@ -110,7 +109,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         if(isNotification) {
                             intent.putExtra("notification","notification")
-                            Log.d(TAG, "observeLoginState: puExtra")
                         }
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)

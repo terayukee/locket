@@ -23,7 +23,6 @@ private val _isIconClicked = MutableSharedFlow<Boolean>()
     fun setIconClicked() {
         viewModelScope.launch{
             _isIconClicked.emit(true)
-            Log.d(TAG, "setIconClicked: ")
         }
     }
 }

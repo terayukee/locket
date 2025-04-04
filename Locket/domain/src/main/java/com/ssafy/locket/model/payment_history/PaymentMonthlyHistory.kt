@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PaymentMonthlyHistory(
-    val list: List<PaymentMonthlyHistoryItem>
+    val list: List<PaymentHistoryItem>
 ): BaseModel

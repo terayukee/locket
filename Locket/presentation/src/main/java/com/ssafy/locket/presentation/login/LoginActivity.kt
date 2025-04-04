@@ -23,7 +23,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
         super.onNewIntent(intent, caller)
         intent.getStringExtra("notification")?.let {
-            Log.d(TAG, "onNewIntent: notification으로 들어옴")
             notificationCheckViewModel.setIconClicked()
         }
     }

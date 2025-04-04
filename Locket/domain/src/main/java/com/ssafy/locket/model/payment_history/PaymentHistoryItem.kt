@@ -5,7 +5,7 @@ import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 
 @Parcelize
-data class PaymentMonthlyHistoryItem(
+data class PaymentHistoryItem(
     val cardName: String,
     val category: String,
     val storeName: String,

@@ -2,7 +2,7 @@ package com.ssafy.locket.data.network.response.payment_history
 
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
-import com.ssafy.locket.model.payment_history.PaymentMonthlyHistoryItem
+import com.ssafy.locket.model.payment_history.PaymentHistoryItem
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 
@@ -15,9 +15,9 @@ data class PaymentMonthlyHistoryResponseItem(
     val year: Int,
     val month: Int
 ): BaseResponse {
-    companion object: DataMapper<PaymentMonthlyHistoryResponseItem, PaymentMonthlyHistoryItem> {
-        override fun PaymentMonthlyHistoryResponseItem.toDomainModel(): PaymentMonthlyHistoryItem {
-            return PaymentMonthlyHistoryItem(
+    companion object: DataMapper<PaymentMonthlyHistoryResponseItem, PaymentHistoryItem> {
+        override fun PaymentMonthlyHistoryResponseItem.toDomainModel(): PaymentHistoryItem {
+            return PaymentHistoryItem(
                 cardName = cardName,
                 category = paymentCategory,
                 storeName = storeName,
