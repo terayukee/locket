@@ -39,12 +39,17 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
         super.onViewCreated(view, savedInstanceState)
         initEvent()
         initAdapter()
+        getLikeList()
+    }
+
+    override fun onResume() {
+        super.onResume()
         lifecycleScope.launch {
             val userId = userDataStoreSource.userId.first()?:0
             productViewModel.getLikeList(userId.toInt())
         }
-        getLikeList()
     }
+
 
     fun initAdapter(){
         productLikeList = mutableListOf()
