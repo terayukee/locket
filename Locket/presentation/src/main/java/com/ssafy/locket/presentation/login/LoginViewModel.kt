@@ -38,7 +38,7 @@ class LoginViewModel @Inject constructor(
                     when (response) {
                         is ResponseStatus.Success -> {
                             Log.d("LoginViewModel", "✅ 로그인 성공 → 홈 화면 이동")
-                            dataStore.saveJwtToken(response.data.accessToken)
+                            dataStore.saveJwtToken("Bearer "+response.data.accessToken)
                             _loginState.value = true // ✅ 최신 값 유지
                         }
                         is ResponseStatus.Error -> {
@@ -70,7 +70,7 @@ class LoginViewModel @Inject constructor(
                     when (response) {
                         is ResponseStatus.Success -> {
                             Log.d("LoginViewModel","jwt토큰 "+ response.data.accessToken)
-                            dataStore.saveJwtToken(response.data.accessToken)
+                            dataStore.saveJwtToken("Bearer "+response.data.accessToken)
                         }
                         is ResponseStatus.Error -> {
                             Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.status}")

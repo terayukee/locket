@@ -22,6 +22,7 @@ class LocketFirebaseMessagingService: FirebaseMessagingService() {
         var messageTitle = ""
         var messageContent = ""
         var messageType = ""
+        var productId = -1
 
         if(message.notification != null) {
             messageTitle = message.notification?.title.toString()
@@ -34,7 +35,13 @@ class LocketFirebaseMessagingService: FirebaseMessagingService() {
             messageContent = data["body"].orEmpty()
             messageType = data["type"].orEmpty()
 
+            if(messageType == "price") {
+                productId = data["productId"].orEmpty().toInt()
+            }
+
             Log.d(TAG, "onMessageReceived: else ${message.data}")
+
+            // TODO PendingIntent 추가해서 화면 이동시키기, "price"는 상품 상세 화면으로 이동시키고 "budget"는 알림 화면으로 이동시키기
         }
 
         createNotification(messageTitle, messageContent, messageType)

@@ -13,7 +13,7 @@ import okhttp3.Response
 class RequestInterceptor constructor(private val dataStore: UserDataStoreSource): Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         val token = runBlocking {
-            dataStore.accessToken.first() ?: ""
+            dataStore.jwtToken.first() ?: ""
         }
         val requestWithToken = chain.request().newBuilder()
             .addHeader("Authorization", token)

@@ -2,7 +2,6 @@ package com.ssafy.locket.presentation.login.register_user_info
 
 import android.content.Intent
 import android.os.Bundle
-import android.provider.Settings
 import android.view.View
 import androidx.biometric.BiometricManager
 import androidx.navigation.fragment.findNavController

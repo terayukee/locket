@@ -17,6 +17,8 @@ import androidx.biometric.BiometricManager
 import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.viewpager2.widget.ViewPager2
 import com.ssafy.locket.ui.payment.viewmodel.RecertifyViewModel
@@ -24,12 +26,22 @@ import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import com.ssafy.locket.model.graph.Card
+import com.ssafy.locket.model.payment.PaymentCard
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentCardPaymentBinding
 import com.ssafy.locket.presentation.payment.adapter.CardAdapter
+import com.ssafy.locket.presentation.payment.viewmodel.CardPaymentViewModel
+import com.ssafy.locket.presentation.payment.viewmodel.PaymentCardState
+import com.ssafy.locket.presentation.payment.viewmodel.SelectedPaymentCardViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import com.ssafy.locket.ui.payment.RecertifyDialogFragment
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+private const val TAG = "CardPaymentFragment"
+@AndroidEntryPoint
 class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     FragmentCardPaymentBinding::bind,
     R.layout.fragment_card_payment
@@ -40,31 +52,24 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
 
     //지문 관련 이벤트 처리때문에 viewModel작성
     private val viewModel: RecertifyViewModel by activityViewModels()
+    private val cardPaymentViewModel: CardPaymentViewModel by viewModels()
+    private val selectedPaymentCardViewModel: SelectedPaymentCardViewModel by activityViewModels()
 
     //스크롤 가능
-    private var selectedPosition = 0
+    private var selectedPosition = -1
     private var lastScrollX = 0
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
     //버튼 클릭으로 이벤트 지정
     private var btnClick = 0
 
-    val cards = listOf(
-        Card(R.drawable.ic_payment_card_img, "국민행복 삼성카드 V2"),
-        Card(R.drawable.ic_payment_card_img, "Another Card"),
-        Card(R.drawable.ic_payment_card_img, "Third Card"),
-        Card(R.drawable.ic_payment_card_img, "국민행복 삼성카드 V2"),
-        Card(R.drawable.ic_payment_card_img, "Another Card"),
-        Card(R.drawable.ic_payment_card_img, "Third Card"),
-        Card(R.drawable.ic_payment_card_img, "국민행복 삼성카드 V2"),
-        Card(R.drawable.ic_payment_card_img, "Another Card"),
-        Card(R.drawable.ic_payment_card_img, "Third Card"),
-    )
+    var cards = listOf<PaymentCard>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initialAdapter()
+        initState()
         initialView()
+        initialAdapter()
         initEvent()
         backEvent()
         getCardView(savedInstanceState)
@@ -78,24 +83,41 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         outState.putInt("scrollPosition", binding.dotIndicatorScroll.scrollX)
     }
 
-    fun getCardView(savedInstanceState: Bundle?){
+    fun getCardView(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
             selectedPosition = it.getInt("selectedPosition", 0)
             lastScrollX = it.getInt("scrollPosition", 0)
             binding.viewpager.setCurrentItem(selectedPosition, false) // 애니메이션 없이 복원
             binding.dotIndicator.scrollTo(lastScrollX, 0) // ScrollView 복원
         }
-        scrollToDotAtPosition(selectedPosition)
+        if(selectedPosition >= 0) scrollToDotAtPosition(selectedPosition)
     }
 
+    fun initState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            cardPaymentViewModel.paymentCardList.collect { uiState ->
+                if (uiState is PaymentCardState.Success) {
+                    cards = uiState.paymentCardList.cards
+                    cardAdapter.setCards(cards)
+                    setupDotIndicator(cards.size)
+                }
+            }
+        }
 
-    fun initialAdapter(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            cardPaymentViewModel.isFingerprintRegistered.collect {
+                if(it) initBiometrics()
+                else CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "회원가입 시 지문이 등록되지 않았습니다")
+            }
+        }
+    }
+
+    fun initialAdapter() {
         cardAdapter = CardAdapter(cards)
         binding.viewpager.adapter = cardAdapter
-        setupDotIndicator(cards.size)
     }
 
-    fun backEvent(){
+    fun backEvent() {
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (System.currentTimeMillis() - backPressedTime < 2000) {
@@ -108,8 +130,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         })
     }
 
-
     fun initialView(){
+        cardPaymentViewModel.getAllPaymentCards()
         requireActivity().window.decorView.setBackgroundColor(Color.WHITE)
     }
 
@@ -118,15 +140,18 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateDots(position)
-                binding.tvCardName.text = cards[position].name
+                binding.tvCardName.text = cards[position].cardName
+                Log.d(TAG, "onPageSelected: card changed in initEvent ${cards[position].cardName}")
             }
         })
         binding.ivFingerprint.setOnClickListener {
             btnClick = 1
+            selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
         binding.btnPassword.setOnClickListener {
             btnClick = 2
+            selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
     }
@@ -164,6 +189,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
 
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                selectedPosition = position
                 updateDots(position)
                 if (count > MAX_VISIBLE_DOTS) {
                     val scrollView = binding.dotIndicatorScroll
@@ -179,7 +205,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                         0
                     )
                 }
-                binding.tvCardName.text = cards[position].name
+                binding.tvCardName.text = cards[position].cardName
+                Log.d(TAG, "onPageSelected: card changed in registerOnPageChangeCallback ${cards[position].cardName}")
             }
         })
         updateDots(0)
@@ -211,7 +238,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         }
         else{
             if(btnClick==1){
-                initBiometrics()
+//                initBiometrics()
+                cardPaymentViewModel.checkFingerprintRegistered()
             }
             else if(btnClick==2){
                 requireActivity().window.decorView.setBackgroundColor(Color.BLACK)

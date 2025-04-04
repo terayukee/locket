@@ -143,6 +143,7 @@ class MainActivity : AppCompatActivity() {
 
         intent?.let {
             if (it.action == NfcAdapter.ACTION_NDEF_DISCOVERED || it.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
+                Log.d(TAG, "onNewIntent: nfc 인식")
                 val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
                 val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
                 if (currentFragment is NfcPaymentFragment) {

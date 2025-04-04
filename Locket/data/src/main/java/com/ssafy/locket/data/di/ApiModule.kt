@@ -3,6 +3,7 @@ package com.ssafy.locket.data.di
 import com.ssafy.locket.data.network.api.AuthService
 import com.ssafy.locket.data.network.api.CharacterService
 import com.ssafy.locket.data.network.api.ProductService
+import com.ssafy.locket.data.network.api.PaymentService
 import com.ssafy.locket.data.network.api.UserService
 import dagger.Module
 import dagger.Provides
@@ -39,6 +40,14 @@ internal class ApiModule {
         return retrofit.create(AuthService::class.java)
     }
 
+    @Provides
+    @Singleton
+    fun providePaymentService(
+        @InterceptorRetrofit retrofit: Retrofit
+    ): PaymentService {
+        return retrofit.create(PaymentService::class.java)
+    }
+
 //    @Provides
 //    @Singleton
 //    fun provideAnalysisService(retrofit: Retrofit): AnalysisService {
@@ -51,11 +60,6 @@ internal class ApiModule {
 //        return retrofit.create(BudgetService::class.java)
 //    }
 //
-//    @Provides
-//    @Singleton
-//    fun providePaymentService(retrofit: Retrofit): PaymentService {
-//        return retrofit.create(PaymentService::class.java)
-//    }
 //
     @Provides
     @Singleton

@@ -1,7 +1,6 @@
 package com.ssafy.locket.presentation.payment
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
@@ -9,13 +8,8 @@ import android.graphics.Color
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.NfcA
-import android.nfc.tech.NfcB
-import android.nfc.tech.NfcF
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
@@ -25,23 +19,37 @@ import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.databinding.FragmentNfcPaymentBinding
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.ssafy.locket.presentation.payment.viewmodel.PaymentState
+import com.ssafy.locket.presentation.payment.viewmodel.PaymentViewModel
+import com.ssafy.locket.presentation.payment.viewmodel.SelectedPaymentCardState
+import com.ssafy.locket.presentation.payment.viewmodel.SelectedPaymentCardViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 private const val TAG = "MainActivity_NFC"
+@AndroidEntryPoint
 class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     FragmentNfcPaymentBinding::bind,
     R.layout.fragment_nfc_payment
 ) {
     private var timeRemaining = 30  // 30초 설정
     private var isVibrating = false
+    private var timerJob: Job? = null
+    private var vibrationJob: Job? = null
 
     private lateinit var vibrator: Vibrator
     private val vibrationPattern = longArrayOf(100, 200, 100, 200)
@@ -54,6 +62,8 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
 
     //nfc어댑터
     private lateinit var nfcAdapter: NfcAdapter
+    private val paymentViewModel: PaymentViewModel by viewModels()
+    private val selectedPaymentCardViewModel: SelectedPaymentCardViewModel by activityViewModels()
 
     override fun onResume() {
         super.onResume()
@@ -65,10 +75,8 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
         if (nfcAdapter != null) {
             nfcAdapter.disableForegroundDispatch(requireActivity())
         }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
+        timerJob?.cancel()
+        vibrationJob?.cancel()
         stopVibration()
     }
 
@@ -87,10 +95,30 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
             stopVibration()
             applyCardRotationExitAnimation()
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            paymentViewModel.payment.collect { state ->
+                when (state) {
+                    is PaymentState.Success -> {
+                        // 결제 성공 처리하기, 카드 리스트 화면으로 이동시키기
+                        stopVibration()
+                        applyCardRotationExitAnimation()
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "결제가 완료되었습니다")
+                    }
+                    is PaymentState.Error -> {
+                        // 결제 실패 처리하기
+                        stopVibration()
+                        applyCardRotationExitAnimation()
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "결제 실패하였습니다")
+                    }
+                    else -> {}
+                }
+            }
+        }
     }
 
     private fun startTimer() {
-        CoroutineScope(Dispatchers.Main).launch {
+        timerJob = lifecycleScope.launch {
             while (timeRemaining >= 0) {
                 binding.tvTimer.text = timeRemaining.toString()  // 남은 시간 업데이트
                 delay(1000)  // 1초 대기
@@ -104,7 +132,7 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun startContinuousVibration() {
         isVibrating = true
-        CoroutineScope(Dispatchers.Main).launch {
+        vibrationJob = lifecycleScope.launch {
             while (isVibrating) {
                 val vibrationEffect = VibrationEffect.createWaveform(
                     vibrationPattern,
@@ -206,10 +234,30 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
                     for (message in ndefMessages) {
                         val ndefMessage = message as NdefMessage
                         for (record in ndefMessage.records) {
-                            // NDEF 레코드에서 데이터 읽기
                             val payload = record.payload
-                            val text = String(payload, charset("UTF-8"))
-                            Log.d(TAG, "NDEF 데이터: $text")
+
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                val paymentCardState = selectedPaymentCardViewModel.selectedPaymentCard.first()
+                                if(paymentCardState is SelectedPaymentCardState.Selected) {
+                                    val cardId : Int = paymentCardState.paymentCard.cardId
+                                    
+                                    val jsonString = byteArrayToStringWithNDEF(payload)
+                                    val jsonObject = JSONObject(jsonString)
+
+                                    val paymentKey = jsonObject["paymentKey"].toString()
+                                    val sellerId = jsonObject["sellerId"].toString().toLong()
+                                    val paymentCategory = jsonObject["paymentCategory"].toString()
+                                    val paymentMerchant = jsonObject["paymentMerchant"].toString()
+                                    val amount = jsonObject["amount"].toString().toBigDecimal()
+                                    val storeName = jsonObject["storeName"].toString()
+
+                                    paymentViewModel.pay(paymentKey, cardId, sellerId, paymentCategory, paymentMerchant, amount, storeName)
+                                } else {
+                                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "선택된 카드가 없습니다")
+                                    stopVibration()
+                                    applyCardRotationExitAnimation()
+                                }
+                            }
                         }
                     }
                 } else {
@@ -218,4 +266,24 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
             }
         }
     }
+}
+
+private fun byteArrayToStringWithNDEF(byteArray: ByteArray): String {
+    if (byteArray.isEmpty()) {
+        return ""
+    }
+
+    // 첫 번째 바이트는 상태 바이트
+    val statusByte = byteArray[0].toInt()
+
+    // 상태 바이트의 하위 5비트는 언어 코드의 길이를 나타냄
+    val languageCodeLength = statusByte and 0x3F
+
+    // 실제 텍스트 데이터는 언어 코드 다음에 위치
+    return String(
+        byteArray,
+        languageCodeLength + 1,
+        byteArray.size - languageCodeLength - 1,
+        Charsets.UTF_8
+    )
 }
