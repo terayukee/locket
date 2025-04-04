@@ -2,7 +2,9 @@ package com.locket.payment.domain.pay.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "card_catalogs")
@@ -28,4 +30,7 @@ public class CardCatalog {
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+
+    @OneToMany(mappedBy = "card", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CardBenefit> benefits;  // ✅ 혜택 연관관계 추가
 }

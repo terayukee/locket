@@ -1,6 +1,7 @@
 package com.locket.payment.service.pay;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
+import com.locket.payment.domain.pay.dto.CardBenefitDto;
 import com.locket.payment.domain.pay.dto.CardInfoDto;
 import com.locket.payment.domain.pay.dto.PaymentRequest;
 import com.locket.payment.domain.pay.dto.PaymentResponse;
@@ -315,7 +316,22 @@ public class PayService {
 
         return cards.stream()
                 .map(card -> {
-                    BigDecimal monthlyUsage = paymentHistoryFeignClient.getMonthlyTotalAmountByCard(userId, card.getCardId(), year, month).getTotalAmount();
+                    BigDecimal monthlyUsage = paymentHistoryFeignClient
+                            .getMonthlyTotalAmountByCard(userId, card.getCardId(), year, month)
+                            .getTotalAmount();
+
+                    // 혜택 조회
+                    List<CardBenefitDto> benefits = new ArrayList<>();
+                    if (card.getCardCatalog() != null) {
+                        List<CardBenefit> benefitEntities = card.getCardCatalog().getBenefits();
+                        benefits = benefitEntities.stream()
+                                .map(b -> CardBenefitDto.builder()
+                                        .benefitId(b.getBenefitId())
+                                        .item(b.getItem())
+                                        .benefitDetail(b.getBenefitDetail())
+                                        .build())
+                                .collect(Collectors.toList());
+                    }
 
                     return CardInfoDto.builder()
                             .cardId(card.getCardId())
@@ -327,7 +343,8 @@ public class PayService {
                             .accountNumber(card.getBankAccount().getAccountNumber())
                             .createdAt(card.getCreatedAt())
                             .updatedAt(card.getUpdatedAt())
-                            .monthlyUsage(monthlyUsage)  // 🔥 이번달 사용금액 추가
+                            .monthlyUsage(monthlyUsage)
+                            .benefits(benefits)  // ✅ 혜택 포함
                             .build();
                 })
                 .collect(Collectors.toList());
