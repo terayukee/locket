@@ -1,10 +1,7 @@
 package com.locket.payment.service.pay;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
-import com.locket.payment.domain.pay.dto.CardBenefitDto;
-import com.locket.payment.domain.pay.dto.CardInfoDto;
-import com.locket.payment.domain.pay.dto.PaymentRequest;
-import com.locket.payment.domain.pay.dto.PaymentResponse;
+import com.locket.payment.domain.pay.dto.*;
 import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.feign.PaymentHistoryFeignClient;
@@ -72,23 +69,26 @@ public class PayService {
 
     @Transactional
     public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
+        // 카드 유효성 및 잔액 확인
+        validateCardAndBalance(request.getCardId(), request.getAmount());
+
         try {
             // ✅ 중복 결제 방지 - paymentKey Redis에 체크
-//            String redisPaymentKey = "payment:dup:" + request.getPaymentKey();
-//            Boolean exists = redisTemplate.hasKey(redisPaymentKey);
-//
-//            if (Boolean.TRUE.equals(exists)) {
-//                return ResponseEntity.status(409).body(
-//                        PaymentResponse.builder()
-//                                .transactionId(null)
-//                                .status("DUPLICATE_PAYMENT")
-//                                .message("이미 처리된 결제 요청입니다.")
-//                                .build()
-//                );
-//            }
+            String redisPaymentKey = "payment:dup:" + request.getPaymentKey();
+            Boolean exists = redisTemplate.hasKey(redisPaymentKey);
 
-            // ✅ Redis에 결제 키 등록 (유효 시간 예: 10분)
-//            redisTemplate.opsForValue().set(redisPaymentKey, "LOCK", Duration.ofSeconds(5));
+            if (Boolean.TRUE.equals(exists)) {
+                return ResponseEntity.status(409).body(
+                        PaymentResponse.builder()
+                                .transactionId(null)
+                                .status("DUPLICATE_PAYMENT")
+                                .message("이미 처리된 결제 요청입니다.")
+                                .build()
+                );
+            }
+
+            // ✅ Redis에 결제 키 등록 (유효 시간 예: 5초)
+            redisTemplate.opsForValue().set(redisPaymentKey, "LOCK", Duration.ofSeconds(5));
 
             // 카드 정보
             int cardId = request.getCardId();
@@ -130,19 +130,19 @@ public class PayService {
             String userJob = "학생";
 
             try {
-                String redisKey = "user:" + buyerId;
+                String redisKey = "user:" + buyerId + ":auth";
 
-                String redisBirthYear = redisTemplate.opsForValue().get(redisKey + ":birthYear");
-                String redisUserJob = redisTemplate.opsForValue().get(redisKey + ":userJob");
+                Object birthYearValue = redisTemplate.opsForHash().get(redisKey, "birthYear");
+                Object userJobValue = redisTemplate.opsForHash().get(redisKey, "userJob");
 
-                if (redisBirthYear != null) {
-                    birthYear = Integer.parseInt(redisBirthYear);
+                if (birthYearValue != null) {
+                    birthYear = Integer.parseInt(birthYearValue.toString());
                 } else {
                     log.warn("❗ Redis에서 birthYear 값을 찾을 수 없음. 기본값 사용: {}", birthYear);
                 }
 
-                if (redisUserJob != null) {
-                    userJob = redisUserJob;
+                if (userJobValue != null) {
+                    userJob = userJobValue.toString();
                 } else {
                     log.warn("❗ Redis에서 userJob 값을 찾을 수 없음. 기본값 사용: {}", userJob);
                 }
@@ -368,7 +368,11 @@ public class PayService {
         }
     }
 
-    public boolean verifyPaymentPassword(long userId, int inputPassword) {
+    public boolean verifyPaymentPassword(PaymentPasswordRequest passwordRequest) {
+        long userId = passwordRequest.getUserId();
+        int inputPassword = passwordRequest.getPaymentPassword();
+        log.info("입력한 결제 PW : {}", inputPassword);
+
         String key = "user:" + userId + ":auth";
 
         try {
@@ -379,6 +383,8 @@ public class PayService {
             }
 
             int storedPassword = Integer.parseInt(value.toString());
+            log.info("저장된 결제 PW : {}, 입력한 결제 PW : {}", storedPassword, inputPassword);
+
             return storedPassword == inputPassword;
 
         } catch (NumberFormatException e) {
