@@ -31,14 +31,17 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
     R.layout.fragment_sign_in
 ) {
     private val loginViewModel: LoginViewModel by activityViewModels()
+    private val notificationCheckViewModel: NotificationCheckViewModel by activityViewModels()
     @Inject
     lateinit var userDataStoreSource: UserDataStoreSource
 
     private var isClick = false // 중복 클릭 방지 변수
+    private var isNotification = false
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
+        observeNotificationState()
         observeLoginState()
     }
 
@@ -84,6 +87,14 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
         }
     }
 
+    private fun observeNotificationState() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            notificationCheckViewModel.isIconClicked.collect {
+                if(it) isNotification = true
+            }
+        }
+    }
+
     private fun observeLoginState() {
         lifecycleScope.launchWhenStarted {
             loginViewModel.loginState.collect { isRegistered ->
@@ -91,6 +102,9 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                     true -> {
                         Log.d(TAG, "홈 화면으로 갑니다")
                         val intent = Intent(requireContext(), MainActivity::class.java)
+                        if(isNotification) {
+                            intent.putExtra("notification","notification")
+                        }
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }

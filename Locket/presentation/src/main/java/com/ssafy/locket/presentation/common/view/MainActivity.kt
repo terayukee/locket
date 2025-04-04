@@ -38,6 +38,12 @@ class MainActivity : AppCompatActivity() {
 
         initNavigationBar()
         checkPermission()
+
+        val flag = intent.getStringExtra("notification") ?: ""
+        if("notification".equals(flag)) {
+            Log.d(TAG, "onCreate: notification in mainActivity ")
+            findNavController(R.id.main_container).navigate(R.id.notificationFragment)
+        }
     }
 
     private val checker = PermissionChecker(this)
@@ -141,6 +147,11 @@ class MainActivity : AppCompatActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
 
+        val flag = intent.getStringExtra("notification") ?: ""
+        if("notification".equals(flag)) {
+            Log.d(TAG, "onNewIntent: notification in mainActivity")
+            findNavController(R.id.main_container).navigate(R.id.notificationFragment)
+        }
         intent?.let {
             if (it.action == NfcAdapter.ACTION_NDEF_DISCOVERED || it.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
                 Log.d(TAG, "onNewIntent: nfc 인식")

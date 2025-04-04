@@ -82,36 +82,39 @@ class CharacterViewModel @Inject constructor(
 
     fun growCharacter(actionType: CharacterAction) {
         viewModelScope.launch(Dispatchers.IO) {
-            growCharacterUseCase(actionType.actionName, (_characterInfo.value as CharacterInfoState.Success).characterInfo.name)
-                .onStart {  }
-                .catch { e ->
-                    Log.d(TAG, "growCharacter: ${e.message}")
-                }
-                .collect { status ->
-                    when(status) {
-                        is ResponseStatus.Success -> {
-                            _characterInfo.update { currentState ->
-                                if(currentState is CharacterInfoState.Success) {
-                                    var newFoodCount = currentState.characterInfo.foodCount
-                                    if(actionType.actionName == "feed") {
-                                        newFoodCount = currentState.characterInfo.foodCount -1
-                                    }
-                                    val updateInfo = currentState.characterInfo.copy(
-                                        level = status.data.level,
-                                        exp = status.data.currentExp,
-                                        expPercentage = status.data.expPercentage,
-                                        foodCount = newFoodCount,
-                                        toy = Toy(status.data.toyAvailable, status.data.minRemain)
-                                    )
-                                    CharacterInfoState.Success(updateInfo)
-                                } else currentState
+            if(_characterInfo.value is CharacterInfoState.Success) {
+                growCharacterUseCase(actionType.actionName, (_characterInfo.value as CharacterInfoState.Success).characterInfo.name)
+                    .onStart {  }
+                    .catch { e ->
+                        Log.d(TAG, "growCharacter: ${e.message}")
+                    }
+                    .collect { status ->
+                        when(status) {
+                            is ResponseStatus.Success -> {
+                                _characterInfo.update { currentState ->
+                                    if(currentState is CharacterInfoState.Success) {
+                                        var newFoodCount = currentState.characterInfo.foodCount
+                                        if(actionType.actionName == "feed") {
+                                            newFoodCount = currentState.characterInfo.foodCount -1
+                                        }
+                                        val updateInfo = currentState.characterInfo.copy(
+                                            level = status.data.level,
+                                            exp = status.data.currentExp,
+                                            expPercentage = status.data.expPercentage,
+                                            foodCount = newFoodCount,
+                                            toy = Toy(status.data.toyAvailable, status.data.minRemain)
+                                        )
+                                        CharacterInfoState.Success(updateInfo)
+                                    } else currentState
+                                }
+                            }
+                            is ResponseStatus.Error -> {
+                                _characterInfo.value = CharacterInfoState.Error(status.error.message)
                             }
                         }
-                        is ResponseStatus.Error -> {
-                            _characterInfo.value = CharacterInfoState.Error(status.error.message)
-                        }
                     }
-                }
+            }
+
         }
     }
 

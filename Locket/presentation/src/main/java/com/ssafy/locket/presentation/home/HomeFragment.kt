@@ -1,5 +1,6 @@
 package com.ssafy.locket.presentation.home
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -22,6 +23,7 @@ import com.ssafy.locket.presentation.home.character.viewmodel.NavigationEvent
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.internal.managers.ViewComponentManager
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -66,12 +68,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.ivBudgetCardBg.setOnClickListener {
             mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
-            (requireContext() as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
+            (getActivityContext(requireContext()) as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
         }
 
         binding.ivPaymentCardBg.setOnClickListener {
             mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
-            (requireContext() as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
+            (getActivityContext(requireContext()) as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
         }
 
         binding.btnAnalysis.setOnClickListener {
@@ -124,6 +126,15 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         super.onDestroyView()
         //(requireContext() as MainActivity).changeBackgroundColor(R.color.white)
     }
+
+    fun getActivityContext(context: Context): Context {
+        return if (context is ViewComponentManager.FragmentContextWrapper) {
+            context.baseContext
+        } else {
+            context
+        }
+    }
+
 
     fun initEvent(){
         lifecycleScope.launch {
