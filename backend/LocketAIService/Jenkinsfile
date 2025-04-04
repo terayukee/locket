@@ -61,17 +61,17 @@ pipeline {
                     ),
                     string(credentialsId: 'EC2_IP', variable: 'EC2_IP')
                 ]) {
-                    sh '''
-                        ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP '
+                    sh """
+                        ssh -o StrictHostKeyChecking=no -i \$EC2_SSH_KEY_FILE \$EC2_USER@\$EC2_IP '
                             docker service create \
-                                --name ${SERVICE_NAME} \
+                                --name \$SERVICE_NAME \
                                 --publish 8500:8500 \
                                 --env PORT=8500 \
                                 --env EUREKA_SERVER=http://eureka-server:8761/eureka \
                                 --env SERVICE_NAME=LOCKET-AI-SERVICE \
-                                $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest
+                                \$DOCKERHUB_USERNAME/\$DOCKER_IMAGE:latest
                         '
-                    '''
+                    """
                 }
             }
         }
