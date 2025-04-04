@@ -3,6 +3,7 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'spring-locket-ai-service'
+        SERVICE_NAME = 'locket-ai-service'
         DOCKER_PORT = 8500
 
         EC2_USER = credentials('EC2_USER')
@@ -67,9 +68,9 @@ pipeline {
                                 --env-add EUREKA_SERVER=http://eureka-server:8761/eureka \
                                 --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
                                 --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
-                                ${DOCKER_IMAGE} || \
+                                ${SERVICE_NAME} || \
                             docker service create \
-                                --name ${DOCKER_IMAGE} \
+                                --name ${SERVICE_NAME} \
                                 --publish 8500:8500 \
                                 --env PORT=8500 \
                                 --env EUREKA_SERVER=http://eureka-server:8761/eureka \
