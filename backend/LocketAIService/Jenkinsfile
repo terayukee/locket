@@ -1,0 +1,97 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_IMAGE = 'spring-locket-ai-service'
+        DOCKER_PORT = 8500
+
+        EC2_USER = credentials('EC2_USER')
+        EC2_IP = credentials('EC2_IP')
+        SSH_KEY = credentials('SSH_KEY')
+
+        JAVA_HOME = '/opt/java/openjdk'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+    }
+
+    stages {
+        stage('Clone Repository') {
+            steps {
+                echo '🔄 Cloning the repository...'
+                git branch: 'backend',
+                    url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git',
+                    credentialsId: 'GitLab-PAT'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo '🐳 Building the Docker image...'
+                dir('backend/LocketAIService') {
+                    sh 'docker build -t ${DOCKER_IMAGE}:latest .'
+                }
+            }
+        }
+
+        stage('Push to Docker Hub') {
+            steps {
+                echo '📤 Pushing Docker image to Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'DockerHub_PAT',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+                        docker tag ${DOCKER_IMAGE}:latest ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                        docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                    '''
+                }
+            }
+        }
+
+        stage('Deploy to Docker Swarm') {
+            steps {
+                echo '🚀 Deploying to Docker Swarm on EC2...'
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'SSH_KEY',
+                        keyFileVariable: 'EC2_SSH_KEY_FILE',
+                        usernameVariable: 'EC2_USER'
+                    ),
+                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP')
+                ]) {
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP '
+                            docker service update \
+                                --env-add PORT=8500 \
+                                --env-add EUREKA_SERVER=http://eureka-server:8761/eureka \
+                                --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
+                                --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
+                                ${DOCKER_IMAGE} || \
+                            docker service create \
+                                --name ${DOCKER_IMAGE} \
+                                --publish 8500:8500 \
+                                --env PORT=8500 \
+                                --env EUREKA_SERVER=http://eureka-server:8761/eureka \
+                                --env SERVICE_NAME=LOCKET-AI-SERVICE \
+                                ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                        '
+                    '''
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo '🧹 Cleaning workspace...'
+            cleanWs()
+        }
+        success {
+            echo '✅ LocketAIService 배포 성공!'
+        }
+        failure {
+            echo '❌ 배포 실패. 로그 확인 필요.'
+        }
+    }
+}

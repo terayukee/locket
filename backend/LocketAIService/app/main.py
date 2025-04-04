@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from py_eureka_client import eureka_client
+from .api import receipt, category, feedback, health
 from .api import receipt, category, feedback
 import logging
 import os
@@ -64,6 +65,17 @@ def _register_routers(app: FastAPI) -> None:
         (receipt.router, "/api/ai/receipt", "영수증 등록"),
         (category.router, "/api/ai/category", "카테고리 분류"),
         (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백")
+    ]
+
+    for router, prefix, tag in routers:
+        app.include_router(router, prefix=prefix, tags=[tag])\
+
+def _register_routers(app: FastAPI) -> None:
+    routers = [
+        (receipt.router, "/api/ai/receipt", "영수증 등록"),
+        (category.router, "/api/ai/category", "카테고리 분류"),
+        (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백"),
+        (health.router, "", "헬스체크")  # 👉 prefix 없이 루트에 등록
     ]
 
     for router, prefix, tag in routers:
