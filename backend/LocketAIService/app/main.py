@@ -2,7 +2,6 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from py_eureka_client import eureka_client
 from .api import receipt, category, feedback, health
-from .api import receipt, category, feedback
 import logging
 import os
 
@@ -44,7 +43,7 @@ def create_app() -> FastAPI:
     # 유레카 등록 (dev 포함 모든 환경에서)
     @app.on_event("startup")
     async def register_to_eureka():
-        health_check_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/docs"
+        health_check_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/health"
         home_page_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/"
         logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
         await eureka_client.init_async(
@@ -59,16 +58,6 @@ def create_app() -> FastAPI:
         )
 
     return app
-
-def _register_routers(app: FastAPI) -> None:
-    routers = [
-        (receipt.router, "/api/ai/receipt", "영수증 등록"),
-        (category.router, "/api/ai/category", "카테고리 분류"),
-        (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백")
-    ]
-
-    for router, prefix, tag in routers:
-        app.include_router(router, prefix=prefix, tags=[tag])\
 
 def _register_routers(app: FastAPI) -> None:
     routers = [
