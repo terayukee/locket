@@ -74,22 +74,22 @@ management:
     livenessstate:
       enabled: true
 
-springdoc:
-  api-docs:
-    enabled: true
-    path: /elasticsearch-docs
-  swagger-ui:
-    path: /elasticsearch-docs/swagger-ui.html
-  default-consumes-media-type: application/json
-  default-produces-media-type: application/json
-
-
 #springdoc:
 #  api-docs:
 #    enabled: true
-#    path: /v3/api-docs
+#    path: /elasticsearch-docs
 #  swagger-ui:
-#    path: /swagger-ui.html
+#    path: /elasticsearch-docs/swagger-ui.html
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
 #    config-url: /v3/api-docs/swagger-config
 
 swagger:
