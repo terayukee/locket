@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.payment.Payment
+import com.ssafy.locket.model.payment.PaymentCard
 import com.ssafy.locket.usecase.payment.PaymentUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
@@ -24,6 +26,17 @@ class PaymentViewModel @Inject constructor(
     // TODO 결제 viewmodel 완성하기
     private val _payment = MutableStateFlow<PaymentState>(PaymentState.Initial)
     val payment = _payment.asStateFlow()
+
+//    private var _selectedPaymentCard = MutableStateFlow<SelectedPaymentCardState>(SelectedPaymentCardState.Initial)
+//    val selectedPaymentCard: Flow<SelectedPaymentCardState> = _selectedPaymentCard.asStateFlow()
+//
+//    fun selectPaymentCard(paymentCard: PaymentCard) {
+//        _selectedPaymentCard.value = SelectedPaymentCardState.Selected(paymentCard)
+//    }
+//
+//    fun clearPaymentCard() {
+//        _selectedPaymentCard.value = SelectedPaymentCardState.Initial
+//    }
 
     fun pay(paymentKey: String,
             cardId: Int,

@@ -19,6 +19,7 @@ import android.view.animation.AnimationUtils
 import androidx.activity.addCallback
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -28,11 +29,14 @@ import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.databinding.FragmentNfcPaymentBinding
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentState
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentViewModel
+import com.ssafy.locket.presentation.payment.viewmodel.SelectedPaymentCardState
+import com.ssafy.locket.presentation.payment.viewmodel.SelectedPaymentCardViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -59,6 +63,7 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     //nfc어댑터
     private lateinit var nfcAdapter: NfcAdapter
     private val paymentViewModel: PaymentViewModel by viewModels()
+    private val selectedPaymentCardViewModel: SelectedPaymentCardViewModel by activityViewModels()
 
     override fun onResume() {
         super.onResume()
@@ -229,27 +234,30 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
                     for (message in ndefMessages) {
                         val ndefMessage = message as NdefMessage
                         for (record in ndefMessage.records) {
-                            // NDEF 레코드에서 데이터 읽기
                             val payload = record.payload
-//                            val text = String(payload, charset("UTF-8"))
-//                            Log.d(TAG, "NDEF 데이터: $text")
 
-                            // TODO nfc에 데이터 넣어서 테스트해보기
-                            // paymentViewModel.pay 호출해서 해보기
+                            viewLifecycleOwner.lifecycleScope.launch {
+                                val paymentCardState = selectedPaymentCardViewModel.selectedPaymentCard.first()
+                                if(paymentCardState is SelectedPaymentCardState.Selected) {
+                                    val cardId : Int = paymentCardState.paymentCard.cardId
+                                    
+                                    val jsonString = byteArrayToStringWithNDEF(payload)
+                                    val jsonObject = JSONObject(jsonString)
 
-                            val jsonString = byteArrayToStringWithNDEF(payload)
-                            val jsonObject = JSONObject(jsonString)
+                                    val paymentKey = jsonObject["paymentKey"].toString()
+                                    val sellerId = jsonObject["sellerId"].toString().toLong()
+                                    val paymentCategory = jsonObject["paymentCategory"].toString()
+                                    val paymentMerchant = jsonObject["paymentMerchant"].toString()
+                                    val amount = jsonObject["amount"].toString().toBigDecimal()
+                                    val storeName = jsonObject["storeName"].toString()
 
-                            val paymentKey = jsonObject["paymentKey"].toString()
-                            val cardId = jsonObject["cardId"].toString().toInt()
-                            val sellerId = jsonObject["sellerId"].toString().toLong()
-                            val paymentCategory = jsonObject["paymentCategory"].toString()
-                            val paymentMerchant = jsonObject["paymentMerchant"].toString()
-                            val amount = jsonObject["amount"].toString().toBigDecimal()
-                            val storeName = jsonObject["storeName"].toString()
-
-                            paymentViewModel.pay(paymentKey, cardId, sellerId, paymentCategory, paymentMerchant, amount, storeName)
-
+                                    paymentViewModel.pay(paymentKey, cardId, sellerId, paymentCategory, paymentMerchant, amount, storeName)
+                                } else {
+                                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "선택된 카드가 없습니다")
+                                    stopVibration()
+                                    applyCardRotationExitAnimation()
+                                }
+                            }
                         }
                     }
                 } else {

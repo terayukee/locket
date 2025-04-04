@@ -33,7 +33,8 @@
             android:name=".presentation.login.LoginActivity"
             android:exported="true"
             android:screenOrientation="nosensor"
-            android:excludeFromRecents="true">
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -45,7 +46,7 @@
             android:name=".presentation.common.view.MainActivity"
             android:exported="false"
             android:screenOrientation="nosensor"
-            android:excludeFromRecents="true"/>
+            />
 
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"

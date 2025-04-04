@@ -33,6 +33,7 @@ import com.ssafy.locket.presentation.databinding.FragmentCardPaymentBinding
 import com.ssafy.locket.presentation.payment.adapter.CardAdapter
 import com.ssafy.locket.presentation.payment.viewmodel.CardPaymentViewModel
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentCardState
+import com.ssafy.locket.presentation.payment.viewmodel.SelectedPaymentCardViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import com.ssafy.locket.ui.payment.RecertifyDialogFragment
@@ -52,6 +53,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     //지문 관련 이벤트 처리때문에 viewModel작성
     private val viewModel: RecertifyViewModel by activityViewModels()
     private val cardPaymentViewModel: CardPaymentViewModel by viewModels()
+    private val selectedPaymentCardViewModel: SelectedPaymentCardViewModel by activityViewModels()
 
     //스크롤 가능
     private var selectedPosition = -1
@@ -144,10 +146,12 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         })
         binding.ivFingerprint.setOnClickListener {
             btnClick = 1
+            selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
         binding.btnPassword.setOnClickListener {
             btnClick = 2
+            selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
     }
@@ -185,6 +189,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
 
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
+                selectedPosition = position
                 updateDots(position)
                 if (count > MAX_VISIBLE_DOTS) {
                     val scrollView = binding.dotIndicatorScroll
