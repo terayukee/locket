@@ -79,7 +79,8 @@ spring:
 #          order: 1
 
         - id: elasticsearch-service-docs
-          uri: lb://ELASTICSEARCH-SERVICE
+#          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://172.26.5.222:8083
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
           filters:
@@ -88,7 +89,8 @@ spring:
           order: 1
 
         - id: elasticsearch-service-docs-config
-          uri: lb://ELASTICSEARCH-SERVICE
+#          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://172.26.5.222:8083
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/swagger-config
           filters:
