@@ -1,10 +1,7 @@
 package com.locket.payment.service.pay;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
-import com.locket.payment.domain.pay.dto.CardBenefitDto;
-import com.locket.payment.domain.pay.dto.CardInfoDto;
-import com.locket.payment.domain.pay.dto.PaymentRequest;
-import com.locket.payment.domain.pay.dto.PaymentResponse;
+import com.locket.payment.domain.pay.dto.*;
 import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
 import com.locket.payment.feign.PaymentHistoryFeignClient;
@@ -133,19 +130,19 @@ public class PayService {
             String userJob = "학생";
 
             try {
-                String redisKey = "user:" + buyerId;
+                String redisKey = "user:" + buyerId + ":auth";
 
-                String redisBirthYear = redisTemplate.opsForValue().get(redisKey + ":birthYear");
-                String redisUserJob = redisTemplate.opsForValue().get(redisKey + ":userJob");
+                Object birthYearValue = redisTemplate.opsForHash().get(redisKey, "birthYear");
+                Object userJobValue = redisTemplate.opsForHash().get(redisKey, "userJob");
 
-                if (redisBirthYear != null) {
-                    birthYear = Integer.parseInt(redisBirthYear);
+                if (birthYearValue != null) {
+                    birthYear = Integer.parseInt(birthYearValue.toString());
                 } else {
                     log.warn("❗ Redis에서 birthYear 값을 찾을 수 없음. 기본값 사용: {}", birthYear);
                 }
 
-                if (redisUserJob != null) {
-                    userJob = redisUserJob;
+                if (userJobValue != null) {
+                    userJob = userJobValue.toString();
                 } else {
                     log.warn("❗ Redis에서 userJob 값을 찾을 수 없음. 기본값 사용: {}", userJob);
                 }
@@ -371,7 +368,11 @@ public class PayService {
         }
     }
 
-    public boolean verifyPaymentPassword(long userId, int inputPassword) {
+    public boolean verifyPaymentPassword(PaymentPasswordRequest passwordRequest) {
+        long userId = passwordRequest.getUserId();
+        int inputPassword = passwordRequest.getPaymentPassword();
+        log.info("입력한 결제 PW : {}", inputPassword);
+
         String key = "user:" + userId + ":auth";
 
         try {
@@ -382,6 +383,8 @@ public class PayService {
             }
 
             int storedPassword = Integer.parseInt(value.toString());
+            log.info("저장된 결제 PW : {}, 입력한 결제 PW : {}", storedPassword, inputPassword);
+
             return storedPassword == inputPassword;
 
         } catch (NumberFormatException e) {
