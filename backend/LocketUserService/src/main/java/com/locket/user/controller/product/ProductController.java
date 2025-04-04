@@ -156,7 +156,7 @@ public class ProductController {
                                             {
                                               "status": 404,
                                               "error": "Not Found",
-                                              "message": "요청한 데이터 없음",
+                                              "message": "해당 상품을 찾을 수 없습니다. 상품 ID 1은 존재하지 않습니다.",
                                               "timestamp": "2025-04-01T12:34:56.789Z"
                                             }
                                             """
@@ -191,7 +191,7 @@ public class ProductController {
     }
 
     // 상품 찜하기
-    @Operation(summary = "상품 찜하기/찜 해제", description = "상품을 찜 목록에 추가하거나 제거합니다.")
+    @Operation(summary = "상품 찜하기/찜 해제", description = "상품을 찜 목록에 추가하거나 제거합니다. 찜 상태는 토글됩니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "SUCCESS"),
             @ApiResponse(
@@ -238,7 +238,7 @@ public class ProductController {
                                             {
                                               "status": 404,
                                               "error": "Not Found",
-                                              "message": "요청한 데이터 없음",
+                                              "message": "해당 상품을 찾을 수 없습니다. 상품 ID 1은 존재하지 않습니다.",
                                               "timestamp": "2025-04-01T12:34:56.789Z"
                                             }
                                             """
@@ -263,6 +263,19 @@ public class ProductController {
                     )
             )
     })
+    @io.swagger.v3.oas.annotations.parameters.RequestBody(
+            content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = ProductLikeRequestDTO.class),
+                    examples = @ExampleObject(
+                            value = """
+                    {
+                        "userId": 123
+                    }
+                    """
+                    )
+            )
+    )
     @PostMapping("/{productId}/like")
     public ResponseEntity<ProductLikeResponseDTO> toggleProductLike(
             @PathVariable Integer productId,
@@ -270,8 +283,7 @@ public class ProductController {
     ) {
         ProductLikeResponseDTO response = productService.toggleProductLike(
                 productId,
-                requestDTO.getUserId(),
-                requestDTO.getIsLiked()
+                requestDTO.getUserId()
         );
         return ResponseEntity.ok(response);
     }
@@ -425,7 +437,7 @@ public class ProductController {
                                             {
                                               "status": 404,
                                               "error": "Not Found",
-                                              "message": "요청한 데이터 없음",
+                                              "message": "해당 상품을 찾을 수 없습니다. 상품 ID 1은 존재하지 않습니다.",
                                               "timestamp": "2025-04-01T12:34:56.789Z"
                                             }
                                             """
@@ -469,7 +481,23 @@ public class ProductController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "가격 변경 성공"),
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
-            @ApiResponse(responseCode = "404", description = "상품을 찾을 수 없음")
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "상품을 찾을 수 없음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                            {
+                                              "status": 404,
+                                              "error": "Not Found",
+                                              "message": "해당 상품을 찾을 수 없습니다. 상품 ID 1은 존재하지 않습니다.",
+                                              "timestamp": "2025-04-01T12:34:56.789Z"
+                                            }
+                                            """
+                            )
+                    )
+            )
     })
     @PatchMapping("/{productId}/price")
     public ResponseEntity<Void> updateProductPrice(
@@ -525,33 +553,33 @@ public class ProductController {
     }
 
     @Operation(
-        summary = "상품 검색 API",
-        description = """
+            summary = "상품 검색 API",
+            description = """
                 **상품 이름**으로 검색하고, 결과를 **페이지** 단위로 가져옵니다.<br/>
                 `Authorization: Bearer <JWT>` 토큰을 헤더에 포함해야 합니다.<br/>
                 page 파라미터는 기본값 1입니다.<br/>
                 """
     )
     @ApiResponses(value = {
-        @ApiResponse(
-            responseCode = "200",
-            description = "✅ 검색 성공",
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ProductSearchResponseDTO.class)
-            )
-        ),
-        @ApiResponse(
-            responseCode = "400",
-            description = """
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "✅ 검색 성공",
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ProductSearchResponseDTO.class)
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = """
                             ---
                             ❌ 잘못된 요청
                           """,
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = """
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
                             {
                                 "status": 400,
                                 "error": "BAD REQUEST",
@@ -559,20 +587,20 @@ public class ProductController {
                                 "details": "category 파라미터는 정수여야 합니다."
                             }
                             """
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "401",
-            description = """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = """
                             ---
                             \uD83D\uDD12 인증 실패
                           """,
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = """
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
                             {
                               "status": 401,
                               "error": "UNAUTHORIZED",
@@ -580,20 +608,20 @@ public class ProductController {
                               "details": "유효한 Access Token 이 필요합니다."
                             }
                             """
-                )
-            )
-        ),
-        @ApiResponse(
-            responseCode = "500",
-            description = """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "500",
+                    description = """
                             ---
                             📡 서버 에러
                           """,
-            content = @Content(
-                mediaType = "application/json",
-                schema = @Schema(implementation = ErrorResponse.class),
-                examples = @ExampleObject(
-                    value = """
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
                             {
                               "status": 500,
                               "error": "INTERNAL SERVER ERROR",
@@ -601,17 +629,17 @@ public class ProductController {
                               "details": "서버 처리 중 알 수 없는 오류가 발생했습니다. 잠시 후 다시 시도해 주세요."
                             }
                             """
-                )
+                            )
+                    )
             )
-        )
     })
     @GetMapping("/search")
     public ResponseEntity<ProductSearchResponseDTO> getProducts(
-        @Parameter(description = "검색할 상품 이름", required = true)
-        @RequestParam(name = "product_name", defaultValue = "삼성전자") String productName,
+            @Parameter(description = "검색할 상품 이름", required = true)
+            @RequestParam(name = "product_name", defaultValue = "삼성전자") String productName,
 
-        @Parameter(description = "페이지 번호 (기본값: 1)")
-        @RequestParam(name = "page", required = false, defaultValue = "1") int page
+            @Parameter(description = "페이지 번호 (기본값: 1)")
+            @RequestParam(name = "page", required = false, defaultValue = "1") int page
     ) {
         ProductSearchResponseDTO response = productService.searchProducts(productName, page);
         return ResponseEntity.ok(response);
