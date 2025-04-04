@@ -8,6 +8,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
+import com.kakao.sdk.user.UserApiClient
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -42,21 +43,26 @@ class DeleteAccountFragment : BaseFragment<FragmentDeleteAccountBinding>(
             findNavController().popBackStack()
         }
         binding.btnDelete.setOnClickListener {
-
             lifecycleScope.launch {
-                lifecycleScope.launch {
-                    // 최신 사용자 정보 가져오기
-                    val user = userDataStoreSource.user.first()
-                    user?.let {
-                        Log.d("UserFragment","asfsadf"+user.userId.toLong().toString())
-                        userInfoViewModel.deleteUser(user.userId.toLong())
-                        // UI 업데이트는 Main 스레드에서 실행
-                        withContext(Dispatchers.Main) {
-                            val intent = Intent(requireContext(), LoginActivity::class.java)
-                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-                            startActivity(intent)
-                            requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-                            requireActivity().finishAffinity() // 기존 스택 완전히 제거
+                UserApiClient.instance.unlink { error ->
+                    if (error != null) {
+                        Log.e("DeleteAccount", "카카오 연결 해제 실패", error)
+                    } else {
+                        Log.i("DeleteAccount", "카카오 연결 해제 성공")
+                        lifecycleScope.launch {
+                            val user = userDataStoreSource.user.first()
+                            user?.let {
+                                userInfoViewModel.deleteUser(user.userId.toLong())
+                            }
+                            // 3. 로그인 화면 이동 (UI는 메인 스레드)
+                            withContext(Dispatchers.Main) {
+                                val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                                    addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                                }
+                                startActivity(intent)
+                                requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                                requireActivity().finishAffinity()
+                            }
                         }
                     }
                 }
