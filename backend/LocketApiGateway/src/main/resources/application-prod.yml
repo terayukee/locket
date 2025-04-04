@@ -74,8 +74,8 @@ spring:
           predicates:
             - Path=/api/elasticsearch/v3/api-docs/**
           filters:
-            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs${remaining}
-            - RemoveRequestHeader=Host  # ✅ 반드시 추가
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /elasticsearch-docs${remaining}
+            - RemoveRequestHeader=Host
           order: 1
 
 eureka:
