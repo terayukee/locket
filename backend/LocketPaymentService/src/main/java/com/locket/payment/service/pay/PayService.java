@@ -72,23 +72,26 @@ public class PayService {
 
     @Transactional
     public ResponseEntity<PaymentResponse> processPayment(PaymentRequest request) {
+        // 카드 유효성 및 잔액 확인
+        validateCardAndBalance(request.getCardId(), request.getAmount());
+
         try {
             // ✅ 중복 결제 방지 - paymentKey Redis에 체크
-//            String redisPaymentKey = "payment:dup:" + request.getPaymentKey();
-//            Boolean exists = redisTemplate.hasKey(redisPaymentKey);
-//
-//            if (Boolean.TRUE.equals(exists)) {
-//                return ResponseEntity.status(409).body(
-//                        PaymentResponse.builder()
-//                                .transactionId(null)
-//                                .status("DUPLICATE_PAYMENT")
-//                                .message("이미 처리된 결제 요청입니다.")
-//                                .build()
-//                );
-//            }
+            String redisPaymentKey = "payment:dup:" + request.getPaymentKey();
+            Boolean exists = redisTemplate.hasKey(redisPaymentKey);
 
-            // ✅ Redis에 결제 키 등록 (유효 시간 예: 10분)
-//            redisTemplate.opsForValue().set(redisPaymentKey, "LOCK", Duration.ofSeconds(5));
+            if (Boolean.TRUE.equals(exists)) {
+                return ResponseEntity.status(409).body(
+                        PaymentResponse.builder()
+                                .transactionId(null)
+                                .status("DUPLICATE_PAYMENT")
+                                .message("이미 처리된 결제 요청입니다.")
+                                .build()
+                );
+            }
+
+            // ✅ Redis에 결제 키 등록 (유효 시간 예: 5초)
+            redisTemplate.opsForValue().set(redisPaymentKey, "LOCK", Duration.ofSeconds(5));
 
             // 카드 정보
             int cardId = request.getCardId();
