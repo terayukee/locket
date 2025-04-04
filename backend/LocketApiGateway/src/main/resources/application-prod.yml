@@ -87,6 +87,16 @@ spring:
             - RemoveRequestHeader=Host
           order: 1
 
+        - id: elasticsearch-service-docs-config
+          uri: lb://ELASTICSEARCH-SERVICE
+          predicates:
+            - Path=/api/elasticsearch/v3/api-docs/swagger-config
+          filters:
+            - RewritePath=/api/elasticsearch/v3/api-docs/swagger-config, /v3/api-docs/swagger-config
+            - RemoveRequestHeader=Host
+          order: 1
+
+
 
 
 
