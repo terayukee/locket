@@ -79,7 +79,7 @@ pipeline {
                             --env-add CLOVA_OCR_SECRET=${CLOVA_OCR_SECRET} \
                             --env-add OPENAI_API_KEY=${OPENAI_API_KEY} \
                             --mount-add type=bind,source=/home/ubuntu/models,target=/app/app/domain/category/model \
-                            --limit-memory 4g \
+                            --limit-memory 5g \
                             ${DOCKER_IMAGE}"
                     """
                 }
