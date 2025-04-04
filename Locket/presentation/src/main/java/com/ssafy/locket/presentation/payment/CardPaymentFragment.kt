@@ -98,8 +98,15 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             cardPaymentViewModel.paymentCardList.collect { uiState ->
                 if (uiState is PaymentCardState.Success) {
                     cards = uiState.paymentCardList.cards
+                    if(cards.size == 0) {
+                        binding.btnPassword.isEnabled = false
+                        binding.ivFingerprint.isEnabled = false
+                    }
                     cardAdapter.setCards(cards)
                     setupDotIndicator(cards.size)
+                } else {
+                    binding.btnPassword.isEnabled = false
+                    binding.ivFingerprint.isEnabled = false
                 }
             }
         }

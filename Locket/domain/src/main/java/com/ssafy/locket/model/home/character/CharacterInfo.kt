@@ -12,5 +12,6 @@ data class CharacterInfo(
     val foodCount: Int,
     val level: Int,
     val totalExpForNextLevel: Int,
-    val toy: Toy
+    val toy: Toy,
+    val isInit: Boolean = true
 ): BaseModel
