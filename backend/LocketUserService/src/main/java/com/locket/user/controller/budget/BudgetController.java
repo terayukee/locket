@@ -118,7 +118,7 @@ public class BudgetController {
         return budgetService.getBudgetMonthlyStatus(userId, year, month);
     }
 
-    @Operation(summary = "소비 패턴 피드백 조회", description = "사용자의 소비 패턴을 분석하여 간단한 피드백을 제공합니다")
+    @Operation(summary = "한 줄 소비 피드백 조회", description = "사용자의 카테고리별 지출과 예산 현황을 기반으로 한 줄짜리 피드백을 제공합니다.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "SUCCESS"),
             @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND"),

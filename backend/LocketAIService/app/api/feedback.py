@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
         400: {"description": "잘못된 요청"},
         500: {"description": "서버 오류"}
     },
-    summary="소비 패턴 기반 피드백 생성",
+    summary="한 줄 소비 피드백 생성",
     description="사용자의 카테고리별 지출과 예산 현황을 기반으로 맞춤형 피드백을 생성합니다"
 )
 async def generate_feedback(request: FeedbackRequest):
