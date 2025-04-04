@@ -76,7 +76,7 @@ class LocketFirebaseMessagingService: FirebaseMessagingService() {
             addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
         }
 
-        val pendingIntent = PendingIntent.getActivity(this, 1000, intent, FLAG_UPDATE_CURRENT or FLAG_MUTABLE)
+        val pendingIntent = PendingIntent.getActivity(this, 1000, intent, FLAG_MUTABLE)
 
         val notificationBuilder = NotificationCompat.Builder(this, "default")
             .setSmallIcon(smallIcon)  // 🔥 작은 아이콘 추가 (필수)

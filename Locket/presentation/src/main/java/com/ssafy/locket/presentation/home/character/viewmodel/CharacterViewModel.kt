@@ -102,8 +102,10 @@ class CharacterViewModel @Inject constructor(
                                             exp = status.data.currentExp,
                                             expPercentage = status.data.expPercentage,
                                             foodCount = newFoodCount,
-                                            toy = Toy(status.data.toyAvailable, status.data.minRemain)
+                                            toy = Toy(status.data.toyAvailable, status.data.minRemain),
+                                            isInit = false
                                         )
+                                        Log.d(TAG, "growCharacter: ${updateInfo.toy.remainingTimeMinutes}")
                                         CharacterInfoState.Success(updateInfo)
                                     } else currentState
                                 }
@@ -144,7 +146,7 @@ class CharacterViewModel @Inject constructor(
     fun completeCharacter() {
         viewModelScope.launch(Dispatchers.IO) {
             completeCharacterUseCase()
-                .onStart { setLoading() }
+                .onStart { }
                 .catch { e ->
                     Log.d(TAG, "completeCharacter: ${e.message}")
                 }

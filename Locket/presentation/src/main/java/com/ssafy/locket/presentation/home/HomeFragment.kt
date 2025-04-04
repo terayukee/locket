@@ -112,10 +112,16 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 characterViewModel.navigationEvent.collect { uiState ->
-                    if(uiState is NavigationEvent.MoveToFragment) {
-                        findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
-                    } else if(uiState is NavigationEvent.MoveToInitial) {
-                        findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+                    when(uiState) {
+                        is NavigationEvent.MoveToFragment -> {
+                            findNavController().navigate(R.id.action_homeFragment_to_characterGrowthFragment)
+                        }
+                        is NavigationEvent.MoveToInitial -> {
+                            findNavController().navigate(R.id.action_homeFragment_to_characterInitialFragment)
+                        }
+                        is NavigationEvent.Error -> {
+                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                        }
                     }
                 }
             }
