@@ -119,10 +119,10 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    fun getLikeList(userId :Int)
+    fun getLikeList(userId :Int,page: Int)
     {
         viewModelScope.launch {
-            productLikeListUseCase(userId)
+            productLikeListUseCase(userId,page)
                 .onStart {
                     productLikeListSetLoading() }
                 .catch { e ->

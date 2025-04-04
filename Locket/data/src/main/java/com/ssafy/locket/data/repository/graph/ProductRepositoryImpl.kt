@@ -108,10 +108,10 @@ internal class ProductRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getLikeProductList(userId: Int): Flow<ResponseStatus<ProductLikeListInfo>> {
+    override suspend fun getLikeProductList(userId: Int,page:Int): Flow<ResponseStatus<ProductLikeListInfo>> {
         return flow {
             val result = ApiResponseHandler().handle {
-                productService.getLikeProductList(userId)
+                productService.getLikeProductList(userId,page)
             }.first() // ✅ 첫 번째 값만 가져옴
             when (result) {
                 is ApiResponse.Success -> {

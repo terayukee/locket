@@ -28,6 +28,7 @@ import com.ssafy.locket.presentation.graph.viewmodel.ProductDetailState
 import com.ssafy.locket.presentation.graph.viewmodel.ProductViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -236,7 +237,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     fun getDetailInfo(){
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                productViewModel.productDetailInfo.collect { productDetail ->
+                productViewModel.productDetailInfo.collectLatest { productDetail ->
                     if(productDetail is ProductDetailState.Success) {
                         Log.d(TAG,productDetail.productDetailInfo.toString())
                         binding.tvProductTitle.text = productDetail.productDetailInfo.productName

@@ -29,7 +29,7 @@ interface ProductService {
     suspend fun getDetailProductInfo(@Path("productId") productId: Int,@Query("userId") userId: Int) : Response<ProductDetailResponse>
 
     @GET("users/products/liked")
-    suspend fun getLikeProductList(@Query("userId") userId:Int) :Response<ProductLikeListResponse>
+    suspend fun getLikeProductList(@Query("userId") userId:Int,@Query("page") page:Int) :Response<ProductLikeListResponse>
 
     @GET("users/products/happiness")
     suspend fun getHappiness() :Response<PriceHappinessResponse>

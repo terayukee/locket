@@ -9,7 +9,7 @@ import javax.inject.Inject
 class ProductLikeListUseCase @Inject constructor(
     private val productRepository : ProductRepository
 ){
-    suspend operator fun invoke(userId: Int): Flow<ResponseStatus<ProductLikeListInfo>> {
-        return productRepository.getLikeProductList(userId)
+    suspend operator fun invoke(userId: Int,page: Int): Flow<ResponseStatus<ProductLikeListInfo>> {
+        return productRepository.getLikeProductList(userId,page)
     }
 }

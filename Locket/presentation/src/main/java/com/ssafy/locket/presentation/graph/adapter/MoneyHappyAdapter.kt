@@ -1,6 +1,8 @@
 package com.ssafy.locket.presentation.graph.adapter
 
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -27,8 +29,8 @@ class MoneyHappyAdapter(var moneyHappyList: List<Product>, private val navContro
             binding.tvPrice.text= product.currentPrice
             Glide.with(binding.root.context)
                 .load(product.imageUrl) // 이미지 URL
-                .placeholder(R.drawable.ic_all_empty_heart) // 로딩 중 표시할 이미지
-                .error(R.drawable.ic_all_empty_heart) // 로드 실패 시 표시할 이미지
+                .placeholder(ColorDrawable(Color.WHITE)) // 로딩 중 표시할 이미지
+                .error(ColorDrawable(Color.WHITE)) // 로드 실패 시 표시할 이미지
                 .into(binding.ivProduct)
         }
     }
