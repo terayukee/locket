@@ -73,7 +73,7 @@ pipeline {
                         "docker service update \
                             --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest \
                             --env-add PORT=${DOCKER_PORT} \
-                            --env-add EUREKA_SERVER=http://discovery:8761/eureka \
+                            --env-add EUREKA_SERVER=http://j12d204.p.ssafy.io:8761/eureka \
                             --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
                             --env-add CLOVA_OCR_URL=${CLOVA_OCR_URL} \
                             --env-add CLOVA_OCR_SECRET=${CLOVA_OCR_SECRET} \

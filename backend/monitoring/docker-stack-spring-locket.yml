@@ -48,6 +48,24 @@ services:
       - spring-locket
       - monitoring
 
+  ai-service:
+    image: maru1203/spring-locket-ai-service:latest
+    ports:
+      - "8500:8500"
+    environment:
+      - PORT=8500
+      - SERVICE_NAME=LOCKET-AI-SERVICE
+      - EUREKA_SERVER=http://discovery:8761/eureka
+      - CLOVA_OCR_URL=YOUR_ACTUAL_URL
+      - CLOVA_OCR_SECRET=YOUR_ACTUAL_SECRET
+      - OPENAI_API_KEY=YOUR_ACTUAL_KEY
+    volumes:
+      - /home/ubuntu/models:/app/app/domain/category/model
+    networks:
+      - spring-locket
+    depends_on:
+      - discovery
+
 networks:
   spring-locket:
     external: true
