@@ -13,7 +13,10 @@ WORKDIR /app
 
 # ---- Install dependencies ----
 COPY requirements.txt .
-RUN pip install --upgrade pip && pip install -r requirements.txt
+RUN apt-get update && apt-get install -y curl iputils-ping procps && \
+    pip install --upgrade pip && \
+    pip install -r requirements.txt && \
+    apt-get clean
 
 # ---- Copy application code ----
 COPY . .
@@ -26,4 +29,5 @@ EXPOSE ${PORT}
 #  CMD curl -f http://localhost:8500/health || exit 1
 
 # ---- Start application ----
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8500"]
+#CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8500"]
+CMD ["sh", "-c", "uvicorn app.main:app --host 0.0.0.0 --port $PORT"]

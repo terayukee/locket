@@ -18,11 +18,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.NumberFormat;
 import java.util.List;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -115,25 +117,30 @@ public class ProductService {
     }
 
     // 상품 찜하기
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public ProductLikeResponseDTO toggleProductLike(Integer productId, Long userId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        ProductUserPreference preference = productUserPreferenceRepository
-                .findByProductIdAndUserId(productId, userId)
-                .orElse(null);
+        // 저장 전 다시 한번 DB에서 조회
+        Optional<ProductUserPreference> existingPref = productUserPreferenceRepository
+                .findByProductIdAndUserId(productId, userId);
 
+        ProductUserPreference preference;
         boolean newLikeStatus;
 
-        if (preference == null) {
-            // 처음 찜
-            preference = new ProductUserPreference(null, product, userId, true, false, null);
-            newLikeStatus = true;
-        } else {
+        if (existingPref.isPresent()) {
+
+            preference = existingPref.get();
             newLikeStatus = !preference.isLiked();
             preference.setLiked(newLikeStatus);
+
+        } else {
+            preference = new ProductUserPreference(null, product, userId, true, false, null);
+            newLikeStatus = true;
         }
+
+        log.debug("찜하기 토글: 상품 ID={}, 사용자 ID={}, 상태 변경={}", productId, userId, newLikeStatus);
 
         ProductUserPreference savedPreference = productUserPreferenceRepository.save(preference);
 

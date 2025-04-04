@@ -8,9 +8,9 @@ import com.locket.user.domain.productalert.repository.ProductAlertRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -19,38 +19,58 @@ public class UserAlertService {
     private final GoalAlertRepository goalAlertRepository;
     private final ProductAlertRepository productAlertRepository;
 
-    public List<UserAlertDto> getUserAlerts(Long userId) {
-        List<UserAlertDto> result = new ArrayList<>();
+    public Map<String, List<UserAlertDto>> getUserAlerts(Long userId) {
+        List<UserAlertDto> allAlerts = new ArrayList<>();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일");
 
         // 🎯 목표 알림 처리
         List<GoalAlert> goalAlerts = goalAlertRepository.findByUserId(userId);
         for (GoalAlert alert : goalAlerts) {
-            result.add(UserAlertDto.builder()
+            allAlerts.add(UserAlertDto.builder()
                     .type("goal")
                     .alertId(alert.getNotificationId())
                     .message(alert.getMessage())
-                    .isRead(!alert.getIsRead())  // 읽지 않았으면 알림으로 표시
+                    .isRead(!alert.getIsRead())
                     .alertPrice(null)
                     .createdAt(alert.getCreatedAt())
+                    .formattedDate(alert.getCreatedAt().format(formatter))  // 🆕
                     .build());
         }
 
         // 🛍️ 상품 알림 처리
         List<ProductAlert> productAlerts = productAlertRepository.findByUserId(userId);
         for (ProductAlert alert : productAlerts) {
-            result.add(UserAlertDto.builder()
+            allAlerts.add(UserAlertDto.builder()
                     .type("product")
                     .alertId(alert.getId())
                     .message(alert.getMessage())
-                    .isRead(!alert.getIsRead())  // 동일하게 반영
+                    .isRead(!alert.getIsRead())
                     .alertPrice(alert.getAlertPrice())
                     .createdAt(alert.getCreatedAt())
+                    .formattedDate(alert.getCreatedAt().format(formatter))  // 🆕
                     .build());
         }
 
         // 🕘 최신순 정렬
-        result.sort(Comparator.comparing(UserAlertDto::getCreatedAt).reversed());
+        allAlerts.sort(Comparator.comparing(UserAlertDto::getCreatedAt).reversed());
 
-        return result;
+        // 📅 최근 7일 기준 분류
+        LocalDateTime sevenDaysAgo = LocalDateTime.now().minusDays(7);
+
+        Map<String, List<UserAlertDto>> grouped = new HashMap<>();
+        grouped.put("recent", new ArrayList<>());
+        grouped.put("past", new ArrayList<>());
+
+        for (UserAlertDto dto : allAlerts) {
+            if (dto.getCreatedAt().isAfter(sevenDaysAgo)) {
+                grouped.get("recent").add(dto);
+            } else {
+                grouped.get("past").add(dto);
+            }
+        }
+
+        return grouped;
     }
+
 }

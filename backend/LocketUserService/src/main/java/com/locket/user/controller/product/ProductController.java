@@ -3,6 +3,7 @@ package com.locket.user.controller.product;
 import com.locket.user.domain.product.constant.PaginationConstants;
 import com.locket.user.domain.product.dto.*;
 import com.locket.user.exception.ErrorResponse;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.product.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@RequiresUser(ownerOnly = true)
 @Tag(name = "🛒 Product", description = "상품 관련 API")
 public class ProductController {
 

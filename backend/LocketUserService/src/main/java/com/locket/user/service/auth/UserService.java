@@ -15,6 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
@@ -173,20 +175,19 @@ public class UserService {
         String refreshToken = jwtUtil.createRefreshToken(user.getUserId());
 
         Long userId = user.getUserId();
-        String userIdKey = REDIS_USER_PREFIX + userId;
 
+        String key = "user:" + user.getUserId() + ":auth";
 
-        redisTemplate.opsForValue().set(userIdKey + REDIS_PAYMENT_PASSWORD_SUFFIX,
-                String.valueOf(user.getPaymentPassword()));
-        redisTemplate.opsForValue().set(userIdKey + REDIS_FINGERPRINT_SUFFIX,
-                String.valueOf(user.getFingerprintRegistered()));
-        redisTemplate.opsForValue().set(userIdKey + REDIS_REFRESH_TOKEN_SUFFIX,
-                refreshToken, 7, TimeUnit.DAYS);
+        Map<String, String> userAuthInfo = new HashMap<>();
+        userAuthInfo.put("paymentPassword", String.valueOf(user.getPaymentPassword()));
+        userAuthInfo.put("fingerprintRegistered", String.valueOf(user.getFingerprintRegistered()));
+        userAuthInfo.put("birthYear", String.valueOf(user.getBirthYear()));
+        userAuthInfo.put("userJob", String.valueOf(user.getUserJob()));
 
-        redisTemplate.opsForValue().set(userIdKey + REDIS_BIRTH_YEAR_SUFFIX,
-                String.valueOf(user.getBirthYear()));
-        redisTemplate.opsForValue().set(userIdKey + REDIS_USER_JOB_SUFFIX,
-                String.valueOf(user.getUserJob()));
+        redisTemplate.opsForHash().putAll(key, userAuthInfo);
+
+        // refreshToken은 유효기간 설정 필요하므로 별도 저장
+        redisTemplate.opsForValue().set(key + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
 
         log.info("로그인 완료 및 토큰 발급: userId={}", userId);
 

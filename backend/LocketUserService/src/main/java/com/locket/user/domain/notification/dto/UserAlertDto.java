@@ -1,5 +1,6 @@
 package com.locket.user.domain.notification.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,9 @@ public class UserAlertDto {
     private String message;
     private boolean isRead;
     private Integer alertPrice; // goal은 null일 수 있음
+
+    @JsonIgnore // ❌ 응답에서 제외
     private LocalDateTime createdAt;
+
+    private String formattedDate; // 🆕 "2025년 4월 4일" 형태
 }

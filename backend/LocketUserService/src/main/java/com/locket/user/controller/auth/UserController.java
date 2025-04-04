@@ -6,6 +6,7 @@ import com.locket.common.jwt.JwtUtil;
 import com.locket.user.exception.ErrorResponse;
 import com.locket.user.exception.ResourceNotFoundException;
 import com.locket.user.exception.UnauthorizedException;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.auth.KakaoService;
 import com.locket.user.service.auth.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,13 +22,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequiresUser(ownerOnly = true)
 @Tag(name = "\uD83D\uDE4BUser", description = "회원가입, 로그인, 정보 조회/수정/삭제 API")
 public class UserController {
 
@@ -35,6 +40,10 @@ public class UserController {
     private final UserService userService;
     private final StringRedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
+
+    // Property 기반 접근 제어 설정 추가
+    @Value("${app.test-auth.enabled:false}")
+    private boolean testAuthEnabled;
 
     @Operation(
             summary = "소셜로그인",
@@ -386,23 +395,26 @@ public class UserController {
     public ResponseEntity<SuccessResponse> saveUserInfoToRedis(@PathVariable("user_id") Long userId) {
         User user = userService.findById(userId);
 
-        redisTemplate.opsForValue().set("user:" + userId + ":paymentPassword",
-                String.valueOf(user.getPaymentPassword()));
-        redisTemplate.opsForValue().set("user:" + userId + ":fingerprintRegistered",
-                String.valueOf(user.getFingerprintRegistered()));
-        redisTemplate.opsForValue().set("user:" + userId + ":refreshToken",
-                "dummy-refresh-token", 7, TimeUnit.DAYS);
-        redisTemplate.opsForValue().set("user:" + userId + ":birthYear",
-                String.valueOf(user.getBirthYear()));
-        redisTemplate.opsForValue().set("user:" + userId + ":userJob",
-                String.valueOf(user.getUserJob()));
+        String key = "user:" + userId + ":auth";
+
+        Map<String, String> userAuthInfo = new HashMap<>();
+        userAuthInfo.put("paymentPassword", String.valueOf(user.getPaymentPassword()));
+        userAuthInfo.put("fingerprintRegistered", String.valueOf(user.getFingerprintRegistered()));
+        userAuthInfo.put("birthYear", String.valueOf(user.getBirthYear()));
+        userAuthInfo.put("userJob", String.valueOf(user.getUserJob()));
+
+        redisTemplate.opsForHash().putAll(key, userAuthInfo);
+
+        // refreshToken은 별도 키로 저장 (만료 시간 필요하므로)
+        redisTemplate.opsForValue().set("user:" + userId + ":auth:refreshToken", "dummy-refresh-token", 7, TimeUnit.DAYS);
 
         SuccessResponse response = SuccessResponse.builder()
-                .message("✅ Redis에 사용자 정보 저장 완료")
+                .message("✅ Redis에 사용자 정보 저장 완료 (Hash 구조)")
                 .build();
 
         return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/refresh")
     @Operation(
@@ -454,30 +466,27 @@ public class UserController {
         String refreshToken = request.getRefreshToken();
 
         try {
-            // 리프레시 토큰 검증
             jwtUtil.validateRefreshToken(refreshToken);
-
             Long userId = jwtUtil.getUserIdFromToken(refreshToken);
-            String storedRefreshToken = redisTemplate.opsForValue().get("user:" + userId + ":refreshToken");
+
+            String refreshKey = "user:" + userId + ":auth:refreshToken";
+            String storedRefreshToken = redisTemplate.opsForValue().get(refreshKey);
 
             if (storedRefreshToken == null || !storedRefreshToken.equals(refreshToken)) {
                 throw new UnauthorizedException("리프레시 토큰이 유효하지 않습니다. 다시 로그인해주세요.");
             }
 
             User user = userService.findById(userId);
-
-            // 새 액세스 토큰 발급
             String newAccessToken = jwtUtil.createAccessToken(userId, user.getNickname());
-            Long ttl = redisTemplate.getExpire("user:" + userId + ":refreshToken", TimeUnit.MILLISECONDS);
+            Long ttl = redisTemplate.getExpire(refreshKey, TimeUnit.MILLISECONDS);
 
             TokenRefreshResponse.TokenRefreshResponseBuilder builder = TokenRefreshResponse.builder()
                     .userId(userId)
                     .accessToken(newAccessToken);
 
-            // 리프레시 토큰 남은 기간이 1일 미만이면 새로 발급
             if (ttl != null && ttl < 24 * 60 * 60 * 1000) {
                 String newRefreshToken = jwtUtil.createRefreshToken(userId);
-                redisTemplate.opsForValue().set("user:" + userId + ":refreshToken", newRefreshToken, 7, TimeUnit.DAYS);
+                redisTemplate.opsForValue().set(refreshKey, newRefreshToken, 7, TimeUnit.DAYS);
 
                 builder
                         .refreshToken(newRefreshToken)
@@ -493,4 +502,31 @@ public class UserController {
             throw new UnauthorizedException("토큰 갱신 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    @Operation(
+            summary = "[테스트용] 토큰 발급",
+            description = "테스트 목적으로 특정 사용자의 토큰을 발급합니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "토큰 발급 성공",
+                    content = @Content(schema = @Schema(implementation = LoginResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PostMapping("/test/auth/{user_id}")
+    public ResponseEntity<LoginResponseDto> generateTestAuth(@PathVariable("user_id") Long userId) {
+
+        User user = userService.findById(userId);
+        LoginResponseDto loginResponse = userService.login(user);
+
+        return ResponseEntity.ok(loginResponse);
+    }
+
 }
