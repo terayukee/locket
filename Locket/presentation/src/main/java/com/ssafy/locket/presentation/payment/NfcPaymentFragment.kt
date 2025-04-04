@@ -1,7 +1,6 @@
 package com.ssafy.locket.presentation.payment
 
 import android.animation.ObjectAnimator
-import android.annotation.SuppressLint
 import android.app.PendingIntent
 import android.content.Intent
 import android.content.IntentFilter
@@ -9,13 +8,8 @@ import android.graphics.Color
 import android.nfc.NdefMessage
 import android.nfc.NfcAdapter
 import android.nfc.Tag
-import android.nfc.tech.NfcA
-import android.nfc.tech.NfcB
-import android.nfc.tech.NfcF
 import android.os.Build
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
@@ -34,13 +28,16 @@ import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.databinding.FragmentNfcPaymentBinding
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentState
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 private const val TAG = "MainActivity_NFC"
+@AndroidEntryPoint
 class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
     FragmentNfcPaymentBinding::bind,
     R.layout.fragment_nfc_payment
@@ -101,11 +98,13 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
                         // 결제 성공 처리하기, 카드 리스트 화면으로 이동시키기
                         stopVibration()
                         applyCardRotationExitAnimation()
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "결제가 완료되었습니다")
                     }
                     is PaymentState.Error -> {
                         // 결제 실패 처리하기
                         stopVibration()
                         applyCardRotationExitAnimation()
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "결제 실패하였습니다")
                     }
                     else -> {}
                 }
@@ -232,10 +231,24 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
                         for (record in ndefMessage.records) {
                             // NDEF 레코드에서 데이터 읽기
                             val payload = record.payload
-                            val text = String(payload, charset("UTF-8"))
-                            Log.d(TAG, "NDEF 데이터: $text")
+//                            val text = String(payload, charset("UTF-8"))
+//                            Log.d(TAG, "NDEF 데이터: $text")
+
                             // TODO nfc에 데이터 넣어서 테스트해보기
                             // paymentViewModel.pay 호출해서 해보기
+
+                            val jsonString = byteArrayToStringWithNDEF(payload)
+                            val jsonObject = JSONObject(jsonString)
+
+                            val paymentKey = jsonObject["paymentKey"].toString()
+                            val cardId = jsonObject["cardId"].toString().toInt()
+                            val sellerId = jsonObject["sellerId"].toString().toLong()
+                            val paymentCategory = jsonObject["paymentCategory"].toString()
+                            val paymentMerchant = jsonObject["paymentMerchant"].toString()
+                            val amount = jsonObject["amount"].toString().toBigDecimal()
+                            val storeName = jsonObject["storeName"].toString()
+
+                            paymentViewModel.pay(paymentKey, cardId, sellerId, paymentCategory, paymentMerchant, amount, storeName)
 
                         }
                     }
@@ -245,4 +258,24 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
             }
         }
     }
+}
+
+private fun byteArrayToStringWithNDEF(byteArray: ByteArray): String {
+    if (byteArray.isEmpty()) {
+        return ""
+    }
+
+    // 첫 번째 바이트는 상태 바이트
+    val statusByte = byteArray[0].toInt()
+
+    // 상태 바이트의 하위 5비트는 언어 코드의 길이를 나타냄
+    val languageCodeLength = statusByte and 0x3F
+
+    // 실제 텍스트 데이터는 언어 코드 다음에 위치
+    return String(
+        byteArray,
+        languageCodeLength + 1,
+        byteArray.size - languageCodeLength - 1,
+        Charsets.UTF_8
+    )
 }

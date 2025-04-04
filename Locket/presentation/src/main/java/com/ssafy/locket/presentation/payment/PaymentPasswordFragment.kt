@@ -9,6 +9,7 @@ import androidx.biometric.BiometricPrompt
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavOptions
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
@@ -16,10 +17,14 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentPaymentPasswordBinding
 import com.ssafy.locket.presentation.login.register_user_info.PasswordInputHandler
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentPasswordViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import com.ssafy.locket.ui.payment.viewmodel.RecertifyViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
-
+@AndroidEntryPoint
 class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
     FragmentPaymentPasswordBinding::bind,
     R.layout.fragment_payment_password
@@ -33,6 +38,16 @@ class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
         initView()
         initPassword()
         initEvent()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            paymentPasswordViewModel.isPasswordVerify.collect {
+                if(it) certifymove()
+                else {
+                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "비밀번호가 틀렸습니다. 다시 입력해주세요.")
+                    passwordInputHandler.clearPassword()
+                }
+            }
+        }
     }
 
     fun initView(){
@@ -53,7 +68,8 @@ class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
             ),
             maxPasswordLength = 6
         ) {
-            certifymove()
+//            certifymove()
+            paymentPasswordViewModel.checkPassword(passwordInputHandler.getPassword().toString().toInt())
         }
         setupNumberButtons()
         setupClearButton()

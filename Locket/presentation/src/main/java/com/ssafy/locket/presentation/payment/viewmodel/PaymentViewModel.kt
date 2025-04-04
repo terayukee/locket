@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.payment.Payment
 import com.ssafy.locket.usecase.payment.PaymentUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,6 +17,7 @@ import java.math.BigDecimal
 import javax.inject.Inject
 
 private const val TAG = "PaymentViewModel"
+@HiltViewModel
 class PaymentViewModel @Inject constructor(
     private val paymentUseCase: PaymentUseCase
 ): ViewModel() {
