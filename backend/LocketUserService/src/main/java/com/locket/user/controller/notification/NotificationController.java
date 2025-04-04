@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -20,8 +21,7 @@ import java.util.List;
                 사용자의 알림 정보를 조회하는 API입니다.  
                 \uD83D\uDCC8 [저축 목표 알림] - goals_alerts 테이블  
                 \uD83C\uDFEA [상품 가격 알림] - products_alerts 테이블  
-                \n모든 알림은 최신순 정렬로 제공되며,  
-                향후 읽음 처리 및 삭제 기능도 확장 가능합니다.
+                \n모든 알림은 최신순 정렬로 제공됩니다.
                 """
 )
 public class NotificationController {
@@ -43,8 +43,8 @@ public class NotificationController {
                     @ApiResponse(responseCode = "500", description = "🔥 서버 오류")
             }
     )
-    public ResponseEntity<List<UserAlertDto>> getAllUserAlerts(@RequestParam Long userId) {
-        List<UserAlertDto> alerts = userAlertService.getUserAlerts(userId);
+    public ResponseEntity<Map<String, List<UserAlertDto>>> getAllUserAlerts(@RequestParam Long userId) {
+        Map<String, List<UserAlertDto>> alerts = userAlertService.getUserAlerts(userId);
         return ResponseEntity.ok(alerts);
     }
 }
