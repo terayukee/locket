@@ -43,6 +43,10 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/users/pet(?:\\?.*)?$"),
             Pattern.compile("^/api/users/test/auth/(\\d+)$")
+
+
+
+
     );
 
     public JwtGatewayFilter(JwtUtil jwtUtil) {
