@@ -27,6 +27,10 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+        
+        binding.btnBudgetSet.setOnClickListener { 
+            // TODO api 전송
+        }
     }
 
     private fun validateInputForm(editText: EditText) = with(binding) {
