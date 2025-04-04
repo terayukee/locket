@@ -5,6 +5,7 @@ import com.locket.user.domain.budget.dto.BudgetSetResponseDto;
 import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
 import com.locket.user.domain.budget.dto.BudgetFeedbackResponse;
 import com.locket.user.exception.ErrorResponse;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.budget.BudgetService;
 import com.locket.user.service.budget.BudgetFeedbackService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/budget")
+@RequiresUser(ownerOnly = true)
 @Tag(name = "\uD83D\uDCB0Budget", description = "소비 목표")
 public class BudgetController {
 

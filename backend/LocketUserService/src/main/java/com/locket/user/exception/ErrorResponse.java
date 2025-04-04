@@ -1,5 +1,6 @@
 package com.locket.user.exception;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class ErrorResponse {
     private String message;
 
     @Schema(description = "오류 발생 시간")
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime timestamp;
 
     public ErrorResponse(int status, String error, String message) {
