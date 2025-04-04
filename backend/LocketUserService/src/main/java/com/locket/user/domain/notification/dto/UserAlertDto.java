@@ -16,4 +16,5 @@ public class UserAlertDto {
     private boolean isRead;
     private Integer alertPrice; // goal은 null일 수 있음
     private LocalDateTime createdAt;
+    private String formattedDate; // 🆕 "2025년 4월 4일" 형태
 }
