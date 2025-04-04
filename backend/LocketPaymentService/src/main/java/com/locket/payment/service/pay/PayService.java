@@ -6,6 +6,7 @@ import com.locket.payment.domain.pay.dto.PaymentRequest;
 import com.locket.payment.domain.pay.dto.PaymentResponse;
 import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
+import com.locket.payment.feign.PaymentHistoryFeignClient;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +36,7 @@ public class PayService {
     private final PaymentLedgerRepository paymentLedgerRepository;
     private final PaymentProducer paymentProducer;
     private final StringRedisTemplate redisTemplate;
+    private final PaymentHistoryFeignClient paymentHistoryFeignClient;
 
 
     /**
@@ -305,28 +304,35 @@ public class PayService {
         return true; // 현재는 무조건 성공 처리
     }
 
-    public List<CardInfoDto> getCardsByUserId(long userId) {
+    public List<CardInfoDto> getCardsWithMonthlyUsage(long userId) {
         List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
-
-        // ✅ 카드가 하나도 없을 경우 예외를 던질 수도 있음
         if (cards.isEmpty()) {
             throw new NoSuchElementException("해당 사용자에게 등록된 카드가 없습니다.");
         }
 
+        int year = LocalDate.now().getYear();
+        int month = LocalDate.now().getMonthValue();
+
         return cards.stream()
-                .map(card -> CardInfoDto.builder()
-                        .cardId(card.getCardId())
-                        .userId(card.getUserId())                                  // 🔹 userId 추가
-                        .cardNumber(card.getCardNumber())
-                        .cardExpiry(card.getCardExpiry())
-                        .cardCvc(card.getCardCvc())                                // 🔹 CVC 추가
-                        .cardName(card.getCardName())                              // 🔹 카드 이름 추가
-                        .accountNumber(card.getBankAccount().getAccountNumber())
-                        .createdAt(card.getCreatedAt())                            // 🔹 생성일
-                        .updatedAt(card.getUpdatedAt())                            // 🔹 수정일
-                        .build())
+                .map(card -> {
+                    BigDecimal monthlyUsage = paymentHistoryFeignClient.getMonthlyTotalAmountByCard(userId, card.getCardId(), year, month).getTotalAmount();
+
+                    return CardInfoDto.builder()
+                            .cardId(card.getCardId())
+                            .userId(card.getUserId())
+                            .cardNumber(card.getCardNumber())
+                            .cardExpiry(card.getCardExpiry())
+                            .cardCvc(card.getCardCvc())
+                            .cardName(card.getCardName())
+                            .accountNumber(card.getBankAccount().getAccountNumber())
+                            .createdAt(card.getCreatedAt())
+                            .updatedAt(card.getUpdatedAt())
+                            .monthlyUsage(monthlyUsage)  // 🔥 이번달 사용금액 추가
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
+
 
     public boolean getFingerprintRegisteredFromRedis(long userId) {
         String key = "user:" + userId + ":auth";

@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Getter
@@ -19,4 +20,6 @@ public class CardInfoDto {
     private String accountNumber;
     private LocalDateTime createdAt;  // 🔹 생성일 추가
     private LocalDateTime updatedAt;  // 🔹 수정일 추가
+    private BigDecimal monthlyUsage; // 💳 해당 카드의 이번달 사용 금액
+
 }
