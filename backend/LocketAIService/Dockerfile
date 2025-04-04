@@ -16,7 +16,8 @@ COPY requirements.txt .
 RUN pip install --upgrade pip && pip install -r requirements.txt
 
 # ---- Copy application code ----
-COPY . .
+COPY app/ ./app/
+COPY .env .env
 
 # ---- Expose port ----
 EXPOSE ${PORT}
