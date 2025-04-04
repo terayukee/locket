@@ -41,28 +41,50 @@ def create_app() -> FastAPI:
     _register_routers(app)
 
     # 유레카 등록 (dev 포함 모든 환경에서)
+    # @app.on_event("startup")
+    # async def register_to_eureka():
+    #     # home_page_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/"
+    #     # logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
+    #
+    #     SERVICE_HOST_EXTERNAL = "j12d204.p.ssafy.io"
+    #     SERVICE_PORT_EXTERNAL = os.getenv("PORT")
+    #
+    #     home_page_url = f"http://{SERVICE_HOST_EXTERNAL}:{SERVICE_PORT_EXTERNAL}/"
+    #     logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
+    #
+    #     await eureka_client.init_async(
+    #         eureka_server=EUREKA_SERVER,
+    #         app_name=SERVICE_NAME,
+    #         # instance_port=SERVICE_PORT,
+    #         # instance_host=SERVICE_HOST,
+    #         instance_port=int(SERVICE_PORT_EXTERNAL),
+    #         instance_host=SERVICE_HOST_EXTERNAL,
+    #         home_page_url=home_page_url,
+    #         renewal_interval_in_secs=10,
+    #         duration_in_secs=30
+    #     )
+
     @app.on_event("startup")
     async def register_to_eureka():
-        # home_page_url = f"http://{SERVICE_HOST}:{SERVICE_PORT}/"
-        # logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
+        try:
+            SERVICE_HOST_EXTERNAL = "j12d204.p.ssafy.io"
+            SERVICE_PORT_EXTERNAL = os.getenv("PORT")
 
-        SERVICE_HOST_EXTERNAL = "j12d204.p.ssafy.io"
-        SERVICE_PORT_EXTERNAL = os.getenv("PORT")
+            home_page_url = f"http://{SERVICE_HOST_EXTERNAL}:{SERVICE_PORT_EXTERNAL}/"
+            logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
 
-        home_page_url = f"http://{SERVICE_HOST_EXTERNAL}:{SERVICE_PORT_EXTERNAL}/"
-        logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
-
-        await eureka_client.init_async(
-            eureka_server=EUREKA_SERVER,
-            app_name=SERVICE_NAME,
-            # instance_port=SERVICE_PORT,
-            # instance_host=SERVICE_HOST,
-            instance_port=int(SERVICE_PORT_EXTERNAL),
-            instance_host=SERVICE_HOST_EXTERNAL,
-            home_page_url=home_page_url,
-            renewal_interval_in_secs=10,
-            duration_in_secs=30
-        )
+            await eureka_client.init_async(
+                eureka_server=EUREKA_SERVER,
+                app_name=SERVICE_NAME,
+                instance_port=int(SERVICE_PORT_EXTERNAL),
+                instance_host=SERVICE_HOST_EXTERNAL,
+                home_page_url=home_page_url,
+                renewal_interval_in_secs=10,
+                duration_in_secs=30
+            )
+            logger.info("✅ Eureka 등록 성공!")
+        except Exception as e:
+            logger.error(f"❌ Eureka 등록 실패: {str(e)}")
 
     return app
 
