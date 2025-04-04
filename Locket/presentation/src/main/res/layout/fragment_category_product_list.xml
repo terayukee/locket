@@ -24,7 +24,7 @@
         android:layout_marginTop="2dp"
         android:letterSpacing="-0.02"
         android:textSize="14sp"
-        android:text="홈인테리어"
+        android:text=""
         android:fontFamily="@font/pretendard_bold"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"

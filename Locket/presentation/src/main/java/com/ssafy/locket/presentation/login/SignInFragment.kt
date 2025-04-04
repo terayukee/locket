@@ -97,9 +97,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                     false -> {
                         Log.d(TAG, "회원가입 화면으로 이동")
                         lifecycleScope.launch {
-                            userDataStoreSource.accessToken.collect { token ->
-                                loginViewModel.updateAccessToken(token?:"")
-                            }
+                            val token = userDataStoreSource.accessToken.first()
+                            loginViewModel.updateAccessToken(token ?: "")
                         }
                         val currentDestination = findNavController().currentDestination?.id
                         if (currentDestination == R.id.signInFragment) { // ✅ 현재 Fragment가 signInFragment인지 확인
@@ -113,8 +112,5 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
             }
         }
     }
-
-
-
 
 }

@@ -2,31 +2,49 @@ package com.ssafy.locket.presentation.graph.fragment
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.LineData
 import com.github.mikephil.charting.data.LineDataSet
 import com.github.mikephil.charting.formatter.IndexAxisValueFormatter
+import com.ssafy.locket.data.datasource.local.UserDataStoreSource
+import com.ssafy.locket.model.graph.product_detail.PriceHistoryInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductDetailBinding
 import com.ssafy.locket.presentation.graph.PriceMarkerView
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
+import com.ssafy.locket.presentation.graph.viewmodel.ProductDetailState
+import com.ssafy.locket.presentation.graph.viewmodel.ProductViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import javax.inject.Inject
 
+private const val TAG = "CategoryProductListFrag"
+@AndroidEntryPoint
 class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     FragmentProductDetailBinding::bind,
     R.layout.fragment_product_detail
 ) {
-    private val viewModel: EditPriceViewModel by activityViewModels()
+    private val editViewModel: EditPriceViewModel by activityViewModels()
     val bottomSheet = EditPriceBottomSheetFragment.newInstance()
+    //카테고리 번호 알기 위함
+    var productId = -1
+    private val productViewModel: ProductViewModel by activityViewModels()
+    @Inject
+    lateinit var userDataStoreSource: UserDataStoreSource
     //차트
     private lateinit var lineChart: LineChart
     //하트 색칠여부
@@ -34,9 +52,34 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initData()
         initEvent()
         initViewModel()
+        getDetailInfo()
         initChart()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        productViewModel.productLikeClick(productId,isHeartFilled)
+        if(editViewModel.editprice.value==""||editViewModel.editprice.value=="설정 안됨"){
+            productViewModel.productAlert(productId,false,0)
+        }
+        else{
+            val price = editViewModel.editprice.value.replace(",", "").toInt()
+            productViewModel.productAlert(productId, true, price)
+        }
+    }
+
+    fun initData(){
+        productId = arguments?.getInt("productId") ?: -1
+        Log.d(TAG,"무슨 값"+productId.toString())
+        lifecycleScope.launch {
+            val user = userDataStoreSource.user.first()
+            user?.let {it->
+                productViewModel.getDetailInfo(productId,it.userId)
+            }
+        }
     }
 
     fun initEvent(){
@@ -60,7 +103,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
 
     fun initViewModel(){
         lifecycleScope.launchWhenStarted {
-            viewModel.editprice.collect { editprice ->
+            editViewModel.editprice.collect { editprice ->
                 if(editprice==""){
                     binding.tvSetting.text = "설정 안됨"
                 }
@@ -73,117 +116,103 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
 
     fun initChart(){
         lineChart = binding.chartPriceGraph
-        setupLineChart()
     }
 
-    private fun setupLineChart() {
+    private fun setupLineChart(priceHistory: List<PriceHistoryInfo>) {
         val highPriceEntries = ArrayList<Entry>()
         val lowPriceEntries = ArrayList<Entry>()
-        // 날짜별 데이터 (X축: 날짜, Y축: 가격)
-        val dates = arrayOf(
-            "09-11", "09-12", "09-14", "09-15", "09-17", "09-18", "09-20", "09-21",
-            "09-23", "09-24", "09-26", "09-27", "09-29", "09-30", "10-02", "10-03",
-            "10-05", "10-06", "10-08", "10-09", "10-11", "10-12", "10-14", "10-15",
-            "10-17", "10-19", "10-20", "10-22", "10-23", "10-25", "10-26", "10-28",
-            "10-29", "10-31", "11-01", "11-03", "11-04", "11-06", "11-07", "11-09",
-            "11-10", "11-12", "11-13", "11-15", "11-16", "11-18", "11-19", "11-21",
-            "11-23", "11-24", "11-26", "11-27", "11-29", "11-30", "12-02", "12-03",
-            "12-05", "12-06", "12-08", "12-09", "12-11", "12-12", "12-14", "12-15",
-            "12-17", "12-18", "12-20", "12-21", "12-23", "12-24", "12-26", "12-27",
-            "12-29", "12-31", "01-01", "01-03", "01-04", "01-06", "01-07", "01-09",
-            "01-10", "01-12", "01-13", "01-15", "01-16", "01-18", "01-19", "01-21",
-            "01-22", "01-24", "01-25", "01-27", "01-28", "01-30", "01-31", "02-02",
-            "02-04", "02-05", "02-07", "02-08", "02-10", "02-11", "02-13", "02-14",
-            "02-16", "02-17", "02-19", "02-20", "02-22", "02-23", "02-25", "02-26",
-            "02-28", "03-01", "03-03", "03-04", "03-06", "03-07", "03-09", "03-11"
-        )
-        val highPrices = intArrayOf(
-            18480, 18480, 18480, 18480, 18480, 18480, 18480, 18480,
-            18480, 18480, 18480, 18480, 18480, 18210, 18210, 18210,
-            18210, 18210, 18480, 18480, 18480, 18480, 18480, 18450,
-            18450, 18480, 18480, 18480, 18480, 18210, 17370, 17370,
-            17370, 17670, 17670, 17670, 17670, 18400, 18180, 17960,
-            17740, 17740, 17740, 18480, 18360, 18360, 18360, 18360,
-            18360, 18360, 18360, 18360, 18360, 18360, 18360, 18360,
-            18360, 18270, 18070, 17870, 17870, 17860, 17860, 17860,
-            17860, 17860, 18360, 18360, 18360, 18360, 18360, 18360,
-            18360, 18360, 18360, 18360, 18360, 18360, 17950, 17950,
-            18360, 18360, 18360, 18360, 18360, 18360, 18260, 18260,
-            18260, 18260, 18260, 18360, 18360, 18360, 18360, 18360,
-            18360, 18360, 18360, 18360, 18360, 18360, 17950, 17950,
-            18360, 18360, 18360, 18360, 18360, 18360, 18260, 18260,
-            18260, 18260, 18260, 18360, 18360, 18360, 18360, 18360
-        )
-        val lowPrices = highPrices // 최저가도 같은 배열 사용
-        for (i in dates.indices) {
-            //lowPriceEntries.add(Entry(i.toFloat(), lowPrices[i].toFloat()))
-            highPriceEntries.add(Entry(i.toFloat(), highPrices[i].toFloat()))
-            lowPriceEntries.add(Entry(i.toFloat(), lowPrices[i].toFloat()+300))
+        val dates = ArrayList<String>()
+        val leftAxis: YAxis = lineChart.axisLeft
+
+        leftAxis.removeAllLimitLines()
+
+        for (i in priceHistory.indices) {
+            val history = priceHistory[i]
+            dates.add(history.priceDate)
+            highPriceEntries.add(Entry(i.toFloat(), history.highestPrice.toFloat()))
+            lowPriceEntries.add(Entry(i.toFloat(), history.lowestPrice.toFloat()))
         }
-        // 최고가 라인
-        val highPriceDataSet = LineDataSet(highPriceEntries, "최고가").apply {
+
+        val adjustedHighPriceEntries = ArrayList<Entry>()
+        val adjustedLowPriceEntries = ArrayList<Entry>()
+
+        for (i in priceHistory.indices) {
+            val high = highPriceEntries[i].y
+            val low = lowPriceEntries[i].y
+
+            if (high == low) {
+                // 최고가와 최저가가 같으면 그대로 사용
+                adjustedHighPriceEntries.add(Entry(i.toFloat(), high))
+                adjustedLowPriceEntries.add(Entry(i.toFloat(), low))
+            } else {
+                val diff = high - low
+                val adjustment = diff * 0.05f // 차이의 5%만큼 조정
+
+                adjustedHighPriceEntries.add(Entry(i.toFloat(), high + adjustment))
+                adjustedLowPriceEntries.add(Entry(i.toFloat(), low - adjustment))
+            }
+        }
+
+        val highPriceDataSet = LineDataSet(adjustedHighPriceEntries, "최고가").apply {
             color = Color.RED
             lineWidth = 2f
-            setDrawCircles(false) // 원형 점 숨기기
-            setDrawCircleHole(false) // 원 내부 구멍 숨기기
-            setDrawValues(false) // 값(라벨) 숨기기
+            setDrawCircles(false)
+            setDrawValues(false)
         }
-        // 최저가 라인
-        val lowPriceDataSet = LineDataSet(lowPriceEntries, "최저가").apply {
+
+        val lowPriceDataSet = LineDataSet(adjustedLowPriceEntries, "최저가").apply {
             color = Color.parseColor("#C9C9C9")
             lineWidth = 2f
-            setDrawCircles(false) // 원형 점 숨기기
-            setDrawCircleHole(false) // 원 내부 구멍 숨기기
-            setDrawValues(false) // 값(라벨) 숨기기
+            setDrawCircles(false)
+            setDrawValues(false)
         }
-        // 평균가 표시 (17,925원)
-        val leftAxis: YAxis = lineChart.axisLeft
-        val limitLine = LimitLine(17925f, "6개월간 평균가: 17925").apply {
-            lineColor = Color.parseColor("#00CBBF")
-            lineWidth = 2f
-            labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
-            enableDashedLine(10f, 10f, 0f) // 점선 스타일 (10px 선, 10px 공백)
+
+        val maxPrice = highPriceEntries.maxOfOrNull { it.y } ?: 0f
+        val minPrice = lowPriceEntries.minOfOrNull { it.y } ?: 0f
+        val avgPrice = (maxPrice + minPrice) / 2
+
+        leftAxis.apply {
+            addLimitLine(LimitLine(avgPrice, "6개월 평균가: ${String.format("%.1f", avgPrice)}원").apply {
+                lineColor = Color.parseColor("#00CBBF")
+                lineWidth = 2f
+                labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
+                enableDashedLine(10f, 10f, 0f)
+            })
+
+            addLimitLine(LimitLine(minPrice, "6개월 최저가: ${minPrice}원").apply {
+                lineColor = Color.RED
+                textColor = Color.RED
+                lineWidth = 2f
+                labelPosition = LimitLine.LimitLabelPosition.RIGHT_BOTTOM
+                enableDashedLine(10f, 10f, 0f)
+            })
+
+            axisMinimum = minPrice * 0.9f
+            axisMaximum = maxPrice * 1.1f
+            setDrawGridLines(false)
         }
-        leftAxis.addLimitLine(limitLine)
-        val minPrice = lowPrices.minOrNull()?.toFloat() ?: 0f // 최저가 값 찾기
-        val lowPriceLimitLine = LimitLine(minPrice, "6개월간 최저가"+minPrice+"원").apply {
-            lineColor = Color.parseColor("#FF0000") // 빨간색
-            lineWidth = 2f
-            textColor = Color.parseColor("#FF0000") // 텍스트 색상
-            labelPosition = LimitLine.LimitLabelPosition.RIGHT_BOTTOM // 왼쪽 상단에 표시
-            enableDashedLine(10f, 10f, 0f) // 점선 스타일 (10px 선, 10px 공백)
+
+        lineChart.apply {
+            data = LineData(highPriceDataSet, lowPriceDataSet)
+            description.isEnabled = false
+            legend.isEnabled = false
+            axisRight.isEnabled = false
+            xAxis.apply {
+                position = XAxis.XAxisPosition.BOTTOM
+                granularity = 1f
+                valueFormatter = IndexAxisValueFormatter(dates)
+                setDrawGridLines(false)
+            }
+            setPinchZoom(false)
+            setDragEnabled(true)
+            setScaleXEnabled(true)
+            setScaleYEnabled(false)
+            setDoubleTapToZoomEnabled(false)
+            marker = PriceMarkerView(requireContext()).apply {
+                setData(dates.toTypedArray(), highPriceEntries.map { it.y.toInt() }.toIntArray(), lowPriceEntries.map { it.y.toInt() }.toIntArray())
+            }
+            invalidate()
         }
-        // Y축에 추가
-        leftAxis.addLimitLine(lowPriceLimitLine)
-        leftAxis.setDrawLabels(false)
-        leftAxis.setDrawGridLines(false)
-
-        // 데이터 적용
-        lineChart.data = LineData(highPriceDataSet, lowPriceDataSet)
-        lineChart.invalidate()
-        lineChart.axisRight.isEnabled = false
-        // X축 설정
-        val xAxis: XAxis = lineChart.xAxis
-        xAxis.position = XAxis.XAxisPosition.BOTTOM
-        xAxis.granularity = 1f
-        xAxis.valueFormatter = IndexAxisValueFormatter(dates)
-        xAxis.setDrawGridLines(false)
-        // 설명 제거
-        lineChart.description = Description().apply { text = "" }
-        val legend = lineChart.legend
-        legend.isEnabled = false
-
-        lineChart = binding.chartPriceGraph
-        lineChart.setPinchZoom(false) // 확대/축소 비활성화
-        lineChart.setDragEnabled(true) // 드래그 활성화
-        lineChart.setScaleXEnabled(true) // X축 스케일만 활성화
-        lineChart.setScaleYEnabled(false) // Y축 스케일 비활성화
-        lineChart.setDoubleTapToZoomEnabled(false)
-        lineChart.setNestedScrollingEnabled(false)
-
-        val markerView = PriceMarkerView(requireContext())
-        markerView.setData(dates, highPrices, lowPrices)
-        lineChart.marker = markerView
 
         lineChart.setOnTouchListener { v, event ->
             when (event.action) {
@@ -203,4 +232,45 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             false
         }
     }
+
+    fun getDetailInfo(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                productViewModel.productDetailInfo.collect { productDetail ->
+                    if(productDetail is ProductDetailState.Success) {
+                        Log.d(TAG,productDetail.productDetailInfo.toString())
+                        binding.tvProductTitle.text = productDetail.productDetailInfo.productName
+                        binding.tvPrice.text = productDetail.productDetailInfo.currentPrice
+                        Glide.with(requireContext())
+                            .load(productDetail.productDetailInfo.imageUrl)
+                            .placeholder(R.drawable.ic_all_empty_heart)
+                            .error(R.drawable.ic_all_empty_heart)
+                            .into(binding.ivProductImage)
+                        binding.tvReview.text = productDetail.productDetailInfo.reviewRating
+                        binding.tvHighestPrice.text= productDetail.productDetailInfo.highestPrice
+                        binding.tvDiscount.text = productDetail.productDetailInfo.discountRate
+                        setupLineChart(productDetail.productDetailInfo.priceHistory)
+                        isHeartFilled = productDetail.productDetailInfo.liked
+                        if(isHeartFilled){
+                            binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)
+                            binding.cvNotificationSetting.visibility = View.VISIBLE
+                            if(productDetail.productDetailInfo.alertPrice==0){
+                                binding.tvSetting.text ="설정 안됨"
+                                editViewModel.updatePrice("")
+                            }
+                            else{
+                                binding.tvSetting.text = CommonUtils.makeComma(productDetail.productDetailInfo.alertPrice)+"원"
+                                editViewModel.updatePrice(CommonUtils.makeComma(productDetail.productDetailInfo.alertPrice))
+                            }
+                        }
+                        else{
+                            binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)
+                            binding.cvNotificationSetting.visibility = View.INVISIBLE
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }
