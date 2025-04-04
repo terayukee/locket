@@ -63,19 +63,13 @@ pipeline {
                 ]) {
                     sh '''
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP '
-                            docker service update \
-                                --env-add PORT=8500 \
-                                --env-add EUREKA_SERVER=http://eureka-server:8761/eureka \
-                                --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
-                                --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
-                                ${SERVICE_NAME} || \
                             docker service create \
                                 --name ${SERVICE_NAME} \
                                 --publish 8500:8500 \
                                 --env PORT=8500 \
                                 --env EUREKA_SERVER=http://eureka-server:8761/eureka \
                                 --env SERVICE_NAME=LOCKET-AI-SERVICE \
-                                ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                                $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest
                         '
                     '''
                 }
