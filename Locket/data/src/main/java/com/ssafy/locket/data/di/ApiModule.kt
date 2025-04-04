@@ -2,6 +2,7 @@ package com.ssafy.locket.data.di
 
 import com.ssafy.locket.data.network.api.AuthService
 import com.ssafy.locket.data.network.api.CharacterService
+import com.ssafy.locket.data.network.api.NotificationService
 import com.ssafy.locket.data.network.api.ProductService
 import com.ssafy.locket.data.network.api.PaymentService
 import com.ssafy.locket.data.network.api.UserService
@@ -67,6 +68,14 @@ internal class ApiModule {
         @NoInterceptorRetrofit retrofit: Retrofit)
     : ProductService {
         return retrofit.create(ProductService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(
+        @NoInterceptorRetrofit retrofit: Retrofit)
+            : NotificationService {
+        return retrofit.create(NotificationService::class.java)
     }
 //
 //    @Provides

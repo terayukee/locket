@@ -10,8 +10,6 @@ import com.ssafy.locket.model.graph.ProductHappyListInfo
 import com.ssafy.locket.model.graph.ProductLikeListInfo
 import com.ssafy.locket.model.graph.ProductSearchInfo
 import com.ssafy.locket.model.graph.product_detail.ProductDetailInfo
-import com.ssafy.locket.model.user.UserInfo
-import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.usecase.product.ProductAlertUseCase
 import com.ssafy.locket.usecase.product.ProductCategoryUseCase
 import com.ssafy.locket.usecase.product.ProductDetailUseCase
@@ -19,9 +17,6 @@ import com.ssafy.locket.usecase.product.ProductHappyListUseCase
 import com.ssafy.locket.usecase.product.ProductLikeClickUseCase
 import com.ssafy.locket.usecase.product.ProductLikeListUseCase
 import com.ssafy.locket.usecase.product.ProductSearchListUseCase
-import com.ssafy.locket.usecase.user.DeleteUserInfoUseCase
-import com.ssafy.locket.usecase.user.GetUserInfoUseCase
-import com.ssafy.locket.usecase.user.UpdateUserInfoUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

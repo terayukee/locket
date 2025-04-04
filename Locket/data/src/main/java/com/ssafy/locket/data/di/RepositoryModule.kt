@@ -3,13 +3,15 @@ package com.ssafy.locket.data.di
 import com.ssafy.locket.data.repository.auth.AuthRepositoryImpl
 import com.ssafy.locket.data.repository.graph.ProductRepositoryImpl
 import com.ssafy.locket.data.repository.home.character.CharacterRepositoryImpl
+import com.ssafy.locket.data.repository.notification.NotificationRepositoryImpl
 import com.ssafy.locket.data.repository.payment.PaymentRepositoryImpl
 import com.ssafy.locket.data.repository.user.DataStoreRepositoryImpl
 import com.ssafy.locket.data.repository.user.UserRepositoryImpl
-import com.ssafy.locket.repository.Product.ProductRepository
+import com.ssafy.locket.repository.product.ProductRepository
 import com.ssafy.locket.repository.auth.AuthRepository
 import com.ssafy.locket.repository.user.UserRepository
 import com.ssafy.locket.repository.home.character.CharacterRepository
+import com.ssafy.locket.repository.notification.NotificationRepository
 import com.ssafy.locket.repository.payment.PaymentRepository
 import com.ssafy.locket.repository.user.DataStoreRepository
 import dagger.Binds
@@ -56,5 +58,11 @@ internal abstract class RepositoryModule {
     abstract fun bindPaymentRepository(
         paymentRepositoryImpl: PaymentRepositoryImpl
     ): PaymentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindNotificationRepository(
+        notificationRepositoryImpl: NotificationRepositoryImpl
+    ): NotificationRepository
 
 }

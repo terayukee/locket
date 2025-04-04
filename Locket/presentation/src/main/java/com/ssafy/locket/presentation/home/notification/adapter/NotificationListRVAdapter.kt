@@ -39,7 +39,12 @@ class NotificationListRVAdapter:
                 .load(notificationImg)
                 .placeholder(R.drawable.ic_finance_category_etc)
                 .into(binding.ivNotification)
-            binding.tvNotificationTitle.text = item.title
+            if(item.type=="goal"){
+                binding.tvNotificationTitle.text = "목표가"
+            }
+            else{
+                binding.tvNotificationTitle.text = "경고알림"
+            }
             binding.tvNotificationContent.text = item.content
             binding.tvNotificationDate.text = item.date
         }

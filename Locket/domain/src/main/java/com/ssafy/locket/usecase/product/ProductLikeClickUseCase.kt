@@ -1,9 +1,7 @@
 package com.ssafy.locket.usecase.product
 
-import android.text.BoringLayout
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.model.graph.ProductLikeListInfo
-import com.ssafy.locket.repository.Product.ProductRepository
+import com.ssafy.locket.repository.product.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
