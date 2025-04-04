@@ -15,7 +15,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Map;
 
 @Tag(name = "Locket ElasticSearch Service")
 @Slf4j
@@ -118,5 +120,22 @@ public class PaymentQueryController {
 
     }
 
+    @GetMapping("/history/card-total")
+    @Operation(summary = "특정 카드의 월간 총 사용 금액", description = "카드 ID 기준으로 연/월 총 결제 금액을 조회합니다.")
+    public ResponseEntity<?> getMonthlyTotalAmountByCard(
+            @RequestParam long userId,
+            @RequestParam int cardId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        BigDecimal totalAmount = paymentQueryService.getMonthlyTotalByCard(userId, cardId, year, month);
+        return ResponseEntity.ok(Map.of(
+                "cardId", cardId,
+                "userId", userId,
+                "year", year,
+                "month", month,
+                "totalAmount", totalAmount
+        ));
+    }
 
 }
