@@ -91,16 +91,28 @@ public class PayController {
     }
 
     @GetMapping("/cards")
-    @Operation(summary = "내 카드 목록 조회", description = "사용자 ID를 기반으로 등록된 카드 목록을 조회합니다.")
+    @Operation(
+            summary = "💳 내 카드 목록 조회",
+            description = """
+        ✅ 사용자 ID를 기반으로 등록된 모든 카드를 조회합니다.<br>
+        💰 각 카드의 이번 달 총 결제 금액(`monthlyUsage`)도 함께 제공합니다.<br><br>
+        📌 `Authorization` 헤더를 통해 JWT 토큰을 전달해야 합니다.
+    """,
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "🟢 조회 성공"),
+                    @ApiResponse(responseCode = "404", description = "🔴 사용자의 카드가 존재하지 않음"),
+                    @ApiResponse(responseCode = "500", description = "🟠 서버 내부 오류")
+            }
+    )
     public ResponseEntity<?> getMyCards(
             @RequestHeader("Authorization") String token,
             @RequestParam long userId
     ) {
         try {
-            List<CardInfoDto> cards = payService.getCardsByUserId(userId);
+            List<CardInfoDto> cards = payService.getCardsWithMonthlyUsage(userId);
             return ResponseEntity.ok(Map.of(
                     "cardList", cards,
-                    "count", cards.size() // 선택: 총 개수도 함께 제공
+                    "count", cards.size()
             ));
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(404).body(Map.of(
@@ -116,6 +128,7 @@ public class PayController {
             ));
         }
     }
+
 
     @GetMapping("/auth-info/fingerprint")
     @Operation(summary = "지문 등록 여부 조회", description = "사용자 ID를 기반으로 Redis에서 지문 등록 여부를 조회합니다.")

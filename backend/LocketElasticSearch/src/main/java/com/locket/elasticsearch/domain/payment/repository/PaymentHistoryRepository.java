@@ -42,4 +42,7 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
             "]}}")
     List<PaymentHistory> findByBuyerIdAndYearAndMonthCustomQuery(long buyerId, int year, int month);
 
+    // 한 카드의 이번달 결제 내역
+    List<PaymentHistory> findByBuyerIdAndCardIdAndYearAndMonth(Long buyerId, Integer cardId, int year, int month);
+
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import lombok.extern.slf4j.Slf4j;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -204,4 +205,12 @@ public class PaymentQueryService {
         return categoryAmounts;
     }
 
+    // 한 카드의 이번달 총 이용 금액 조회
+    public BigDecimal getMonthlyTotalByCard(Long userId, Integer cardId, int year, int month) {
+        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndCardIdAndYearAndMonth(userId, cardId, year, month);
+
+        return payments.stream()
+                .map(PaymentHistory::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }

@@ -1,11 +1,13 @@
 package com.locket.payment.service.pay;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
+import com.locket.payment.domain.pay.dto.CardBenefitDto;
 import com.locket.payment.domain.pay.dto.CardInfoDto;
 import com.locket.payment.domain.pay.dto.PaymentRequest;
 import com.locket.payment.domain.pay.dto.PaymentResponse;
 import com.locket.payment.domain.pay.entity.*;
 import com.locket.payment.domain.pay.repository.*;
+import com.locket.payment.feign.PaymentHistoryFeignClient;
 import com.locket.payment.infra.kafka.PaymentProducer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,10 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
+import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -38,6 +37,7 @@ public class PayService {
     private final PaymentLedgerRepository paymentLedgerRepository;
     private final PaymentProducer paymentProducer;
     private final StringRedisTemplate redisTemplate;
+    private final PaymentHistoryFeignClient paymentHistoryFeignClient;
 
 
     /**
@@ -305,28 +305,51 @@ public class PayService {
         return true; // 현재는 무조건 성공 처리
     }
 
-    public List<CardInfoDto> getCardsByUserId(long userId) {
+    public List<CardInfoDto> getCardsWithMonthlyUsage(long userId) {
         List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
-
-        // ✅ 카드가 하나도 없을 경우 예외를 던질 수도 있음
         if (cards.isEmpty()) {
             throw new NoSuchElementException("해당 사용자에게 등록된 카드가 없습니다.");
         }
 
+        int year = LocalDate.now().getYear();
+        int month = LocalDate.now().getMonthValue();
+
         return cards.stream()
-                .map(card -> CardInfoDto.builder()
-                        .cardId(card.getCardId())
-                        .userId(card.getUserId())                                  // 🔹 userId 추가
-                        .cardNumber(card.getCardNumber())
-                        .cardExpiry(card.getCardExpiry())
-                        .cardCvc(card.getCardCvc())                                // 🔹 CVC 추가
-                        .cardName(card.getCardName())                              // 🔹 카드 이름 추가
-                        .accountNumber(card.getBankAccount().getAccountNumber())
-                        .createdAt(card.getCreatedAt())                            // 🔹 생성일
-                        .updatedAt(card.getUpdatedAt())                            // 🔹 수정일
-                        .build())
+                .map(card -> {
+                    BigDecimal monthlyUsage = paymentHistoryFeignClient
+                            .getMonthlyTotalAmountByCard(userId, card.getCardId(), year, month)
+                            .getTotalAmount();
+
+                    // 혜택 조회
+                    List<CardBenefitDto> benefits = new ArrayList<>();
+                    if (card.getCardCatalog() != null) {
+                        List<CardBenefit> benefitEntities = card.getCardCatalog().getBenefits();
+                        benefits = benefitEntities.stream()
+                                .map(b -> CardBenefitDto.builder()
+                                        .benefitId(b.getBenefitId())
+                                        .item(b.getItem())
+                                        .benefitDetail(b.getBenefitDetail())
+                                        .build())
+                                .collect(Collectors.toList());
+                    }
+
+                    return CardInfoDto.builder()
+                            .cardId(card.getCardId())
+                            .userId(card.getUserId())
+                            .cardNumber(card.getCardNumber())
+                            .cardExpiry(card.getCardExpiry())
+                            .cardCvc(card.getCardCvc())
+                            .cardName(card.getCardName())
+                            .accountNumber(card.getBankAccount().getAccountNumber())
+                            .createdAt(card.getCreatedAt())
+                            .updatedAt(card.getUpdatedAt())
+                            .monthlyUsage(monthlyUsage)
+                            .benefits(benefits)  // ✅ 혜택 포함
+                            .build();
+                })
                 .collect(Collectors.toList());
     }
+
 
     public boolean getFingerprintRegisteredFromRedis(long userId) {
         String key = "user:" + userId + ":auth";
