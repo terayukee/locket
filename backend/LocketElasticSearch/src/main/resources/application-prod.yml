@@ -11,7 +11,7 @@ ELASTICSEARCH:
 
 spring:
   application:
-    name: ELASTICSEARCH-SERVICE
+    name: elasticsearch-service
   config:
     activate:
       on-profile: prod
