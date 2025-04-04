@@ -8,6 +8,7 @@
     <string name="home_budget_month">%d월 목표 예산</string>
 
     <string name="home_character_gifticon_character">%s이 물어온 선물</string>
+    <string name="home_character_gifticon_character_message">%s이🐱\n선물을 준비했어요</string>
 
     <string name="home_character_toy_remain_time">%d분 남음</string>
     <string name="home_character_food_remain_count">%d개 보유</string>

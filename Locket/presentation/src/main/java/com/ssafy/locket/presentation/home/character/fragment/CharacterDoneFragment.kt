@@ -30,6 +30,7 @@ class CharacterDoneFragment : BaseFragment<FragmentCharacterDoneBinding>(
             characterViewModel.characterInfo.collect { uiState ->
                 if(uiState is CharacterInfoState.Success) {
                     binding.tvCharacterName.text = getString(R.string.home_character_gifticon_character, uiState.characterInfo.name)
+                    binding.tvCharacterMessage.text = getString(R.string.home_character_gifticon_character_message,uiState.characterInfo.name)
                 }
             }
         }

@@ -18,9 +18,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+    }
 
+    override fun onNewIntent(intent: Intent, caller: ComponentCaller) {
+        super.onNewIntent(intent, caller)
         intent.getStringExtra("notification")?.let {
-            Log.d(TAG, "onCreate: notification으로 들어옴")
+            Log.d(TAG, "onNewIntent: notification으로 들어옴")
             notificationCheckViewModel.setIconClicked()
         }
     }

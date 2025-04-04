@@ -7,8 +7,10 @@ import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import com.kakao.sdk.auth.model.OAuthToken
 import com.kakao.sdk.common.model.ClientError
 import com.kakao.sdk.common.model.ClientErrorCause
@@ -89,9 +91,13 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
 
     private fun observeNotificationState() {
         viewLifecycleOwner.lifecycleScope.launch {
-            notificationCheckViewModel.isIconClicked.collect {
-                if(it) isNotification = true
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notificationCheckViewModel.isIconClicked.collect {
+                    if(it) isNotification = true
+                    Log.d(TAG, "observeNotificationState: ${it} ${isNotification}")
+                }
             }
+
         }
     }
 
@@ -104,6 +110,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                         val intent = Intent(requireContext(), MainActivity::class.java)
                         if(isNotification) {
                             intent.putExtra("notification","notification")
+                            Log.d(TAG, "observeLoginState: puExtra")
                         }
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)

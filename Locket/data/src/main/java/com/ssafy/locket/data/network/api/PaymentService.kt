@@ -1,6 +1,5 @@
 package com.ssafy.locket.data.network.api
 
-import com.ssafy.locket.data.network.request.payment.CardValidationRequest
 import com.ssafy.locket.data.network.request.payment.PassswordVerifyRequest
 import com.ssafy.locket.data.network.request.payment.PaymentRequest
 import com.ssafy.locket.data.network.response.payment.CardListResponse

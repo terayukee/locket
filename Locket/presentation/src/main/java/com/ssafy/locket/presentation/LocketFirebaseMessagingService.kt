@@ -66,7 +66,7 @@ class LocketFirebaseMessagingService: FirebaseMessagingService() {
         notificationManager.createNotificationChannel(channel)
 
         // 🔹 작은 아이콘 설정 (이 아이콘이 없으면 앱이 크래시 발생!)
-        val smallIcon = R.drawable.app_icon
+        val smallIcon = R.drawable.ic_home_budget
 //            if("budget".equals(type)) R.drawable.ic_notification_finance
 //        else if("price".equals(type)) R.drawable.ic_notification_product
 //        else R.drawable.ic_home_budget // TODO 추후 앱 아이콘으로 변경

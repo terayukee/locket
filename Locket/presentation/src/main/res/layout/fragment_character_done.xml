@@ -47,6 +47,7 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_back" />
 
         <TextView
+            android:id="@+id/tv_character_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/pretendard_medium"
@@ -57,7 +58,7 @@
             app:layout_constraintEnd_toEndOf="@+id/iv_character_message_bg"
             app:layout_constraintStart_toStartOf="@+id/iv_character_message_bg"
             app:layout_constraintTop_toTopOf="@+id/iv_character_message_bg"
-            tools:text="다정한 000를 위해\n선물을 준비했어요" />
+            tools:text="개농이가🐱\n선물을 준비했어요" />
 
         <!--        <ImageView-->
         <!--            android:id="@+id/bg_chain_point"-->

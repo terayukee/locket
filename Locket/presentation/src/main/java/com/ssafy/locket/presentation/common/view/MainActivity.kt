@@ -42,7 +42,10 @@ class MainActivity : AppCompatActivity() {
         val flag = intent.getStringExtra("notification") ?: ""
         if("notification".equals(flag)) {
             Log.d(TAG, "onCreate: notification in mainActivity ")
-            findNavController(R.id.main_container).navigate(R.id.notificationFragment)
+            val navHostFragment =
+                supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
+            val navController = navHostFragment.navController
+            navController.navigate(R.id.notificationFragment)
         }
     }
 
