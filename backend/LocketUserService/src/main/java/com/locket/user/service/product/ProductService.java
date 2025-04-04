@@ -18,7 +18,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.text.NumberFormat;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
@@ -201,7 +203,21 @@ public class ProductService {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        product.setCurrentPrice(newPrice);
+        // ✅ 숫자 추출
+        String digitsOnly = newPrice.replaceAll("[^0-9]", "");
+
+        if (digitsOnly.isEmpty()) {
+            throw new IllegalArgumentException("가격 정보에 숫자가 포함되어 있지 않습니다: " + newPrice);
+        }
+
+        int priceValue = Integer.parseInt(digitsOnly);
+
+        // ✅ "9,000원" 형식으로 변환
+        String formattedPrice = NumberFormat.getNumberInstance(Locale.KOREA).format(priceValue) + "원";
+
+
+        // ✅ 저장
+        product.setCurrentPrice(formattedPrice);
         productRepository.save(product);
 
         // ✅ 알림 트리거
