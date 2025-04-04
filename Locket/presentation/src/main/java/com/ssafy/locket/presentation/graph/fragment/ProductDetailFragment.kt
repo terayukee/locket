@@ -1,6 +1,7 @@
 package com.ssafy.locket.presentation.graph.fragment
 
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -29,6 +30,7 @@ import com.ssafy.locket.presentation.graph.viewmodel.ProductViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -53,13 +55,16 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initData()
         initEvent()
         initViewModel()
         getDetailInfo()
         initChart()
     }
 
+    override fun onResume() {
+        super.onResume()
+        initData()
+    }
     override fun onPause() {
         super.onPause()
         productViewModel.productLikeClick(productId,isHeartFilled)
@@ -72,9 +77,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        editViewModel.updatePrice("")
+        productViewModel.resetProductDetailState()
+    }
     fun initData(){
         productId = arguments?.getInt("productId") ?: -1
-        Log.d(TAG,"무슨 값"+productId.toString())
         lifecycleScope.launch {
             val user = userDataStoreSource.user.first()
             user?.let {it->
@@ -244,8 +253,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                         binding.tvPrice.text = productDetail.productDetailInfo.currentPrice
                         Glide.with(requireContext())
                             .load(productDetail.productDetailInfo.imageUrl)
-                            .placeholder(R.drawable.ic_all_empty_heart)
-                            .error(R.drawable.ic_all_empty_heart)
+                            .placeholder(ColorDrawable(Color.WHITE))
+                            .error(ColorDrawable(Color.WHITE))
                             .into(binding.ivProductImage)
                         binding.tvReview.text = productDetail.productDetailInfo.reviewRating
                         binding.tvHighestPrice.text= productDetail.productDetailInfo.highestPrice

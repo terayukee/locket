@@ -3,6 +3,7 @@ package com.ssafy.locket.presentation.graph.fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,6 +13,7 @@ import com.ssafy.locket.presentation.databinding.FragmentEditPriceBottomSheetBin
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 
+private const val TAG = "EditPriceBottomSheetFra"
 class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
     private var _binding: FragmentEditPriceBottomSheetBinding? = null
     private val binding get() = _binding!!
@@ -42,14 +44,16 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
             binding.tvWantPrice.hint = "현재 가격은 "+ CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
         }
     }
-
-
+    
     fun initEvent(){
         binding.btnConfirm.setOnClickListener {
             // Get the raw number (without commas)
-            val rawNumber = binding.tvWantPrice.text.toString().replace(",", "")
-            viewModel.updatePrice(rawNumber)
-            binding.tvWantPrice.setText("")
+            Log.d(TAG,binding.tvWantPrice.text.toString())
+            if(binding.tvWantPrice.text.toString()!=""){
+                val rawNumber = binding.tvWantPrice.text.toString().replace(",", "")
+                viewModel.updatePrice(rawNumber)
+                binding.tvWantPrice.setText("")
+            }
             dismiss()
         }
     }

@@ -4,7 +4,9 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.EditorInfo
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -46,6 +48,7 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
         initCategoryMoveEvent()
         getHappyListData()
         initEvent()
+        initSearch()
         initAdapter()
         backEvent()
     }
@@ -54,14 +57,16 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
         binding.ivHeart.setOnClickListener {
             findNavController().navigate(R.id.action_productListFragment_to_likeProductListFragment)
         }
-
         binding.btnRecommandMove.setOnClickListener {
             findNavController().navigate(R.id.action_productListFragment_to_recommendProductListFragment)
         }
-        binding.ivSearch.setOnClickListener {
-            productViewModel.updateProductName(binding.etProductSearch.text.toString())
-            findNavController().navigate(R.id.action_productListFragment_to_searchProductListFragment)
+        binding.ivClear.setOnClickListener {
+            binding.etProductSearch.setText("")
         }
+        productViewModel.getHappyList()
+    }
+
+    fun initSearch(){
         binding.etProductSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 binding.ivClear.visibility = if (s.isNullOrEmpty()) View.INVISIBLE else View.VISIBLE
@@ -69,10 +74,20 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
         })
-        binding.ivClear.setOnClickListener {
-            binding.etProductSearch.setText("")
+        binding.etProductSearch.setOnEditorActionListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_SEARCH ||
+                (event != null && event.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)) {
+                val query = binding.etProductSearch.text.toString()
+                if (query.isNotBlank()) {
+                    binding.etProductSearch.text.clear()
+                    productViewModel.updateProductName(query)
+                    findNavController().navigate(R.id.action_productListFragment_to_searchProductListFragment)
+                }
+                true  // 이벤트 소비 완료
+            } else {
+                false  // 다른 곳으로 이벤트 전달
+            }
         }
-        productViewModel.getHappyList()
     }
 
     fun initCategoryMoveEvent(){

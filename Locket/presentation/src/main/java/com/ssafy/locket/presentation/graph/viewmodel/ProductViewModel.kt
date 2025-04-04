@@ -94,6 +94,10 @@ class ProductViewModel @Inject constructor(
         _productSearchInfo.value = ProductSearchState.Loading
     }
 
+    fun resetProductDetailState() {
+        _productDetailInfo.value = ProductDetailState.Initial
+    }
+
     fun getCategoryList(category: Int, page: Int)
     {
         viewModelScope.launch {
