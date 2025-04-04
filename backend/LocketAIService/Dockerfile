@@ -26,4 +26,4 @@ EXPOSE ${PORT}
 #  CMD curl -f http://localhost:8500/health || exit 1
 
 # ---- Start application ----
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8500"]
+CMD ["python", "-m", "uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8500"]
