@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -39,7 +40,7 @@ class UserInfoViewModel @Inject constructor(
                 .catch { e ->
 
                 }
-                .first()
+                .firstOrNull()
                 .let { uiState ->
                     when(uiState) {
                         is ResponseStatus.Success -> {
@@ -50,6 +51,7 @@ class UserInfoViewModel @Inject constructor(
                             _userInfo.value = UserInfoState.Error(uiState.error.message)
                             Log.d("UserFragment", "fetchUser: ${_userInfo.value}")
                         }
+                        else -> Log.d("UserFragment", "fetchUser: else error")
                     }
                 }
         }

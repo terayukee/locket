@@ -58,7 +58,7 @@ class PaymentHistoryViewModel @Inject constructor(
     fun getMonthlyPaymentCalendar(year: Int, month: Int){
         viewModelScope.launch {
             getMonthlyCalendarPaymentUseCase(year, month)
-                .onStart {  }
+                .onStart { Log.d(TAG, "getMonthlyPaymentCalendar: start $year $month") }
                 .catch { e ->
                     Log.d(TAG, "getMonthlyPaymentCalendar: Error ${e.message}")
                 }

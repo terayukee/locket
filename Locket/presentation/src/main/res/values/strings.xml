@@ -20,6 +20,8 @@
 
     <string name="finance_year_month">%1$d년 %2$d월</string>
 
+    <string name="finance_calendar_day_payment_detail">%1$s | %2$s</string>
+
     <string name="finance_calendar_payment">-%s</string>
     <string name="finance_calendar_bottom_sheet_date">%1$s일 %2$s요일</string>
     <string name="finance_calendar_bottom_sheet_count">총 %d건</string>

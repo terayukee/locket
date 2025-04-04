@@ -4,13 +4,14 @@ import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
 import com.ssafy.locket.model.payment_history.PaymentDailyHistoryItem
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 
 @Parcelize
 data class PaymentDailyHistoryResponseItem(
     val cardName: String,
     val paymentCategory: String,
     val storeName: String,
-    val totalAmount: Int
+    val totalAmount: BigDecimal
 ): BaseResponse {
     companion object: DataMapper<PaymentDailyHistoryResponseItem, PaymentDailyHistoryItem> {
         override fun PaymentDailyHistoryResponseItem.toDomainModel(): PaymentDailyHistoryItem {

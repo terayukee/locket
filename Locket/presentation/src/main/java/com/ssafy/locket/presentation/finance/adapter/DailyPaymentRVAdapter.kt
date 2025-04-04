@@ -9,26 +9,26 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.locket.model.finance.Payment
+import com.ssafy.locket.model.payment_history.PaymentDailyHistoryItem
 import com.ssafy.locket.model.payment_history.PaymentHistoryItem
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemPaymentBinding
 import com.ssafy.locket.presentation.utils.CommonUtils
 
-class PaymentRVAdapter(val type: String):
-    ListAdapter<PaymentHistoryItem, PaymentRVAdapter.CustomViewHolder>(CustomComparator) {
-    lateinit var itemClickListener: ItemClickListener
+class DailyPaymentRVAdapter:
+    ListAdapter<PaymentDailyHistoryItem, DailyPaymentRVAdapter.CustomViewHolder>(CustomComparator) {
     private lateinit var context: Context
 
     interface ItemClickListener {
-        fun onClick(view: View, data: PaymentHistoryItem, position: Int)
+        fun onClick(view: View, data: PaymentDailyHistoryItem, position: Int)
     }
 
-    companion object CustomComparator : DiffUtil.ItemCallback<PaymentHistoryItem>() {
-        override fun areItemsTheSame(oldItem: PaymentHistoryItem, newItem: PaymentHistoryItem): Boolean {
+    companion object CustomComparator : DiffUtil.ItemCallback<PaymentDailyHistoryItem>() {
+        override fun areItemsTheSame(oldItem: PaymentDailyHistoryItem, newItem: PaymentDailyHistoryItem): Boolean {
             return oldItem.hashCode() == newItem.hashCode()
         }
 
-        override fun areContentsTheSame(oldItem: PaymentHistoryItem, newItem: PaymentHistoryItem): Boolean {
+        override fun areContentsTheSame(oldItem: PaymentDailyHistoryItem, newItem: PaymentDailyHistoryItem): Boolean {
             return oldItem == newItem
         }
     }
@@ -36,7 +36,7 @@ class PaymentRVAdapter(val type: String):
     inner class CustomViewHolder(private val binding: ItemPaymentBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: PaymentHistoryItem) {
+        fun bind(item: PaymentDailyHistoryItem) {
             val categoryImg : Int = when(item.category) {
                 "shopping" -> R.drawable.ic_finance_category_shopping
                 "food" -> R.drawable.ic_finance_category_food
@@ -51,11 +51,8 @@ class PaymentRVAdapter(val type: String):
                 .placeholder(R.drawable.ic_finance_category_etc)
                 .into(binding.ivCategory)
             binding.tvReceiptPlace.text = item.storeName
-            binding.tvReceiptDescription.text = context.getString(R.string.receipt_description, item.category, item.cardName, CommonUtils.dateformatYMDHMFromInt(item.year, item.month, 23)) // TODO 현재는 임의의 day 넣어둠 추후에 변경
+            binding.tvReceiptDescription.text = context.getString(R.string.finance_calendar_day_payment_detail, item.category, item.cardName) // TODO 현재는 임의의 day 넣어둠 추후에 변경
             binding.tvReceiptPrice.text = context.getString(R.string.receipt_price, CommonUtils.makeCommaDecimal(item.totalAmount))
-            binding.root.setOnClickListener {
-                if(type == "receipt") itemClickListener.onClick(it, item, adapterPosition)
-            }
         }
     }
 
