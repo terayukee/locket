@@ -24,7 +24,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
 
     private final JwtUtil jwtUtil;
 
-    // 인증이 필요 없는 URL 패턴들
+    // 인증이 필요 없는 URL 패턴들 (그대로 유지)
     private final List<Pattern> excludedPatterns = Arrays.asList(
             Pattern.compile("^/api/users/login$"),
             Pattern.compile("^/api/users/signup$"),
@@ -41,7 +41,6 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/api/users/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/user-profiles/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$"),
-            Pattern.compile("^/pet/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/users/pet(?:\\?.*)?$"),
             Pattern.compile("^/api/users/test/auth/(\\d+)$")
     );
@@ -65,6 +64,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
                 return chain.filter(exchange);
             }
 
+            // Authorization 헤더 검사
             List<String> authHeaders = request.getHeaders().getOrEmpty("Authorization");
             if (authHeaders.isEmpty() || !authHeaders.get(0).startsWith("Bearer ")) {
                 return onError(exchange, "인증이 필요합니다.", HttpStatus.UNAUTHORIZED);
@@ -73,6 +73,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             String token = authHeaders.get(0).substring(7);
 
             try {
+                // JWT 유효성 검사
                 TokenStatus tokenStatus = jwtUtil.validateTokenWithStatus(token);
                 if (tokenStatus != TokenStatus.VALID) {
                     if (tokenStatus == TokenStatus.EXPIRED) {
@@ -86,18 +87,22 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
                     return onError(exchange, "유효한 액세스 토큰이 아닙니다.", HttpStatus.UNAUTHORIZED);
                 }
 
+                // 토큰에서 userId 추출
                 Long userId = jwtUtil.getUserIdFromToken(token);
+                // 경로에서 userId 추출 시도 (우리는 지금 path에는 {userId}가 없으므로 보통 null)
                 Long pathUserId = extractUserIdFromPath(path);
 
-                // 경로에서 추출 못했으면 쿼리 파라미터에서 시도
+                // 쿼리 파라미터에서 userId 추출
                 if (pathUserId == null) {
                     pathUserId = extractUserIdFromQueryParam(request);
                 }
 
+                // 토큰 userId와 path/쿼리 userId가 다르면 403
                 if (pathUserId != null && !pathUserId.equals(userId)) {
                     return onError(exchange, "다른 사용자의 정보에 접근할 권한이 없습니다.", HttpStatus.FORBIDDEN);
                 }
 
+                // X-User-Id 헤더에 userId를 넣어 내부 서비스로 전달
                 ServerHttpRequest mutatedRequest = request.mutate()
                         .header("X-User-Id", String.valueOf(userId))
                         .build();
@@ -116,14 +121,28 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
     }
 
     private Long extractUserIdFromPath(String path) {
+
         for (Pattern pattern : userApiPatterns) {
             Matcher matcher = pattern.matcher(path);
             if (matcher.matches()) {
                 try {
                     return Long.parseLong(matcher.group(1));
-                } catch (NumberFormatException e) {
+                } catch (Exception e) {
                     log.warn("Failed to parse user ID from path: {} - {}", path, e.getMessage());
                 }
+            }
+        }
+        return null;
+    }
+
+    private Long extractUserIdFromQueryParam(ServerHttpRequest request) {
+        // 쿼리 파라미터에서 userId 추출
+        String userIdParam = request.getQueryParams().getFirst("userId");
+        if (userIdParam != null) {
+            try {
+                return Long.parseLong(userIdParam);
+            } catch (NumberFormatException e) {
+                log.warn("Failed to parse user ID from query param: {}", userIdParam);
             }
         }
         return null;
@@ -135,18 +154,5 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
         return response.writeWith(Mono.just(
                 response.bufferFactory().wrap(message.getBytes())
         ));
-    }
-
-    private Long extractUserIdFromQueryParam(ServerHttpRequest request) {
-        // 쿼리 파라미터에서 userId 추출
-        String userId = request.getQueryParams().getFirst("userId");
-        if (userId != null) {
-            try {
-                return Long.parseLong(userId);
-            } catch (NumberFormatException e) {
-                log.warn("Failed to parse user ID from query param: {}", userId);
-            }
-        }
-        return null;
     }
 }

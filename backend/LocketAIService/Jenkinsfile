@@ -73,13 +73,14 @@ pipeline {
                         "docker service update \
                             --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest \
                             --env-add PORT=${DOCKER_PORT} \
-                            --env-add EUREKA_SERVER=http://spring-locket_discovery:8761/eureka \
+                            --env-add EUREKA_SERVER=http://discovery:8761/eureka \
                             --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
                             --env-add CLOVA_OCR_URL=${CLOVA_OCR_URL} \
                             --env-add CLOVA_OCR_SECRET=${CLOVA_OCR_SECRET} \
                             --env-add OPENAI_API_KEY=${OPENAI_API_KEY} \
                             --mount-add type=bind,source=/home/ubuntu/models,target=/app/app/domain/category/model \
                             --limit-memory 4g \
+                            --network-add spring-locket \
                             ${DOCKER_IMAGE}"
                     """
                 }
