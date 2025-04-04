@@ -21,7 +21,7 @@ public class Goals {
     private Integer goalId;
 
     @Column(name = "user_id", nullable = false)
-    private Integer userId;  // users.user_id (int)
+    private long userId;
 
     @Column(name = "goal_amount", nullable = false)
     private Integer goalAmount;  // 예산 목표 금액

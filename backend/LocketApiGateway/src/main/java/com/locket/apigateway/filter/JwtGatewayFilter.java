@@ -40,7 +40,10 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
     private final List<Pattern> userApiPatterns = Arrays.asList(
             Pattern.compile("^/api/users/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/user-profiles/(\\d+)(?:/.*)?$"),
-            Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$")
+            Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$"),
+            Pattern.compile("^/pet/(\\d+)(?:/.*)?$"),
+            Pattern.compile("^/api/users/pet(?:\\?.*)?$"),
+            Pattern.compile("^/api/users/test/auth/(\\d+)$")
     );
 
     public JwtGatewayFilter(JwtUtil jwtUtil) {
@@ -85,6 +88,12 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
 
                 Long userId = jwtUtil.getUserIdFromToken(token);
                 Long pathUserId = extractUserIdFromPath(path);
+
+                // 경로에서 추출 못했으면 쿼리 파라미터에서 시도
+                if (pathUserId == null) {
+                    pathUserId = extractUserIdFromQueryParam(request);
+                }
+
                 if (pathUserId != null && !pathUserId.equals(userId)) {
                     return onError(exchange, "다른 사용자의 정보에 접근할 권한이 없습니다.", HttpStatus.FORBIDDEN);
                 }
@@ -126,5 +135,18 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
         return response.writeWith(Mono.just(
                 response.bufferFactory().wrap(message.getBytes())
         ));
+    }
+
+    private Long extractUserIdFromQueryParam(ServerHttpRequest request) {
+        // 쿼리 파라미터에서 userId 추출
+        String userId = request.getQueryParams().getFirst("userId");
+        if (userId != null) {
+            try {
+                return Long.parseLong(userId);
+            } catch (NumberFormatException e) {
+                log.warn("Failed to parse user ID from query param: {}", userId);
+            }
+        }
+        return null;
     }
 }

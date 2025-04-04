@@ -21,6 +21,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -35,6 +36,10 @@ public class UserController {
     private final UserService userService;
     private final StringRedisTemplate redisTemplate;
     private final JwtUtil jwtUtil;
+
+    // Property 기반 접근 제어 설정 추가
+    @Value("${app.test-auth.enabled:false}")
+    private boolean testAuthEnabled;
 
     @Operation(
             summary = "소셜로그인",
@@ -493,4 +498,31 @@ public class UserController {
             throw new UnauthorizedException("토큰 갱신 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    @Operation(
+            summary = "[테스트용] 토큰 발급",
+            description = "테스트 목적으로 특정 사용자의 토큰을 발급합니다.",
+            security = {}
+    )
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "토큰 발급 성공",
+                    content = @Content(schema = @Schema(implementation = LoginResponseDto.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @PostMapping("/test/auth/{user_id}")
+    public ResponseEntity<LoginResponseDto> generateTestAuth(@PathVariable("user_id") Long userId) {
+
+        User user = userService.findById(userId);
+        LoginResponseDto loginResponse = userService.login(user);
+
+        return ResponseEntity.ok(loginResponse);
+    }
+
 }

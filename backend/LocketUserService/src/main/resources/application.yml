@@ -86,3 +86,7 @@ jwt:
 receipt:
   service:
     url: http://localhost:8000 # Receipt 서비스 URL
+
+app:
+  test-auth:
+    enabled: true  # 개발/테스트 환경에서는 true로, 운영 환경에서는 false로 설정

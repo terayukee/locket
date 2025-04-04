@@ -2,6 +2,7 @@ package com.locket.user.controller.pet;
 
 import com.locket.user.domain.pet.dto.*;
 import com.locket.user.exception.ErrorResponse;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.pet.CharacterService;
 import com.locket.user.service.pet.RewardService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/pet")
 @RequiredArgsConstructor
 @Tag(name = "🐱Pet", description = "캐릭터 조회, 경험치 관리 API")
+@RequiresUser(ownerOnly = true)
 public class PetController {
 
     private final CharacterService characterService;
