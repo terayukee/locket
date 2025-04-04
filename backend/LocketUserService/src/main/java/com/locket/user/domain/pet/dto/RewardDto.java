@@ -1,5 +1,6 @@
 package com.locket.user.domain.pet.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,5 +15,6 @@ import java.time.LocalDateTime;
 public class RewardDto {
     private Long rewardId;
     private String rewardName;
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime receivedAt;
 }

@@ -1,5 +1,6 @@
 package com.locket.user.controller.feedback;
 
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.feedback.FeedbackService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/feedback")
 @RequiredArgsConstructor
+@RequiresUser(ownerOnly = true)
 public class FeedbackController {
 
     private final FeedbackService feedbackService;
