@@ -51,7 +51,7 @@ pipeline {
 
         stage('Deploy to Docker Swarm') {
             steps {
-                echo '🚀 Deploying to Docker Swarm on EC2 (CREATE only)...'
+                echo '🚀 Deploying to Docker Swarm on EC2 (UPDATE)...'
                 withCredentials([
                     sshUserPrivateKey(
                         credentialsId: 'SSH_KEY',
@@ -70,17 +70,18 @@ pipeline {
                 ]) {
                     sh """
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
-                        "docker service create \
-                            --name ${DOCKER_IMAGE} \
-                            --publish ${DOCKER_PORT}:${DOCKER_PORT} \
-                            --env PORT=${DOCKER_PORT} \
-                            --env EUREKA_SERVER=http://eureka-server:8761/eureka \
-                            --env SERVICE_NAME=LOCKET-AI-SERVICE \
-                            --env CLOVA_OCR_URL=${CLOVA_OCR_URL} \
-                            --env CLOVA_OCR_SECRET=${CLOVA_OCR_SECRET} \
-                            --env OPENAI_API_KEY=${OPENAI_API_KEY} \
-                            --mount type=bind,source=/home/ubuntu/models,target=/app/app/domain/category/model \
-                            ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest"
+                        "docker service update \
+                            --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest \
+                            --env-add PORT=${DOCKER_PORT} \
+                            --env-add EUREKA_SERVER=http://discovery:8761/eureka \
+                            --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
+                            --env-add CLOVA_OCR_URL=${CLOVA_OCR_URL} \
+                            --env-add CLOVA_OCR_SECRET=${CLOVA_OCR_SECRET} \
+                            --env-add OPENAI_API_KEY=${OPENAI_API_KEY} \
+                            --mount-add type=bind,source=/home/ubuntu/models,target=/app/app/domain/category/model \
+                            --limit-memory 4g \
+                            --network-add spring-locket \
+                            ${DOCKER_IMAGE}"
                     """
                 }
             }
