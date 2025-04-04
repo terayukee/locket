@@ -21,16 +21,7 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
 
     // 사용자 ID를 포함하는 경로 패턴 목록 (정규식)
     private final List<Pattern> userIdPatterns = Arrays.asList(
-            // /users/{userId} 또는 /api/users/{userId} 패턴
-            Pattern.compile("/(?:api/)?users/(\\d+)(?:/.*)?"),
-            // /pet/{userId} 패턴
-            Pattern.compile("/pet/(\\d+)(?:/.*)?")
-//            // /products/{userId}/recommendation 패턴
-//            Pattern.compile("/products/(\\d+)/recommendation"),
-//            // /budget/feedback/{userId} 패턴
-//            Pattern.compile("/budget/feedback/(\\d+)"),
-//            // /elasticsearch/payment/available/{userId} 패턴
-//            Pattern.compile("/elasticsearch/payment/available/(\\d+)")
+            Pattern.compile("/(?:api/)?users/(\\d+)(?:/.*)?")
     );
 
     // 쿼리 파라미터 목록
@@ -72,12 +63,6 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
         Long targetUserId = extractTargetUserId(request);
         log.debug("대상 사용자 ID: {}", targetUserId);
 
-        // ownerOnly 설정이 true이고 현재 사용자와 대상 사용자가 다르면 접근 거부
-        if (requiresUser.ownerOnly() && targetUserId != null && !targetUserId.equals(currentUserId)) {
-            log.warn("권한 없음: 현재 사용자 {}가 대상 사용자 {}의 리소스에 접근 시도", currentUserId, targetUserId);
-            throw new AccessDeniedException("다른 사용자의 자원에 접근할 권한이 없습니다.");
-        }
-
         return true;
     }
 
@@ -100,35 +85,14 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
     private Long extractUserIdFromPath(HttpServletRequest request) {
         String uri = request.getRequestURI();
 
-        // 경로에서 userId 추출
+        // /api/users/(숫자)
         for (Pattern pattern : userIdPatterns) {
             Matcher matcher = pattern.matcher(uri);
             if (matcher.matches() && matcher.groupCount() >= 1) {
                 try {
-                    String userIdStr = matcher.group(1);
-                    log.debug("URI 경로에서 userId 추출: {}, 패턴: {}", userIdStr, pattern.pattern());
-                    return Long.parseLong(userIdStr);
+                    return Long.parseLong(matcher.group(1));
                 } catch (NumberFormatException e) {
-                    log.debug("경로에서 추출한 userId 값이 숫자 변환에 실패했습니다: {}", e.getMessage());
-                }
-            }
-        }
-
-        // 패턴 탐색 (fallback)
-        String[] segments = uri.split("/");
-        for (int i = 0; i < segments.length; i++) {
-
-            // 숫자만 있는 세그먼트를 발견하면 확인
-            if (segments[i].matches("\\d+")) {
-
-                // 이전 세그먼트 resource 확인
-                if (i > 0 && isUserResourceIndicator(segments[i-1])) {
-                    try {
-                        log.debug("기본 방식으로 URI 경로에서 userId 추출: {}", segments[i]);
-                        return Long.parseLong(segments[i]);
-                    } catch (NumberFormatException e) {
-                        log.debug("경로에서 userId로 의심되는 값 변환 실패: {}", e.getMessage());
-                    }
+                    log.debug("경로 userId 파싱 실패: {}", e.getMessage());
                 }
             }
         }

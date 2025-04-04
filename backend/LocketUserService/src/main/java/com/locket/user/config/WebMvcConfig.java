@@ -27,13 +27,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userAuthorizationInterceptor)
-                .addPathPatterns("/pet/**");
-//                .addPathPatterns("/pet/**")
-//                .addPathPatterns("/api/users/**")
-//                .addPathPatterns("/products/**")
-//                .addPathPatterns("/budget/**")
-//                .addPathPatterns("/feedback/**")
-//                .addPathPatterns("/elasticsearch/payment/**");
+                .addPathPatterns("/api/users/pet/**");
+
 
 
 
