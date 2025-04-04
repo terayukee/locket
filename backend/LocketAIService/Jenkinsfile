@@ -3,7 +3,6 @@ pipeline {
 
     environment {
         DOCKER_IMAGE = 'spring-locket-ai-service'
-        SERVICE_NAME = 'locket-ai-service'
         DOCKER_PORT = 8500
 
         EC2_USER = credentials('EC2_USER')
@@ -52,26 +51,30 @@ pipeline {
 
         stage('Deploy to Docker Swarm') {
             steps {
-                echo '🚀 Deploying to Docker Swarm on EC2...'
+                echo '🚀 Deploying to Docker Swarm on EC2 (CREATE only)...'
                 withCredentials([
                     sshUserPrivateKey(
                         credentialsId: 'SSH_KEY',
                         keyFileVariable: 'EC2_SSH_KEY_FILE',
                         usernameVariable: 'EC2_USER'
                     ),
-                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP')
+                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP'),
+                    usernamePassword(
+                        credentialsId: 'DockerHub_PAT',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
+                    )
                 ]) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no -i \$EC2_SSH_KEY_FILE \$EC2_USER@\$EC2_IP '
-                            docker service create \
-                                --name \$SERVICE_NAME \
-                                --publish 8500:8500 \
-                                --env PORT=8500 \
+                    sh '''
+                        ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
+                            "docker service create \
+                                --name ${DOCKER_IMAGE} \
+                                --publish ${DOCKER_PORT}:${DOCKER_PORT} \
+                                --env PORT=${DOCKER_PORT} \
                                 --env EUREKA_SERVER=http://eureka-server:8761/eureka \
                                 --env SERVICE_NAME=LOCKET-AI-SERVICE \
-                                \$DOCKERHUB_USERNAME/\$DOCKER_IMAGE:latest
-                        '
-                    """
+                                ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest"
+                    '''
                 }
             }
         }
@@ -83,10 +86,10 @@ pipeline {
             cleanWs()
         }
         success {
-            echo '✅ LocketAIService 배포 성공!'
+            echo '✅ LocketAIService 최초 배포 성공 (create only) !'
         }
         failure {
-            echo '❌ 배포 실패. 로그 확인 필요.'
+            echo '❌ 최초 배포 실패. 로그 확인 필요.'
         }
     }
 }
