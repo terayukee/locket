@@ -11,6 +11,8 @@ import com.locket.user.exception.InvalidRequestException;
 import com.locket.user.exception.ProductNotFoundException;
 import com.locket.user.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +33,7 @@ public class ProductService {
     private final ProductUserPreferenceRepository productUserPreferenceRepository;
     private final ProductAlertNotificationService productAlertNotificationService;
     private final UserRepository userRepository;
+    private final Logger log = LoggerFactory.getLogger(ProductService.class);
 
     @Transactional(readOnly = true)
     public ProductListResponseDTO getProductsByCategory(Integer categoryId, Integer page, Integer size) {
@@ -53,10 +56,11 @@ public class ProductService {
                 .map(ProductSummaryDTO::fromEntity)
                 .collect(Collectors.toList());
 
-        System.out.println("카테고리 조회: " + categoryId);
-        System.out.println("페이지 번호: " + pageNumber + ", 페이지 사이즈: " + pageSize);
-        System.out.println("조회된 상품 수: " + productPage.getContent().size());
-        System.out.println("전체 카테고리 상품 수: " + productRepository.countByCategoryId(categoryId));
+        // 메소드 내부
+        log.debug("카테고리 조회: {}", categoryId);
+        log.debug("페이지 번호: {}, 페이지 사이즈: {}", pageNumber, pageSize);
+        log.debug("조회된 상품 수: {}", productPage.getContent().size());
+        log.debug("전체 카테고리 상품 수: {}", productRepository.countByCategoryId(categoryId));
 
         return ProductListResponseDTO.builder()
                 .category(categoryId)
@@ -110,19 +114,24 @@ public class ProductService {
 
     // 상품 찜하기
     @Transactional
-    public ProductLikeResponseDTO toggleProductLike(Integer productId, Long userId, Boolean isLiked) {
-        if (isLiked == null) {
-            throw new InvalidRequestException("isLiked 값은 필수입니다.");
-        }
-
+    public ProductLikeResponseDTO toggleProductLike(Integer productId, Long userId) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
         ProductUserPreference preference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
-                .orElse(new ProductUserPreference(null, product, userId, false, false, null));
+                .orElse(null);
 
-        preference.setLiked(isLiked);
+        boolean newLikeStatus;
+
+        if (preference == null) {
+            // 처음 찜
+            preference = new ProductUserPreference(null, product, userId, true, false, null);
+            newLikeStatus = true;
+        } else {
+            newLikeStatus = !preference.isLiked();
+            preference.setLiked(newLikeStatus);
+        }
 
         ProductUserPreference savedPreference = productUserPreferenceRepository.save(preference);
 
@@ -140,7 +149,11 @@ public class ProductService {
 
         // 페이지 처리
         int pageNumber = (page == null || page < 1) ? 0 : page - 1;
-        int pageSize = size;
+        int pageSize = (size == null || size <= 0) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
+
+        if (pageSize > PaginationConstants.MAX_PAGE_SIZE) {
+            pageSize = PaginationConstants.MAX_PAGE_SIZE;
+        }
 
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 

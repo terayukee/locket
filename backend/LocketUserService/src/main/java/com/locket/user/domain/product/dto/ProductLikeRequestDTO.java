@@ -9,5 +9,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ProductLikeRequestDTO {
     private Long userId;
-    private Boolean isLiked;
 }

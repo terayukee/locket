@@ -7,7 +7,10 @@ import lombok.Setter;
 import lombok.AllArgsConstructor;
 
 @Entity
-@Table(name = "product_user_preferences")
+@Table(
+        name = "product_user_preferences",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"product_id", "userId"})
+)
 @Getter
 @Setter
 @NoArgsConstructor
