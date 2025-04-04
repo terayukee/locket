@@ -8,7 +8,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ProductDetailResponse(
-    val alert: Boolean,
     val alertPrice: Int,
     val averagePrice: Int,
     val coupangUrl: String,
@@ -30,7 +29,6 @@ data class ProductDetailResponse(
     companion object : DataMapper<ProductDetailResponse, ProductDetailInfo> {
         override fun ProductDetailResponse.toDomainModel(): ProductDetailInfo {
             return ProductDetailInfo(
-                alert = this.alert,
                 alertPrice = this.alertPrice,
                 averagePrice = this.averagePrice,
                 coupangUrl = this.coupangUrl,

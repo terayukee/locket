@@ -9,6 +9,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
+import com.ssafy.locket.model.graph.Product
 import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -25,7 +26,7 @@ class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBind
 
 ) {
     private lateinit var productAdapter: ProductAdapter
-    private lateinit var productList: MutableList<ProductxInfo>
+    private lateinit var productList: MutableList<Product>
 
     //카테고리 번호 알기 위함
     var productId  = -1
@@ -51,12 +52,6 @@ class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBind
     fun initAdapter(){
         productList = mutableListOf()
         productAdapter = ProductAdapter(productList,findNavController(),R.id.action_categoryProductListFragment_to_productDetailFragment)
-        productList.add(ProductxInfo(1000))
-        productList.add(ProductxInfo(2000))
-        productList.add(ProductxInfo(3000))
-        productList.add(ProductxInfo(3200))
-        productList.add(ProductxInfo(3100))
-        productList.add(ProductxInfo(3040))
         binding.rvProductList.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.rvProductList.adapter = productAdapter
     }
@@ -73,6 +68,10 @@ class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBind
                 productViewModel.productCategoryInfo.collect { productCategory ->
                     if(productCategory is ProductCategoryListState.Success) {
                         binding.tvTitle.text = productCategory.productCategoryList.categoryName
+                        Log.d(TAG,productCategory.productCategoryList.products.toString())
+                        productList.clear()
+                        productList.addAll(productCategory.productCategoryList.products)
+                        productAdapter.notifyDataSetChanged()
                     }
                 }
             }

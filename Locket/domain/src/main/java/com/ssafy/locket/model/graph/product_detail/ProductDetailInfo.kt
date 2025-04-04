@@ -5,7 +5,6 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class ProductDetailInfo(
-    val alert: Boolean,
     val alertPrice: Int,
     val averagePrice: Int,
     val coupangUrl: String,

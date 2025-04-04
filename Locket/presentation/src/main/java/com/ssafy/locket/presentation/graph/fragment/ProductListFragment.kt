@@ -34,7 +34,7 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
 ) {
     private lateinit var productAdapter: ProductAdapter
     private lateinit var moneyHappyListAdapter: MoneyHappyAdapter
-    private lateinit var productList: MutableList<ProductxInfo>
+    private lateinit var productList: MutableList<Product>
     private lateinit var moneyHappyList: MutableList<Product>
 
     private val productViewModel: ProductViewModel by activityViewModels()
@@ -57,6 +57,10 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
 
         binding.btnRecommandMove.setOnClickListener {
             findNavController().navigate(R.id.action_productListFragment_to_recommendProductListFragment)
+        }
+        binding.ivSearch.setOnClickListener {
+            productViewModel.updateProductName(binding.etProductSearch.text.toString())
+            findNavController().navigate(R.id.action_productListFragment_to_searchProductListFragment)
         }
         binding.etProductSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
@@ -134,12 +138,7 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
         moneyHappyList = mutableListOf()
         productAdapter = ProductAdapter(productList,findNavController(),R.id.action_productListFragment_to_productDetailFragment)
         moneyHappyListAdapter = MoneyHappyAdapter(moneyHappyList,findNavController())
-        productList.add(ProductxInfo(1000))
-        productList.add(ProductxInfo(2000))
-        productList.add(ProductxInfo(3000))
-        productList.add(ProductxInfo(3200))
-        productList.add(ProductxInfo(3100))
-        productList.add(ProductxInfo(3040))
+
         binding.rvRecommanditemList.layoutManager = GridLayoutManager(requireContext(), 3)
         binding.rvRecommanditemList.adapter = productAdapter
         binding.rvMoneyHappyList.layoutManager = LinearLayoutManager(requireContext())

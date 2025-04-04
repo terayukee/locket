@@ -6,13 +6,11 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.github.mikephil.charting.charts.LineChart
 import com.github.mikephil.charting.components.*
 import com.github.mikephil.charting.data.Entry
@@ -27,14 +25,11 @@ import com.ssafy.locket.presentation.databinding.FragmentProductDetailBinding
 import com.ssafy.locket.presentation.graph.PriceMarkerView
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 import com.ssafy.locket.presentation.graph.viewmodel.ProductDetailState
-import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
 import com.ssafy.locket.presentation.graph.viewmodel.ProductViewModel
-import com.ssafy.locket.presentation.login.LoginViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import javax.inject.Inject
 
 private const val TAG = "CategoryProductListFrag"
@@ -43,7 +38,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     FragmentProductDetailBinding::bind,
     R.layout.fragment_product_detail
 ) {
-    private val viewModel: EditPriceViewModel by activityViewModels()
+    private val editViewModel: EditPriceViewModel by activityViewModels()
     val bottomSheet = EditPriceBottomSheetFragment.newInstance()
     //카테고리 번호 알기 위함
     var productId = -1
@@ -67,6 +62,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     override fun onPause() {
         super.onPause()
         productViewModel.productLikeClick(productId,isHeartFilled)
+        if(editViewModel.editprice.value==""||editViewModel.editprice.value=="설정 안됨"){
+            productViewModel.productAlert(productId,false,0)
+        }
+        else{
+            val price = editViewModel.editprice.value.replace(",", "").toInt()
+            productViewModel.productAlert(productId, true, price)
+        }
     }
 
     fun initData(){
@@ -101,7 +103,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
 
     fun initViewModel(){
         lifecycleScope.launchWhenStarted {
-            viewModel.editprice.collect { editprice ->
+            editViewModel.editprice.collect { editprice ->
                 if(editprice==""){
                     binding.tvSetting.text = "설정 안됨"
                 }
@@ -235,19 +237,35 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 productViewModel.productDetailInfo.collect { productDetail ->
-                    if (productDetail is ProductDetailState.Success) {
-                        launch { binding.tvProductTitle.text = productDetail.productDetailInfo.productName }
-                        launch { binding.tvPrice.text = CommonUtils.makeComma(productDetail.productDetailInfo.currentPrice.toInt()) + "원" }
-                        launch {
-                            Glide.with(requireContext())
-                                .load(productDetail.productDetailInfo.imageUrl)
-                                .thumbnail(0.1f)
-                                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                                .into(binding.ivProductImage)
+                    if(productDetail is ProductDetailState.Success) {
+                        Log.d(TAG,productDetail.productDetailInfo.toString())
+                        binding.tvProductTitle.text = productDetail.productDetailInfo.productName
+                        binding.tvPrice.text = productDetail.productDetailInfo.currentPrice
+                        Glide.with(requireContext())
+                            .load(productDetail.productDetailInfo.imageUrl)
+                            .placeholder(R.drawable.ic_all_empty_heart)
+                            .error(R.drawable.ic_all_empty_heart)
+                            .into(binding.ivProductImage)
+                        binding.tvReview.text = productDetail.productDetailInfo.reviewRating
+                        binding.tvHighestPrice.text= productDetail.productDetailInfo.highestPrice
+                        binding.tvDiscount.text = productDetail.productDetailInfo.discountRate
+                        setupLineChart(productDetail.productDetailInfo.priceHistory)
+                        isHeartFilled = productDetail.productDetailInfo.liked
+                        if(isHeartFilled){
+                            binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)
+                            binding.cvNotificationSetting.visibility = View.VISIBLE
+                            if(productDetail.productDetailInfo.alertPrice==0){
+                                binding.tvSetting.text ="설정 안됨"
+                                editViewModel.updatePrice("")
+                            }
+                            else{
+                                binding.tvSetting.text = CommonUtils.makeComma(productDetail.productDetailInfo.alertPrice)+"원"
+                                editViewModel.updatePrice(CommonUtils.makeComma(productDetail.productDetailInfo.alertPrice))
+                            }
                         }
-                        launch { binding.tvReview.text = productDetail.productDetailInfo.reviewRating }
-                        launch {
-                            setupLineChart(productDetail.productDetailInfo.priceHistory)
+                        else{
+                            binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)
+                            binding.cvNotificationSetting.visibility = View.INVISIBLE
                         }
                     }
                 }

@@ -8,14 +8,17 @@ import com.ssafy.locket.model.graph.Product
 import com.ssafy.locket.model.graph.ProductCategoryListInfo
 import com.ssafy.locket.model.graph.ProductHappyListInfo
 import com.ssafy.locket.model.graph.ProductLikeListInfo
+import com.ssafy.locket.model.graph.ProductSearchInfo
 import com.ssafy.locket.model.graph.product_detail.ProductDetailInfo
 import com.ssafy.locket.model.user.UserInfo
 import com.ssafy.locket.presentation.home.UserInfoState
+import com.ssafy.locket.usecase.product.ProductAlertUseCase
 import com.ssafy.locket.usecase.product.ProductCategoryUseCase
 import com.ssafy.locket.usecase.product.ProductDetailUseCase
 import com.ssafy.locket.usecase.product.ProductHappyListUseCase
 import com.ssafy.locket.usecase.product.ProductLikeClickUseCase
 import com.ssafy.locket.usecase.product.ProductLikeListUseCase
+import com.ssafy.locket.usecase.product.ProductSearchListUseCase
 import com.ssafy.locket.usecase.user.DeleteUserInfoUseCase
 import com.ssafy.locket.usecase.user.GetUserInfoUseCase
 import com.ssafy.locket.usecase.user.UpdateUserInfoUseCase
@@ -35,9 +38,10 @@ class ProductViewModel @Inject constructor(
     private val productLikeListUseCase: ProductLikeListUseCase,
     private val productHappyListUseCase: ProductHappyListUseCase,
     private val productDetailUseCase: ProductDetailUseCase,
-    private val productLikeClickUseCase: ProductLikeClickUseCase
+    private val productLikeClickUseCase: ProductLikeClickUseCase,
+    private val productAlertUseCase: ProductAlertUseCase,
+    private val productSearchListUseCase: ProductSearchListUseCase
 ) : ViewModel() {
-
     private val _productCategoryInfo = MutableStateFlow<ProductCategoryListState>(ProductCategoryListState.Initial)
     val productCategoryInfo: StateFlow<ProductCategoryListState> = _productCategoryInfo.asStateFlow()
 
@@ -53,6 +57,17 @@ class ProductViewModel @Inject constructor(
     private val _productLikeClickInfo = MutableStateFlow<ProductLikeClickState>(ProductLikeClickState.Initial)
     val productLikeClickInfo  :StateFlow<ProductLikeClickState> = _productLikeClickInfo.asStateFlow()
 
+    private val _productAlertInfo = MutableStateFlow<ProductAlertState>(ProductAlertState.Initial)
+    val productAlertInfo  :StateFlow<ProductAlertState> = _productAlertInfo.asStateFlow()
+
+    private val _productSearchInfo = MutableStateFlow<ProductSearchState>(ProductSearchState.Initial)
+    val productSearchInfo :StateFlow<ProductSearchState> = _productSearchInfo.asStateFlow()
+
+    private val _productName = MutableStateFlow("")
+    val productName: StateFlow<String> get() = _productName
+    fun updateProductName(searchProduct: String) {
+        _productName.value = searchProduct
+    }
 
     fun productCategorySetLoading() {
         _productCategoryInfo.value = ProductCategoryListState.Loading
@@ -71,6 +86,13 @@ class ProductViewModel @Inject constructor(
         _productLikeClickInfo.value = ProductLikeClickState.Loading
     }
 
+    fun productAlertSetLoading(){
+        _productAlertInfo.value = ProductAlertState.Loading
+    }
+
+    fun productSearchSetLoading(){
+        _productSearchInfo.value = ProductSearchState.Loading
+    }
 
     fun getCategoryList(category: Int, page: Int)
     {
@@ -194,6 +216,57 @@ class ProductViewModel @Inject constructor(
                 }
         }
     }
+
+    fun productAlert(productId: Int,isAlert: Boolean,alertPrice: Int)
+    {
+        viewModelScope.launch {
+            productAlertUseCase.invoke(productId,isAlert,alertPrice)
+                .onStart {
+                    productAlertSetLoading()}
+                .catch { e ->
+                    Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                }
+                .first()
+                .let { uiState ->
+                    when (uiState) {
+                        is ResponseStatus.Success -> {
+                            _productAlertInfo.value = ProductAlertState.Success(Unit)
+                            Log.d("ProductFragment", "Product: ${_productAlertInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _productAlertInfo.value  = ProductAlertState.Error(uiState.error.message)
+                            Log.d("ProductFragment", "error: ${ _productAlertInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+
+    fun productSearch(product_name: String,page: Int)
+    {
+        viewModelScope.launch {
+            productSearchListUseCase.invoke(product_name,page)
+                .onStart {
+                    productSearchSetLoading()}
+                .catch { e ->
+                    Log.e("ProductFragment", "Error fetching category list: ${e.message}")
+                }
+                .first()
+                .let { uiState ->
+                    when (uiState) {
+                        is ResponseStatus.Success -> {
+                            _productSearchInfo.value = ProductSearchState.Success(uiState.data)
+                            Log.d("ProductFragment", "Product: ${_productAlertInfo.value}")
+                        }
+                        is ResponseStatus.Error -> {
+                            _productSearchInfo.value  = ProductSearchState.Error(uiState.error.message)
+                            Log.d("ProductFragment", "error: ${ _productAlertInfo.value}")
+                        }
+                    }
+                }
+        }
+    }
+
 }
 
 sealed class ProductInfoState {
@@ -236,4 +309,18 @@ sealed class ProductLikeClickState {
     object Loading : ProductLikeClickState ()
     data class Success(val unit: Unit) : ProductLikeClickState ()
     data class Error(val message: String) : ProductLikeClickState ()
+}
+
+sealed class ProductAlertState {
+    object Initial : ProductAlertState ()
+    object Loading : ProductAlertState ()
+    data class Success(val unit: Unit) :ProductAlertState ()
+    data class Error(val message: String) : ProductAlertState ()
+}
+
+sealed class ProductSearchState {
+    object Initial : ProductSearchState ()
+    object Loading : ProductSearchState ()
+    data class Success(val productSearchInfo: ProductSearchInfo) :ProductSearchState ()
+    data class Error(val message: String) : ProductSearchState ()
 }

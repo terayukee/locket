@@ -7,6 +7,7 @@ import com.ssafy.locket.data.network.response.graph.ProductCategoryListResponse
 import com.ssafy.locket.data.network.response.graph.ProductDetailResponse
 import com.ssafy.locket.data.network.response.graph.ProductLikeListResponse
 import com.ssafy.locket.data.network.response.graph.ProductLikeResponse
+import com.ssafy.locket.data.network.response.graph.ProductSearchResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -32,4 +33,7 @@ interface ProductService {
 
     @GET("users/products/happiness")
     suspend fun getHappiness() :Response<PriceHappinessResponse>
+
+    @GET("users/products/search")
+    suspend fun getSearchProduct(@Query("product_name") product_name: String,@Query("page") page: Int) :Response<ProductSearchResponse>
 }

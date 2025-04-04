@@ -23,8 +23,8 @@ class MoneyHappyAdapter(var moneyHappyList: List<Product>, private val navContro
                 navController.navigate(R.id.action_productListFragment_to_productDetailFragment,bundle)
             }
             binding.tvProductName.text = product.productName
-            binding.tvDiscountRate.text= product.discountRate+"%"
-            binding.tvPrice.text= CommonUtils.makeComma(product.currentPrice.toInt())+"원"
+            binding.tvDiscountRate.text= product.discountRate
+            binding.tvPrice.text= product.currentPrice
             Glide.with(binding.root.context)
                 .load(product.imageUrl) // 이미지 URL
                 .placeholder(R.drawable.ic_all_empty_heart) // 로딩 중 표시할 이미지
