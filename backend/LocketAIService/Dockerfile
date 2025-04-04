@@ -23,7 +23,7 @@ COPY . .
 EXPOSE ${PORT}
 
 # ---- HEALTHCHECK ----
-HEALTHCHECK --interval=10s --timeout=5s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:8500/health || exit 1
 
 # ---- Start application ----
