@@ -68,7 +68,7 @@ def create_app() -> FastAPI:
     async def register_to_eureka():
         try:
             SERVICE_HOST_EXTERNAL = "j12d204.p.ssafy.io"
-            SERVICE_PORT_EXTERNAL = os.getenv("PORT")
+            SERVICE_PORT_EXTERNAL = os.getenv("PORT", "8500")
 
             home_page_url = f"http://{SERVICE_HOST_EXTERNAL}:{SERVICE_PORT_EXTERNAL}/"
             logger.info(f"📡 Registering {SERVICE_NAME} to Eureka at {EUREKA_SERVER} (env: {ENV})")
