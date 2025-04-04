@@ -92,7 +92,7 @@ springdoc:
 #    config-url: /v3/api-docs/swagger-config
 
 swagger:
-  server-url: https://j12d204.p.ssafy.io/api/elasticsearch
+  server-url: http://elasticsearch-service:8083
 
 locket:
   ai:

@@ -1,4 +1,4 @@
-package com.locket.elasticsearch.config;
+package com.locket.payment.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
