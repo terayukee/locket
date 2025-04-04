@@ -2,7 +2,7 @@ import requests
 import json
 from typing import Dict
 from app.config.settings import settings
-from ..exception.receipt_exception import OCRProcessingException
+from ..exception.receipt_exception import ReceiptException
 from ..constant.receipt_error import ReceiptErrorCode
 import logging
 
@@ -48,21 +48,17 @@ class OCRService:
             logger.info(f"OCR 응답 데이터: {json.dumps(result, indent=2, ensure_ascii=False)}")
 
             if response.status_code != 200:
-                raise OCRProcessingException(
-                    error_code=ReceiptErrorCode.OCR_API_ERROR,
-                    detail=f"OCR API Error: {result.get('error', {}).get('message', '알 수 없는 오류')}"
-                )
+                error_message = result.get('error', {}).get('message', '알 수 없는 오류')
+                logger.error(f"OCR API Error: {error_message}")
+                raise ReceiptException(error_code=ReceiptErrorCode.OCR_ERROR)
 
             return self._parse_receipt_data(result)
 
-        except OCRProcessingException:
+        except ReceiptException:
             raise
         except Exception as e:
             logger.error(f"OCR 처리 중 오류 발생: {str(e)}")
-            raise OCRProcessingException(
-                error_code=ReceiptErrorCode.OCR_PROCESSING_ERROR,
-                detail=f"OCR 처리 중 오류 발생: {str(e)}"
-            )
+            raise ReceiptException(error_code=ReceiptErrorCode.OCR_ERROR)
 
     def _parse_receipt_data(self, ocr_result: Dict) -> Dict:
         """OCR 결과 파싱"""
@@ -104,16 +100,10 @@ class OCRService:
 
         except KeyError as e:
             logger.error(f"필수 필드를 찾을 수 없습니다: {str(e)}")
-            raise OCRProcessingException(
-                error_code=ReceiptErrorCode.OCR_PARSING_ERROR,
-                detail=f"필수 필드를 찾을 수 없습니다: {str(e)}"
-            )
+            raise ReceiptException(error_code=ReceiptErrorCode.PARSING_ERROR)
         except Exception as e:
             logger.error(f"영수증 데이터 파싱 중 오류 발생: {str(e)}")
-            raise OCRProcessingException(
-                error_code=ReceiptErrorCode.OCR_PARSING_ERROR,
-                detail=f"영수증 데이터 파싱 중 오류 발생: {str(e)}"
-            )
+            raise ReceiptException(error_code=ReceiptErrorCode.PARSING_ERROR)
 
     def _mask_secret(self, headers: Dict) -> Dict:
         """민감한 헤더 정보 마스킹"""
