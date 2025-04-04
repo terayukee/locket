@@ -42,11 +42,12 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/api/user-profiles/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/users/pet(?:\\?.*)?$"),
-            Pattern.compile("^/api/users/test/auth/(\\d+)$")
-
-
-
-
+            Pattern.compile("^/api/users/test/auth/(\\d+)$"),
+            Pattern.compile("^/api/budget(?:/.*)?$"),
+            Pattern.compile("^/api/feedback/(\\d+)(?:/.*)?$"),
+            Pattern.compile("^/api/notifications(?:/.*)?$"),
+            Pattern.compile("^/api/products/liked(?:\\?.*userId=(\\d+))?$"),
+            Pattern.compile("^/api/products/(\\d+)/like$")
     );
 
     public JwtGatewayFilter(JwtUtil jwtUtil) {

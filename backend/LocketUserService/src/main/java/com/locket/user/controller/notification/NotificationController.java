@@ -1,6 +1,7 @@
 package com.locket.user.controller.notification;
 
 import com.locket.user.domain.notification.dto.UserAlertDto;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.notification.UserAlertService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -14,6 +15,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@RequiresUser(ownerOnly = true)
 @RequestMapping("/notifications")
 @Tag(
         name = "🔔 사용자 알림 API",

@@ -6,6 +6,7 @@ import com.locket.common.jwt.JwtUtil;
 import com.locket.user.exception.ErrorResponse;
 import com.locket.user.exception.ResourceNotFoundException;
 import com.locket.user.exception.UnauthorizedException;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.auth.KakaoService;
 import com.locket.user.service.auth.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
+@RequiresUser(ownerOnly = true)
 @Tag(name = "\uD83D\uDE4BUser", description = "회원가입, 로그인, 정보 조회/수정/삭제 API")
 public class UserController {
 
