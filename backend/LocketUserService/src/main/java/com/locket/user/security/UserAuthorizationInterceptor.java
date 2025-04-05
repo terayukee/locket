@@ -31,17 +31,9 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
     private final List<Pattern> userIdPatterns = Arrays.asList(
             Pattern.compile("^/(\\d+)(?:/.*)?$"),           // '/1'
             Pattern.compile("^/users/(\\d+)(?:/.*)?$"),     // '/users/1'
-            Pattern.compile("^/pet/(\\d+)(?:/.*)?$")        // '/pet/1'
-//            Pattern.compile("^/users/(\\d+)(?:/.*)?$"),
-//            Pattern.compile("^/pet/(\\d+)(?:/.*)?$")
-//            Pattern.compile("/(?:api/)?users/(\\d+)(?:/.*)?"),
-//            Pattern.compile("/(?:api/)?pet/(\\d+)(?:/.*)?"),
-//            Pattern.compile("/(?:api/)?budget/(\\d+)(?:/.*)?"),
-//            Pattern.compile("/(?:api/)?feedback/(\\d+)(?:/.*)?"),
-//            Pattern.compile("/(?:api/)?notifications(?:/.*)?"),
-//            Pattern.compile("/(?:api/)?products/liked"),
-//            Pattern.compile("/(?:api/)?products/(\\d+)/like"),
-//            Pattern.compile("/(?:api/)?products/(\\d+)/alert")
+            Pattern.compile("^/pet/(\\d+)(?:/.*)?$"),        // '/pet/1'
+            Pattern.compile("^/budget/(\\d+)(?:/.*)?$"),
+            Pattern.compile("^/feedback/(\\d+)(?:/.*)?$")
     );
 
     // 쿼리 파라미터 목록
