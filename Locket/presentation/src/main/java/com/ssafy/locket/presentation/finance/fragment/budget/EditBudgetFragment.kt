@@ -11,6 +11,7 @@ import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditBudgetBinding
 import java.text.DecimalFormat
+import java.time.LocalDate
 
 class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
     FragmentEditBudgetBinding::bind,
@@ -19,11 +20,16 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         validateInputForm(binding.etGoalBudget)
+
+        binding.tvTitle.text = getString(R.string.finance_budget_edit_title, LocalDate.now().monthValue)
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
+        }
+        
+        binding.btnBudgetSet.setOnClickListener { 
+            // TODO api 전송
         }
     }
 

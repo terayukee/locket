@@ -1,6 +1,5 @@
 package com.ssafy.locket.data.network.api
 
-import com.ssafy.locket.data.network.request.payment.CardValidationRequest
 import com.ssafy.locket.data.network.request.payment.PassswordVerifyRequest
 import com.ssafy.locket.data.network.request.payment.PaymentRequest
 import com.ssafy.locket.data.network.response.payment.CardListResponse
@@ -14,15 +13,15 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 internal interface PaymentService {
-    @POST("payment/nfc")
+    @POST("payment/api/payment/nfc")
     suspend fun pay(@Query("userId") userId: Long, @Body paymentRequest: PaymentRequest): Response<PaymentResponse>
 
-    @POST("payment/auth/verify-password")
+    @POST("payment/api/payment/auth/verify-password")
     suspend fun verifyPassword(@Query("userId") userId: Long, @Body passswordVerifyRequest: PassswordVerifyRequest): Response<PasswordVerifyResponse>
 
-    @GET("payment/cards")
+    @GET("payment/api/payment/cards")
     suspend fun getCards(@Query("userId") userId: Long): Response<CardListResponse>
 
-    @GET("payment/auth-info/fingerprint")
+    @GET("payment/api/payment/auth-info/fingerprint")
     suspend fun checkFingerPrintRegistered(@Query("userId") userId: Long): Response<CheckFingerprintResponse>
 }

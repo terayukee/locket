@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.Toast
 import com.ssafy.locket.presentation.databinding.ToastMultiLineCustomBinding
 import com.ssafy.locket.presentation.databinding.ToastSingleLineCustomBinding
+import java.math.BigDecimal
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -20,6 +21,18 @@ object CommonUtils {
     fun makeComma(num: Int): String {
         val comma = DecimalFormat("#,###")
         return comma.format(num)
+    }
+
+    fun makeCommaDecimal(num: BigDecimal): String {
+        val comma = DecimalFormat("#,###")
+        return comma.format(num)
+    }
+
+    fun dateformatYMDHMFromInt(year: Int, month: Int, day: Int):String{
+//        val format = SimpleDateFormat("yyyy.MM.dd. HH:mm", Locale.KOREA)
+//        format.timeZone = TimeZone.getTimeZone("Asia/Seoul")
+//        return format.format(time)
+        return "${year}.${month}.${day}."
     }
 
     //날짜 포맷 출력

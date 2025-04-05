@@ -102,18 +102,18 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        paymentRVAdapter.itemClickListener = object : PaymentRVAdapter.ItemClickListener {
-            override fun onClick(view: View, data: Payment, position: Int) {
-                receiptViewModel.setSelectedPaymentReceipt(data)
-                findNavController().navigate(R.id.receiptUploadDialog)
-            }
-        }
+//        paymentRVAdapter.itemClickListener = object : PaymentRVAdapter.ItemClickListener {
+//            override fun onClick(view: View, data: Payment, position: Int) {
+//                receiptViewModel.setSelectedPaymentReceipt(data)
+//                findNavController().navigate(R.id.receiptUploadDialog)
+//            }
+//        }
 
-        val tmpList : List<Payment> = listOf(
-            Payment(0, "쿠팡", "쇼핑", "내일배움카드", 3000, "2024.03.11"),
-            Payment(1, "쿠팡", "쇼핑", "내일배움카드3", 8000, "2024.03.10")
-        )
-        paymentRVAdapter.submitList(tmpList)
+//        val tmpList : List<Payment> = listOf(
+//            Payment(0, "쿠팡", "쇼핑", "내일배움카드", 3000, "2024.03.11"),
+//            Payment(1, "쿠팡", "쇼핑", "내일배움카드3", 8000, "2024.03.10")
+//        )
+//        paymentRVAdapter.submitList(tmpList)
     }
 
     fun initEvent(){

@@ -9,25 +9,26 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.locket.model.finance.Payment
+import com.ssafy.locket.model.payment_history.PaymentHistoryItem
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemPaymentBinding
 import com.ssafy.locket.presentation.utils.CommonUtils
 
 class PaymentRVAdapter(val type: String):
-    ListAdapter<Payment, PaymentRVAdapter.CustomViewHolder>(CustomComparator) {
+    ListAdapter<PaymentHistoryItem, PaymentRVAdapter.CustomViewHolder>(CustomComparator) {
     lateinit var itemClickListener: ItemClickListener
     private lateinit var context: Context
 
     interface ItemClickListener {
-        fun onClick(view: View, data: Payment, position: Int)
+        fun onClick(view: View, data: PaymentHistoryItem, position: Int)
     }
 
-    companion object CustomComparator : DiffUtil.ItemCallback<Payment>() {
-        override fun areItemsTheSame(oldItem: Payment, newItem: Payment): Boolean {
-            return oldItem.id == newItem.id
+    companion object CustomComparator : DiffUtil.ItemCallback<PaymentHistoryItem>() {
+        override fun areItemsTheSame(oldItem: PaymentHistoryItem, newItem: PaymentHistoryItem): Boolean {
+            return oldItem.hashCode() == newItem.hashCode()
         }
 
-        override fun areContentsTheSame(oldItem: Payment, newItem: Payment): Boolean {
+        override fun areContentsTheSame(oldItem: PaymentHistoryItem, newItem: PaymentHistoryItem): Boolean {
             return oldItem == newItem
         }
     }
@@ -35,7 +36,7 @@ class PaymentRVAdapter(val type: String):
     inner class CustomViewHolder(private val binding: ItemPaymentBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: Payment) {
+        fun bind(item: PaymentHistoryItem) {
             val categoryImg : Int = when(item.category) {
                 "shopping" -> R.drawable.ic_finance_category_shopping
                 "food" -> R.drawable.ic_finance_category_food
@@ -49,9 +50,9 @@ class PaymentRVAdapter(val type: String):
                 .load(categoryImg)
                 .placeholder(R.drawable.ic_finance_category_etc)
                 .into(binding.ivCategory)
-            binding.tvReceiptPlace.text = item.place
-            binding.tvReceiptDescription.text = context.getString(R.string.receipt_description, item.category, item.cardName, item.date)
-            binding.tvReceiptPrice.text = context.getString(R.string.receipt_price, CommonUtils.makeComma(item.price))
+            binding.tvReceiptPlace.text = item.storeName
+            binding.tvReceiptDescription.text = context.getString(R.string.receipt_description, item.category, item.cardName, CommonUtils.dateformatYMDHMFromInt(item.year, item.month, 23)) // TODO 현재는 임의의 day 넣어둠 추후에 변경
+            binding.tvReceiptPrice.text = context.getString(R.string.receipt_price, CommonUtils.makeCommaDecimal(item.totalAmount))
             binding.root.setOnClickListener {
                 if(type == "receipt") itemClickListener.onClick(it, item, adapterPosition)
             }

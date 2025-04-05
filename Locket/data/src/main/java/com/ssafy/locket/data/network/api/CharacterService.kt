@@ -23,7 +23,7 @@ internal interface CharacterService {
     @GET("users/pet/{userId}")
     suspend fun getCharacterInfo(@Path("userId") userId: Long): Response<CharacterInfoResponse>
 
-    @GET("users/pet/info/{userId}/rewards")
+    @GET("users/pet/{userId}/rewards")
     suspend fun getAllGifticons(@Path("userId") userId: Long): Response<GifticonListResponse>
 
     @POST("users/pet/{userId}/experience")
