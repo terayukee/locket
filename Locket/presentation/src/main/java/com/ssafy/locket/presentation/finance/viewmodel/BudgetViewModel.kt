@@ -6,11 +6,11 @@ import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.SetBudget
 import com.ssafy.locket.model.finance.budget.feedback.Feedback
+import com.ssafy.locket.model.finance.budget.feedback.ShortFeedback
 import com.ssafy.locket.model.finance.budget.status.BudgetStatus
-import com.ssafy.locket.model.payment_history.PaymentCalendar
 import com.ssafy.locket.usecase.budget.GetBudgetStatusUseCase
 import com.ssafy.locket.usecase.budget.SetBugetGoalUseCase
-import com.ssafy.locket.usecase.budget.getFeedbackUseCase
+import com.ssafy.locket.usecase.budget.getShortFeedbackUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -24,7 +24,7 @@ private const val TAG = "BudgetViewModel"
 class BudgetViewModel @Inject constructor(
     private val setBugetGoalUseCase: SetBugetGoalUseCase,
     private val getBudgetStatusUseCase: GetBudgetStatusUseCase,
-    private val getFeedbackUseCase: getFeedbackUseCase
+    private val getShortFeedbackUseCase: getShortFeedbackUseCase
 ): ViewModel() {
     private val _setBudgetGoal = MutableStateFlow<SetBudgetState>(SetBudgetState.Initial)
     val setBudgetGoal: StateFlow<SetBudgetState> = _setBudgetGoal
@@ -32,8 +32,8 @@ class BudgetViewModel @Inject constructor(
     private val _getBudgetStatus = MutableStateFlow<GetBudgetStatusState>(GetBudgetStatusState.Initial)
     val getBudgetStatus: StateFlow<GetBudgetStatusState> = _getBudgetStatus
 
-    private val _getFeedback = MutableStateFlow<GetFeedbackState>(GetFeedbackState.Initial)
-    val getFeedback: StateFlow<GetFeedbackState> = _getFeedback
+    private val _getShortFeedback = MutableStateFlow<GetShortFeedbackState>(GetShortFeedbackState.Initial)
+    val getShortFeedback: StateFlow<GetShortFeedbackState> = _getShortFeedback
 
     fun setBudgetGoal(amount: Int){
         viewModelScope.launch {
@@ -45,6 +45,7 @@ class BudgetViewModel @Inject constructor(
                 .collect{ status ->
                     when(status) {
                         is ResponseStatus.Success -> {
+                            Log.d(TAG,status.data.toString())
                             _setBudgetGoal.value = SetBudgetState.Success(status.data)
                         }
                         is ResponseStatus.Error -> {
@@ -75,9 +76,9 @@ class BudgetViewModel @Inject constructor(
         }
     }
 
-    fun getFeedback(year: Int, month: Int){
+    fun getShortFeedback(){
         viewModelScope.launch {
-            getFeedbackUseCase(year,month)
+            getShortFeedbackUseCase()
                 .onStart {  }
                 .catch { e ->
                     Log.d(TAG, "getMonthlyPaymentHistory: Error ${e.message}")
@@ -85,18 +86,15 @@ class BudgetViewModel @Inject constructor(
                 .collect{ status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            _getFeedback.value = GetFeedbackState.Success(status.data)
+                            _getShortFeedback.value = GetShortFeedbackState.Success(status.data)
                         }
                         is ResponseStatus.Error -> {
-                            _getFeedback.value = GetFeedbackState.Error(status.error.message)
+                            _getShortFeedback.value = GetShortFeedbackState.Error(status.error.message)
                         }
                     }
                 }
         }
     }
-
-
-
 }
 
 sealed class SetBudgetState{
@@ -111,9 +109,9 @@ sealed class GetBudgetStatusState{
     data class Success(val budgetStatus: BudgetStatus): GetBudgetStatusState()
     data class Error(val message: String): GetBudgetStatusState()
 }
-sealed class GetFeedbackState{
-    object Initial: GetFeedbackState()
-    object Loading: GetFeedbackState()
-    data class Success(val feedback: Feedback): GetFeedbackState()
-    data class Error(val message: String): GetFeedbackState()
+sealed class GetShortFeedbackState{
+    object Initial: GetShortFeedbackState()
+    object Loading: GetShortFeedbackState()
+    data class Success(val shortFeedback: ShortFeedback): GetShortFeedbackState()
+    data class Error(val message: String): GetShortFeedbackState()
 }

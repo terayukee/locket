@@ -1,6 +1,8 @@
 package com.ssafy.locket.data.di
 
+import com.ssafy.locket.data.network.api.AnalysisService
 import com.ssafy.locket.data.network.api.AuthService
+import com.ssafy.locket.data.network.api.BudgetService
 import com.ssafy.locket.data.network.api.CharacterService
 import com.ssafy.locket.data.network.api.NotificationService
 import com.ssafy.locket.data.network.api.PaymentHistoryService
@@ -50,17 +52,19 @@ internal class ApiModule {
         return retrofit.create(PaymentService::class.java)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideAnalysisService(retrofit: Retrofit): AnalysisService {
-//        return retrofit.create(AnalysisService::class.java)
-//    }
+    @Provides
+    @Singleton
+    fun provideAnalysisService(@InterceptorRetrofit retrofit: Retrofit): AnalysisService {
+        return retrofit.create(AnalysisService::class.java)
+    }
 //
-//    @Provides
-//    @Singleton
-//    fun provideBudgetService(retrofit: Retrofit): BudgetService {
-//        return retrofit.create(BudgetService::class.java)
-//    }
+    @Provides
+    @Singleton
+    fun provideBudgetService(
+    @NoInterceptorRetrofit retrofit: Retrofit)
+    : BudgetService {
+        return retrofit.create(BudgetService::class.java)
+    }
 //
 //
     @Provides

@@ -1,5 +1,6 @@
 package com.ssafy.locket.data.di
 
+import com.ssafy.locket.data.repository.analysis.AnalysisRepositoryImpl
 import com.ssafy.locket.data.repository.auth.AuthRepositoryImpl
 import com.ssafy.locket.data.repository.budget.BudgetRepositoryImpl
 import com.ssafy.locket.data.repository.graph.ProductRepositoryImpl
@@ -9,6 +10,7 @@ import com.ssafy.locket.data.repository.payment.PaymentRepositoryImpl
 import com.ssafy.locket.data.repository.payment_history.PaymentHistoryRepositoryImpl
 import com.ssafy.locket.data.repository.user.DataStoreRepositoryImpl
 import com.ssafy.locket.data.repository.user.UserRepositoryImpl
+import com.ssafy.locket.repository.analysis.AnalysisRepository
 import com.ssafy.locket.repository.product.ProductRepository
 import com.ssafy.locket.repository.auth.AuthRepository
 import com.ssafy.locket.repository.budget.BudgetRepository
@@ -81,4 +83,12 @@ internal abstract class RepositoryModule {
     abstract fun bindBudgetRepository(
         budgetRepositoryImpl: BudgetRepositoryImpl
     ): BudgetRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindAnalysisRepository(
+        analysisRepositoryImpl: AnalysisRepositoryImpl
+    ): AnalysisRepository
+
+
 }

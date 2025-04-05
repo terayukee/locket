@@ -28,7 +28,7 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
     FragmentEditBudgetBinding::bind,
     R.layout.fragment_edit_budget
 ) {
-    private val budgetViewModel : BudgetViewModel by viewModels()
+    private val budgetViewModel : BudgetViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,7 +43,9 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
         
         binding.btnBudgetSet.setOnClickListener { 
             // TODO api 전송
-            budgetViewModel.setBudgetGoal(binding.etGoalBudget.text.toString().toInt())
+            val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
+            budgetViewModel.setBudgetGoal(rawNumber.toInt())
+            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
         }
     }
 

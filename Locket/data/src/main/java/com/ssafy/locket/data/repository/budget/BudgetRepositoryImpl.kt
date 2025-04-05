@@ -6,9 +6,11 @@ import com.ssafy.locket.data.network.api.BudgetService
 import com.ssafy.locket.data.network.common.ApiResponse
 import com.ssafy.locket.data.network.common.ApiResponseHandler
 import com.ssafy.locket.data.network.common.ErrorResponse.Companion.toDomainModel
+import com.ssafy.locket.data.network.response.budget.ShortFeedbackResponse.Companion.toDomainModel
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.SetBudget
 import com.ssafy.locket.model.finance.budget.feedback.Feedback
+import com.ssafy.locket.model.finance.budget.feedback.ShortFeedback
 import com.ssafy.locket.model.finance.budget.status.BudgetStatus
 import com.ssafy.locket.repository.budget.BudgetRepository
 import kotlinx.coroutines.flow.Flow
@@ -63,16 +65,16 @@ class BudgetRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getFeedback(year: Int, month: Int): Flow<ResponseStatus<Feedback>> {
+    override suspend fun getShortFeedback(): Flow<ResponseStatus<ShortFeedback>> {
         return flow {
             ApiResponseHandler().handle {
                 val userId = dataStore.userId.first() ?: -1
-                budgetService.getFeedback(userId.toInt(),year,month)
+                budgetService.getShortFeedback(userId.toInt())
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {
                         Log.d("BudgetFragment",result.data.toString())
-                        emit(ResponseStatus.Success(result.data))
+                        emit(ResponseStatus.Success(result.data.toDomainModel()))
                     }
                     is ApiResponse.Error -> {
                         emit(ResponseStatus.Error(result.error.toDomainModel()))
@@ -81,5 +83,4 @@ class BudgetRepositoryImpl @Inject constructor(
             }.collect()
         }
     }
-
 }

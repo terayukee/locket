@@ -171,7 +171,11 @@
         android:id="@+id/editBudgetFragment"
         android:name="com.ssafy.locket.presentation.finance.fragment.budget.EditBudgetFragment"
         android:label="fragment_edit_budget"
-        tools:layout="@layout/fragment_edit_budget" />
+        tools:layout="@layout/fragment_edit_budget" >
+        <action
+            android:id="@+id/action_editBudgetFragment_to_financeFragment"
+            app:destination="@id/financeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/expenseAnalysisFragment"
         android:name="com.ssafy.locket.presentation.finance.fragment.analysis.ExpenseAnalysisFragment"
