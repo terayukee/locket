@@ -38,11 +38,11 @@ public class PaymentQueryController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<List<ReceiptPaymentDto>> getReceiptRegisterablePayments(
+    public ResponseEntity<ReceiptPaymentDto> getReceiptRegisterablePayments(
             @PathVariable(name = "userId") long userId
     ) {
         try {
-            List<ReceiptPaymentDto> payments = paymentQueryService.getReceiptRegisterablePayments(userId);
+            ReceiptPaymentDto payments = paymentQueryService.getReceiptRegisterablePayments(userId);
             return ResponseEntity.ok(payments);
         } catch (Exception e) {
             log.error("Failed to get receipt registerable payments for user {}: {}", userId, e.getMessage());
