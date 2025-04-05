@@ -1,9 +1,6 @@
 package com.locket.payment.controller.pay;
 
-import com.locket.payment.domain.pay.dto.CardInfoDto;
-import com.locket.payment.domain.pay.dto.PaymentPasswordRequest;
-import com.locket.payment.domain.pay.dto.PaymentRequest;
-import com.locket.payment.domain.pay.dto.PaymentResponse;
+import com.locket.payment.domain.pay.dto.*;
 import com.locket.payment.service.pay.PayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -17,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
@@ -221,4 +219,37 @@ public class PayController {
             ));
         }
     }
+
+    @GetMapping("/monthly-total")
+    @Operation(
+            summary = "📊 월간 총 결제 금액 조회",
+            description = "사용자 ID, 연도, 월을 기반으로 해당 월의 총 결제 금액을 반환합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "🟢 조회 성공"),
+            @ApiResponse(responseCode = "500", description = "🟠 서버 내부 오류")
+    })
+    public ResponseEntity<?> getMonthlyTotalAmount(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        try {
+            BigDecimal total = payService.getMonthlyTotalAmount(userId, year, month);
+            return ResponseEntity.ok(Map.of(
+                    "userId", userId,
+                    "year", year,
+                    "month", month,
+                    "totalAmount", total
+            ));
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body(Map.of(
+                    "status", 500,
+                    "message", "INTERNAL_ERROR",
+                    "error", e.getMessage()
+            ));
+        }
+    }
+
+
 }

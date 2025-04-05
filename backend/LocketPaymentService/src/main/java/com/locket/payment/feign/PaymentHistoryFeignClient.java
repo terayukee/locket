@@ -1,6 +1,7 @@
 package com.locket.payment.feign;
 
 import com.locket.payment.domain.pay.dto.CardMonthlyUsageDto;
+import com.locket.payment.domain.pay.dto.MonthPaymentDto;
 import com.locket.payment.dto.PaymentHistoryDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,4 +26,12 @@ public interface PaymentHistoryFeignClient {
             @RequestParam("year") int year,
             @RequestParam("month") int month
     );
+
+    @GetMapping("/payment/month")
+    List<MonthPaymentDto> getMonthPayments(
+            @RequestParam("userId") long userId,
+            @RequestParam("year") int year,
+            @RequestParam("month") int month
+    );
+
 }

@@ -393,4 +393,11 @@ public class PayService {
             throw new IllegalStateException("비밀번호 검증 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
+
+    public BigDecimal getMonthlyTotalAmount(long userId, int year, int month) {
+        List<MonthPaymentDto> paymentList = paymentHistoryFeignClient.getMonthPayments(userId, year, month);
+        return paymentList.stream()
+                .map(MonthPaymentDto::getTotalAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }
