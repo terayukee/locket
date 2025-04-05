@@ -10,6 +10,8 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class DayPaymentDto {
+    private String id;
+    private int day;
     private String paymentCategory;
     private String cardName;
     private String storeName;

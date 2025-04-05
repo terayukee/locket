@@ -93,13 +93,13 @@ public class PaymentQueryController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<List<MonthPaymentDto>> getMonthPayments(
+    public ResponseEntity<Map<String, Object>> getMonthPayments(
             @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month
     ) {
         List<MonthPaymentDto> result = paymentQueryService.getMonthPaymentData(userId, year, month);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(Map.of("payments", result));
     }
 
     @GetMapping("/day")
@@ -109,14 +109,14 @@ public class PaymentQueryController {
             @ApiResponse(responseCode = "400", description = "잘못된 요청"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<List<DayPaymentDto>> getDayPayments(
+    public ResponseEntity<Map<String, Object>> getDayPayments(
             @RequestParam long userId,
             @RequestParam int year,
             @RequestParam int month,
             @RequestParam int day
     ) {
         List<DayPaymentDto> result = paymentQueryService.getDayPaymentData(userId, year, month, day);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(Map.of("payments", result));
 
     }
 
