@@ -23,17 +23,13 @@ private const val TAG = "PaymentHistoryViewModel"
 @HiltViewModel
 class PaymentHistoryViewModel @Inject constructor(
     private val getMonthlyPaymentHistoryUseCase: GetMonthlyPaymentHistoryUseCase,
-    private val getMonthlyCalendarPaymentUseCase: GetMonthlyCalendarPaymentUseCase,
-    private val getDailyPaymentHistoryUseCase: GetDailyPaymentHistoryUseCase
+    private val getMonthlyCalendarPaymentUseCase: GetMonthlyCalendarPaymentUseCase
 ): ViewModel(){
     private val _monthlyPaymentHistory = MutableStateFlow<PaymentHistoryState>(PaymentHistoryState.Initial)
     val monthlyPaymentHistory: StateFlow<PaymentHistoryState> = _monthlyPaymentHistory
 
     private val _monthlyPaymentCalendar = MutableStateFlow<PaymentCalendarState>(PaymentCalendarState.Initial)
     val monthlyPaymentCalendar: StateFlow<PaymentCalendarState> = _monthlyPaymentCalendar
-
-    private val _dailyPaymentHistory = MutableStateFlow<DailyPaymentState>(DailyPaymentState.Initial)
-    val dailyPaymentHistory: StateFlow<DailyPaymentState> = _dailyPaymentHistory
 
     fun getMonthlyPaymentHistory(year: Int, month: Int){
         viewModelScope.launch {
@@ -74,45 +70,22 @@ class PaymentHistoryViewModel @Inject constructor(
                 }
         }
     }
-
-    fun getDailyPaymentHistory(year: Int, month: Int, day: Int){
-        viewModelScope.launch {
-            getDailyPaymentHistoryUseCase(year, month, day)
-                .onStart {  }
-                .catch { e ->
-                    Log.d(TAG, "getMonthlyPaymentCalendar: Error ${e.message}")
-                }
-                .collect{ status ->
-                    when(status) {
-                        is ResponseStatus.Success -> {
-                            _dailyPaymentHistory.value = DailyPaymentState.Success(status.data)
-                        }
-                        is ResponseStatus.Error -> {
-                            _dailyPaymentHistory.value = DailyPaymentState.Error(status.error.message)
-                        }
-                    }
-                }
-        }
-    }
 }
 
 sealed class PaymentHistoryState{
     object Initial: PaymentHistoryState()
-    object Loading: PaymentHistoryState()
     data class Success(val paymentMonthlyHistory: PaymentMonthlyHistory): PaymentHistoryState()
     data class Error(val message: String): PaymentHistoryState()
 }
 
 sealed class PaymentCalendarState{
     object Initial: PaymentCalendarState()
-    object Loading: PaymentCalendarState()
     data class Success(val paymentCalendar: PaymentCalendar): PaymentCalendarState()
     data class Error(val message: String): PaymentCalendarState()
 }
 
 sealed class DailyPaymentState{
     object Initial: DailyPaymentState()
-    object Loading: DailyPaymentState()
     data class Success(val paymentDailyHistory: PaymentDailyHistory): DailyPaymentState()
     data class Error(val message: String): DailyPaymentState()
 }
