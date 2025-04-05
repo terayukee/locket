@@ -1,4 +1,4 @@
-package com.ssafy.locket.usecase.character
+package com.ssafy.locket.usecase.home.character
 
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.CharacterInfo

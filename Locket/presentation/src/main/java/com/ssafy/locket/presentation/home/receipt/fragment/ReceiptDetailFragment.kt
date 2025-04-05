@@ -14,7 +14,6 @@ import com.ssafy.locket.presentation.databinding.FragmentReceiptDetailBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailRVAdapter
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
-import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptViewModel
 import kotlinx.coroutines.launch
 
 private const val TAG = "ReceiptDetailFragment"
@@ -23,7 +22,6 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
     R.layout.fragment_receipt_detail
 ) {
     private lateinit var receiptDetailRVAdapter: ReceiptDetailRVAdapter
-    private val receiptViewModel : ReceiptViewModel by activityViewModels()
     private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -31,21 +29,15 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
 
         initUI()
         initAdapter()
-
-        viewLifecycleOwner.lifecycleScope.launch { 
-            receiptViewModel.receiptDetail.collect {
-                Log.d(TAG, "onViewCreated: $it")
-            }
-        }
     }
 
     private fun initUI() {
         viewLifecycleOwner.lifecycleScope.launch {
-            receiptViewModel.receiptDetail.collect { uiState ->
-                if(uiState is ReceiptDetailState.Selected) {
-                    binding.tvStore.text = uiState.receiptDetail.itemName
-                }
-            }
+//            receiptViewModel.receiptDetail.collect { uiState ->
+//                if(uiState is ReceiptDetailState.Selected) {
+//                    binding.tvStore.text = uiState.receiptDetail.itemName
+//                }
+//            }
         }
 
         binding.btnEdit.setOnClickListener {
@@ -94,7 +86,7 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        receiptViewModel.clearSelectedPayment()
+//        receiptViewModel.clearSelectedPayment()
         receiptFileSelectionViewModel.clearSelectedType()
         receiptFileSelectionViewModel.clearSelectedReceiptFile()
     }

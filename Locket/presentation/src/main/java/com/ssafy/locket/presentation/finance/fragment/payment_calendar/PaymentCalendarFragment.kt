@@ -50,7 +50,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     private val paymentHistoryViewModel: PaymentHistoryViewModel by activityViewModels()
     private val selectedDayViewModel: SelectedDayViewModel by activityViewModels()
     private lateinit var dialog : PaymentCalendarBottomSheetFragment
-    private val format = DateTimeFormatter.ofPattern("yyyy.MM.dd")
+    private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
     
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -119,7 +119,6 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
     private fun bindDate(date: LocalDate, dayText: TextView, paymentText: TextView, isSelectable: Boolean) {
         dayText.text = date.dayOfMonth.toString()
-        if(date.dayOfMonth % 8 == 0) paymentText.text = resources.getString(R.string.finance_calendar_payment, CommonUtils.makeComma(18000))
         val fonts = arrayOf(R.font.pretendard_regular, R.font.pretendard_bold)
 
         if (isSelectable) {
@@ -134,6 +133,16 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                     dayText.apply {
                         setTextColor(resources.getColor(R.color.text))
                         typeface = ResourcesCompat.getFont(context, fonts[0])
+                    }
+                }
+            }
+            paymentHistoryViewModel.monthlyPaymentCalendar.value.let { uiState ->
+                if(uiState is PaymentCalendarState.Success) {
+                    val element = uiState.paymentCalendar.dailySpending.find { it.date == date.format(format) }
+                    if(element != null) {
+                        paymentText.apply {
+                            setText(getString(R.string.finance_calendar_payment,CommonUtils.makeComma(element.amount)))
+                        }
                     }
                 }
             }
@@ -175,6 +184,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                 selectedDayViewModel.selectedDayPayments.collect { uiState ->
                     when(uiState) {
                         is SelectedDayPaymentsState.Success -> {
+                            Log.d(TAG, "initUI: success")
                             dialog.show(childFragmentManager, "payment")
                         }
                         is SelectedDayPaymentsState.Error -> {
@@ -185,7 +195,6 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                 }
             }
         }
-
     }
 
     override fun onDestroyView() {

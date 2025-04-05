@@ -38,8 +38,9 @@ class SelectedDayViewModel @Inject constructor(
         viewModelScope.launch {
             getDailyPaymentHistoryUseCase(year, month, day)
                 .onStart {  }
-                .catch { e ->
-                    Log.d(TAG, "setSelectedDayPayments: ${e.message}")
+                .catch {e ->
+                    _selectedDayPayments.value = SelectedDayPaymentsState.Error(e.message ?: "Unknown Error")
+                    Log.e(TAG, "시스템 레벨 예외: ${e.stackTraceToString()}")
                 }
                 .collect { status ->
                     when(status) {

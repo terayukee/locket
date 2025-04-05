@@ -105,8 +105,8 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                     cardAdapter.setCards(cards)
                     setupDotIndicator(cards.size)
                 } else {
-                    binding.btnPassword.isEnabled = false
-                    binding.ivFingerprint.isEnabled = false
+                    binding.btnPassword.isEnabled = true
+                    binding.ivFingerprint.isEnabled = true
                 }
             }
         }
@@ -153,11 +153,13 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         })
         binding.ivFingerprint.setOnClickListener {
             btnClick = 1
+            Log.d(TAG, "initEvent: clicked btn1")
             selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
         binding.btnPassword.setOnClickListener {
             btnClick = 2
+            Log.d(TAG, "initEvent: clicked btn2")
             selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
@@ -246,11 +248,15 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         else{
             if(btnClick==1){
 //                initBiometrics()
+                Log.d(TAG, "checkNFCEnabled: btnclick1")
                 cardPaymentViewModel.checkFingerprintRegistered()
             }
             else if(btnClick==2){
+                Log.d(TAG, "checkNFCEnabled: btnclick2")
                 requireActivity().window.decorView.setBackgroundColor(Color.BLACK)
                 findNavController().navigate(R.id.action_cardPaymentFragment_to_paymentPasswordFragment)
+            } else {
+                Log.d(TAG, "checkNFCEnabled: else")
             }
         }
     }

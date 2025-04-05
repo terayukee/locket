@@ -1,16 +1,15 @@
-package com.ssafy.locket.usecase.character
+package com.ssafy.locket.usecase.home.character
 
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.CharacterInfo
-import com.ssafy.locket.model.home.character.GifticonList
 import com.ssafy.locket.repository.home.character.CharacterRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetAllGifticonsUseCase @Inject constructor(
+class CreateCharacterUseCase @Inject constructor(
     private val characterRepository: CharacterRepository
 ){
-    suspend operator fun invoke(): Flow<ResponseStatus<GifticonList>> {
-        return characterRepository.getAllGifticons()
+    suspend operator fun invoke(): Flow<ResponseStatus<CharacterInfo>> {
+        return characterRepository.createCharacter()
     }
 }
