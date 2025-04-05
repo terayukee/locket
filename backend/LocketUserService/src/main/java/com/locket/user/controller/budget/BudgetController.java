@@ -124,7 +124,6 @@ public class BudgetController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "SUCCESS"),
             @ApiResponse(responseCode = "404", description = "USER_NOT_FOUND"),
-            @ApiResponse(responseCode = "401", description = "UNAUTHORIZED"),
             @ApiResponse(responseCode = "500", description = "INTERNAL_SERVER_ERROR")
     })
     @GetMapping("/feedback/{userId}")

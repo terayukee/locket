@@ -1,39 +1,31 @@
 from enum import Enum
 
 class ReceiptErrorCode(Enum):
-    # 1000-1099: 파일 관련 에러
-    FILE_NOT_FOUND = 1001
-    FILE_TOO_LARGE = 1002
-    INVALID_FILE_TYPE = 1003
-    INVALID_IMAGE_SIZE = 1004
+    # 400 에러 (1000-1499)
+    FILE_NOT_FOUND = 1001        # 파일 누락
+    INVALID_EXTENSION = 1002     # 잘못된 확장자
+    EMPTY_FILE = 1003           # 빈 파일
+    FILE_TOO_LARGE = 1004       # 파일 크기 초과
+    LOW_RESOLUTION = 1005       # 낮은 해상도
+    CORRUPTED_FILE = 1006       # 파일 손상
+    PDF_TOO_MANY_PAGES = 1007   # PDF 페이지 초과
 
-    # 1100-1199: OCR 관련 에러
-    OCR_PROCESSING_ERROR = 1101
-    OCR_PARSING_ERROR = 1102
-    OCR_API_ERROR = 1103
-
-    # 1200-1299: 분류 관련 에러
-    CLASSIFICATION_INIT_ERROR = 1201
-    CLASSIFICATION_ERROR = 1202
-    CLASSIFICATION_MISMATCH_ERROR = 1203
-    CLASSIFICATION_INVALID_CATEGORY = 1204
-    CLASSIFICATION_PARSE_ERROR = 1205
+    # 500 에러 (1500-1999)
+    OCR_ERROR = 1501            # OCR 처리 실패
+    PARSING_ERROR = 1502        # 데이터 파싱 실패
+    CLASSIFICATION_ERROR = 1503  # 분류 처리 실패
 
 class ReceiptErrorMessage(Enum):
-    # 파일 관련 메시지
-    FILE_NOT_FOUND = "파일이 업로드되지 않았습니다"
-    FILE_TOO_LARGE = "파일 크기가 제한을 초과합니다"
-    INVALID_FILE_TYPE = "지원하지 않는 파일 형식입니다"
-    INVALID_IMAGE_SIZE = "이미지 해상도가 너무 낮습니다"
+    # 400 에러 메시지
+    FILE_NOT_FOUND = "파일이 없습니다"
+    INVALID_EXTENSION = "지원하지 않는 파일 형식입니다"
+    EMPTY_FILE = "파일이 비어있습니다"
+    FILE_TOO_LARGE = "파일 크기가 5MB를 초과합니다"
+    LOW_RESOLUTION = "이미지 해상도가 너무 낮습니다"
+    CORRUPTED_FILE = "파일이 손상되었습니다"
+    PDF_TOO_MANY_PAGES = "PDF는 1페이지만 처리 가능합니다"
 
-    # OCR 관련 메시지
-    OCR_PROCESSING_ERROR = "OCR 처리 중 오류가 발생했습니다"
-    OCR_PARSING_ERROR = "영수증 데이터 파싱 중 오류가 발생했습니다"
-    OCR_API_ERROR = "OCR API 호출 중 오류가 발생했습니다"
-
-    # 분류 관련 메시지
-    CLASSIFICATION_INIT_ERROR = "분류 서비스 초기화 중 오류가 발생했습니다"
-    CLASSIFICATION_ERROR = "품목 분류 중 오류가 발생했습니다"
-    CLASSIFICATION_MISMATCH_ERROR = "품목 수와 카테고리 수가 일치하지 않습니다"
-    CLASSIFICATION_INVALID_CATEGORY = "유효하지 않은 카테고리입니다"
-    CLASSIFICATION_PARSE_ERROR = "분류 결과 파싱 중 오류가 발생했습니다"
+    # 500 에러 메시지
+    OCR_ERROR = "영수증 인식 처리에 실패했습니다"
+    PARSING_ERROR = "데이터 추출에 실패했습니다"
+    CLASSIFICATION_ERROR = "품목 분류에 실패했습니다"

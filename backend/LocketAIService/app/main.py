@@ -1,7 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from py_eureka_client import eureka_client
-from .api import receipt, category, feedback
+from starlette.responses import JSONResponse
+from datetime import datetime
+from app.common.exception.base_exception import BaseException
+from app.common.constant.status import StatusCode, CommonErrorMessage
+
+from .api import receipt, category, feedback #, health
 import logging
 import os
 import fasttext  # 모델 로딩용
@@ -29,8 +35,49 @@ def create_app() -> FastAPI:
         title="Locket AI Service",
         version="1.0.0",
         docs_url="/docs",
-        redoc_url="/redoc"
+        redoc_url="/redoc",
+        responses={422: {"model": None}} # 422 에러 코드 사용하지 않으므로 숨김
     )
+
+    # 기존 BaseException 핸들러
+    @app.exception_handler(BaseException)
+    async def base_exception_handler(request, exc: BaseException):
+        return JSONResponse(
+            status_code=exc.status_code,
+            content={
+                "status": exc.status_code,
+                "error": exc.error_code,
+                "message": exc.message,
+                "timestamp": exc.timestamp
+            }
+        )
+
+    # 새로운 RequestValidationError 핸들러
+    @app.exception_handler(RequestValidationError)
+    async def validation_exception_handler(request: Request, exc: RequestValidationError):
+        return JSONResponse(
+            status_code=400,  # 422 대신 400 사용
+            content={
+                "status": 400,
+                "error": "BAD_REQUEST",
+                "message": "잘못된 요청입니다",
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            }
+        )
+
+    # 처리되지 않은 예외를 위한 핸들러
+    @app.exception_handler(Exception)
+    async def global_exception_handler(request: Request, exc: Exception):
+        logger.error(f"처리되지 않은 예외 발생: {str(exc)}")
+        return JSONResponse(
+            status_code=StatusCode.INTERNAL_ERROR.value,
+            content={
+                "status": StatusCode.INTERNAL_ERROR.value,
+                "error": "INTERNAL_ERROR",
+                "message": CommonErrorMessage.INTERNAL_SERVER_ERROR.value,
+                "timestamp": datetime.utcnow().isoformat() + "Z"
+            }
+        )
 
     # CORS 설정
     app.add_middleware(
@@ -91,3 +138,6 @@ if __name__ == "__main__":
     import uvicorn
     logger.info(f"🚀 Starting {SERVICE_NAME} on port {SERVICE_PORT} (env: {ENV})")
     uvicorn.run("app.main:app", host="0.0.0.0", port=SERVICE_PORT, reload=True)
+
+
+

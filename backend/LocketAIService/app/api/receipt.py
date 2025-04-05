@@ -1,15 +1,12 @@
 from fastapi import APIRouter, UploadFile, File
 
+from app.schema.error.model import ErrorResponse
 from ..domain.receipt.constant.receipt_error import ReceiptErrorCode
 from ..domain.receipt.service.ocr import OCRService
 from ..domain.receipt.service.classifier import ItemClassifier
 from ..domain.receipt.dto.receipt_dto import ReceiptResponse
 from ..common.core.validator import FileValidator
-from ..domain.receipt.exception.receipt_exception import (
-    FileValidationException,
-    OCRProcessingException,
-    ClassificationException
-)
+from ..domain.receipt.exception.receipt_exception import ReceiptException
 import base64
 from io import BytesIO
 from pdf2image import convert_from_bytes
@@ -59,9 +56,8 @@ async def _process_receipt(image_data: str) -> ReceiptResponse:
             categoryAmount=category_amount
         )
 
-    except (OCRProcessingException, ClassificationException) as e:
-        logger.error(f"영수증 처리 중 오류 발생: {str(e)}")
-        raise e
+    except ReceiptException:
+        raise
 
 @router.post(
     "/camera/{transaction_id}",
@@ -90,8 +86,107 @@ async def _process_receipt(image_data: str) -> ReceiptResponse:
                 }
             }
         },
-        400: {"description": "잘못된 요청"},
-        500: {"description": "서버 오류"}
+        400: {
+            "model": ErrorResponse,
+            "description": "잘못된 요청",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "file_not_found": {
+                            "summary": "파일 누락",
+                            "value": {
+                                "status": 400,
+                                "error": "FILE_NOT_FOUND",
+                                "message": "파일이 없습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "invalid_extension": {
+                            "summary": "잘못된 확장자",
+                            "value": {
+                                "status": 400,
+                                "error": "INVALID_EXTENSION",
+                                "message": "지원하지 않는 파일 형식입니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "empty_file": {
+                            "summary": "빈 파일",
+                            "value": {
+                                "status": 400,
+                                "error": "EMPTY_FILE",
+                                "message": "파일이 비어있습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "file_too_large": {
+                            "summary": "파일 크기 초과",
+                            "value": {
+                                "status": 400,
+                                "error": "FILE_TOO_LARGE",
+                                "message": "파일 크기가 5MB를 초과합니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "low_resolution": {
+                            "summary": "낮은 해상도",
+                            "value": {
+                                "status": 400,
+                                "error": "LOW_RESOLUTION",
+                                "message": "이미지 해상도가 너무 낮습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "corrupted_file": {
+                            "summary": "파일 손상",
+                            "value": {
+                                "status": 400,
+                                "error": "CORRUPTED_FILE",
+                                "message": "파일이 손상되었습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        500: {
+            "model": ErrorResponse,
+            "description": "서버 오류",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "ocr_error": {
+                            "summary": "OCR 처리 실패",
+                            "value": {
+                                "status": 500,
+                                "error": "OCR_ERROR",
+                                "message": "영수증 인식 처리에 실패했습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "parsing_error": {
+                            "summary": "데이터 파싱 실패",
+                            "value": {
+                                "status": 500,
+                                "error": "PARSING_ERROR",
+                                "message": "데이터 추출에 실패했습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "classification_error": {
+                            "summary": "분류 처리 실패",
+                            "value": {
+                                "status": 500,
+                                "error": "CLASSIFICATION_ERROR",
+                                "message": "품목 분류에 실패했습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
     summary="영수증 이미지 OCR + 품목 카테고리 분류",
     description="이미지 파일을 OCR 처리하고, 구매 품목 별 카테고리 분류"
@@ -103,7 +198,7 @@ async def process_receipt_from_camera(
     logger.info(f"카메라 영수증 처리 시작: transaction_id={transaction_id}")
     try:
         if not file:
-            raise FileValidationException(
+            raise ReceiptException(
                 error_code=ReceiptErrorCode.FILE_NOT_FOUND,
                 detail="파일이 업로드되지 않았습니다"
             )
@@ -118,8 +213,8 @@ async def process_receipt_from_camera(
 
         return await _process_receipt(image_data)
 
-    except FileValidationException as e:
-        logger.error(f"파일 검증 실패: {str(e)}")
+    except ReceiptException as e:
+        logger.error(f"영수증 처리 실패: {str(e)}")
         raise e
 
 @router.post(
@@ -149,8 +244,107 @@ async def process_receipt_from_camera(
                 }
             }
         },
-        400: {"description": "잘못된 요청"},
-        500: {"description": "서버 오류"}
+        400: {
+            "model": ErrorResponse,
+            "description": "잘못된 요청",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "file_not_found": {
+                            "summary": "파일 누락",
+                            "value": {
+                                "status": 400,
+                                "error": "FILE_NOT_FOUND",
+                                "message": "파일이 없습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "invalid_extension": {
+                            "summary": "잘못된 확장자",
+                            "value": {
+                                "status": 400,
+                                "error": "INVALID_EXTENSION",
+                                "message": "지원하지 않는 파일 형식입니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "empty_file": {
+                            "summary": "빈 파일",
+                            "value": {
+                                "status": 400,
+                                "error": "EMPTY_FILE",
+                                "message": "파일이 비어있습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "file_too_large": {
+                            "summary": "파일 크기 초과",
+                            "value": {
+                                "status": 400,
+                                "error": "FILE_TOO_LARGE",
+                                "message": "파일 크기가 5MB를 초과합니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "corrupted_file": {
+                            "summary": "파일 손상",
+                            "value": {
+                                "status": 400,
+                                "error": "CORRUPTED_FILE",
+                                "message": "파일이 손상되었습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "pdf_too_many_pages": {
+                            "summary": "PDF 페이지 초과",
+                            "value": {
+                                "status": 400,
+                                "error": "PDF_TOO_MANY_PAGES",
+                                "message": "PDF는 1페이지만 처리 가능합니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        500: {
+            "model": ErrorResponse,
+            "description": "서버 오류",
+            "content": {
+                "application/json": {
+                    "examples": {
+                        "ocr_error": {
+                            "summary": "OCR 처리 실패",
+                            "value": {
+                                "status": 500,
+                                "error": "OCR_ERROR",
+                                "message": "영수증 인식 처리에 실패했습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "parsing_error": {
+                            "summary": "데이터 파싱 실패",
+                            "value": {
+                                "status": 500,
+                                "error": "PARSING_ERROR",
+                                "message": "데이터 추출에 실패했습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        },
+                        "classification_error": {
+                            "summary": "분류 처리 실패",
+                            "value": {
+                                "status": 500,
+                                "error": "CLASSIFICATION_ERROR",
+                                "message": "품목 분류에 실패했습니다",
+                                "timestamp": "2024-03-14T06:30:00.000Z"
+                            }
+                        }
+                    }
+                }
+            }
+        }
     },
     summary="PDF OCR + 품목 카테고리 분류",
     description="거래명세표(PDF)를 OCR 처리하고, 구매 품목 별 카테고리 분류"
@@ -162,7 +356,7 @@ async def process_receipt_pdf(
     logger.info(f"PDF 거래명세표 처리 시작: transaction_id={transaction_id}")
     try:
         if not file:
-            raise FileValidationException(
+            raise ReceiptException(
                 error_code=ReceiptErrorCode.FILE_NOT_FOUND,
                 detail="파일이 업로드되지 않았습니다"
             )
@@ -176,8 +370,8 @@ async def process_receipt_pdf(
         images = convert_from_bytes(contents)
 
         if not images:
-            raise FileValidationException(
-                error_code=ReceiptErrorCode.INVALID_FILE_TYPE,
+            raise ReceiptException(
+                error_code=ReceiptErrorCode.CORRUPTED_FILE,
                 detail="PDF를 이미지로 변환할 수 없습니다"
             )
 
@@ -195,6 +389,6 @@ async def process_receipt_pdf(
 
         return await _process_receipt(image_data)
 
-    except FileValidationException as e:
-        logger.error(f"파일 검증 실패: {str(e)}")
+    except ReceiptException as e:
+        logger.error(f"영수증 처리 실패: {str(e)}")
         raise e
