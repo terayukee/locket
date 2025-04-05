@@ -138,4 +138,40 @@ public class PaymentQueryController {
         ));
     }
 
+    @GetMapping("/month/total")
+    @Operation(
+            summary = "월 단위 총 결제 금액 조회",
+            description = "사용자 ID, 연도, 월을 기반으로 해당 월 전체 결제 금액을 반환합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "400", description = "잘못된 요청"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<Map<String, Object>> getMonthlyTotalAmount(
+            @RequestParam long userId,
+            @RequestParam int year,
+            @RequestParam int month
+    ) {
+        try {
+            List<MonthPaymentDto> result = paymentQueryService.getMonthPaymentData(userId, year, month);
+            BigDecimal totalAmount = result.stream()
+                    .map(MonthPaymentDto::getTotalAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            return ResponseEntity.ok(Map.of(
+                    "userId", userId,
+                    "year", year,
+                    "month", month,
+                    "totalAmount", totalAmount
+            ));
+        } catch (Exception e) {
+            log.error("Error while calculating monthly total amount for user {}: {}", userId, e.getMessage());
+            return ResponseEntity.status(500).body(Map.of(
+                    "error", "서버 내부 오류",
+                    "message", e.getMessage()
+            ));
+        }
+    }
+
 }
