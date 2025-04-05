@@ -97,9 +97,6 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP "
                             docker service create \
                                         --name ${DOCKER_SERVICE_NAME} \
-                                        --replicas 1 \
-                                        --network spring-locket_default \
-                                        --publish 8083:8080 \
                                         --env SPRING_PROFILES_ACTIVE=prod \
                                         --env ELASTICSEARCH_URIS=$ELASTICSEARCH_URIS \
                                         --env ELASTICSEARCH_USERNAME=$ELASTICSEARCH_USERNAME \
