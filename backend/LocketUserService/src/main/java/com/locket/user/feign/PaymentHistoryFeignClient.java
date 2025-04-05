@@ -8,7 +8,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 
-@FeignClient(name = "elasticsearch-service", contextId = "paymentHistoryClient")
+//@FeignClient(name = "elasticsearch-service", contextId = "paymentHistoryClient")
+@FeignClient(
+        name = "elasticsearch-service",
+        contextId = "paymentHistoryClient",
+        url = "http://172.26.5.222:8083" // 실제 컨테이너 IP 및 포트
+)
 public interface PaymentHistoryFeignClient {
 
     @GetMapping("/payment/history")
