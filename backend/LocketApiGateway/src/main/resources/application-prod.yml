@@ -37,7 +37,8 @@ spring:
           order: 10
 
         - id: elasticsearch-service
-          uri: lb://ELASTICSEARCH-SERVICE
+#          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://172.26.5.222:8083
           predicates:
             - Path=/api/elasticsearch/**
           filters:
