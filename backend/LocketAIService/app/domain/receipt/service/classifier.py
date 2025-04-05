@@ -105,8 +105,20 @@ class ItemClassifier:
     def _parse_response(self, response: str) -> List[str]:
         """LLM 응답을 파싱하여 카테고리 리스트 반환"""
         response = response.strip()
+
+        # 단일 카테고리인 경우 처리
         if '|' not in response:
-            logger.error(f"잘못된 응답 형식입니다: {response}")
+            if response in self.CATEGORIES:  # 유효한 카테고리인지 확인
+                return [response]
+            logger.error(f"잘못된 응답 형식 또는 카테고리입니다: {response}")
             raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
 
-        return [category.strip() for category in response.split('|')]
+        # 여러 카테고리인 경우 처리
+        categories = [category.strip() for category in response.split('|')]
+
+        # 모든 카테고리가 유효한지 확인
+        if not all(category in self.CATEGORIES for category in categories):
+            logger.error(f"잘못된 카테고리가 포함되어 있습니다: {categories}")
+            raise ReceiptException(error_code=ReceiptErrorCode.CLASSIFICATION_ERROR)
+
+        return categories

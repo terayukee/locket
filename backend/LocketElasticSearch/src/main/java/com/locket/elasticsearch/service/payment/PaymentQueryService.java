@@ -114,7 +114,7 @@ public class PaymentQueryService {
      * 결제 상태가 'SUCCESS'이고 영수증이 등록되지 않은(receiptUploaded=false) 내역만 반환
      * @throws IllegalArgumentException 유효하지 않은 userId가 입력된 경우
      */
-    public List<ReceiptPaymentDto> getReceiptRegisterablePayments(Long userId) {
+    public ReceiptPaymentDto getReceiptRegisterablePayments(Long userId) {
         if (userId == null) {
             throw new IllegalArgumentException("userId는 null일 수 없습니다.");
         }
@@ -125,8 +125,8 @@ public class PaymentQueryService {
                 false
         );
 
-        return payments.stream()
-                .map(payment -> ReceiptPaymentDto.builder()
+        List<ReceiptPaymentDto.Receipt> receipts = payments.stream()
+                .map(payment -> ReceiptPaymentDto.Receipt.builder()
                         .transactionId(payment.getTransactionId())
                         .storeName(payment.getStoreName())
                         .paymentCategory(payment.getPaymentCategory())
@@ -138,6 +138,10 @@ public class PaymentQueryService {
                         .amount(payment.getTotalAmount().intValue())
                         .build())
                 .collect(Collectors.toList());
+
+        return ReceiptPaymentDto.builder()
+                .receipts(receipts)
+                .build();
     }
 
 
