@@ -32,7 +32,6 @@ import java.util.concurrent.TimeUnit;
 @RestController
 @RequiredArgsConstructor
 @Slf4j
-@RequiresUser(ownerOnly = true)
 @Tag(name = "\uD83D\uDE4BUser", description = "회원가입, 로그인, 정보 조회/수정/삭제 API")
 public class UserController {
 
@@ -220,6 +219,7 @@ public class UserController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = true)
     @GetMapping("/{user_id}")
     public ResponseEntity<UserDto> getUserInfo(@PathVariable("user_id") Long pathUserId) {
         User user = userService.findById(pathUserId);
@@ -276,6 +276,7 @@ public class UserController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = true)
     @PatchMapping("/{user_id}")
     public ResponseEntity<UserDto> updateUser(
             @PathVariable("user_id") Long userId,
@@ -335,6 +336,7 @@ public class UserController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = true)
     @DeleteMapping("/{user_id}")
     public ResponseEntity<SuccessResponse> deleteUser(@PathVariable("user_id") Long userId) {
         userService.deleteUser(userId);
@@ -462,6 +464,7 @@ public class UserController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = true)
     public ResponseEntity<TokenRefreshResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
         String refreshToken = request.getRefreshToken();
 

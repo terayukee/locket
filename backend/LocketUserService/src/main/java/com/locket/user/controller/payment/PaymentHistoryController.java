@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/payment/history")
 @RequiredArgsConstructor
-@RequiresUser(ownerOnly = true)
 public class PaymentHistoryController {
 
 }
