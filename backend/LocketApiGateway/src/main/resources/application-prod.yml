@@ -42,7 +42,7 @@ spring:
             - Path=/api/elasticsearch/**
           filters:
             - RewritePath=/api/elasticsearch/(?<segment>/?.*), /${segment}
-          #            - RemoveRequestHeader=Host
+            - RemoveRequestHeader=Host
           order: 10
 
         - id: locket-ai-service
