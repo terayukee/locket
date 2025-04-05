@@ -3,7 +3,6 @@ package com.ssafy.locket.presentation.home.receipt.fragment
 import android.app.Activity
 import android.content.Intent
 import android.net.Uri
-import com.ssafy.locket.presentation.finance.adapter.PaymentRVAdapter
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -16,14 +15,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ssafy.locket.model.finance.Payment
+import com.ssafy.locket.model.home.receipt.Receipt
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentReceiptListBinding
+import com.ssafy.locket.presentation.home.receipt.adapter.AvailableReceiptAdapter
 import com.ssafy.locket.presentation.home.receipt.viewmodel.FileTypeSelectionUiState
+import com.ssafy.locket.presentation.home.receipt.viewmodel.PaymentReceiptListState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionUiState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
-import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptViewModel
+import com.ssafy.locket.presentation.home.receipt.viewmodel.SelectedReceiptState
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -34,9 +35,8 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
     FragmentReceiptListBinding::bind,
     R.layout.fragment_receipt_list
 ) {
-    private lateinit var paymentRVAdapter: PaymentRVAdapter
+    private lateinit var availableReceiptAdapter: AvailableReceiptAdapter
     private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
-    private val receiptViewModel : ReceiptViewModel by activityViewModels()
     private lateinit var file: File
     private lateinit var currentPhotoPath: String
 
@@ -45,6 +45,16 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
 
         initEvent()
         initAdapter()
+
+        receiptFileSelectionViewModel.getAllAvailableReceipts()
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            receiptFileSelectionViewModel.receiptList.collect { uiState ->
+                if(uiState is PaymentReceiptListState.Success) {
+                    availableReceiptAdapter.submitList(uiState.paymentReceiptList)
+                }
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             receiptFileSelectionViewModel.selectedType.collect { uiState ->
@@ -62,7 +72,22 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
             receiptFileSelectionViewModel.receiptFileSelectionUiState.collect { uiState ->
                 if(uiState is ReceiptFileSelectionUiState.Success) {
                     val uri = uiState.uri
-                    Log.d(TAG, "onViewCreated: uri")
+//                    if(receiptFileSelectionViewModel.selectedReceipt.value is SelectedReceiptState.Success) {
+//                        when(receiptFileSelectionViewModel.selectedType.value) {
+//
+//                        }
+//                        receiptFileSelectionViewModel.processReceipt()
+//                    }
+//                    when(receiptFileSelectionViewModel.selectedType.value) {
+//                        is FileTypeSelectionUiState.Image -> {
+//                            if(receiptFileSelectionViewModel.receiptFileSelectionUiState.value is ReceiptFileSelectionUiState.Success) {
+////                                receiptFileSelectionViewModel.processReceipt("image",receiptFileSelectionViewModel.receiptFileSelectionUiState.value.uri, )
+//                            }
+//
+//                        }
+//                        is FileTypeSelectionUiState.Pdf -> receiptFileSelectionViewModel.setReceiptDetails(receiptFileSelectionViewModel.selectedType.value, uri, "")
+//                        is FileTypeSelectionUiState.Camera -> receiptFileSelectionViewModel.setReceiptDetails(receiptFileSelectionViewModel.selectedType.value, uri, "")
+//                    }
                     findNavController().navigate(R.id.action_receiptListFragment_to_receiptDetailFragment)
 
                     // TODO 서버로 던진 후에 아래 두 값 초기화 시키기
@@ -95,25 +120,19 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
     }
 
     private fun initAdapter() {
-        paymentRVAdapter = PaymentRVAdapter("receipt")
+        availableReceiptAdapter = AvailableReceiptAdapter()
 
         binding.rvReceipt.apply {
-            adapter = paymentRVAdapter
+            adapter = availableReceiptAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-//        paymentRVAdapter.itemClickListener = object : PaymentRVAdapter.ItemClickListener {
-//            override fun onClick(view: View, data: Payment, position: Int) {
-//                receiptViewModel.setSelectedPaymentReceipt(data)
-//                findNavController().navigate(R.id.receiptUploadDialog)
-//            }
-//        }
-
-//        val tmpList : List<Payment> = listOf(
-//            Payment(0, "쿠팡", "쇼핑", "내일배움카드", 3000, "2024.03.11"),
-//            Payment(1, "쿠팡", "쇼핑", "내일배움카드3", 8000, "2024.03.10")
-//        )
-//        paymentRVAdapter.submitList(tmpList)
+        availableReceiptAdapter.itemClickListener = object : AvailableReceiptAdapter.ItemClickListener {
+            override fun onClick(view: View, data: Receipt, position: Int) {
+                receiptFileSelectionViewModel.selectReceipt(data.transactionId)
+                findNavController().navigate(R.id.receiptUploadDialog)
+            }
+        }
     }
 
     fun initEvent(){

@@ -8,7 +8,7 @@ import retrofit2.http.GET
 import retrofit2.http.Query
 
 internal interface PaymentHistoryService {
-    @GET("elasticsearch/payment/history")
+    @GET("elasticsearch/payment/month")
     suspend fun getPaymentMonthlyHistory(@Query("userId") userId: Long, @Query("year") year: Int, @Query("month") month: Int): Response<PaymentMonthlyHistoryResponse>
 
     @GET("elasticsearch/payment/calendar")

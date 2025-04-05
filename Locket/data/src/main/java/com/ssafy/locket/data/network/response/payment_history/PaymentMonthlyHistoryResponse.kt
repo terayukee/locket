@@ -1,5 +1,6 @@
 package com.ssafy.locket.data.network.response.payment_history
 
+import com.google.gson.annotations.SerializedName
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
 import com.ssafy.locket.data.network.response.payment_history.PaymentMonthlyHistoryResponse.Companion.toDomainModel
@@ -9,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class PaymentMonthlyHistoryResponse(
-    val list: List<PaymentMonthlyHistoryResponseItem>
+    @SerializedName("payments") val list: List<PaymentMonthlyHistoryResponseItem>
 ): BaseResponse {
     companion object: DataMapper<PaymentMonthlyHistoryResponse, PaymentMonthlyHistory> {
         override fun PaymentMonthlyHistoryResponse.toDomainModel(): PaymentMonthlyHistory {

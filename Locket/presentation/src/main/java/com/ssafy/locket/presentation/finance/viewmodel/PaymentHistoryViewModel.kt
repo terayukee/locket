@@ -41,6 +41,7 @@ class PaymentHistoryViewModel @Inject constructor(
                 .collect{ status ->
                     when(status) {
                         is ResponseStatus.Success -> {
+                            Log.d(TAG, "getMonthlyPaymentHistory: ${status.data}")
                             _monthlyPaymentHistory.value = PaymentHistoryState.Success(status.data)
                         }
                         is ResponseStatus.Error -> {

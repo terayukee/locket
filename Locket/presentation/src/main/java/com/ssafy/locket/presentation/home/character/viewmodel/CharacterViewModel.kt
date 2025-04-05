@@ -9,10 +9,10 @@ import com.ssafy.locket.model.home.character.CharacterInfo
 import com.ssafy.locket.model.home.character.CharacterResult
 import com.ssafy.locket.model.home.character.Toy
 import com.ssafy.locket.model.home.character.characterCoolTime
-import com.ssafy.locket.usecase.character.CheckCharacterUseCase
-import com.ssafy.locket.usecase.character.CompleteCharacterUseCase
-import com.ssafy.locket.usecase.character.CreateCharacterUseCase
-import com.ssafy.locket.usecase.character.GrowCharacterUseCase
+import com.ssafy.locket.usecase.home.character.CheckCharacterUseCase
+import com.ssafy.locket.usecase.home.character.CompleteCharacterUseCase
+import com.ssafy.locket.usecase.home.character.CreateCharacterUseCase
+import com.ssafy.locket.usecase.home.character.GrowCharacterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow

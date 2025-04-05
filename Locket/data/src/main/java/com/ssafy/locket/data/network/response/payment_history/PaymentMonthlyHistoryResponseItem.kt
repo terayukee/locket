@@ -8,22 +8,26 @@ import java.math.BigDecimal
 
 @Parcelize
 data class PaymentMonthlyHistoryResponseItem(
+    val id: String,
     val cardName: String,
     val paymentCategory: String,
     val storeName: String,
     val totalAmount: BigDecimal,
     val year: Int,
-    val month: Int
+    val month: Int,
+    val day: Int
 ): BaseResponse {
     companion object: DataMapper<PaymentMonthlyHistoryResponseItem, PaymentHistoryItem> {
         override fun PaymentMonthlyHistoryResponseItem.toDomainModel(): PaymentHistoryItem {
             return PaymentHistoryItem(
+                id = id,
                 cardName = cardName,
                 category = paymentCategory,
                 storeName = storeName,
                 totalAmount = totalAmount,
                 year = year,
-                month = month
+                month = month,
+                day = day
             )
         }
     }

@@ -1,11 +1,13 @@
 package com.ssafy.locket.data.di
 
 import com.ssafy.locket.data.repository.analysis.AnalysisRepositoryImpl
+import android.content.Context
 import com.ssafy.locket.data.repository.auth.AuthRepositoryImpl
 import com.ssafy.locket.data.repository.budget.BudgetRepositoryImpl
 import com.ssafy.locket.data.repository.graph.ProductRepositoryImpl
 import com.ssafy.locket.data.repository.home.character.CharacterRepositoryImpl
 import com.ssafy.locket.data.repository.notification.NotificationRepositoryImpl
+import com.ssafy.locket.data.repository.home.receipt.ReceiptFileRepositoryImpl
 import com.ssafy.locket.data.repository.payment.PaymentRepositoryImpl
 import com.ssafy.locket.data.repository.payment_history.PaymentHistoryRepositoryImpl
 import com.ssafy.locket.data.repository.user.DataStoreRepositoryImpl
@@ -17,12 +19,14 @@ import com.ssafy.locket.repository.budget.BudgetRepository
 import com.ssafy.locket.repository.user.UserRepository
 import com.ssafy.locket.repository.home.character.CharacterRepository
 import com.ssafy.locket.repository.notification.NotificationRepository
+import com.ssafy.locket.repository.home.receipt.ReceiptFileRepository
 import com.ssafy.locket.repository.payment.PaymentRepository
 import com.ssafy.locket.repository.payment_history.PaymentHistoryRepository
 import com.ssafy.locket.repository.user.DataStoreRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import javax.inject.Singleton
 
@@ -77,6 +81,12 @@ internal abstract class RepositoryModule {
     abstract fun bindPaymentHistoryRepository(
         paymentHistoryRepositoryImpl: PaymentHistoryRepositoryImpl
     ): PaymentHistoryRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindReceiptRepository(
+        receiptFileRepositoryImpl: ReceiptFileRepositoryImpl
+    ): ReceiptFileRepository
 
     @Binds
     @Singleton

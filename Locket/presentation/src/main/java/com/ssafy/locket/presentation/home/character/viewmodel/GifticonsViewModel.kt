@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.GifticonList
-import com.ssafy.locket.usecase.character.GetAllGifticonsUseCase
+import com.ssafy.locket.usecase.home.character.GetAllGifticonsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow

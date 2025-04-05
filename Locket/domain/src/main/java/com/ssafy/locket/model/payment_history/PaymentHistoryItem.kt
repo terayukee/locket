@@ -6,10 +6,12 @@ import java.math.BigDecimal
 
 @Parcelize
 data class PaymentHistoryItem(
+    val id: String,
     val cardName: String,
     val category: String,
     val storeName: String,
     val totalAmount: BigDecimal,
     val year: Int,
-    val month: Int
+    val month: Int,
+    val day: Int
 ): BaseModel

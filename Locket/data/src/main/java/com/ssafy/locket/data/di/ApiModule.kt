@@ -8,6 +8,7 @@ import com.ssafy.locket.data.network.api.NotificationService
 import com.ssafy.locket.data.network.api.PaymentHistoryService
 import com.ssafy.locket.data.network.api.ProductService
 import com.ssafy.locket.data.network.api.PaymentService
+import com.ssafy.locket.data.network.api.ReceiptService
 import com.ssafy.locket.data.network.api.UserService
 import dagger.Module
 import dagger.Provides
@@ -96,11 +97,16 @@ internal class ApiModule {
 //    fun provideReceiptService(retrofit: Retrofit): ReceiptService {
 //        return retrofit.create(ReceiptService::class.java)
 //    }
+
+    @Provides
+    @Singleton
+    fun provideReceiptService(@InterceptorRetrofit retrofit: Retrofit): ReceiptService {
+        return retrofit.create(ReceiptService::class.java)
+    }
 //
 //    @Provides
 //    @Singleton
 //    fun provideCharacterService(@BaseRetrofit retrofit: Retrofit): CharacterService {
 //        return retrofit.create(CharacterService::class.java)
 //    }
-
 }
