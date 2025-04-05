@@ -435,49 +435,6 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/textView4"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:textStyle="bold"
-                    android:fontFamily="@font/pretendard"
-                    android:text="내 주문목록 기반 추천목록"
-                    android:textSize="16dp"
-                    android:letterSpacing="-0.02"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/view" />
-
-                <ImageView
-                    android:id="@+id/btn_recommand_move"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:layout_marginTop="10dp"
-                    android:paddingHorizontal="4dp"
-                    android:paddingTop="20dp"
-                    android:src="@drawable/ic_all_arrow"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rv_recommanditem_list"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    app:layout_constraintBottom_toTopOf="@+id/v_underline_1"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    
-                    app:layout_constraintTop_toBottomOf="@+id/textView4" />
-
-                <View
-                    android:id="@+id/v_underline_1"
-                    android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:layout_marginTop="16dp"
-                    android:background="#EFEFEF"
-                    app:layout_constraintTop_toBottomOf="@+id/rv_recommanditem_list" />
-
-                <TextView
                     android:id="@+id/tv_money_happy"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -487,7 +444,7 @@
                     android:textSize="16dp"
                     android:letterSpacing="-0.02"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/v_underline_1" />
+                    app:layout_constraintTop_toBottomOf="@+id/view" />
 
                 <TextView
                     android:id="@+id/tv_money_happy_description"

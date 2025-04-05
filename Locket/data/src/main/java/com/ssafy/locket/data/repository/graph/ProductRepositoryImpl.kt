@@ -1,7 +1,6 @@
 package com.ssafy.locket.data.repository.graph
 
 import android.util.Log
-import androidx.datastore.dataStore
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.data.network.api.ProductService
 import com.ssafy.locket.data.network.common.ApiResponse
@@ -19,9 +18,8 @@ import com.ssafy.locket.model.graph.ProductCategoryListInfo
 import com.ssafy.locket.model.graph.ProductHappyListInfo
 import com.ssafy.locket.model.graph.ProductLikeListInfo
 import com.ssafy.locket.model.graph.ProductSearchInfo
-import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.model.graph.product_detail.ProductDetailInfo
-import com.ssafy.locket.repository.Product.ProductRepository
+import com.ssafy.locket.repository.product.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
@@ -44,6 +42,7 @@ internal class ProductRepositoryImpl @Inject constructor(
                 }
                 is ApiResponse.Error -> {
                     val errorModel = result.error.toDomainModel()
+                    Log.d("ProductFragment",errorModel.error.toString())
                     emit(ResponseStatus.Error(result.error.toDomainModel()))
                 }
             }

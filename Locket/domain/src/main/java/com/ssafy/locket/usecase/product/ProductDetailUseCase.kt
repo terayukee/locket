@@ -1,9 +1,8 @@
 package com.ssafy.locket.usecase.product
 
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.model.graph.ProductHappyListInfo
 import com.ssafy.locket.model.graph.product_detail.ProductDetailInfo
-import com.ssafy.locket.repository.Product.ProductRepository
+import com.ssafy.locket.repository.product.ProductRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

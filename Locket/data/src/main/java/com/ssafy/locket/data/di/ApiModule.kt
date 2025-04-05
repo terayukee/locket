@@ -1,7 +1,10 @@
 package com.ssafy.locket.data.di
 
+import com.ssafy.locket.data.network.api.AnalysisService
 import com.ssafy.locket.data.network.api.AuthService
+import com.ssafy.locket.data.network.api.BudgetService
 import com.ssafy.locket.data.network.api.CharacterService
+import com.ssafy.locket.data.network.api.NotificationService
 import com.ssafy.locket.data.network.api.PaymentHistoryService
 import com.ssafy.locket.data.network.api.ProductService
 import com.ssafy.locket.data.network.api.PaymentService
@@ -49,17 +52,19 @@ internal class ApiModule {
         return retrofit.create(PaymentService::class.java)
     }
 
-//    @Provides
-//    @Singleton
-//    fun provideAnalysisService(retrofit: Retrofit): AnalysisService {
-//        return retrofit.create(AnalysisService::class.java)
-//    }
+    @Provides
+    @Singleton
+    fun provideAnalysisService(@InterceptorRetrofit retrofit: Retrofit): AnalysisService {
+        return retrofit.create(AnalysisService::class.java)
+    }
 //
-//    @Provides
-//    @Singleton
-//    fun provideBudgetService(retrofit: Retrofit): BudgetService {
-//        return retrofit.create(BudgetService::class.java)
-//    }
+    @Provides
+    @Singleton
+    fun provideBudgetService(
+    @NoInterceptorRetrofit retrofit: Retrofit)
+    : BudgetService {
+        return retrofit.create(BudgetService::class.java)
+    }
 //
 //
     @Provides
@@ -68,6 +73,22 @@ internal class ApiModule {
         @NoInterceptorRetrofit retrofit: Retrofit)
     : ProductService {
         return retrofit.create(ProductService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideNotificationService(
+        @InterceptorRetrofit retrofit: Retrofit
+    ): NotificationService {
+        return retrofit.create(NotificationService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun providePaymentHistoryService(
+        @InterceptorRetrofit retrofit: Retrofit
+    ): PaymentHistoryService {
+        return retrofit.create(PaymentHistoryService::class.java)
     }
 //
 //    @Provides
@@ -81,11 +102,5 @@ internal class ApiModule {
 //    fun provideCharacterService(@BaseRetrofit retrofit: Retrofit): CharacterService {
 //        return retrofit.create(CharacterService::class.java)
 //    }
-
-    @Provides
-    @Singleton
-    fun providePaymentHistoryService(@InterceptorRetrofit retrofit: Retrofit):PaymentHistoryService {
-        return retrofit.create(PaymentHistoryService::class.java)
-    }
 
 }

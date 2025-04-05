@@ -67,8 +67,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     }
     override fun onPause() {
         super.onPause()
-        productViewModel.productLikeClick(productId,isHeartFilled)
-        if(editViewModel.editprice.value==""||editViewModel.editprice.value=="설정 안됨"){
+        if(editViewModel.editprice.value==""){
             productViewModel.productAlert(productId,false,0)
         }
         else{
@@ -108,6 +107,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                 binding.cvNotificationSetting.visibility = View.INVISIBLE
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)  // 빈 하트
             }
+            Log.d(TAG,"하트여부"+isHeartFilled)
+            productViewModel.productLikeClick(productId,isHeartFilled)
         }
     }
 
@@ -248,7 +249,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 productViewModel.productDetailInfo.collectLatest { productDetail ->
                     if(productDetail is ProductDetailState.Success) {
-                        Log.d(TAG,productDetail.productDetailInfo.toString())
+                        Log.d(TAG,"like"+productDetail.productDetailInfo.liked.toString())
                         binding.tvProductTitle.text = productDetail.productDetailInfo.productName
                         binding.tvPrice.text = productDetail.productDetailInfo.currentPrice
                         Glide.with(requireContext())

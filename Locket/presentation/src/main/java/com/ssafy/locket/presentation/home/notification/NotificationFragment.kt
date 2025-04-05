@@ -1,25 +1,45 @@
 package com.ssafy.locket.presentation.home.notification
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.locket.model.home.Notification
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentNotificationBinding
+import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
+import com.ssafy.locket.presentation.home.character.viewmodel.NotificationState
+import com.ssafy.locket.presentation.home.character.viewmodel.NotificationViewModel
 import com.ssafy.locket.presentation.home.notification.adapter.NotificationListRVAdapter
+import com.ssafy.locket.presentation.login.LoginViewModel
+import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.launch
 
+
+private const val TAG = "NotificationFragment"
+@AndroidEntryPoint
 class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
     FragmentNotificationBinding::bind,
     R.layout.fragment_notification
 ) {
     private lateinit var recentNotificationListRVAdapter: NotificationListRVAdapter
     private lateinit var prevNotificationListRVAdapter: NotificationListRVAdapter
-
+    
+    private val notificationViewModel : NotificationViewModel by viewModels()
+    
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initAdapter()
+        getNotificationData()
+        notificationViewModel.getNotifications()
     }
 
     private fun initAdapter() {
@@ -39,11 +59,23 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
+    }
 
-        val tmpRecentList : List<Notification> = listOf(Notification(0,"product","최저가 알림","당근이 설정하신 가격보다 내려갔습니다. 사이트로 들어가 확인하세요","3월 21일"),Notification(1,"product","최저가 알림","신발이 설정하신 가격보다 내려갔습니다. 사이트로 들어가 확인하세요","3월 20일"))
-        recentNotificationListRVAdapter.submitList(tmpRecentList)
+    fun getNotificationData(){
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                notificationViewModel.notificationList.collect { notificationList ->
+                    Log.d(TAG,"확인"+notificationList)
+                    if(notificationList is NotificationState.Success) {
+                        val pastNotifications = notificationList.notificationList.past
+                        val recentNotifications = notificationList.notificationList.recent
+                        // ✅ RecyclerView 업데이트
+                        recentNotificationListRVAdapter.submitList(recentNotifications)
+                        prevNotificationListRVAdapter.submitList(pastNotifications)
 
-        val tmpPrevList : List<Notification> = listOf(Notification(0,"product","최저가 알림","당근이 설정하신 가격보다 내려갔습니다. 사이트로 들어가 확인하세요","3월 21일"),Notification(1,"product","최저가 알림","신발이 설정하신 가격보다 내려갔습니다. 사이트로 들어가 확인하세요","3월 20일"))
-        prevNotificationListRVAdapter.submitList(tmpPrevList)
+                    }
+                }
+            }
+        }
     }
 }

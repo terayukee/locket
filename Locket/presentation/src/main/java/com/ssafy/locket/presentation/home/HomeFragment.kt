@@ -17,6 +17,8 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
+import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.GetShortFeedbackState
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterInfoState
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterViewModel
 import com.ssafy.locket.presentation.home.character.viewmodel.NavigationEvent
@@ -39,6 +41,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private val userInfoViewModel: UserInfoViewModel by activityViewModels()
 
     private val characterViewModel: CharacterViewModel by activityViewModels()
+
+    private val budgetViewModel : BudgetViewModel by activityViewModels()
 
     private var backPressedTime: Long = 0
     @Inject
@@ -133,6 +137,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         //(requireContext() as MainActivity).changeBackgroundColor(R.color.white)
     }
 
+
     fun getActivityContext(context: Context): Context {
         return if (context is ViewComponentManager.FragmentContextWrapper) {
             context.baseContext
@@ -148,6 +153,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 userInfoViewModel.fetchUser(id?:0)
             }
         }
+        budgetViewModel.getShortFeedback()
     }
 
     fun observeModel(){
@@ -156,6 +162,18 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
                         userDataStoreSource.saveUser(user.userInfo)
+                        binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
+                    }
+                }
+            }
+        }
+
+        //나중에라도 피드백 되면 여기에 text넣으면 끝
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                budgetViewModel.getShortFeedback.collect { getShortFeedback ->
+                    if(getShortFeedback is GetShortFeedbackState.Success) {
+                        Log.d(TAG,"피드백"+getShortFeedback.toString())
                     }
                 }
             }

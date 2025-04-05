@@ -16,7 +16,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.locket.model.graph.Product
-import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentProductListBinding
@@ -56,9 +55,6 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
     fun initEvent(){
         binding.ivHeart.setOnClickListener {
             findNavController().navigate(R.id.action_productListFragment_to_likeProductListFragment)
-        }
-        binding.btnRecommandMove.setOnClickListener {
-            findNavController().navigate(R.id.action_productListFragment_to_recommendProductListFragment)
         }
         binding.ivClear.setOnClickListener {
             binding.etProductSearch.setText("")
@@ -154,8 +150,6 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
         productAdapter = ProductAdapter(productList,findNavController(),R.id.action_productListFragment_to_productDetailFragment)
         moneyHappyListAdapter = MoneyHappyAdapter(moneyHappyList,findNavController())
 
-        binding.rvRecommanditemList.layoutManager = GridLayoutManager(requireContext(), 3)
-        binding.rvRecommanditemList.adapter = productAdapter
         binding.rvMoneyHappyList.layoutManager = LinearLayoutManager(requireContext())
         binding.rvMoneyHappyList.adapter = moneyHappyListAdapter
     }

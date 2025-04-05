@@ -4,19 +4,32 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
+import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditBudgetBinding
+import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.SetBudgetState
+import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
+import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.time.LocalDate
 
+private const val TAG = "EditBudgetFragment"
 class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
     FragmentEditBudgetBinding::bind,
     R.layout.fragment_edit_budget
 ) {
+    private val budgetViewModel : BudgetViewModel by activityViewModels()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -30,6 +43,9 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
         
         binding.btnBudgetSet.setOnClickListener { 
             // TODO api 전송
+            val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
+            budgetViewModel.setBudgetGoal(rawNumber.toInt())
+            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
         }
     }
 

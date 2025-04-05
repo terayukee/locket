@@ -5,9 +5,11 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.ViewGroup
 import android.view.Window
 import androidx.fragment.app.DialogFragment
+import com.kakao.sdk.user.UserApiClient
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.FragmentLogoutDialogBinding
 import com.ssafy.locket.presentation.login.LoginActivity
@@ -26,32 +28,47 @@ class LogoutDialogFragment : DialogFragment() {
 
         binding.btnLogout.setOnClickListener {
             performLogout()
-            dismiss()
         }
 
         binding.btnCancel.setOnClickListener {
             dismiss()
         }
 
-        // Optional: Customize dialog appearance
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+
         return dialog
     }
 
     private fun performLogout() {
-        val intent = Intent(requireContext(), LoginActivity::class.java)
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
-        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
-        requireActivity().finishAffinity() // 기존 스택 완전히 제거
+        UserApiClient.instance.unlink { error ->
+            if (error != null) {
+                Log.e("Logout", "카카오 연결 해제 실패", error)
+            } else {
+                Log.i("Logout", "카카오 연결 해제 성공")
+
+                if (isAdded && activity != null) {
+                    val intent = Intent(requireContext(), LoginActivity::class.java).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                    }
+                    startActivity(intent)
+                    requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                    requireActivity().finishAffinity()
+
+                    // 안전하게 다이얼로그 닫기
+                    dialog?.window?.decorView?.post {
+                        dismissAllowingStateLoss()
+                    }
+                }
+            }
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        _binding = null // ✅ 메모리 누수 방지
+        _binding = null
     }
 }

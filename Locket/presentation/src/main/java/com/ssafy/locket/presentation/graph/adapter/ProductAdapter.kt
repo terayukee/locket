@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.locket.model.graph.Product
-import com.ssafy.locket.model.graph.ProductxInfo
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemProductBinding
 
