@@ -1,5 +1,6 @@
 package com.ssafy.locket.presentation.graph.fragment
 
+import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -39,6 +40,8 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
     fun initView(){
         if(viewModel.editprice.value==""){
             binding.tvWantPrice.hint = "설정 안됨"
+            binding.btnClear.isEnabled = false
+            binding.btnClear.setBackgroundColor(Color.parseColor("#C9C9C9"))
         }
         else {
             binding.tvWantPrice.hint = "현재 가격은 "+ CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
@@ -54,6 +57,11 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
                 viewModel.updatePrice(rawNumber)
                 binding.tvWantPrice.setText("")
             }
+            dismiss()
+        }
+        binding.btnClear.setOnClickListener {
+            viewModel.updatePrice("")
+            binding.tvWantPrice.setText("")
             dismiss()
         }
     }

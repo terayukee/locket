@@ -64,6 +64,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_want_price" />
 
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_clear"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="24dp"
+        android:background="@drawable/bg_bottom_btn"
+        android:letterSpacing="-0.02"
+        android:text="설정 해제"
+        android:textColor="#FFFFFF"
+        android:textSize="@dimen/btn_text_size"
+        app:layout_constraintHorizontal_bias="0.05"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_info"
+        app:layout_constraintWidth_percent="0.4" />
     <!-- 확인 버튼 -->
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_confirm"
@@ -71,14 +87,15 @@
         android:layout_height="56dp"
         android:layout_marginHorizontal="24dp"
         android:layout_marginTop="24dp"
-        android:letterSpacing="-0.02"
         android:background="@drawable/bg_bottom_btn"
+        android:letterSpacing="-0.02"
         android:text="완료"
         android:textColor="#FFFFFF"
         android:textSize="@dimen/btn_text_size"
+        app:layout_constraintHorizontal_bias="0.95"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintWidth_percent="0.85"
-        app:layout_constraintTop_toBottomOf="@+id/tv_info" />
+        app:layout_constraintTop_toBottomOf="@+id/tv_info"
+        app:layout_constraintWidth_percent="0.4" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
