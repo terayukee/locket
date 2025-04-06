@@ -10,6 +10,9 @@ import android.os.Bundle
 import android.provider.Settings
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.text.Spannable
+import android.text.SpannableStringBuilder
+import android.text.style.TabStopSpan
 import android.util.Log
 import android.view.View
 import android.widget.LinearLayout
@@ -21,6 +24,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.viewpager2.widget.ViewPager2
 import com.ssafy.locket.ui.payment.viewmodel.RecertifyViewModel
 import java.security.KeyStore
@@ -32,6 +36,7 @@ import com.ssafy.locket.model.payment.PaymentCard
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentCardPaymentBinding
+import com.ssafy.locket.presentation.payment.adapter.BenefitAdapter
 import com.ssafy.locket.presentation.payment.adapter.CardAdapter
 import com.ssafy.locket.presentation.payment.viewmodel.CardPaymentViewModel
 import com.ssafy.locket.presentation.payment.viewmodel.PaymentCardState
@@ -49,6 +54,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     R.layout.fragment_card_payment
 ) {
     private lateinit var cardAdapter: CardAdapter
+    private lateinit var benefitAdapter: BenefitAdapter
     val Int.dp: Int
         get() = (this * Resources.getSystem().displayMetrics.density).toInt()
 
@@ -217,14 +223,10 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                 }
                 binding.tvCardName.text = cards[position].cardName
                 binding.tvBalanceDescription.text = "전월 실적: ${CommonUtils.makeComma(cards[selectedPosition].monthlyUsage)}원 남음"
-
-                Log.d(TAG,cards[position].benefits.toString())
-                val formattedText = formatBenefits(cards[position].benefits)
-                binding.tvCardBenefit.typeface = Typeface.MONOSPACE
-                binding.tvCardBenefit.text = formattedText
-
-
-                Log.d(TAG, "onPageSelected: card changed in registerOnPageChangeCallback ${cards[position].cardName}")
+                val benefitList = cards[position].benefits
+                val adapter = BenefitAdapter(benefitList)
+                binding.rvCardBenefit.adapter = adapter
+                binding.rvCardBenefit.layoutManager = LinearLayoutManager(requireContext())
             }
         })
         updateDots(0)
@@ -356,15 +358,17 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         biometricPrompt.authenticate(promptInfo)
     }
 
-    //텍스트에 입력하기 위한 요소
-    fun formatBenefits(benefits: List<Benefit>): String {
-        val builder = StringBuilder()
+    fun formatBenefitsSpannable(benefits: List<Benefit>): SpannableStringBuilder {
+        val builder = SpannableStringBuilder()
+
         for (benefit in benefits) {
-            builder.append(
-                String.format("%-15s %10s", benefit.item, benefit.benefitDetail)
-            ).append("\n")
+            val paddedItem = benefit.item.padEnd(12, ' ') // 앞 항목 고정
+            val paddedBenefit = benefit.benefitDetail.padEnd(10, ' ') // 혜택도 고정
+            val line = "$paddedItem$paddedBenefit\n"
+            builder.append(line)
         }
-        return builder.toString().trim() // 마지막 줄 개행 제거
+
+        return builder
     }
 
 }

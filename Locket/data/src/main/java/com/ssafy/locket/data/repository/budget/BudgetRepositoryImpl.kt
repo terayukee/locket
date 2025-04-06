@@ -54,10 +54,11 @@ class BudgetRepositoryImpl @Inject constructor(
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {
-                        Log.d("BudgetFragment",result.data.toString())
+                        Log.d("BudgetFragment","출력"+result.data.toString())
                         emit(ResponseStatus.Success(result.data))
                     }
                     is ApiResponse.Error -> {
+                        Log.d("BudgetFragment",result.error.toString())
                         emit(ResponseStatus.Error(result.error.toDomainModel()))
                     }
                 }

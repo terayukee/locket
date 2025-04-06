@@ -65,7 +65,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:letterSpacing="-0.02"
-        android:text="전월실적 : 30만원 남음"
+        android:text=""
         android:fontFamily="@font/pretendard_medium"
         android:textSize="16sp"
         android:textStyle="bold"
@@ -76,18 +76,20 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dot_indicator_scroll" />
 
-    <TextView
-        android:id="@+id/tv_card_benefit"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_card_benefit"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
+        android:gravity="start"
         android:letterSpacing="-0.02"
-        android:text="메가커피\t\t\t30% 할인\nGS25\t\t\t\t\t15% 할인"
+        android:text=""
         android:textColor="#666666"
         android:textSize="14sp"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="@+id/viewpager"
-        app:layout_constraintStart_toStartOf="@+id/viewpager"
+        android:fontFamily="monospace"
+        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_balance_description" />
 
     <TextView
@@ -116,7 +118,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.481"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_card_benefit"
+        app:layout_constraintTop_toBottomOf="@+id/rv_card_benefit"
         app:layout_constraintWidth_percent="0.15" />
 
     <com.google.android.material.button.MaterialButton
