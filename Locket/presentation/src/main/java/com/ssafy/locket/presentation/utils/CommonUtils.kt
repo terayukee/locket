@@ -9,6 +9,7 @@ import android.widget.Toast
 import com.ssafy.locket.presentation.databinding.ToastMultiLineCustomBinding
 import com.ssafy.locket.presentation.databinding.ToastSingleLineCustomBinding
 import java.math.BigDecimal
+import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.text.SimpleDateFormat
@@ -92,6 +93,12 @@ object CommonUtils {
 
     fun Float.fromDpToPx(): Int =
         (this * Resources.getSystem().displayMetrics.density).toInt()
+
+    fun floorTenThousandDecimal(prev: BigDecimal, current: BigDecimal): BigDecimal {
+        return prev.subtract(current)
+            .divide(BigDecimal(10000), 0, RoundingMode.DOWN)
+    }
+
 }
 
 sealed class ToastType {

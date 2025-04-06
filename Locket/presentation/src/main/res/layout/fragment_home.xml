@@ -144,13 +144,18 @@
         app:layout_constraintTop_toBottomOf="@+id/iv_payment_icon_bg"
         tools:text="지난 달보다 109만원 덜 썼어요" />
 
-    <ImageView
+    <android.widget.Button
         android:id="@+id/btn_analysis"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginEnd="24dp"
-        app:layout_constraintDimensionRatio="2.5"
-        android:background="@drawable/ic_finance_analysis"
+        app:layout_constraintWidth_percent="0.193"
+        app:layout_constraintDimensionRatio="2.333"
+        android:text="분석하기"
+        android:textSize="14sp"
+        android:textColor="@color/white"
+        android:letterSpacing="-0.02"
+        android:background="@drawable/bg_home_small_btn"
         app:layout_constraintBottom_toBottomOf="@+id/iv_payment_card_bg"
         app:layout_constraintEnd_toEndOf="@+id/iv_payment_card_bg"
         app:layout_constraintTop_toTopOf="@+id/iv_payment_card_bg" />
@@ -206,6 +211,7 @@
 
     <TextView
         android:id="@+id/tv_budget_data"
+        android:visibility="invisible"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="20dp"
@@ -231,6 +237,22 @@
         app:layout_constraintStart_toStartOf="@+id/tv_budget_data"
         app:layout_constraintTop_toBottomOf="@+id/tv_budget_data"
         tools:text="3월 목표 예산" />
+
+    <TextView
+        android:id="@+id/tv_no_budget_title"
+        android:visibility="invisible"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="20dp"
+        android:fontFamily="@font/pretendard_semi_bold"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_budget_title"
+        app:layout_constraintEnd_toEndOf="@+id/iv_budget_card_bg"
+        app:layout_constraintStart_toEndOf="@+id/iv_budget_icon_bg"
+        app:layout_constraintTop_toTopOf="@+id/iv_budget_icon_bg"
+        tools:text="200,000원" />
 
     <TextView
         android:id="@+id/tv_budget_feedback"

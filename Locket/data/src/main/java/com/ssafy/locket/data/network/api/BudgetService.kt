@@ -18,7 +18,7 @@ interface BudgetService {
     @GET("users/budget/status")
     suspend fun getBudgetStatus(@Query("userId") userId: Int, @Query("year") year:Int, @Query("month") month:Int): Response<BudgetStatus>
 
-    @GET("users/feedback/{userId}")
+    @GET("users/budget/feedback/{userId}")
     suspend fun getShortFeedback(@Path("userId") userId: Int) : Response<ShortFeedbackResponse>
 
 }
