@@ -83,7 +83,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     fun initEvent(){
         
         //나중에 날짜 year,month 나오면 여기에 넣으면 바로 데이터 들어옴
-        budgetViewModel.getBudgetStatus(2025,3)
+        budgetViewModel.getBudgetStatus(2025,4)
     }
 
     fun observeViewModel(){
@@ -103,7 +103,8 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
                             else -> budget/(31-today.dayOfMonth)
                         }
                         binding.tvBudgetLeftDaily.text = "하루 예산 "+ CommonUtils.makeComma(budgetLeftDaily)+"원"
-                        binding.progressBar.setProgress(reponse.budgetStatus.budget.monthly.progress)
+                        Log.d(TAG,"출력"+reponse.budgetStatus.budget.monthly.progress.toString())
+                        binding.progressBar.setProgress(reponse.budgetStatus.budget.monthly.progress.toInt())
                         binding.tvBudget.text = CommonUtils.makeComma(budget)+"원 남음"
                         binding.tvRecommendBudgetToday.text = CommonUtils.makeComma((budget/getDaysInCurrentMonth())*today.dayOfMonth)+"원"
                     }
