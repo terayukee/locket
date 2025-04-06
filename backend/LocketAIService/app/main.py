@@ -7,10 +7,9 @@ from datetime import datetime
 from app.common.exception.base_exception import BaseException
 from app.common.constant.status import StatusCode, CommonErrorMessage
 
-from .api import receipt, category, feedback #, health
+from .api import receipt, category, feedback
 import logging
 import os
-import fasttext  # 모델 로딩용
 
 # 로깅 설정
 logging.basicConfig(
@@ -26,8 +25,6 @@ EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://localhost:8761/eureka")
 SERVICE_HOST = os.getenv("SERVICE_HOST", "localhost")
 ENV = os.getenv("ENV", "prod")
 
-# 모델 전역 객체
-model = None
 
 def create_app() -> FastAPI:
     """FastAPI 애플리케이션 생성 및 설정"""
@@ -36,10 +33,10 @@ def create_app() -> FastAPI:
         version="1.0.0",
         docs_url="/docs",
         redoc_url="/redoc",
-        responses={422: {"model": None}} # 422 에러 코드 사용하지 않으므로 숨김
+        responses={422: {"model": None}}
     )
 
-    # 기존 BaseException 핸들러
+    # 예외 핸들러 설정
     @app.exception_handler(BaseException)
     async def base_exception_handler(request, exc: BaseException):
         return JSONResponse(
@@ -52,11 +49,10 @@ def create_app() -> FastAPI:
             }
         )
 
-    # 새로운 RequestValidationError 핸들러
     @app.exception_handler(RequestValidationError)
     async def validation_exception_handler(request: Request, exc: RequestValidationError):
         return JSONResponse(
-            status_code=400,  # 422 대신 400 사용
+            status_code=400,
             content={
                 "status": 400,
                 "error": "BAD_REQUEST",
@@ -65,7 +61,6 @@ def create_app() -> FastAPI:
             }
         )
 
-    # 처리되지 않은 예외를 위한 핸들러
     @app.exception_handler(Exception)
     async def global_exception_handler(request: Request, exc: Exception):
         logger.error(f"처리되지 않은 예외 발생: {str(exc)}")
@@ -79,7 +74,7 @@ def create_app() -> FastAPI:
             }
         )
 
-    # CORS 설정
+    # CORS
     app.add_middleware(
         CORSMiddleware,
         allow_origins=["*"],
@@ -93,7 +88,7 @@ def create_app() -> FastAPI:
 
     @app.on_event("startup")
     async def startup_event():
-        """유레카 등록 후 모델 로딩"""
+        """Eureka에 서비스 등록"""
         try:
             SERVICE_HOST_EXTERNAL = "j12d204.p.ssafy.io"
             SERVICE_PORT_EXTERNAL = os.getenv("PORT", "8500")
@@ -110,16 +105,11 @@ def create_app() -> FastAPI:
                 duration_in_secs=30
             )
             logger.info("✅ Eureka 등록 성공!")
-
-            logger.info("📦 모델 로딩 시작...")
-            global model
-            model = fasttext.load_model("/app/app/domain/category/model/category_classifier.bin")
-            logger.info("✅ 모델 로딩 완료!")
-
         except Exception as e:
             logger.error(f"❌ 초기화 실패: {str(e)}")
 
     return app
+
 
 def _register_routers(app: FastAPI) -> None:
     routers = [
@@ -130,14 +120,11 @@ def _register_routers(app: FastAPI) -> None:
     for router, prefix, tag in routers:
         app.include_router(router, prefix=prefix, tags=[tag])
 
-# 앱 생성
+
+# 앱 실행
 app = create_app()
 
-# 로컬에서 직접 실행할 경우
 if __name__ == "__main__":
     import uvicorn
     logger.info(f"🚀 Starting {SERVICE_NAME} on port {SERVICE_PORT} (env: {ENV})")
     uvicorn.run("app.main:app", host="0.0.0.0", port=SERVICE_PORT, reload=True)
-
-
-
