@@ -18,6 +18,7 @@ import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentFinanceBinding
 import com.ssafy.locket.presentation.finance.adapter.FinanceVPAdapter
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
@@ -38,6 +39,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         initTabLayout()
+        financeSharedViewModel.initYearMonth()
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -51,6 +53,23 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                         binding.btnNextMonthIcon.isEnabled = true
                     }
                     binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, it.year, it.monthValue)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                financeSharedViewModel.selectedYearMonthTotalPayment.collect { uiState ->
+                    when(uiState) {
+                        is TotalPaymentState.Success -> {
+                            binding.tvPaymentData.text = resources.getString(R.string.finance_won, CommonUtils.makeCommaDecimal(uiState.totalPayment))
+                        }
+                        is TotalPaymentState.Error -> {
+                            Log.d(TAG, "initUI: Error payment ${uiState.message}")
+                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                        }
+                        else -> Log.d(TAG, "initUI: Payment Initial or Loading")
+                    }
                 }
             }
         }
@@ -118,6 +137,6 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        financeSharedViewModel.initYearMonth()
+//        financeSharedViewModel.initYearMonth()
     }
 }

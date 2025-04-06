@@ -60,7 +60,7 @@ internal class PaymentRepositoryImpl @Inject constructor(
         return flow {
             ApiResponseHandler().handle {
                 val userId = dataStore.userId.first() ?: -1
-                paymentService.verifyPassword(userId, PassswordVerifyRequest(password))
+                paymentService.verifyPassword(PassswordVerifyRequest(userId, password))
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {

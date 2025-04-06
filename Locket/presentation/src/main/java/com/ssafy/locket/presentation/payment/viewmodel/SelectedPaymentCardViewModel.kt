@@ -19,7 +19,6 @@ class SelectedPaymentCardViewModel @Inject constructor(
     val selectedPaymentCard: Flow<SelectedPaymentCardState> = _selectedPaymentCard.asStateFlow()
 
     fun selectPaymentCard(paymentCard: PaymentCard) {
-        Log.d(TAG, "selectPaymentCard: card selected ${paymentCard.cardName}")
         _selectedPaymentCard.value = SelectedPaymentCardState.Selected(paymentCard)
     }
 

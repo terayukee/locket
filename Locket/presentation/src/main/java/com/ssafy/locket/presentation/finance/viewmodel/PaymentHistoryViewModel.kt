@@ -7,7 +7,6 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.payment_history.PaymentCalendar
 import com.ssafy.locket.model.payment_history.PaymentDailyHistory
 import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
-import com.ssafy.locket.usecase.payment_history.GetDailyPaymentHistoryUseCase
 import com.ssafy.locket.usecase.payment_history.GetMonthlyCalendarPaymentUseCase
 import com.ssafy.locket.usecase.payment_history.GetMonthlyPaymentHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
-import java.math.BigDecimal
 import javax.inject.Inject
 
 private const val TAG = "PaymentHistoryViewModel"

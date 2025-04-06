@@ -4,10 +4,12 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.payment_history.PaymentCalendar
 import com.ssafy.locket.model.payment_history.PaymentDailyHistory
 import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
+import com.ssafy.locket.model.payment_history.PaymentMonthlyTotal
 import kotlinx.coroutines.flow.Flow
 
 interface PaymentHistoryRepository {
     suspend fun getPaymentMonthlyCalendar(year: Int, month: Int): Flow<ResponseStatus<PaymentCalendar>>
     suspend fun getPaymentMonthlyHistory(year: Int, month: Int): Flow<ResponseStatus<PaymentMonthlyHistory>>
     suspend fun getPaymentDailyHistory(year: Int, month: Int, day: Int): Flow<ResponseStatus<PaymentDailyHistory>>
+    suspend fun getPaymentMonthlyTotal(year: Int, month: Int): Flow<ResponseStatus<PaymentMonthlyTotal>>
 }
