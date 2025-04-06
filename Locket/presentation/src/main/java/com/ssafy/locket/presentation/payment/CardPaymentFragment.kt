@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Color
+import android.graphics.Typeface
 import android.nfc.NfcAdapter
 import android.os.Bundle
 import android.provider.Settings
@@ -26,6 +27,7 @@ import java.security.KeyStore
 import javax.crypto.Cipher
 import javax.crypto.SecretKey
 import com.ssafy.locket.model.graph.Card
+import com.ssafy.locket.model.payment.Benefit
 import com.ssafy.locket.model.payment.PaymentCard
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -147,7 +149,6 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateDots(position)
-                binding.tvCardName.text = cards[position].cardName
                 Log.d(TAG, "onPageSelected: card changed in initEvent ${cards[position].cardName}")
             }
         })
@@ -215,6 +216,14 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                     )
                 }
                 binding.tvCardName.text = cards[position].cardName
+                binding.tvBalanceDescription.text = "전월 실적: ${CommonUtils.makeComma(cards[selectedPosition].monthlyUsage)}원 남음"
+
+                Log.d(TAG,cards[position].benefits.toString())
+                val formattedText = formatBenefits(cards[position].benefits)
+                binding.tvCardBenefit.typeface = Typeface.MONOSPACE
+                binding.tvCardBenefit.text = formattedText
+
+
                 Log.d(TAG, "onPageSelected: card changed in registerOnPageChangeCallback ${cards[position].cardName}")
             }
         })
@@ -345,6 +354,17 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             .build()
 
         biometricPrompt.authenticate(promptInfo)
+    }
+
+    //텍스트에 입력하기 위한 요소
+    fun formatBenefits(benefits: List<Benefit>): String {
+        val builder = StringBuilder()
+        for (benefit in benefits) {
+            builder.append(
+                String.format("%-15s %10s", benefit.item, benefit.benefitDetail)
+            ).append("\n")
+        }
+        return builder.toString().trim() // 마지막 줄 개행 제거
     }
 
 }
