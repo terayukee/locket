@@ -3,7 +3,6 @@ package com.ssafy.locket.presentation.login
 import android.app.ComponentCaller
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.ssafy.locket.presentation.databinding.ActivityLoginBinding

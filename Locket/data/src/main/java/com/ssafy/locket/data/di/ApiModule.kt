@@ -6,8 +6,8 @@ import com.ssafy.locket.data.network.api.BudgetService
 import com.ssafy.locket.data.network.api.CharacterService
 import com.ssafy.locket.data.network.api.NotificationService
 import com.ssafy.locket.data.network.api.PaymentHistoryService
-import com.ssafy.locket.data.network.api.ProductService
 import com.ssafy.locket.data.network.api.PaymentService
+import com.ssafy.locket.data.network.api.ProductService
 import com.ssafy.locket.data.network.api.ReceiptService
 import com.ssafy.locket.data.network.api.UserService
 import dagger.Module
@@ -58,21 +58,20 @@ internal class ApiModule {
     fun provideAnalysisService(@InterceptorRetrofit retrofit: Retrofit): AnalysisService {
         return retrofit.create(AnalysisService::class.java)
     }
-//
+
     @Provides
     @Singleton
     fun provideBudgetService(
-    @NoInterceptorRetrofit retrofit: Retrofit)
-    : BudgetService {
+        @InterceptorRetrofit retrofit: Retrofit
+    ): BudgetService {
         return retrofit.create(BudgetService::class.java)
     }
-//
-//
+
     @Provides
     @Singleton
     fun provideProductService(
-        @NoInterceptorRetrofit retrofit: Retrofit)
-    : ProductService {
+        @InterceptorRetrofit retrofit: Retrofit
+    ): ProductService {
         return retrofit.create(ProductService::class.java)
     }
 
@@ -91,22 +90,10 @@ internal class ApiModule {
     ): PaymentHistoryService {
         return retrofit.create(PaymentHistoryService::class.java)
     }
-//
-//    @Provides
-//    @Singleton
-//    fun provideReceiptService(retrofit: Retrofit): ReceiptService {
-//        return retrofit.create(ReceiptService::class.java)
-//    }
 
     @Provides
     @Singleton
     fun provideReceiptService(@InterceptorRetrofit retrofit: Retrofit): ReceiptService {
         return retrofit.create(ReceiptService::class.java)
     }
-//
-//    @Provides
-//    @Singleton
-//    fun provideCharacterService(@BaseRetrofit retrofit: Retrofit): CharacterService {
-//        return retrofit.create(CharacterService::class.java)
-//    }
 }

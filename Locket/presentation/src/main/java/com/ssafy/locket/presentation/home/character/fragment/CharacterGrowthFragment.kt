@@ -53,32 +53,12 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
 
         binding.ivMissionFoodBg.setOnClickListener {
             characterViewModel.growCharacter(CharacterAction.Feed)
-//            Glide.with(requireContext())
-//                .load(gifResId)
-//                .placeholder(imageResId)
-//                .into(binding.ivCharacter)
-//
-//            binding.ivCharacter.postDelayed({
-//                Glide.with(requireContext())
-//                    .load(imageResId)
-//                    .into(binding.ivCharacter)
-//
-//            }, 2000)
         }
 
         binding.ivMissionToyBg.setOnClickListener {
             binding.ivMissionToyBg.isEnabled = false
             characterViewModel.growCharacter(CharacterAction.Play)
             startTimer()
-//            Glide.with(requireContext())
-//                .load(gifResId)
-//                .placeholder(imageResId)
-//                .into(binding.ivCharacter)
-//            binding.ivCharacter.postDelayed({
-//                Glide.with(requireContext())
-//                    .load(imageResId)
-//                    .into(binding.ivCharacter)
-//            }, 2000)
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
