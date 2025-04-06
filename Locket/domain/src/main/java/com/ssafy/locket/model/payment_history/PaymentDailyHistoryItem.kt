@@ -6,8 +6,9 @@ import java.math.BigDecimal
 
 @Parcelize
 data class PaymentDailyHistoryItem(
+    val id: String,
     val cardName: String,
-    val category: String,
+    val category: String?,
     val storeName: String,
     val totalAmount: BigDecimal
 ): BaseModel
