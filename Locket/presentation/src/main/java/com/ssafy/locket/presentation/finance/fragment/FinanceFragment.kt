@@ -17,6 +17,7 @@ import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentFinanceBinding
 import com.ssafy.locket.presentation.finance.adapter.FinanceVPAdapter
+import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
@@ -30,6 +31,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 ) {
     private val mainViewModel: MainViewModel by activityViewModels()
     private val financeSharedViewModel : FinanceSharedViewModel by activityViewModels()
+    private val budgetViewModel : BudgetViewModel by activityViewModels()
 
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
@@ -62,10 +64,17 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
         binding.btnPrevMonthIcon.setOnClickListener {
             financeSharedViewModel.setYearMonth(financeSharedViewModel.selectedYearMonth.value.minusMonths(1))
+            val year = financeSharedViewModel.selectedYearMonth.value.year
+            val month = financeSharedViewModel.selectedYearMonth.value.monthValue
+            budgetViewModel.getBudgetStatus(year,month)
         }
 
         binding.btnNextMonthIcon.setOnClickListener {
+            Log.d(TAG,financeSharedViewModel.selectedYearMonth.toString())
             financeSharedViewModel.setYearMonth(financeSharedViewModel.selectedYearMonth.value.plusMonths(1))
+            val year = financeSharedViewModel.selectedYearMonth.value.year
+            val month = financeSharedViewModel.selectedYearMonth.value.monthValue
+            budgetViewModel.getBudgetStatus(year,month)
         }
         backEvent()
     }
