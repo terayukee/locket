@@ -17,7 +17,7 @@ internal interface PaymentService {
     suspend fun pay(@Query("userId") userId: Long, @Body paymentRequest: PaymentRequest): Response<PaymentResponse>
 
     @POST("payment/api/payment/auth/verify-password")
-    suspend fun verifyPassword(@Query("userId") userId: Long, @Body passswordVerifyRequest: PassswordVerifyRequest): Response<PasswordVerifyResponse>
+    suspend fun verifyPassword(@Body passswordVerifyRequest: PassswordVerifyRequest): Response<PasswordVerifyResponse>
 
     @GET("payment/api/payment/cards")
     suspend fun getCards(@Query("userId") userId: Long): Response<CardListResponse>
