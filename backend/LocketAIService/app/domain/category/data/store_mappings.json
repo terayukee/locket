@@ -1,0 +1,61 @@
+{
+  "chain_stores": {
+    "메가커피": {
+      "names": ["메가커피", "MEGA COFFEE", "메가MGC커피"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "스타벅스": {
+      "names": ["스타벅스", "STARBUCKS", "(주)스타벅스커피코리아"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "이디야": {
+      "names": ["이디야", "EDIYA", "(주)이디야커피"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CU": {
+      "names": ["CU", "씨유", "BGF리테일"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "GS25": {
+      "names": ["GS25", "(주)지에스리테일"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    }
+  },
+  "category_keywords": {
+    "카페/디저트": [
+      "카페",
+      "커피",
+      "베이커리",
+      "디저트"
+    ],
+    "쇼핑": [
+      "마트",
+      "편의점",
+      "스토어",
+      "샵"
+    ],
+    "식비": [
+      "식당",
+      "레스토랑",
+      "치킨",
+      "피자"
+    ],
+    "교통": [
+      "택시",
+      "버스",
+      "지하철",
+      "주차장"
+    ],
+    "생활": [
+      "통신",
+      "가스",
+      "전기",
+      "수도"
+    ]
+  }
+}
