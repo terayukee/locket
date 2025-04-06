@@ -53,12 +53,12 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
     private val homeFinanceViewModel: HomeFinanceViewModel by viewModels()
 
     private var backPressedTime: Long = 0
-    @Inject
-    lateinit var userDataStoreSource: UserDataStoreSource
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initUI()
+
+        (getActivityContext(requireContext()) as MainActivity).changeBackgroundColor(R.color.background)
 
     }
 
@@ -102,7 +102,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 homeFinanceViewModel.prevMonthTotal.collect { uiState ->
                     if(uiState is TotalPaymentState.Success) {
-                        Log.d(TAG, "initUI: totalPayment prevMonthTotal ${uiState.totalPayment}")
                         if((uiState.totalPayment) < BigDecimal.ZERO) {  // 이전 달에 돈을 더 적게 씀
                             binding.tvPaymentFeedback.text = getString(R.string.finance_home_payment_feedback_more, CommonUtils.makeCommaDecimal((uiState.totalPayment).abs()))
                         } else if((uiState.totalPayment) > BigDecimal.ZERO) {
@@ -126,7 +125,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             )
                         }
                         is TotalPaymentState.Error -> {
-                            Log.d(TAG, "initUI: error ${uiState.message}")
                             CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
                         }
                         else -> {
@@ -161,7 +159,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 budgetViewModel.getBudgetStatus.collect { uiState ->
                     if (uiState is GetBudgetStatusState.Success) {
-                        Log.d(TAG, "initUI: ${uiState.budgetStatus.hasBudget}")
                         if(uiState.budgetStatus.hasBudget == false) {
                             binding.tvNoBudgetTitle.visibility = View.VISIBLE
                             binding.tvNoBudgetTitle.text = getString(R.string.home_no_budget_month)
@@ -177,7 +174,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                                 binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_same)
                             }
                         }
-
                     } else if(uiState is GetBudgetStatusState.Error) {
                         Log.d(TAG, "initUI: GetBudgetStatusState error ${uiState.message}")
                     }
@@ -206,7 +202,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //(requireContext() as MainActivity).changeBackgroundColor(R.color.white)
+        (getActivityContext(requireContext()) as MainActivity).changeBackgroundColor(R.color.white)
     }
 
 
@@ -218,14 +214,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-
     fun initEvent(){
-        lifecycleScope.launch {
-            userDataStoreSource.userId.collect { id ->
-                userInfoViewModel.fetchUser(id?:0)
-            }
-        }
-        budgetViewModel.getShortFeedback()
+        userInfoViewModel.fetchUser()
     }
 
     fun observeModel(){
@@ -233,20 +223,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
-                        userDataStoreSource.saveUser(user.userInfo)
                         binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
                     }
                 }
             }
         }
 
-        //나중에라도 피드백 되면 여기에 text넣으면 끝
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 budgetViewModel.getShortFeedback.collect { getShortFeedback ->
                     if(getShortFeedback is GetShortFeedbackState.Success) {
-//                        binding.tvBudgetAiFeedback.text = getShortFeedback.shortFeedback.feedback
-                        Log.d(TAG,"피드백"+getShortFeedback.toString())
+                        binding.tvBudgetAiFeedback.text = getShortFeedback.shortFeedback.feedback
                     }
                 }
             }

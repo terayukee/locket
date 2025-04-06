@@ -70,9 +70,11 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
                         val pastNotifications = notificationList.notificationList.past
                         val recentNotifications = notificationList.notificationList.recent
                         // ✅ RecyclerView 업데이트
+                        Log.d(TAG, "getNotificationData: ${recentNotifications.size} ${pastNotifications.size}")
+                        if(recentNotifications.size > 0) binding.groupRecentNotification.visibility = View.VISIBLE
+                        if(pastNotifications.size > 0) binding.groupPrevNotification.visibility = View.VISIBLE
                         recentNotificationListRVAdapter.submitList(recentNotifications)
                         prevNotificationListRVAdapter.submitList(pastNotifications)
-
                     }
                 }
             }

@@ -11,7 +11,7 @@ data class PaymentDailyHistoryResponseItem(
     val id: String,
     val day: Int,
     val cardName: String,
-    val paymentCategory: String?,
+    val paymentCategory: String,
     val storeName: String,
     val totalAmount: BigDecimal
 ): BaseResponse {

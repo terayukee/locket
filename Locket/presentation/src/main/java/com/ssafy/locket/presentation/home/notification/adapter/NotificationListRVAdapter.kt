@@ -1,6 +1,7 @@
 package com.ssafy.locket.presentation.home.notification.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
@@ -30,8 +31,8 @@ class NotificationListRVAdapter:
 
         fun bind(item: Notification) {
             val notificationImg : Int = when(item.type) {
-                "product" -> R.drawable.ic_notification_finance
-                "finance" -> R.drawable.ic_notification_product
+                "goal" -> R.drawable.ic_notification_finance
+                "product" -> R.drawable.ic_notification_product
                 else -> R.drawable.ic_finance_category_etc
             }
 
@@ -40,10 +41,10 @@ class NotificationListRVAdapter:
                 .placeholder(R.drawable.ic_finance_category_etc)
                 .into(binding.ivNotification)
             if(item.type=="goal"){
-                binding.tvNotificationTitle.text = "목표가"
+                binding.tvNotificationTitle.text = "경고 알림"
             }
             else{
-                binding.tvNotificationTitle.text = "경고알림"
+                binding.tvNotificationTitle.text = "최저가 알림"
             }
             binding.tvNotificationContent.text = item.content
             binding.tvNotificationDate.text = item.date

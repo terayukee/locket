@@ -40,7 +40,7 @@ class BudgetViewModel @Inject constructor(
             setBugetGoalUseCase(amount)
                 .onStart {  }
                 .catch { e ->
-                    Log.d(TAG, "getMonthlyPaymentHistory: Error ${e.message}")
+                    Log.d(TAG, "setBudgetGoal: Error ${e.message}")
                 }
                 .collect{ status ->
                     when(status) {
@@ -61,7 +61,7 @@ class BudgetViewModel @Inject constructor(
             getBudgetStatusUseCase(year,month)
                 .onStart {  }
                 .catch { e ->
-                    Log.d(TAG, "getMonthlyPaymentHistory: Error ${e.message}")
+                    Log.d(TAG, "getBudgetStatus: Error ${e.message}")
                 }
                 .collect{ status ->
                     when(status) {

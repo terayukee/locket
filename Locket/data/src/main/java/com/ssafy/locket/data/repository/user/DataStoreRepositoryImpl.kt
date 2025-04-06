@@ -1,6 +1,7 @@
 package com.ssafy.locket.data.repository.user
 
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
+import com.ssafy.locket.model.user.UserInfo
 import com.ssafy.locket.repository.user.DataStoreRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -8,11 +9,13 @@ import javax.inject.Inject
 class DataStoreRepositoryImpl @Inject constructor(
     private val dataStore: UserDataStoreSource
 ): DataStoreRepository {
-    override val accessToken: Flow<String?> = dataStore.accessToken
-    override suspend fun saveAccessToken(token: String) = dataStore.saveAccessToken(token)
+    override val kakaoAccessToken: Flow<String?> = dataStore.kakaoAccessToken
 
-    override val refreshToken: Flow<String?> = dataStore.refreshToken
-    override suspend fun saveRefreshToken(token: String) = dataStore.saveRefreshToken(token)
+    override suspend fun saveKakaoAccessToken(token: String) = dataStore.saveKakaoAccessToken(token)
+
+    override val jwtToken: Flow<String?> = dataStore.jwtToken
+
+    override suspend fun saveJwtToken(token: String) = dataStore.saveJwtToken(token)
 
     override val nickname: Flow<String?> = dataStore.nickname
 
@@ -25,6 +28,10 @@ class DataStoreRepositoryImpl @Inject constructor(
     override val fcmToken: Flow<String?> = dataStore.fcmToken
 
     override suspend fun saveFcmToken(fcmToken: String) = dataStore.saveFcmToken(fcmToken)
+
+    override val user: Flow<UserInfo?> = dataStore.user
+
+    override suspend fun saveUser(user: UserInfo) = dataStore.saveUser(user)
 
     override suspend fun clearAll() = dataStore.clearAll()
 }

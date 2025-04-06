@@ -23,7 +23,7 @@ import javax.inject.Inject
 class UserInfoViewModel @Inject constructor(
     private val getUserInfoUseCase: GetUserInfoUseCase,
     private val updateUserInfoUseCase: UpdateUserInfoUseCase,
-    private val deleteUserInfoUseCase: DeleteUserInfoUseCase
+    private val deleteUserInfoUseCase: DeleteUserInfoUseCase,
 ) : ViewModel() {
 
     private val _userInfo = MutableStateFlow<UserInfoState>(UserInfoState.Initial)
@@ -33,9 +33,9 @@ class UserInfoViewModel @Inject constructor(
         _userInfo.value = UserInfoState.Loading
     }
 
-    fun fetchUser(userId: Long) {
+    fun fetchUser() {
         viewModelScope.launch {
-            getUserInfoUseCase(userId)
+            getUserInfoUseCase()
                 .onStart { setLoading() }
                 .catch { e ->
 

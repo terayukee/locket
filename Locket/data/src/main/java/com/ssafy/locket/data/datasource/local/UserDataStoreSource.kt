@@ -15,8 +15,7 @@ class UserDataStoreSource @Inject constructor(
     private val dataStore: DataStore<Preferences>
 ) {
     companion object {
-        val ACCESS_TOKEN = stringPreferencesKey("access_token")
-        val REFRESH_TOKEN = stringPreferencesKey("refresh_token")
+        val KAKAO_ACCESS_TOKEN = stringPreferencesKey("kakao_access_token")
         val NICKNAME = stringPreferencesKey("nickname")
         val USER_ID = longPreferencesKey("user_id")
         val FCM_TOKEN = stringPreferencesKey("fcm_token")
@@ -26,22 +25,15 @@ class UserDataStoreSource @Inject constructor(
 
     private val gson = Gson()
 
-
-    suspend fun saveAccessToken(accessToken: String) {
+    suspend fun saveKakaoAccessToken(kakaoAccessToken: String) {
         dataStore.edit { preferences ->
-            preferences[ACCESS_TOKEN] = accessToken
+            preferences[KAKAO_ACCESS_TOKEN] = kakaoAccessToken
         }
     }
 
     suspend fun saveFcmToken(fcmToken: String){
         dataStore.edit{preferences ->
             preferences[FCM_TOKEN] = fcmToken
-        }
-    }
-
-    suspend fun saveRefreshToken(refreshToken: String) {
-        dataStore.edit { preferences ->
-            preferences[REFRESH_TOKEN] = refreshToken
         }
     }
 
@@ -70,12 +62,8 @@ class UserDataStoreSource @Inject constructor(
         }
     }
 
-    val accessToken: Flow<String?> = dataStore.data.map { preferences ->
-        preferences[ACCESS_TOKEN]
-    }
-
-    val refreshToken: Flow<String?> = dataStore.data.map { preferences ->
-        preferences[REFRESH_TOKEN]
+    val kakaoAccessToken: Flow<String?> = dataStore.data.map { preferences ->
+        preferences[KAKAO_ACCESS_TOKEN]
     }
 
     val nickname: Flow<String?> = dataStore.data.map { preferences ->
