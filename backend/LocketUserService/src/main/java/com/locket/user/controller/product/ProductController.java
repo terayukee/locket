@@ -279,7 +279,7 @@ public class ProductController {
                     )
             )
     )
-    @RequiresUser(ownerOnly = true)
+    @RequiresUser(ownerOnly = false)
     @PostMapping("/{productId}/like")
     public ResponseEntity<ProductLikeResponseDTO> toggleProductLike(
             @PathVariable Integer productId,
@@ -467,7 +467,7 @@ public class ProductController {
                     )
             )
     })
-    @RequiresUser(ownerOnly = true)
+    @RequiresUser(ownerOnly = false)
     @PostMapping("/{productId}/alert")
     public ResponseEntity<ProductAlertResponseDTO> setProductPriceAlert(
             @PathVariable Integer productId,
@@ -505,7 +505,7 @@ public class ProductController {
                     )
             )
     })
-    @RequiresUser
+    @RequiresUser(ownerOnly = false)
     @PatchMapping("/{productId}/price")
     public ResponseEntity<Void> updateProductPrice(
             @PathVariable Integer productId,

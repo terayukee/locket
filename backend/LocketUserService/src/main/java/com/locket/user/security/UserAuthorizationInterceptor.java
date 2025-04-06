@@ -11,6 +11,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
+import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -40,6 +41,14 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
     private final List<String> userIdParamNames = Arrays.asList(
             "userId", "user_id", "user-id", "user_id"
     );
+
+    // 상품 관련 URL 패턴
+    private final List<Pattern> productPatterns = Arrays.asList(
+            Pattern.compile("^/products/(\\d+)/like$"),
+            Pattern.compile("^/products/(\\d+)/alert$"),
+            Pattern.compile("^/products/(\\d+)/price$")
+    );
+
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -155,12 +164,20 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
         return extractUserIdFromRequestBody(request);
     }
 
+    // URI에서 userId 추출
     private Long extractUserIdFromPath(HttpServletRequest request) {
         String uri = request.getRequestURI();
 
         log.info("URI 패턴 매칭: {}", uri);
 
-        // /api/users/(숫자)
+        // 상품 관련 URI인지 확인
+        for (Pattern pattern : productPatterns) {
+            if (pattern.matcher(uri).matches()) {
+                return null;
+            }
+        }
+
+        // 기존 사용자 URI 패턴 확인
         for (Pattern pattern : userIdPatterns) {
             Matcher matcher = pattern.matcher(uri);
             if (matcher.matches() && matcher.groupCount() >= 1) {
@@ -200,19 +217,37 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
     }
 
     private Long extractUserIdFromRequestBody(HttpServletRequest request) {
+        String uri = request.getRequestURI();
+
+        // 상품 관련 URI인 경우 요청 본문에서 userId를 추출하지 않음
+        for (Pattern pattern : productPatterns) {
+            if (pattern.matcher(uri).matches()) {
+                log.debug("상품 관련 URI({}): 요청 본문에서 userId를 추출하지 않습니다.", uri);
+                return null;
+            }
+        }
+
         try {
             if (request.getContentType() != null && request.getContentType().contains("application/json")) {
-                // 요청 본문 읽기 (ContentCachingRequestWrapper를 통해 캐싱된 본문)
-                String body = StreamUtils.copyToString(request.getInputStream(), StandardCharsets.UTF_8);
+                String body = null;
+
+                if (request instanceof ContentCachingRequestWrapper) {
+                    ContentCachingRequestWrapper cachingRequest = (ContentCachingRequestWrapper) request;
+                    byte[] cachedBody = cachingRequest.getContentAsByteArray();
+                    body = new String(cachedBody, StandardCharsets.UTF_8);
+                    log.debug("캐싱된 요청 본문 크기: {} 바이트", cachedBody.length);
+                }
 
                 if (body == null || body.isEmpty()) {
+                    log.debug("요청 본문이 비어 있습니다. userId를 추출할 수 없습니다.");
                     return null;
                 }
 
                 // JSON 파싱
                 JsonNode rootNode = objectMapper.readTree(body);
+                log.debug("파싱된 요청 본문: {}", rootNode);
 
-                // userId 필드 검색 (다양한 형태의 userId 필드명 처리)
+                // userId 검색
                 if (rootNode.has("userId")) {
                     return rootNode.get("userId").asLong();
                 } else if (rootNode.has("user_id")) {
@@ -229,7 +264,7 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
                 }
             }
         } catch (Exception e) {
-            log.debug("요청 본문에서 userId 추출 실패: {}", e.getMessage());
+            log.error("요청 본문에서 userId 추출 실패: {}", e.getMessage());
         }
         return null;
     }

@@ -190,6 +190,7 @@ public class UserService {
         redisTemplate.opsForValue().set(key + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
 
         log.info("로그인 완료 및 토큰 발급: userId={}", userId);
+        log.info("Redis에 결제 비밀번호 저장: 키={}, 값={}", key, user.getPaymentPassword());
 
         return LoginResponseDto.builder()
                 .userId(userId)

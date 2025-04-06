@@ -25,12 +25,14 @@ public class RequestBodyCachingFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Content-Type이 application/json인 경우에만 래핑
-        if (request.getContentType() != null && request.getContentType().contains("application/json")) {
+        if (request.getMethod().equals("POST") ||
+                request.getMethod().equals("PUT") ||
+                request.getMethod().equals("PATCH")) {
+
             ContentCachingRequestWrapper wrappedRequest = new ContentCachingRequestWrapper(request);
             filterChain.doFilter(wrappedRequest, response);
         } else {
-            // JSON이 아닌 경우 그대로 진행
+
             filterChain.doFilter(request, response);
         }
     }
