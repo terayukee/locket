@@ -1,5 +1,6 @@
 package com.ssafy.locket.data.repository.payment
 
+import android.util.Log
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.data.network.api.PaymentService
 import com.ssafy.locket.data.network.common.ApiResponse
@@ -64,9 +65,11 @@ internal class PaymentRepositoryImpl @Inject constructor(
             }.onEach { result ->
                 when(result) {
                     is ApiResponse.Success -> {
+                        Log.d("PaymentPasswordViewMode","답"+result.data.toString())
                         emit(ResponseStatus.Success(result.data.toDomainModel()))
                     }
                     is ApiResponse.Error -> {
+                        Log.d("PaymentPasswordViewMode","에러"+result.error.toString())
                         emit(ResponseStatus.Error(result.error.toDomainModel()))
                     }
                 }

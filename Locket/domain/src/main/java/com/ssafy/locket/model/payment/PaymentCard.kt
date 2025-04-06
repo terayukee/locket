@@ -11,5 +11,7 @@ data class PaymentCard(
     val cardId: Int,
     val cardName: String,
     val cardNumber: String,
-    val userId: Long
+    val userId: Long,
+    val monthlyUsage : Int,
+    val benefits: List<Benefit>
 ): BaseModel

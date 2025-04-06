@@ -4,6 +4,9 @@ import android.util.Log
 import com.google.gson.annotations.SerializedName
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
+import com.ssafy.locket.data.network.response.graph.PriceHappinessResponse.Companion.toDomainModel
+import com.ssafy.locket.data.network.response.graph.ProductResponse.Companion.toDomainModel
+import com.ssafy.locket.model.payment.Benefit
 import com.ssafy.locket.model.payment.PaymentCard
 import kotlinx.parcelize.Parcelize
 
@@ -17,7 +20,9 @@ data class CardResponse(
     @SerializedName("cardNumber") val cardNumber: String,
     @SerializedName("createdAt") val createdAt: String,
     @SerializedName("updatedAt") val updatedAt: String,
-    @SerializedName("userId") val userId: Long
+    @SerializedName("userId") val userId: Long,
+    @SerializedName("monthlyUsage") val monthlyUsage : Int,
+    @SerializedName("benefits") val benefits: List<Benefit>
 ): BaseResponse {
     companion object: DataMapper<CardResponse, PaymentCard> {
         override fun CardResponse.toDomainModel(): PaymentCard {
@@ -27,7 +32,9 @@ data class CardResponse(
                 cardId = this.cardId,
                 cardName = this.cardName,
                 cardNumber = this.cardNumber,
-                userId = this.userId
+                userId = this.userId,
+                monthlyUsage = this.monthlyUsage,
+                benefits = this.benefits
             )
         }
     }
