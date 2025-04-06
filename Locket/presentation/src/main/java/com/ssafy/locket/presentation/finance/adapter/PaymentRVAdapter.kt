@@ -51,7 +51,7 @@ class PaymentRVAdapter(val type: String):
                 .placeholder(R.drawable.ic_finance_category_etc)
                 .into(binding.ivCategory)
             binding.tvReceiptPlace.text = item.storeName
-            binding.tvReceiptDescription.text = context.getString(R.string.receipt_description, item.category, item.cardName, CommonUtils.dateformatYMDHMFromInt(item.year, item.month, 23)) // TODO 현재는 임의의 day 넣어둠 추후에 변경
+            binding.tvReceiptDescription.text = context.getString(R.string.receipt_description, item.category, item.cardName, CommonUtils.dateformatYMDHMFromInt(item.year, item.month, item.day)) // TODO 현재는 임의의 day 넣어둠 추후에 변경
             binding.tvReceiptPrice.text = context.getString(R.string.receipt_price, CommonUtils.makeCommaDecimal(item.totalAmount))
             binding.root.setOnClickListener {
                 if(type == "receipt") itemClickListener.onClick(it, item, adapterPosition)
