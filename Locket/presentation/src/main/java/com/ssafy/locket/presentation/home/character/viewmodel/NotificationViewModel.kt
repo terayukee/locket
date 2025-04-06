@@ -8,7 +8,6 @@ import com.ssafy.locket.model.home.Notification
 import com.ssafy.locket.model.home.NotificationListInfo
 import com.ssafy.locket.model.home.character.GifticonList
 import com.ssafy.locket.presentation.graph.viewmodel.ProductCategoryListState
-import com.ssafy.locket.usecase.character.GetAllGifticonsUseCase
 import com.ssafy.locket.usecase.notification.NotificationUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
