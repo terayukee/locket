@@ -33,7 +33,7 @@ public class User {
 
     @Setter
     @Column(name = "payment_password")
-    private Integer paymentPassword;
+    private String paymentPassword;
 
     @Setter
     @Column(name = "fingerprint_registered", nullable = false)

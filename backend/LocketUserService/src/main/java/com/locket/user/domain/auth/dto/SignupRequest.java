@@ -27,7 +27,7 @@ public class SignupRequest {
     private String userJob;
 
     @Schema(example = "123456", description = "결제 비밀번호 (6자리)")
-    private Integer paymentPassword;
+    private String paymentPassword;
 
     @Schema(example = "true", description = "지문 등록 여부")
     private Boolean fingerprintRegistered;
