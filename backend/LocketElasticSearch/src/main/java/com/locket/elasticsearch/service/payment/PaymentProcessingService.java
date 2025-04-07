@@ -29,31 +29,37 @@ public class PaymentProcessingService {
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
 
-        String paymentCategory = DEFAULT_CATEGORY;
+        // 기존 카테고리 확인
+        String paymentCategory = event.getPaymentCategory() != null ?
+                event.getPaymentCategory() : DEFAULT_CATEGORY;
         boolean needItemCheck = DEFAULT_NEED_ITEM_CHECK;
         Map<String, Integer> categoryAmount = new HashMap<>();
 
-        // AI 서비스 호출 부분 - 실패해도 기본값 사용
-        try {
-            log.info("카테고리 분류 요청 - 상호명 : {}", event.getStoreName());
-            Map<String, Object> response = webClient.post()
-                    .uri("/api/ai/category/classify")
-                    .bodyValue(Map.of("storeName", event.getStoreName()))
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
-                    .block();
-            if (response != null && response.get("paymentCategory") != null) {
-                paymentCategory = (String) response.get("paymentCategory");
-                needItemCheck = Boolean.TRUE.equals(response.get("needItemCheck"));
-                log.info("카테고리 분류 성공 - 카테고리: {}, 품목확인필요: {}",
-                        paymentCategory, needItemCheck);
-            } else {
-                log.warn("카테고리 분류 실패, 기본 카테고리 사용");
+        // 카테고리가 기본값일 때만 AI 서비스 호출
+        if (DEFAULT_CATEGORY.equals(paymentCategory)) {
+            try {
+                log.info("카테고리 분류 요청 - 상호명 : {}", event.getStoreName());
+                Map<String, Object> response = webClient.post()
+                        .uri("/api/ai/category/classify")
+                        .bodyValue(Map.of("storeName", event.getStoreName()))
+                        .retrieve()
+                        .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
+                        .block();
+                if (response != null && response.get("paymentCategory") != null) {
+                    paymentCategory = (String) response.get("paymentCategory");
+                    needItemCheck = Boolean.TRUE.equals(response.get("needItemCheck"));
+                    log.info("카테고리 분류 성공 - 카테고리: {}, 품목확인필요: {}",
+                            paymentCategory, needItemCheck);
+                } else {
+                    log.warn("카테고리 분류 실패, 기본 카테고리 사용");
+                }
+            } catch (Exception e) {
+                log.warn("⚠️ 카테고리 분류 서비스 호출 실패, 기본 카테고리 사용 - 상호명: {}, 오류: {}",
+                        event.getStoreName(), e.getMessage());
+                // 기본값 유지
             }
-        } catch (Exception e) {
-            log.warn("⚠️ 카테고리 분류 서비스 호출 실패, 기본 카테고리 사용 - 상호명: {}, 오류: {}",
-                    event.getStoreName(), e.getMessage());
-            // 기본값 사용 (이미 설정되어 있음)
+        } else {
+            log.info("기존 카테고리 사용: {}", paymentCategory);
         }
 
 
