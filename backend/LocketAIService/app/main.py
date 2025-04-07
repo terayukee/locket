@@ -128,9 +128,9 @@ def _register_routers(app: FastAPI) -> None:
     from app.api import feedback, category, receipt
 
     routers = [
-        (receipt.router, "/receipt", "영수증 등록"),
-        (category.router, "/category", "카테고리 분류"),
-        (feedback.router, "/feedback", "소비 한 줄 피드백")
+        (receipt.router, "/api/ai/receipt", "영수증 등록"),
+        (category.router, "/api/ai/category", "카테고리 분류"),
+        (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백")
     ]
     for router, prefix, tag in routers:
         app.include_router(router, prefix=prefix, tags=[tag])
