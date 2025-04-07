@@ -98,7 +98,7 @@ spring:
         - id: locket-ai-service-docs
           uri: lb://LOCKET-AI-SERVICE
           predicates:
-            - Path=/api/ai/v3/api-docs/**
+            - Path=/api/ai/v3/api-docs
           filters:
             - RewritePath=/api/ai/v3/api-docs(?<remaining>/?.*), /openapi.json${remaining}
             - RemoveRequestHeader=Host
