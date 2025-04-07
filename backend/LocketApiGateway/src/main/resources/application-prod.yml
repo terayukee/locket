@@ -54,7 +54,7 @@ spring:
           predicates:
             - Path=/api/ai/**
           filters:
-            - RewritePath=/api/ai/(?<segment>/?.*), /${segment}
+            - RewritePath=/api/ai/(?<segment>/?.*), /api/ai/${segment}
           order: 10
 
         # 서비스별 Swagger 문서 라우팅
