@@ -85,7 +85,9 @@ jwt:
 
 receipt:
   service:
-    url: http://localhost:8000 # Receipt 서비스 URL
+    url: https://j12d204.p.ssafy.io
+
+#    http://localhost:8000 # Receipt 서비스 URL
 
 app:
   test-auth:
