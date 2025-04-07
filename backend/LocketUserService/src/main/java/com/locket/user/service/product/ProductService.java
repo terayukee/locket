@@ -22,6 +22,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.text.NumberFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
+import java.time.temporal.ChronoField;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
@@ -91,9 +96,23 @@ public class ProductService {
         // 가격 히스토리 조회
         List<PriceHistory> priceHistories = priceHistoryRepository.findByProductIdOrderByPriceDateAsc(productId);
 
+        DateTimeFormatter fullFormatter = DateTimeFormatter.ofPattern("yyyy.MM.dd");
+
         List<ProductPriceHistoryResponseDTO> priceHistoryDTOs = priceHistories.stream()
+                .sorted(Comparator.comparing(history -> {
+                    String[] parts = history.getPriceDate().split("\\.");
+                    int month = Integer.parseInt(parts[0]);
+                    String day = parts[1];
+
+                    int year = (month <= 4) ? 2025 : 2024;
+                    String fullDate = year + "." + String.format("%02d", month) + "." + String.format("%02d", Integer.parseInt(day));
+
+                    return LocalDate.parse(fullDate, fullFormatter);
+                }))
                 .map(ProductPriceHistoryResponseDTO::fromEntity)
                 .collect(Collectors.toList());
+
+
 
         return ProductDetailResponseDTO.builder()
                 .userId(userId)
