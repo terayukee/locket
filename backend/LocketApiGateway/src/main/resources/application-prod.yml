@@ -4,6 +4,7 @@ spring:
       on-profile: prod
   web:
     resources:
+      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
       add-mappings: true
 
   application:
@@ -57,6 +58,13 @@ spring:
             - RewritePath=/api/ai/(?<segment>/?.*), /${segment}
             - StripPrefix=2
           order: 10
+
+        - id: swagger-static
+          uri: forward:/  # 정적 리소스를 Gateway 자체에서 서빙하도록 설정
+          predicates:
+            - Path=/swagger-ui.html, /webjars/**, /swagger-ui/**
+          order: 0
+
 
         # 서비스별 Swagger 문서 라우팅
         - id: payment-service-docs
