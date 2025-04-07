@@ -100,7 +100,7 @@ spring:
           predicates:
             - Path=/api/ai/v3/api-docs/**
           filters:
-            - RewritePath=/api/ai/v3/api-docs, /openapi.json
+            - RewritePath=/api/ai/v3/api-docs(?<remaining>/?.*), /openapi.json${remaining}
             - RemoveRequestHeader=Host
           order: 1
 
