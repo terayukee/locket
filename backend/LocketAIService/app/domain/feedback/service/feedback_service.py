@@ -34,7 +34,7 @@ class FeedbackService:
 
             try:
                 response = await self.client.chat.completions.create(
-                    model="gpt-4",
+                    model="gpt-4o",
                     messages=[
                         {"role": "system", "content": "당신은 사용자의 예산 현황과 카테고리별 지출을 분석하여, 짧고 부드러운 제안형 메시지로 절약 아이디어를 주는 전문가입니다."},
                         {"role": "user", "content": prompt}
