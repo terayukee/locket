@@ -96,8 +96,13 @@ public class BudgetService {
             }
 
             // 진행률 계산
-            BigDecimal progress = totalUsed.multiply(BigDecimal.valueOf(100))
-                    .divide(BigDecimal.valueOf(goalAmount), 2, RoundingMode.HALF_UP);
+            BigDecimal progress;
+            if (goalAmount <= 0) {
+                progress = BigDecimal.ZERO;
+            } else {
+                progress = totalUsed.multiply(BigDecimal.valueOf(100))
+                        .divide(BigDecimal.valueOf(goalAmount), 2, RoundingMode.HALF_UP);
+            }
 
             BudgetMonthlyStatusDto monthlyDto = BudgetMonthlyStatusDto.builder()
                     .year(year)
