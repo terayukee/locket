@@ -13,10 +13,12 @@ WORKDIR /app
 
 # ---- Install dependencies ----
 COPY requirements.txt .
-RUN apt-get update && apt-get install -y curl iputils-ping procps && \
+RUN apt-get update && \
+    apt-get install -y curl iputils-ping procps poppler-utils && \
     pip install --upgrade pip && \
     pip install -r requirements.txt && \
     apt-get clean
+
 
 # ---- Copy application code ----
 COPY . .
