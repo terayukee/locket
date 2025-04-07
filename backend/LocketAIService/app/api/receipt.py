@@ -420,14 +420,14 @@ async def get_payment_amount(transaction_id: str) -> int:
         logger.info(f"Eureka 서비스 조회 시작: ELASTICSEARCH-SERVICE")
         # do_service를 사용하여 서비스 URL 조회 및 API 경로 추가
         elastic_service = await eureka_client.get_client().do_service('ELASTICSEARCH-SERVICE',
-                                                                      f"/payment/available/{transaction_id}")
+                                                                      f"/payment/{transaction_id}")
         logger.info(f"조회된 Elasticsearch API URL: {elastic_service}")
 
         if not elastic_service:
             logger.error("ElasticSearch service not found in Eureka")
             raise Exception("ElasticSearch service not found")
 
-        # 결제 정보 조회 API 호출 (URL 직접 사용)
+        # 결제 정보 조회 API 호출
         async with httpx.AsyncClient() as client:
             response = await client.get(elastic_service)
             logger.info(f"API 응답 상태 코드: {response.status_code}")
@@ -439,19 +439,13 @@ async def get_payment_amount(transaction_id: str) -> int:
             payment_data = response.json()
             logger.info(f"수신된 결제 데이터: {payment_data}")
 
-            # receipts 리스트에서 해당 transaction_id를 가진 결제 내역 찾기
-            payment = next(
-                (receipt for receipt in payment_data['receipts']
-                 if receipt['transactionId'] == transaction_id),
-                None
-            )
-
-            if not payment:
-                logger.error(f"결제 내역 없음: transaction_id={transaction_id}")
+            # 새로운 응답 형식에 맞춰 금액 추출
+            amount = payment_data.get('totalAmount')  # 'amount' -> 'totalAmount'로 변경
+            if amount is None:
+                logger.error("결제 금액 정보 없음")
                 raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
 
-            logger.info(f"조회된 결제 금액: {payment['amount']}원")
-            return payment['amount']  # 결제 금액 반환
+            return int(float(amount)) # 결제 금액 반환
 
     except Exception as e:
         logger.error(f"결제 정보 조회 실패: {str(e)}")

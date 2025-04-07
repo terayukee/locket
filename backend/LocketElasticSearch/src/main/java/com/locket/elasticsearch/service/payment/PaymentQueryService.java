@@ -227,4 +227,10 @@ public class PaymentQueryService {
                 .map(PaymentHistory::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
+    // TransactionId로 결제금액 조회
+    public PaymentHistory getPaymentByTransactionId(String transactionId) {
+        return paymentHistoryRepository.findById(transactionId)
+                .orElseThrow(() -> new RuntimeException("결제 내역을 찾을 수 없습니다: " + transactionId));
+    }
 }
