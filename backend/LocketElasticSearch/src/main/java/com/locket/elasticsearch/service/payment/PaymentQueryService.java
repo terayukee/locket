@@ -115,7 +115,7 @@ public class PaymentQueryService {
 
     /**
      * 영수증 등록이 가능한 결제 내역 조회.
-     * 결제 상태가 'SUCCESS'이고 영수증이 등록되지 않은(receiptUploaded=false) 내역만 반환
+     * 결제 상태가 'SUCCESS'이고 영수증이 등록되지 않았으며(receiptUploaded=false) needItemCheck=true인 내역만 반환
      * @throws IllegalArgumentException 유효하지 않은 userId가 입력된 경우
      */
     public ReceiptPaymentDto getReceiptRegisterablePayments(Long userId) {
@@ -123,10 +123,11 @@ public class PaymentQueryService {
             throw new IllegalArgumentException("userId는 null일 수 없습니다.");
         }
 
-        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndPaymentStatusAndReceiptUploaded(
+        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndPaymentStatusAndReceiptUploadedAndNeedItemCheck(
                 userId,
                 "SUCCESS",
-                false
+                false,
+                true
         );
 
         List<ReceiptPaymentDto.Receipt> receipts = payments.stream()
