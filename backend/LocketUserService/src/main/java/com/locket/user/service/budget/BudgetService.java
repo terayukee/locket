@@ -31,6 +31,12 @@ public class BudgetService {
     @Transactional
     public BudgetSetResponseDto setMonthlyBudget(BudgetSetRequestDto requestDto) {
 
+        final int MAX_BUDGET_AMOUNT = 1_000_000_000;
+
+        if (requestDto.getAmount() >= MAX_BUDGET_AMOUNT) {
+            throw new IllegalArgumentException("예산 목표 설정 금액은 10억 원까지 가능합니다.");
+        }
+
         LocalDateTime now = LocalDateTime.now();
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
