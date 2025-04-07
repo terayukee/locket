@@ -10,11 +10,13 @@ import com.ssafy.locket.usecase.auth.LoginUseCase
 import com.ssafy.locket.usecase.auth.SignUpUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+private const val TAG = "LoginViewModel"
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val loginUseCase: LoginUseCase,
@@ -22,8 +24,11 @@ class LoginViewModel @Inject constructor(
     private val dataStore: UserDataStoreSource
 ) : ViewModel() {
     // 로그인 상태 Flow (이전 값을 유지하지 않음)
-    private val _loginState = MutableStateFlow<Boolean?>(null) // 🔥 null 기본값 추가
-    val loginState = _loginState.asStateFlow()
+    private val _loginState = MutableStateFlow<LoginStatus>(LoginStatus.Idle) // 🔥 null 기본값 추가
+    val loginState : StateFlow<LoginStatus> = _loginState.asStateFlow()
+
+    private val _signUpSuccess = MutableStateFlow<Boolean?>(null)
+    val signUpSuccess: StateFlow<Boolean?> get() = _signUpSuccess
 
     private val _userJoin = MutableStateFlow(
         UserJoin(accesstoken = "", birthYear = 0, fingerprintRegistered = false, paymentPassword = 0, userJob = "")
@@ -37,53 +42,60 @@ class LoginViewModel @Inject constructor(
                 loginUseCase(accessToken).collect { response ->
                     when (response) {
                         is ResponseStatus.Success -> {
-                            Log.d("LoginViewModel", "✅ 로그인 성공 → 홈 화면 이동")
-                            dataStore.saveJwtToken("Bearer "+response.data.accessToken)
-                            _loginState.value = true // ✅ 최신 값 유지
+                            _loginState.value = LoginStatus.Success
+                            dataStore.saveJwtToken("Bearer " + response.data.accessToken)
                         }
                         is ResponseStatus.Error -> {
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.status}")
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.message}")
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.code}")
-                            if (response.error.status == "401") {
-                                Log.d("LoginViewModel", "회원가입이 필요함 → 회원가입 화면 이동")
-                                _loginState.value = false // ✅ 최신 값 유지
-                            }
+                            Log.e(TAG, "로그인 실패 - ${response.error.message}")
+                            _loginState.value = LoginStatus.Error("로그인에 실패했습니다: ${response.error.message}")
                         }
                     }
                 }
             } catch (e: Exception) {
-                Log.e("LoginViewModel", "❌ 로그인 처리 중 예외 발생: ${e.message}")
+                Log.e(TAG, "로그인 처리 중 예외 발생: ${e.message}")
+                _loginState.value = LoginStatus.Error("서버와의 연결에 실패했습니다.")
             }
         }
     }
 
     fun resetLoginState() {
-        _loginState.value = null
+        _loginState.value = LoginStatus.Idle
     }
 
     //유저 회원가입 과정
-    fun userJoin(userJoin: UserJoin) {
+    fun userJoin(userJoin: UserJoin?) {
         viewModelScope.launch {
+            if (userJoin == null) {
+                _signUpSuccess.value = false
+                return@launch
+            }
             try {
-                signUpUseCase(userJoin.birthYear,userJoin.fingerprintRegistered,userJoin.paymentPassword,userJoin.userJob,userJoin.accesstoken).collect { response ->
+                signUpUseCase(
+                    userJoin.birthYear,
+                    userJoin.fingerprintRegistered,
+                    userJoin.paymentPassword,
+                    userJoin.userJob,
+                    userJoin.accesstoken
+                ).collect { response ->
                     when (response) {
                         is ResponseStatus.Success -> {
-                            Log.d("LoginViewModel","jwt토큰 "+ response.data.accessToken)
-                            dataStore.saveJwtToken("Bearer "+response.data.accessToken)
+                            Log.d("LoginViewModel", "jwt토큰 " + response.data.accessToken)
+                            dataStore.saveJwtToken("Bearer " + response.data.accessToken)
+                            _signUpSuccess.value = true
                         }
                         is ResponseStatus.Error -> {
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.status}")
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.message}")
-                            Log.d("LoginViewModel", "서버 응답 실패 코드: ${response.error.code}")
+                            Log.d("LoginViewModel", "회원가입 실패: ${response.error.message}")
+                            _signUpSuccess.value = false
                         }
                     }
                 }
             } catch (e: Exception) {
-                Log.e("LoginViewModel", "❌ 로그인 처리 중 예외 발생: ${e.message}")
+                Log.e("LoginViewModel", "회원가입 중 예외 발생", e)
+                _signUpSuccess.value = false
             }
         }
     }
+
 
     fun updateBirthYear(year: Int) {
         _userJoin.update { it.copy(birthYear = year) }
@@ -104,6 +116,10 @@ class LoginViewModel @Inject constructor(
     fun updateUserJob(job: String) {
         _userJoin.update { it.copy(userJob = job) }
     }
+}
 
-
+sealed class LoginStatus {
+    object Idle : LoginStatus()
+    object Success : LoginStatus()
+    data class Error(val message: String) : LoginStatus()
 }

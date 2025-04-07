@@ -1,7 +1,9 @@
 package com.ssafy.locket.presentation.graph.fragment
 
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
@@ -53,6 +55,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     //하트 색칠여부
     private var isHeartFilled = false
 
+    var url = ""
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
@@ -102,13 +106,19 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             isHeartFilled = !isHeartFilled
             if (isHeartFilled) {
                 binding.cvNotificationSetting.visibility = View.VISIBLE
+                binding.ivCoupangMove.visibility = View.VISIBLE
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)  // 색칠된 하트
             } else {
                 binding.cvNotificationSetting.visibility = View.INVISIBLE
+                binding.ivCoupangMove.visibility = View.INVISIBLE
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)  // 빈 하트
             }
             Log.d(TAG,"하트여부"+isHeartFilled)
             productViewModel.productLikeClick(productId,isHeartFilled)
+        }
+        binding.ivCoupangMove.setOnClickListener {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            startActivity(intent)
         }
     }
 
@@ -260,11 +270,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                         binding.tvReview.text = productDetail.productDetailInfo.reviewRating
                         binding.tvHighestPrice.text= productDetail.productDetailInfo.highestPrice
                         binding.tvDiscount.text = productDetail.productDetailInfo.discountRate
+                        url = productDetail.productDetailInfo.coupangUrl
                         setupLineChart(productDetail.productDetailInfo.priceHistory)
                         isHeartFilled = productDetail.productDetailInfo.liked
                         if(isHeartFilled){
                             binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)
                             binding.cvNotificationSetting.visibility = View.VISIBLE
+                            binding.ivCoupangMove.visibility = View.VISIBLE
                             if(productDetail.productDetailInfo.alertPrice==0){
                                 binding.tvSetting.text ="설정 안됨"
                                 editViewModel.updatePrice("")
@@ -276,6 +288,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                         }
                         else{
                             binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)
+                            binding.ivCoupangMove.visibility = View.INVISIBLE
                             binding.cvNotificationSetting.visibility = View.INVISIBLE
                         }
                     }
