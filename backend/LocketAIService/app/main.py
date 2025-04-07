@@ -6,6 +6,7 @@ from starlette.responses import JSONResponse
 from datetime import datetime
 from app.common.exception.base_exception import BaseException
 from app.common.constant.status import StatusCode, CommonErrorMessage
+from app.config.settings import settings
 
 from .api import receipt, category, feedback
 import logging
@@ -28,11 +29,23 @@ ENV = os.getenv("ENV", "prod")
 
 def create_app() -> FastAPI:
     """FastAPI 애플리케이션 생성 및 설정"""
+
+    # Swagger 경로 환경에 따라 분기
+    if settings.ENV == "prod":
+        docs_url = "/docs"
+        redoc_url = "/redoc"
+        openapi_url = "/v3/api-docs"  # API Gateway 라우팅에 사용될 경로
+    else:
+        docs_url = "/docs"
+        redoc_url = "/redoc"
+        openapi_url = "/openapi.json"  # 로컬 기본 경로
+
     app = FastAPI(
         title="Locket AI Service",
         version="1.0.0",
-        docs_url="/docs",
-        redoc_url="/redoc",
+        docs_url=docs_url,
+        redoc_url=redoc_url,
+        openapi_url=openapi_url,
         responses={422: {"model": None}}
     )
 
@@ -112,10 +125,12 @@ def create_app() -> FastAPI:
 
 
 def _register_routers(app: FastAPI) -> None:
+    from app.api import feedback, category, receipt
+
     routers = [
-        (receipt.router, "/api/ai/receipt", "영수증 등록"),
-        (category.router, "/api/ai/category", "카테고리 분류"),
-        (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백")
+        (receipt.router, "/receipt", "영수증 등록"),
+        (category.router, "/category", "카테고리 분류"),
+        (feedback.router, "/feedback", "소비 한 줄 피드백")
     ]
     for router, prefix, tag in routers:
         app.include_router(router, prefix=prefix, tags=[tag])

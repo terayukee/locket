@@ -72,6 +72,7 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
                         "docker service update \
                             --image ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest \
+                            --env-add ENV=prod
                             --env-add PORT=${DOCKER_PORT} \
                             --env-add EUREKA_SERVER=http://j12d204.p.ssafy.io:8761/eureka \
                             --env-add SERVICE_NAME=LOCKET-AI-SERVICE \
