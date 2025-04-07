@@ -532,4 +532,53 @@ public class UserController {
         return ResponseEntity.ok(loginResponse);
     }
 
+    @Operation(summary = "지문 등록 추가", description = "사용자의 지문 등록 상태를 false에서 true로 변경합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "지문 등록 상태 변경 성공",
+                    content = @Content(schema = @Schema(implementation = SuccessResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "400",
+                    description = "이미 지문이 등록되어 있음",
+                    content = @Content(
+                            schema = @Schema(implementation = ErrorResponse.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                {
+                                  "status": 400,
+                                  "error": "Bad Request",
+                                  "message": "이미 지문이 등록되어 있습니다.",
+                                  "timestamp": "2025-04-01T12:34:56.789Z"
+                                }
+                                """
+                            )
+                    )
+            ),
+            @ApiResponse(
+                    responseCode = "401",
+                    description = "인증 실패",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            ),
+            @ApiResponse(
+                    responseCode = "404",
+                    description = "사용자를 찾을 수 없음",
+                    content = @Content(schema = @Schema(implementation = ErrorResponse.class))
+            )
+    })
+    @RequiresUser(ownerOnly = true)
+    @PatchMapping("/{user_id}/fingerprint")
+    public ResponseEntity<SuccessResponse> updateFingerprintStatus(
+            @PathVariable("user_id") Long userId) {
+
+        userService.updateFingerprintStatus(userId);
+
+        SuccessResponse response = SuccessResponse.builder()
+                .message("지문 등록이 완료되었습니다")
+                .build();
+
+        return ResponseEntity.ok(response);
+    }
+
 }

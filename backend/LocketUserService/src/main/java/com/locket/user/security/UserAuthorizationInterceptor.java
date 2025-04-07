@@ -94,7 +94,6 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
         // 게이트웨이에서 넘어온 사용자 ID 확인
         String userIdHeader = request.getHeader("X-User-Id");
 
-        // ===== 추가 수정 부분 시작 =====
         // 다른 헤더도 확인
         if (userIdHeader == null || userIdHeader.isEmpty()) {
             userIdHeader = request.getHeader("X-Auth-UserId");
@@ -114,7 +113,6 @@ public class UserAuthorizationInterceptor implements HandlerInterceptor {
                 }
             }
         }
-        // ===== 추가 수정 부분 끝 =====
 
         if (userIdHeader == null || userIdHeader.isEmpty()) {
             log.error("인증 헤더 없음 - 인증 실패: {}", requestURI);
