@@ -24,10 +24,11 @@ public interface PaymentHistoryRepository extends ElasticsearchRepository<Paymen
 
 
     // 영수증 등록 가능한 전체 결제 내역 조회
-    List<PaymentHistory> findByBuyerIdAndPaymentStatusAndReceiptUploaded(
+    List<PaymentHistory> findByBuyerIdAndPaymentStatusAndReceiptUploadedAndNeedItemCheck(
             long buyerId,
             String paymentStatus,
-            boolean receiptUploaded
+            boolean receiptUploaded,
+            boolean needItemCheck
     );
 
 
