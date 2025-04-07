@@ -185,7 +185,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                     when(uiState) {
                         is SelectedDayPaymentsState.Success -> {
                             Log.d(TAG, "initUI: success")
-                            dialog.show(childFragmentManager, "payment")
+                            if (uiState.paymentDailyHistory.list.isNotEmpty()) dialog.show(childFragmentManager, "payment")
                         }
                         is SelectedDayPaymentsState.Error -> {
                             CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)

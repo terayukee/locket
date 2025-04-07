@@ -205,7 +205,6 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         (getActivityContext(requireContext()) as MainActivity).changeBackgroundColor(R.color.white)
     }
 
-
     fun getActivityContext(context: Context): Context {
         return if (context is ViewComponentManager.FragmentContextWrapper) {
             context.baseContext

@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
+import com.ssafy.locket.model.home.receipt.ProcessedReceipt
 import com.ssafy.locket.model.home.receipt.Receipt
 import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.usecase.home.receipt.GetAllAvailableReceiptsUseCase
@@ -42,9 +43,12 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     val receiptFileSelectionUiState: StateFlow<ReceiptFileSelectionUiState> =
         _receiptFileSelectionUiState.asStateFlow() // 선택된 처리할 영수증
 
-
     private val _receiptDetail = MutableStateFlow<ReceiptDetailState>(ReceiptDetailState.Initial)
     val receiptDetail: StateFlow<ReceiptDetailState> = _receiptDetail.asStateFlow() // ocr 처리한 영수증 정보
+
+    private fun setLoading() {
+        _receiptDetail.value = ReceiptDetailState.Loading
+    }
 
     fun selectReceiptFile(uri: Uri) {
         _receiptFileSelectionUiState.value = ReceiptFileSelectionUiState.Success(uri)
@@ -63,19 +67,15 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     }
 
     fun clearSelectedType() {
-        _selectedType.value = FileTypeSelectionUiState.None
+        _selectedType.value = FileTypeSelectionUiState.Initial
     }
 
     fun clearSelectedReceiptFile() {
         _receiptFileSelectionUiState.value = ReceiptFileSelectionUiState.None
     }
 
-    fun setReceiptDetails(receiptDetails: List<ReceiptDetail>) {
-        _receiptDetail.value = ReceiptDetailState.Selected(receiptDetails)
-    }
-
     fun clearSelectedReceiptDetail() {
-        _receiptDetail.value = ReceiptDetailState.None
+        _receiptDetail.value = ReceiptDetailState.Initial
     }
 
     fun getAllAvailableReceipts() {
@@ -88,7 +88,6 @@ class ReceiptFileSelectionViewModel @Inject constructor(
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            Log.d(TAG, "getAllAvailableReceipts: receiptList")
                             _receiptList.value = PaymentReceiptListState.Success(status.data.receiptList)
                         }
                         is ResponseStatus.Error -> {
@@ -102,15 +101,15 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     fun processReceipt(type: String, uri: Uri, transactionId: String) {
         viewModelScope.launch {
             processReceiptUseCase(type, uri, transactionId)
-                .onStart {  }
+                .onStart { setLoading() }
                 .catch { e ->
-                    Log.d(TAG, "processReceipt: ${e.message}")
+                    Log.d(TAG, "processReceipt: catch ${e.message}")
                 }
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            Log.d(TAG, "processReceipt Success: ${status.data}")
-                            _receiptDetail.value = ReceiptDetailState.Selected(status.data.items)
+                            Log.d(TAG, "processReceipt Success: ${status.data.storeName}")
+                            _receiptDetail.value = ReceiptDetailState.Success(status.data)
                         }
                         is ResponseStatus.Error -> {
                             Log.d(TAG, "processReceipt Error: ${status.error.message}")
@@ -142,7 +141,6 @@ sealed class FileTypeSelectionUiState {
     object Image : FileTypeSelectionUiState()
     object Camera : FileTypeSelectionUiState()
     object Pdf : FileTypeSelectionUiState()
-    object None : FileTypeSelectionUiState()
 }
 
 sealed class PaymentReceiptListState {
@@ -153,7 +151,7 @@ sealed class PaymentReceiptListState {
 
 sealed class ReceiptDetailState {
     object Initial : ReceiptDetailState()
-    data class Selected(val receiptDetails: List<ReceiptDetail>) : ReceiptDetailState()
+    object Loading: ReceiptDetailState()
+    data class Success(val processReceipt: ProcessedReceipt) : ReceiptDetailState()
     data class Error(val message: String) : ReceiptDetailState()
-    object None : ReceiptDetailState()
 }

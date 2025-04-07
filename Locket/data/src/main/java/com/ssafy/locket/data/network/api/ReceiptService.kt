@@ -20,11 +20,11 @@ interface ReceiptService {
     suspend fun getAvailableReceiptList(@Path("userId") userId: Long): Response<AvailableReceiptResponse>
 
     @Multipart
-    @POST("ai/receipt/camera/{transactionId}")
+    @POST("ai/api/ai/receipt/camera/{transactionId}")
     suspend fun processReceiptImage(@Part file: MultipartBody.Part, @Path("transactionId") transactionId: String): Response<ProcessedReceiptResponse>
 
     @Multipart
-    @POST("ai/receipt/pdf/{transactionId}")
+    @POST("ai/api/ai/receipt/pdf/{transactionId}")
     suspend fun processReceiptPdf(@Part file: MultipartBody.Part, @Path("transactionId") transactionId: String): Response<ProcessedReceiptResponse>
 
     @POST("ai/receipt/save/{transactionId}")

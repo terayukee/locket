@@ -33,11 +33,11 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
 
     private fun initUI() {
         viewLifecycleOwner.lifecycleScope.launch {
-//            receiptViewModel.receiptDetail.collect { uiState ->
-//                if(uiState is ReceiptDetailState.Selected) {
-//                    binding.tvStore.text = uiState.receiptDetail.itemName
-//                }
-//            }
+            receiptFileSelectionViewModel.receiptDetail.collect { uiState ->
+                if(uiState is ReceiptDetailState.Success) {
+                    binding.tvStore.text = uiState.processReceipt.storeName
+                }
+            }
         }
 
         binding.btnEdit.setOnClickListener {
