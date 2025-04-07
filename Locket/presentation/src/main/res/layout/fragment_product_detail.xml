@@ -200,6 +200,7 @@
                 android:src="@drawable/image_coupang_logo"
                 app:layout_constraintWidth_percent="0.15"
                 app:layout_constraintDimensionRatio="1"
+                android:background="@drawable/bg_card_border_inactive"
                 app:layout_constraintHorizontal_bias="0.1"
                 android:visibility="invisible"
                 app:layout_constraintTop_toTopOf="parent"

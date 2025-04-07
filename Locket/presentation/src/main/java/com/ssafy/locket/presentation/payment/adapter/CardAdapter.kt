@@ -20,23 +20,28 @@ class CardAdapter(private var cards: List<PaymentCard>) : RecyclerView.Adapter<C
         private val cardImageView: ImageView = view.findViewById(R.id.card_image)
 
         fun bind(item: PaymentCard) {
+            Log.d(TAG,"카드 이름"+item.cardName)
             when(item.cardName){
                 "SAMSUNG"->{
+                    Log.d(TAG,"삼성")
                     Glide.with(context)
                         .load(R.drawable.ic_payment_card_img)
                         .into(cardImageView)
                 }
                 "KB 청춘대로 싱글"->{
+                    Log.d(TAG,"KB")
                     Glide.with(context)
                         .load(R.drawable.image_kb_card)
                         .into(cardImageView)
                 }
                 "롯데 LOCA 365"->{
+                    Log.d(TAG,"롯데")
                     Glide.with(context)
                         .load(R.drawable.image_lotte_card)
                         .into(cardImageView)
                 }
                 "NH 올바른 FLEX"->{
+                    Log.d(TAG,"NH")
                     Glide.with(context)
                         .load(R.drawable.image_nh_card)
                         .into(cardImageView)
