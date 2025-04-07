@@ -8,7 +8,7 @@ import kotlinx.parcelize.Parcelize
 data class Receipt(
     val amount: Int,
     val cardName: String,
-    val category: String,
+    val category: String?,
     val paymentDate: String,
     val storeName: String,
     val transactionId: String

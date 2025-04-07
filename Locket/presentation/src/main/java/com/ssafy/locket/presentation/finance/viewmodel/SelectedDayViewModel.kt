@@ -7,12 +7,14 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.payment_history.PaymentDailyHistory
 import com.ssafy.locket.usecase.payment_history.GetDailyPaymentHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import javax.inject.Inject
@@ -28,8 +30,8 @@ class SelectedDayViewModel @Inject constructor(
     private val _selectedDayPayments = MutableStateFlow<SelectedDayPaymentsState>(SelectedDayPaymentsState.Initial)
     val selectedDayPayments = _selectedDayPayments.asStateFlow()
 
-    private val _openDialog = MutableSharedFlow<OpenDialogState>()
-    val openDialog = _openDialog.asSharedFlow()
+    private val _openDialog = Channel<OpenDialogState>(Channel.BUFFERED)
+    val openDialog = _openDialog.receiveAsFlow()
 
     fun setSelectedDay(day: LocalDate) {
         _selectedDay.value = SelectedDayState.Selected(day)
@@ -51,7 +53,10 @@ class SelectedDayViewModel @Inject constructor(
                     when(status) {
                         is ResponseStatus.Success -> {
                             _selectedDayPayments.value = SelectedDayPaymentsState.Success(status.data)
-                            if(status.data.list.isNotEmpty()) _openDialog.emit(OpenDialogState.Opened)
+                            if(status.data.list.isNotEmpty()) {
+                                Log.d(TAG, "setSelectedDayPayments: dialog is added")
+                                _openDialog.trySend(OpenDialogState.Opened)
+                            }
                         }
                         is ResponseStatus.Error -> {
                             _selectedDayPayments.value = SelectedDayPaymentsState.Error(status.error.message)

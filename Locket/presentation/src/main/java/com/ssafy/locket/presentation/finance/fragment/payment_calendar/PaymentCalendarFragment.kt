@@ -30,13 +30,18 @@ import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import com.ssafy.locket.utils.CalendarUtils.displayText
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.yield
+import java.math.BigDecimal
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
 
 private const val TAG = "PaymentCalendarFragment"
+
 @AndroidEntryPoint
 class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     FragmentPaymentCalendarBinding::bind,
@@ -51,9 +56,9 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
     private val paymentHistoryViewModel: PaymentHistoryViewModel by activityViewModels()
     private val selectedDayViewModel: SelectedDayViewModel by activityViewModels()
-    private lateinit var dialog : PaymentCalendarBottomSheetFragment
+    private lateinit var dialog: PaymentCalendarBottomSheetFragment
     private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
-    
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -75,8 +80,14 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         binding.calendar.dayBinder = object : MonthDayBinder<DayViewContainer> {
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.day = data
-                bindDate(data.date, container.dayText, container.paymentText, data.position == DayPosition.MonthDate)
+                bindDate(
+                    data.date,
+                    container.dayText,
+                    container.paymentText,
+                    data.position == DayPosition.MonthDate
+                )
             }
+
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
         }
 
@@ -93,7 +104,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     private fun updateDayWeekColor() {
         for ((index, dayText) in daysOfWeek.withIndex()) {
             val dayLayout = binding.layoutDow.root.getChildAt(index)
-            if (dayLayout != null){
+            if (dayLayout != null) {
                 val textView: TextView? = dayLayout.findViewById(R.id.dayWeekText)
                 if (textView != null) {
                     textView.text = dayText.displayText()
@@ -104,7 +115,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
     private fun updateTitle() {
         val month = binding.calendar.findFirstVisibleMonth()?.yearMonth ?: return
-        val year = month.year.toString() +"년"
+        val year = month.year.toString() + "년"
         currentMonth = month
         financeSharedViewModel.setYearMonth(currentMonth)
     }
@@ -119,7 +130,12 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         selectedDayViewModel.setSelectedDayPayments(date.year, date.monthValue, date.dayOfMonth)
     }
 
-    private fun bindDate(date: LocalDate, dayText: TextView, paymentText: TextView, isSelectable: Boolean) {
+    private fun bindDate(
+        date: LocalDate,
+        dayText: TextView,
+        paymentText: TextView,
+        isSelectable: Boolean
+    ) {
         dayText.text = date.dayOfMonth.toString()
         val fonts = arrayOf(R.font.pretendard_regular, R.font.pretendard_bold)
 
@@ -131,6 +147,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                         typeface = ResourcesCompat.getFont(context, fonts[1])
                     }
                 }
+
                 else -> {
                     dayText.apply {
                         setTextColor(resources.getColor(R.color.text))
@@ -139,17 +156,25 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                 }
             }
             paymentHistoryViewModel.monthlyPaymentCalendar.value.let { uiState ->
-                if(uiState is PaymentCalendarState.Success) {
-                    val element = uiState.paymentCalendar.dailySpending.find { it.date == date.format(format) }
-                    if(element != null) {
+                if (uiState is PaymentCalendarState.Success) {
+                    val element =
+                        uiState.paymentCalendar.dailySpending.find { it.date == date.format(format) }
+                    Log.d(TAG, "bindDate: element ${element?.date} ${element?.amount}")
+                    if (element != null) {
                         paymentText.apply {
-                            setText(getString(R.string.finance_calendar_payment,CommonUtils.makeComma(element.amount*10000)))
+                            text = getString(
+                                R.string.finance_calendar_payment,
+                                CommonUtils.makeCommaDecimal(element.amount)
+                            )
                         }
+                    } else {
+                        paymentText.setText(null)
                     }
                 }
             }
         } else {
             dayText.setTextColor(resources.getColor(R.color.disabled))
+            paymentText.setText(null)
         }
     }
 
@@ -158,16 +183,22 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 paymentHistoryViewModel.monthlyPaymentCalendar.collect { uiState ->
-                    when(uiState) {
+                    when (uiState) {
                         is PaymentCalendarState.Success -> {
                             uiState.paymentCalendar.dailySpending.map { // 월단위 결제내역 캘린더에 mapping
                                 binding.calendar.notifyDateChanged(LocalDate.parse(it.date, format))
                             }
                         }
+
                         is PaymentCalendarState.Error -> {
                             Log.d(TAG, "initUI: Error calendar ${uiState.message}")
-                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                            CommonUtils.showSingleLineCustomToast(
+                                requireContext(),
+                                ToastType.ERROR,
+                                uiState.message
+                            )
                         }
+
                         else -> Log.d(TAG, "initUI: Calendar Initial or Loading")
                     }
                 }
@@ -183,8 +214,10 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 selectedDayViewModel.openDialog.collect { uiState ->
-                    if(uiState is OpenDialogState.Opened) {
+                    if (uiState is OpenDialogState.Opened && !dialog.isAdded) {
+                        Log.d(TAG, "initUI: dialog is added")
                         dialog.show(childFragmentManager, "payment")
+                        yield()
                     }
                 }
             }
@@ -210,6 +243,6 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if(::dialog.isInitialized) dialog.dismiss()
+//        if(::dialog.isInitialized) dialog.dismiss()
     }
 }

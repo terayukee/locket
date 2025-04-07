@@ -34,8 +34,8 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
 
     private var currentMonth = YearMonth.now()
-    private val startMonth = YearMonth.of(2025, 1)
-    private val endMonth = YearMonth.of(2025, 5)
+    private val startMonth = YearMonth.of(2020, 2)
+    private val endMonth = YearMonth.of(2025, 4)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -65,9 +65,9 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collect {
-                    if(it > YearMonth.of(2029,12)) {
+                    if(it >= YearMonth.of(endMonth.year,endMonth.monthValue)) {
                         binding.btnNextMonthIcon.isEnabled = false
-                    } else if (it < YearMonth.of(2020,2)) {
+                    } else if (it < YearMonth.of(startMonth.year,startMonth.monthValue)) {
                         binding.btnPrevMonthIcon.isEnabled = false
                     } else {
                         binding.btnPrevMonthIcon.isEnabled = true

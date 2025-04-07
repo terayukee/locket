@@ -78,7 +78,6 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             }
         }
 
-        binding.tvPaymentData.text = resources.getString(R.string.finance_won, CommonUtils.makeComma(100000))
         binding.btnAnalysis.setOnClickListener {
             findNavController().navigate(R.id.action_financeFragment_to_expenseAnalysisFragment)
         }

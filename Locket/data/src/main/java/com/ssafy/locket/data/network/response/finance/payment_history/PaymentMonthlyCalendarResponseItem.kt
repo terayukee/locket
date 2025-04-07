@@ -4,10 +4,11 @@ import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
 import com.ssafy.locket.model.payment_history.PaymentCalendarItem
 import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
 
 @Parcelize
 data class PaymentMonthlyCalendarResponseItem(
-    val amount: Int,
+    val amount: BigDecimal,
     val date: String
 ): BaseResponse {
     companion object: DataMapper<PaymentMonthlyCalendarResponseItem, PaymentCalendarItem> {

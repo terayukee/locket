@@ -8,9 +8,11 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.receipt.ProcessedReceipt
 import com.ssafy.locket.model.home.receipt.Receipt
 import com.ssafy.locket.model.home.receipt.ReceiptDetail
+import com.ssafy.locket.presentation.finance.viewmodel.OpenDialogState
 import com.ssafy.locket.usecase.home.receipt.GetAllAvailableReceiptsUseCase
 import com.ssafy.locket.usecase.home.receipt.ProcessReceiptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +20,7 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -48,8 +51,8 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     private val _receiptDetail = MutableStateFlow<ReceiptDetailState>(ReceiptDetailState.Initial)
     val receiptDetail: StateFlow<ReceiptDetailState> = _receiptDetail.asStateFlow() // ocr 처리한 영수증 정보
 
-    private val _navigationEvent = MutableSharedFlow<NavigateToDetailEvent>()
-    val navigationEvent = _navigationEvent.asSharedFlow()
+    private val _navigationEvent = Channel<NavigateToDetailEvent>(Channel.BUFFERED)
+    val navigationEvent = _navigationEvent.receiveAsFlow()
 
     fun selectReceiptFile(uri: Uri) {
         _receiptFileSelectionUiState.value = ReceiptFileSelectionUiState.Success(uri)
@@ -102,21 +105,23 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     fun processReceipt(type: String, uri: Uri, transactionId: String) {
         viewModelScope.launch {
             processReceiptUseCase(type, uri, transactionId)
-                .onStart { _navigationEvent.emit(NavigateToDetailEvent.Loading) }
+                .onStart { _navigationEvent.trySend(NavigateToDetailEvent.Loading) }
                 .catch { e ->
                     Log.d(TAG, "processReceipt: catch ${e.message}")
+                    _receiptDetail.value = ReceiptDetailState.Error(e.message ?: "오류가 발생했습니다")
+                    _navigationEvent.trySend(NavigateToDetailEvent.Error(e.message ?: "오류가 발생했습니다"))
                 }
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
                             Log.d(TAG, "processReceipt Success: ${status.data.storeName}")
                             _receiptDetail.value = ReceiptDetailState.Success(status.data)
-                            _navigationEvent.emit(NavigateToDetailEvent.Move)
+                            _navigationEvent.trySend(NavigateToDetailEvent.Move)
                         }
                         is ResponseStatus.Error -> {
                             Log.d(TAG, "processReceipt Error: ${status.error.message}")
                             _receiptDetail.value = ReceiptDetailState.Error(status.error.message)
-                            _navigationEvent.emit(NavigateToDetailEvent.Initial)
+                            _navigationEvent.trySend(NavigateToDetailEvent.Error(status.error.message))
                         }
                     }
                 }
@@ -163,4 +168,5 @@ sealed class NavigateToDetailEvent {
     object Initial: NavigateToDetailEvent()
     object Move: NavigateToDetailEvent()
     object Loading: NavigateToDetailEvent()
+    data class Error(val message: String): NavigateToDetailEvent()
 }

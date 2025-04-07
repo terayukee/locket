@@ -115,9 +115,16 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
                     findNavController().navigate(R.id.action_receiptListFragment_to_receiptDetailFragment)
                     }
                     is NavigateToDetailEvent.Initial -> {
-                        Log.d(TAG, "onViewCreated: error")
-                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "오류가 발생했습니다. 잠시후 다시 시도해주세요")
+//                        Log.d(TAG, "onViewCreated: error")
+//                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "오류가 발생했습니다. 잠시후 다시 시도해주세요")
                     }
+                    is NavigateToDetailEvent.Error -> {
+                        Log.d(TAG, "onViewCreated: error 발생")
+                        binding.progressBar.visibility = View.GONE
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                    }
+
                 }
             }
         }

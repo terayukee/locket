@@ -10,7 +10,7 @@ import kotlinx.parcelize.Parcelize
 data class AvailableReceiptResponseItem(
     @SerializedName("amount") val amount: Int,
     @SerializedName("cardName") val cardName: String,
-    @SerializedName("paymentCategory") val category: String,
+    @SerializedName("paymentCategory") val category: String?,
     @SerializedName("paymentDate") val paymentDate: String,
     @SerializedName("storeName") val storeName: String,
     @SerializedName("transactionId") val transactionId: String

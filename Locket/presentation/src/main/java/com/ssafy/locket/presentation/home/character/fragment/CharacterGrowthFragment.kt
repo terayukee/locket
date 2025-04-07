@@ -23,10 +23,11 @@ import kotlinx.coroutines.launch
 import kotlin.math.min
 
 private const val TAG = "CharacterGrowthFragment"
-class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
+
+class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
     FragmentCharacterGrowthBinding::bind,
     R.layout.fragment_character_growth
-){
+) {
     private var mContext: Context? = null
     private var isTimerRunning = false
     private lateinit var timerRunnable: Runnable
@@ -73,66 +74,80 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             characterViewModel.characterInfo.collect { uiState ->
-                if(uiState is CharacterInfoState.Success) {
-                    if(uiState.characterInfo.level == 4) {
+                if (uiState is CharacterInfoState.Success) {
+                    if (uiState.characterInfo.level == 4) {
                         binding.ivMissionToyBg.isEnabled = false
                         binding.ivCharacterGrowthBg.isEnabled = false
                         characterViewModel.completeCharacter()
-                    }
-                    else {
+                    } else {
                         val level = uiState.characterInfo.level
-                        gifResId = resources.getIdentifier("gif_character_level_$level", "raw", requireContext().packageName)
-                        imageResId = resources.getIdentifier("image_character_level_$level", "drawable", requireContext().packageName)
-                        if(uiState.characterInfo.isInit == false) {
+                        gifResId = resources.getIdentifier(
+                            "gif_character_level_$level",
+                            "raw",
+                            requireContext().packageName
+                        )
+                        imageResId = resources.getIdentifier(
+                            "image_character_level_$level",
+                            "drawable",
+                            requireContext().packageName
+                        )
+                        if (uiState.characterInfo.isInit == false) {
                             mContext?.let {
+                                Log.d(TAG, "initUI false : imageResId $imageResId level $level")
                                 Glide.with(it)
                                     .load(gifResId)
                                     .placeholder(imageResId)
                                     .into(binding.ivCharacter)
                             }
-                            loadCharacterAnimation()
-
-//                            mContext?.let { context ->
-//                                binding?.let {
-//
-//                                    binding.ivCharacter.postDelayed({
-//                                        Glide.with(context)
-//                                            .load(imageResId)
-//                                            .into(binding.ivCharacter)
-//                                    }, 2000)
-//                                }
-//                            }
+                            loadCharacterAnimation(imageResId)
                         } else {
                             mContext?.let { context ->
-                                binding?.let {
-                                    Glide.with(context)
-                                        .load(imageResId)
-                                        .into(binding.ivCharacter)
-                                }
+                                Log.d(TAG, "initUI else : imageResId $imageResId  level $level")
+                                Glide.with(context)
+                                    .load(imageResId)
+                                    .into(binding.ivCharacter)
                             }
                         }
                     }
                     binding.tvCharacterName.text = uiState.characterInfo.name
                     minRemain = uiState.characterInfo.toy.remainingTimeMinutes
-                    binding.tvMissionToyQuantity.text = if(minRemain > 0) getString(R.string.home_character_toy_remain_time, minRemain) else "사용 가능"
-                    binding.tvCharacterLevel.text = getString(R.string.home_character_level, uiState.characterInfo.level)
-                    binding.tvCharacterPercent.text = getString(R.string.home_character_exp_percent, uiState.characterInfo.expPercentage)
-                    binding.tvMissionFoodQuantity.text = getString(R.string.home_character_food_remain_count, uiState.characterInfo.foodCount)
+                    binding.tvMissionToyQuantity.text = if (minRemain > 0) getString(
+                        R.string.home_character_toy_remain_time,
+                        minRemain
+                    ) else "사용 가능"
+                    binding.tvCharacterLevel.text =
+                        getString(R.string.home_character_level, uiState.characterInfo.level)
+                    binding.tvCharacterPercent.text = getString(
+                        R.string.home_character_exp_percent,
+                        uiState.characterInfo.expPercentage
+                    )
+                    binding.tvMissionFoodQuantity.text = getString(
+                        R.string.home_character_food_remain_count,
+                        uiState.characterInfo.foodCount
+                    )
                     binding.progressBar.progress = uiState.characterInfo.expPercentage.toInt()
 
-                    if(uiState.characterInfo.foodCount == 0) binding.ivMissionFoodBg.isEnabled = false
-                    if(minRemain > 0) {
+                    if (uiState.characterInfo.foodCount == 0) binding.ivMissionFoodBg.isEnabled =
+                        false
+                    if (minRemain > 0) {
                         binding.ivMissionToyBg.isEnabled = false
                         startTimer()
                     } else {
                         binding.ivMissionToyBg.isEnabled = true
                     }
-                } else if(uiState is CharacterInfoState.Empty) {
+                } else if (uiState is CharacterInfoState.Empty) {
                     findNavController().navigate(R.id.action_characterGrowthFragment_to_characterDoneFragment)
                 } else {
                     // TODO 캐릭터 정보 불러오지 못했을 때 예외처리
-                    Log.d(TAG, "initUI: Error Character${(uiState as CharacterInfoState.Error).message}")
-                    CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "네트워크 오류가 발생하였습니다. 잠시후 다시 시도해주세요.")
+                    Log.d(
+                        TAG,
+                        "initUI: Error Character${(uiState as CharacterInfoState.Error).message}"
+                    )
+                    CommonUtils.showSingleLineCustomToast(
+                        requireContext(),
+                        ToastType.ERROR,
+                        "네트워크 오류가 발생하였습니다. 잠시후 다시 시도해주세요."
+                    )
                 }
             }
         }
@@ -152,7 +167,7 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
             override fun run() {
                 if (isTimerRunning && minRemain > 0) {
                     binding.tvMissionToyQuantity.text =
-                        getString(R.string.home_character_toy_remain_time, minRemain+1)
+                        getString(R.string.home_character_toy_remain_time, minRemain + 1)
                     minRemain--
 
                     timerHandler.postDelayed(this, 60000)
@@ -166,11 +181,11 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         timerHandler.post(timerRunnable)
     }
 
-    private fun loadCharacterAnimation() {
+    private fun loadCharacterAnimation(imageResId: Int) {
         isGifLoading = true
         pendingGifRunnable = object : Runnable {
             override fun run() {
-                if(isGifLoading) {
+                if (isGifLoading) {
                     mContext?.let {
                         Glide.with(it)
                             .load(imageResId)
@@ -183,11 +198,12 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
     }
 
     private fun stopLoadCharacterAnimation() {
-        if(isGifLoading) {
+        if (isGifLoading) {
             isGifLoading = false
             gifHandler.removeCallbacks(pendingGifRunnable)
         }
     }
+
     private fun stopTimer() {
         if (isTimerRunning) {
             isTimerRunning = false

@@ -167,7 +167,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                             binding.tvBudgetData.text = getString(R.string.finance_won, CommonUtils.makeComma(uiState.budgetStatus.budget.monthly.target))
                             val remain = uiState.budgetStatus.budget.monthly.target - uiState.budgetStatus.budget.monthly.spent
                             if(remain > 0) {
-                                binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_less, CommonUtils.makeComma(remain))
+                                binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_less, CommonUtils.makeComma(remain.absoluteValue.floorDiv(10000)))
                             } else if(remain < 0) {
                                 binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_more, CommonUtils.makeComma(remain.absoluteValue.floorDiv(10000)))
                             } else {
