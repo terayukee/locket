@@ -22,6 +22,7 @@ import com.ssafy.locket.presentation.databinding.FragmentReceiptListBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.AvailableReceiptAdapter
 import com.ssafy.locket.presentation.home.receipt.viewmodel.FileTypeSelectionUiState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.PaymentReceiptListState
+import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionUiState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
 import com.ssafy.locket.presentation.home.receipt.viewmodel.SelectedReceiptState
@@ -72,27 +73,46 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
             receiptFileSelectionViewModel.receiptFileSelectionUiState.collect { uiState ->
                 if(uiState is ReceiptFileSelectionUiState.Success) {
                     val uri = uiState.uri
-//                    if(receiptFileSelectionViewModel.selectedReceipt.value is SelectedReceiptState.Success) {
-//                        when(receiptFileSelectionViewModel.selectedType.value) {
-//
-//                        }
-//                        receiptFileSelectionViewModel.processReceipt()
-//                    }
-//                    when(receiptFileSelectionViewModel.selectedType.value) {
-//                        is FileTypeSelectionUiState.Image -> {
-//                            if(receiptFileSelectionViewModel.receiptFileSelectionUiState.value is ReceiptFileSelectionUiState.Success) {
-////                                receiptFileSelectionViewModel.processReceipt("image",receiptFileSelectionViewModel.receiptFileSelectionUiState.value.uri, )
-//                            }
-//
-//                        }
-//                        is FileTypeSelectionUiState.Pdf -> receiptFileSelectionViewModel.setReceiptDetails(receiptFileSelectionViewModel.selectedType.value, uri, "")
-//                        is FileTypeSelectionUiState.Camera -> receiptFileSelectionViewModel.setReceiptDetails(receiptFileSelectionViewModel.selectedType.value, uri, "")
-//                    }
-                    findNavController().navigate(R.id.action_receiptListFragment_to_receiptDetailFragment)
+
+                    val transactionId = if(receiptFileSelectionViewModel.selectedReceipt.value is SelectedReceiptState.Success) (receiptFileSelectionViewModel.selectedReceipt.value as? SelectedReceiptState.Success)?.transactionId else null
+
+                    when(receiptFileSelectionViewModel.selectedType.value) {
+                        is FileTypeSelectionUiState.Image, FileTypeSelectionUiState.Camera -> {
+                            transactionId?.let {
+                                receiptFileSelectionViewModel.processReceipt("image", uri, it)
+                            }
+                        }
+                        is FileTypeSelectionUiState.Pdf -> {
+                            transactionId?.let {
+                                receiptFileSelectionViewModel.processReceipt("pdf", uri, it)
+                            }
+                        }
+                        else -> {}
+                    }
 
                     // TODO 서버로 던진 후에 아래 두 값 초기화 시키기
                     receiptFileSelectionViewModel.clearSelectedReceiptFile()
                     receiptFileSelectionViewModel.clearSelectedType()
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            receiptFileSelectionViewModel.receiptDetail.collect { uiState ->
+                when(uiState) {
+                    is ReceiptDetailState.Success -> {
+                    findNavController().navigate(R.id.action_receiptListFragment_to_receiptDetailFragment)
+                    }
+                    is ReceiptDetailState.Error -> {
+
+                    }
+                    is ReceiptDetailState.Loading -> {
+                        // 오래 걸린다면 로딩 애니메이션 넣을까?
+                    }
+                    is ReceiptDetailState.Initial -> {
+
+                    }
+
                 }
             }
         }

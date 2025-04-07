@@ -6,10 +6,12 @@ import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.kizitonwose.calendar.core.yearMonth
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
@@ -18,7 +20,9 @@ import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
 import com.ssafy.locket.presentation.finance.viewmodel.GetShortFeedbackState
+import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterInfoState
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterViewModel
 import com.ssafy.locket.presentation.home.character.viewmodel.NavigationEvent
@@ -27,8 +31,10 @@ import com.ssafy.locket.presentation.utils.ToastType
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.internal.managers.ViewComponentManager
 import kotlinx.coroutines.launch
+import java.math.BigDecimal
 import java.time.LocalDate
 import javax.inject.Inject
+import kotlin.math.absoluteValue
 
 private const val TAG = "HomeFragment"
 @AndroidEntryPoint
@@ -44,19 +50,23 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private val budgetViewModel : BudgetViewModel by activityViewModels()
 
+    private val homeFinanceViewModel: HomeFinanceViewModel by viewModels()
+
     private var backPressedTime: Long = 0
-    @Inject
-    lateinit var userDataStoreSource: UserDataStoreSource
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         initUI()
+
+        (getActivityContext(requireContext()) as MainActivity).changeBackgroundColor(R.color.background)
 
     }
 
     private fun initUI() {
         val today = LocalDate.now()
+        homeFinanceViewModel.getMonthTotal(today.yearMonth)
+        budgetViewModel.getBudgetStatus(today.year, today.monthValue)
+        budgetViewModel.getShortFeedback()
 
         binding.ivCharacterBg.setOnClickListener {
             characterViewModel.checkCharacter()
@@ -85,15 +95,47 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
 
         binding.tvPaymentTitle.text = getString(R.string.home_payment_month, today.monthValue)
-        binding.tvBudgetAiFeedback.text = "목표 소비 금액 70% 달성 \uD83C\uDFAF"
 
         binding.tvPaymentData.text = getString(R.string.finance_won, CommonUtils.makeComma(200000))
-        binding.tvPaymentFeedback.text = "지난 달보다 109만원 덜 썼어요"
 
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeFinanceViewModel.prevMonthTotal.collect { uiState ->
+                    if(uiState is TotalPaymentState.Success) {
+                        if((uiState.totalPayment) < BigDecimal.ZERO) {  // 이전 달에 돈을 더 적게 씀
+                            binding.tvPaymentFeedback.text = getString(R.string.finance_home_payment_feedback_more, CommonUtils.makeCommaDecimal((uiState.totalPayment).abs()))
+                        } else if((uiState.totalPayment) > BigDecimal.ZERO) {
+                            binding.tvPaymentFeedback.text = getString(R.string.finance_home_payment_feedback_less, CommonUtils.makeCommaDecimal(uiState.totalPayment))
+                        } else {
+                            binding.tvPaymentFeedback.text = getString(R.string.finance_home_payment_feedback_same)
+                        }
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                homeFinanceViewModel.monthTotal.collect { uiState ->
+                    when(uiState){
+                        is TotalPaymentState.Success -> {
+                            binding.tvPaymentData.text = getString(
+                                R.string.finance_won,
+                                CommonUtils.makeCommaDecimal(uiState.totalPayment)
+                            )
+                        }
+                        is TotalPaymentState.Error -> {
+                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                        }
+                        else -> {
+                            Log.d(TAG, "initUI: else loading")
+                        }
+                    }
+                }
+            }
+        }
+        
         binding.tvBudgetTitle.text = getString(R.string.home_budget_month, today.monthValue)
-        binding.tvBudgetData.text = getString(R.string.finance_won, CommonUtils.makeComma(200000))
-
-        binding.tvBudgetFeedback.text = "100,000원 남았어요"
 
         binding.icProfile.setOnClickListener {
             findNavController().navigate(R.id.action_homeFragment_to_myPageFragment)
@@ -108,6 +150,32 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                 userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
                         binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
+                    }
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                budgetViewModel.getBudgetStatus.collect { uiState ->
+                    if (uiState is GetBudgetStatusState.Success) {
+                        if(uiState.budgetStatus.hasBudget == false) {
+                            binding.tvNoBudgetTitle.visibility = View.VISIBLE
+                            binding.tvNoBudgetTitle.text = getString(R.string.home_no_budget_month)
+                        } else {
+                            binding.tvBudgetData.visibility = View.VISIBLE
+                            binding.tvBudgetData.text = getString(R.string.finance_won, CommonUtils.makeComma(uiState.budgetStatus.budget.monthly.target))
+                            val remain = uiState.budgetStatus.budget.monthly.target - uiState.budgetStatus.budget.monthly.spent
+                            if(remain > 0) {
+                                binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_less, CommonUtils.makeComma(remain))
+                            } else if(remain < 0) {
+                                binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_more, CommonUtils.makeComma(remain.absoluteValue.floorDiv(10000)))
+                            } else {
+                                binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_same)
+                            }
+                        }
+                    } else if(uiState is GetBudgetStatusState.Error) {
+                        Log.d(TAG, "initUI: GetBudgetStatusState error ${uiState.message}")
                     }
                 }
             }
@@ -134,9 +202,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     override fun onDestroyView() {
         super.onDestroyView()
-        //(requireContext() as MainActivity).changeBackgroundColor(R.color.white)
+        (getActivityContext(requireContext()) as MainActivity).changeBackgroundColor(R.color.white)
     }
-
 
     fun getActivityContext(context: Context): Context {
         return if (context is ViewComponentManager.FragmentContextWrapper) {
@@ -146,14 +213,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         }
     }
 
-
     fun initEvent(){
-        lifecycleScope.launch {
-            userDataStoreSource.userId.collect { id ->
-                userInfoViewModel.fetchUser(id?:0)
-            }
-        }
-        budgetViewModel.getShortFeedback()
+        userInfoViewModel.fetchUser()
     }
 
     fun observeModel(){
@@ -161,19 +222,17 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 userInfoViewModel.userInfo.collect { user ->
                     if(user is UserInfoState.Success) {
-                        userDataStoreSource.saveUser(user.userInfo)
                         binding.tvUserName.text = getString(R.string.home_name, user.userInfo.nickname)
                     }
                 }
             }
         }
 
-        //나중에라도 피드백 되면 여기에 text넣으면 끝
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 budgetViewModel.getShortFeedback.collect { getShortFeedback ->
                     if(getShortFeedback is GetShortFeedbackState.Success) {
-                        Log.d(TAG,"피드백"+getShortFeedback.toString())
+                        binding.tvBudgetAiFeedback.text = getShortFeedback.shortFeedback.feedback
                     }
                 }
             }

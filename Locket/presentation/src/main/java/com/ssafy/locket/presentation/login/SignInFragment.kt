@@ -77,7 +77,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                     Log.i(TAG, "카카오톡으로 로그인 성공: ${token.accessToken}")
                     lifecycleScope.launch {
                         Log.d(TAG,"로그인 관련 ${token.accessToken}")
-                        userDataStoreSource.saveAccessToken(token.accessToken)
+                        userDataStoreSource.saveKakaoAccessToken(token.accessToken)
                         loginViewModel.performKakaoLogin(token.accessToken)
                     }
                 }
@@ -116,7 +116,7 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                     false -> {
                         Log.d(TAG, "회원가입 화면으로 이동")
                         lifecycleScope.launch {
-                            val token = userDataStoreSource.accessToken.first()
+                            val token = userDataStoreSource.kakaoAccessToken.first()
                             loginViewModel.updateAccessToken(token ?: "")
                         }
                         val currentDestination = findNavController().currentDestination?.id

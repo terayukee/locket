@@ -8,6 +8,8 @@ import java.math.BigDecimal
 
 @Parcelize
 data class PaymentDailyHistoryResponseItem(
+    val id: String,
+    val day: Int,
     val cardName: String,
     val paymentCategory: String,
     val storeName: String,
@@ -16,6 +18,7 @@ data class PaymentDailyHistoryResponseItem(
     companion object: DataMapper<PaymentDailyHistoryResponseItem, PaymentDailyHistoryItem> {
         override fun PaymentDailyHistoryResponseItem.toDomainModel(): PaymentDailyHistoryItem {
             return PaymentDailyHistoryItem(
+                id = id,
                 cardName = cardName,
                 category = paymentCategory,
                 storeName = storeName,
