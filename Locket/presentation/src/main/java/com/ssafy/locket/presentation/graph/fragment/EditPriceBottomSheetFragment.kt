@@ -68,17 +68,51 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
 
     private fun setupNumberFormatting() {
         binding.tvWantPrice.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            private var beforeText = ""
+            private var cursorPosition = 0
+            private var isDeleting = false
+            private var deletedChar = ""
+            private var deleteIndex = 0
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                beforeText = s.toString()
+                cursorPosition = binding.tvWantPrice.selectionStart
+                isDeleting = count > after
+                if (isDeleting && s != null && count == 1) {
+                    deletedChar = s.substring(start, start + count)
+                    deleteIndex = start
+                }
+            }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
             override fun afterTextChanged(s: Editable?) {
                 if (isFormatting) return
-                val digits = s.toString().replace(Regex("[^\\d]"), "")
+                val original = s.toString()
+                var digits = original.replace(",", "")
                 if (digits.isEmpty()) return
+                // 쉼표 뒤에서 삭제했는지 체크
+                if (isDeleting && deletedChar == "," && deleteIndex > 0) {
+                    // 쉼표 앞 숫자 하나도 제거
+                    val digitsBeforeCursor = beforeText.replace(",", "")
+                    val indexToRemove = deleteIndex - beforeText.take(deleteIndex).count { it == ',' }
+                    if (indexToRemove > 0 && indexToRemove <= digits.length) {
+                        digits = digits.removeRange(indexToRemove - 1, indexToRemove)
+                    }
+                }
                 isFormatting = true
                 val formatted = CommonUtils.formatNumber(digits)
                 binding.tvWantPrice.setText(formatted)
-                binding.tvWantPrice.setSelection(formatted.length)
+                // 커서 위치 보정
+                val commaCountBefore = beforeText.take(cursorPosition).count { it == ',' }
+                val commaCountNow = formatted.take(cursorPosition).count { it == ',' }
+                val adjustment = commaCountNow - commaCountBefore
+                val newCursor = (cursorPosition + adjustment).coerceIn(0, formatted.length)
+                try {
+                    binding.tvWantPrice.setSelection(newCursor)
+                } catch (e: Exception) {
+                    binding.tvWantPrice.setSelection(formatted.length)
+                }
                 isFormatting = false
             }
         })
