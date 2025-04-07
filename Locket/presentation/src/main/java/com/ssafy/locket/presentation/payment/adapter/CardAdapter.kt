@@ -20,11 +20,28 @@ class CardAdapter(private var cards: List<PaymentCard>) : RecyclerView.Adapter<C
         private val cardImageView: ImageView = view.findViewById(R.id.card_image)
 
         fun bind(item: PaymentCard) {
-            Glide.with(context)
-                .load(R.drawable.ic_payment_card_img)
-                .into(cardImageView)
-//            cardImageView.setImageResource(R.drawable.ic_payment_card_img)
-            // TODO: 추후 카드에 맞는 이미지 넣기
+            when(item.cardName){
+                "SAMSUNG"->{
+                    Glide.with(context)
+                        .load(R.drawable.ic_payment_card_img)
+                        .into(cardImageView)
+                }
+                "KB 청춘대로 싱글"->{
+                    Glide.with(context)
+                        .load(R.drawable.image_kb_card)
+                        .into(cardImageView)
+                }
+                "롯데 LOCA 365"->{
+                    Glide.with(context)
+                        .load(R.drawable.image_lotte_card)
+                        .into(cardImageView)
+                }
+                "NH 올바른 FLEX"->{
+                    Glide.with(context)
+                        .load(R.drawable.image_nh_card)
+                        .into(cardImageView)
+                }
+            }
         }
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CardViewHolder {

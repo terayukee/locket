@@ -222,7 +222,12 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                     )
                 }
                 binding.tvCardName.text = cards[position].cardName
-                binding.tvBalanceDescription.text = "전월 실적: ${CommonUtils.makeComma(cards[selectedPosition].monthlyUsage)}원 남음"
+                if(cards[selectedPosition].monthlyUsage>=300000){
+                    binding.tvBalanceDescription.text = "전월 실적: 0원 남음"
+                }
+                else{
+                    binding.tvBalanceDescription.text = "전월 실적: ${CommonUtils.makeComma(300000-cards[selectedPosition].monthlyUsage)}원 남음"
+                }
                 val benefitList = cards[position].benefits
                 val adapter = BenefitAdapter(benefitList)
                 binding.rvCardBenefit.adapter = adapter
