@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ssafy.locket.model.home.receipt.ProcessedReceipt
 import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -38,6 +39,8 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
         }
 
         binding.btnConfirm.setOnClickListener {
+//            val receiptDetail = (receiptFileSelectionViewModel.receiptDetail.value as? ReceiptDetailState.Success)?.processReceipt
+//            receiptFileSelectionViewModel.updateReceipt(ReceiptDetailState.Success(ProcessedReceipt(receiptDetail.storeName, )))
             findNavController().navigate(R.id.action_editReceiptDetailFragment_to_receiptDetailFragment)
         }
     }

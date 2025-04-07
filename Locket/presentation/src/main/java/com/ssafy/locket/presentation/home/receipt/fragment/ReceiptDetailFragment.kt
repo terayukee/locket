@@ -7,12 +7,16 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.ssafy.locket.model.home.receipt.ProcessedReceipt
+import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentReceiptDetailBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailRVAdapter
+import com.ssafy.locket.presentation.home.receipt.viewmodel.ProcessedReceiptViewModel
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
+import com.ssafy.locket.presentation.home.receipt.viewmodel.SelectedReceiptState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import kotlinx.coroutines.launch
 
@@ -23,6 +27,9 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
 ) {
     private lateinit var receiptDetailRVAdapter: ReceiptDetailRVAdapter
     private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
+    private val processedReceiptViewModel: ProcessedReceiptViewModel by activityViewModels()
+
+    private var processedReceipt: ProcessedReceipt? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,9 +44,11 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
             receiptFileSelectionViewModel.receiptDetail.collect { uiState ->
                 if(uiState is ReceiptDetailState.Success) {
                     val item = uiState.processReceipt
+                    processedReceipt = item
                     binding.tvStore.text = item.storeName
                     binding.tvTotalPrice.text = getString(R.string.finance_won, CommonUtils.makeComma(item.totalAmount))
                     receiptDetailRVAdapter.submitList(item.items)
+                    binding.btnRegisterReceipt.isEnabled = true
                 }
             }
         }
@@ -50,7 +59,6 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
 
         binding.btnRegisterReceipt.setOnClickListener {
             // TODO 영수증 정보 등록하기 api 처리
-            findNavController().navigate(R.id.action_receiptDetailFragment_to_homeFragment)
 
         }
 

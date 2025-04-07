@@ -27,6 +27,6 @@ interface ReceiptService {
     @POST("ai/receipt/pdf/{transactionId}")
     suspend fun processReceiptPdf(@Part file: MultipartBody.Part, @Path("transactionId") transactionId: String): Response<ProcessedReceiptResponse>
 
-    @POST("ai/receipt/save/{transactionId}")
+    @POST("elasticsearch/ai/save/{transactionId}")
     suspend fun saveReceipt(@Path("transactionId") transactionId: String, @Body processedReceiptRequest: ProcessReceiptRequest): Response<Unit>
 }

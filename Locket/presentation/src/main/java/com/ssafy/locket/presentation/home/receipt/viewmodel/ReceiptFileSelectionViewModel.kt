@@ -127,6 +127,10 @@ class ReceiptFileSelectionViewModel @Inject constructor(
                 }
         }
     }
+
+    fun updateReceipt(newState: ReceiptDetailState) {
+        _receiptDetail.value = newState
+    }
 }
 sealed class SelectedReceiptState {
     object Initial : SelectedReceiptState()
