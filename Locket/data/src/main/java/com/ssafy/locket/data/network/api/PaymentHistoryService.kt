@@ -1,9 +1,9 @@
 package com.ssafy.locket.data.network.api
 
-import com.ssafy.locket.data.network.response.payment_history.PaymentDailyHistoryResponse
-import com.ssafy.locket.data.network.response.payment_history.PaymentMonthlyCalendarResponse
-import com.ssafy.locket.data.network.response.payment_history.PaymentMonthlyHistoryResponse
-import com.ssafy.locket.data.network.response.payment_history.PaymentMonthlyTotalResponse
+import com.ssafy.locket.data.network.response.finance.payment_history.PaymentDailyHistoryResponse
+import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyCalendarResponse
+import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyHistoryResponse
+import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyTotalResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

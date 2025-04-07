@@ -1,4 +1,4 @@
-package com.ssafy.locket.repository.analysis
+package com.ssafy.locket.repository.finance.analysis
 
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.feedback.Feedback

@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -16,7 +15,6 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentExpenseAnalysisBinding
 import com.ssafy.locket.presentation.finance.adapter.CategoryPaymentRVAdapter
 import com.ssafy.locket.presentation.finance.viewmodel.AnalysisViewModel
-import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.GetFeedbackState
 import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
@@ -47,9 +45,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         getFeedbackData()
         Log.d(TAG,"시작")
         financeSharedViewModel.initYearMonth()
-        //연습용 ai 기능되면 데이터 가져오는 거 됨
-        analysisViewModel.getFeedback(2025,3)
-
     }
 
     fun initEvent(){
@@ -78,6 +73,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                         binding.btnPrevMonthIcon.isEnabled = true
                         binding.btnNextMonthIcon.isEnabled = true
                     }
+                    analysisViewModel.getFeedback(it.year,it.monthValue)
                     binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, it.year, it.monthValue)
                 }
             }

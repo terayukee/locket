@@ -1,6 +1,6 @@
 package com.ssafy.locket.data.network.api
 
-import com.ssafy.locket.data.network.response.budget.ShortFeedbackResponse
+import com.ssafy.locket.data.network.response.finance.budget.ShortFeedbackResponse
 import com.ssafy.locket.model.finance.budget.SetBudget
 import com.ssafy.locket.model.finance.budget.feedback.Feedback
 import com.ssafy.locket.model.finance.budget.status.BudgetStatus

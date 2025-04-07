@@ -3,7 +3,7 @@ package com.ssafy.locket.usecase.budget
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.SetBudget
 import com.ssafy.locket.model.finance.budget.status.BudgetStatus
-import com.ssafy.locket.repository.budget.BudgetRepository
+import com.ssafy.locket.repository.finance.budget.BudgetRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

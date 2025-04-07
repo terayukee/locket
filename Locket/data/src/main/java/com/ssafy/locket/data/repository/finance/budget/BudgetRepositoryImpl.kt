@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.repository.budget
+package com.ssafy.locket.data.repository.finance.budget
 
 import android.util.Log
 import com.ssafy.locket.data.datasource.local.UserDataStoreSource
@@ -6,13 +6,13 @@ import com.ssafy.locket.data.network.api.BudgetService
 import com.ssafy.locket.data.network.common.ApiResponse
 import com.ssafy.locket.data.network.common.ApiResponseHandler
 import com.ssafy.locket.data.network.common.ErrorResponse.Companion.toDomainModel
-import com.ssafy.locket.data.network.response.budget.ShortFeedbackResponse.Companion.toDomainModel
+import com.ssafy.locket.data.network.response.finance.budget.ShortFeedbackResponse.Companion.toDomainModel
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.SetBudget
 import com.ssafy.locket.model.finance.budget.feedback.Feedback
 import com.ssafy.locket.model.finance.budget.feedback.ShortFeedback
 import com.ssafy.locket.model.finance.budget.status.BudgetStatus
-import com.ssafy.locket.repository.budget.BudgetRepository
+import com.ssafy.locket.repository.finance.budget.BudgetRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first

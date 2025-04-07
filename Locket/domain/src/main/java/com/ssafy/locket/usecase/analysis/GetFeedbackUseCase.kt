@@ -2,7 +2,7 @@ package com.ssafy.locket.usecase.analysis
 
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.feedback.Feedback
-import com.ssafy.locket.repository.analysis.AnalysisRepository
+import com.ssafy.locket.repository.finance.analysis.AnalysisRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

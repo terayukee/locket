@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.network.response.payment_history
+package com.ssafy.locket.data.network.response.finance.payment_history
 
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper

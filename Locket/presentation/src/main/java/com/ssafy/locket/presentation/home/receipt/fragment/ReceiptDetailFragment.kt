@@ -14,6 +14,7 @@ import com.ssafy.locket.presentation.databinding.FragmentReceiptDetailBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailRVAdapter
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
 import kotlinx.coroutines.launch
 
 private const val TAG = "ReceiptDetailFragment"
@@ -27,15 +28,19 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        initUI()
         initAdapter()
+        initUI()
+
     }
 
     private fun initUI() {
         viewLifecycleOwner.lifecycleScope.launch {
             receiptFileSelectionViewModel.receiptDetail.collect { uiState ->
                 if(uiState is ReceiptDetailState.Success) {
-                    binding.tvStore.text = uiState.processReceipt.storeName
+                    val item = uiState.processReceipt
+                    binding.tvStore.text = item.storeName
+                    binding.tvTotalPrice.text = getString(R.string.finance_won, CommonUtils.makeComma(item.totalAmount))
+                    receiptDetailRVAdapter.submitList(item.items)
                 }
             }
         }
@@ -66,22 +71,22 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        val tmpList : List<ReceiptDetail> = listOf(
-            ReceiptDetail(0, 15000, "쇼핑", "맑은물에 반모 촌두부 2개입, 300g, 1개", 30),
-            ReceiptDetail(1, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-            ReceiptDetail(2, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-            ReceiptDetail(3, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(4, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(5, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(6, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(7, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(8, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(9, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(10, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(11, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
-//            ReceiptDetail(12, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3)
-        )
-        receiptDetailRVAdapter.submitList(tmpList)
+//        val tmpList : List<ReceiptDetail> = listOf(
+//            ReceiptDetail(0, 15000, "쇼핑", "맑은물에 반모 촌두부 2개입, 300g, 1개", 30),
+//            ReceiptDetail(1, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+//            ReceiptDetail(2, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+//            ReceiptDetail(3, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(4, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(5, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(6, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(7, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(8, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(9, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(10, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(11, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3),
+////            ReceiptDetail(12, 1500, "카페/디저트", "맑은물에 반모 촌두부 2개입, 300g, 1개", 3)
+//        )
+//        receiptDetailRVAdapter.submitList(tmpList)
     }
 
     override fun onDestroyView() {

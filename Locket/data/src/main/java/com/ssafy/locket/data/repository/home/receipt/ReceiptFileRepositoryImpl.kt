@@ -164,9 +164,9 @@ internal class ReceiptFileRepositoryImpl @Inject constructor(
 
     private fun createMultipartFromFile(type: String, file: File): MultipartBody.Part {
         val requestBody =
-            if (type == "image") file.asRequestBody("image/jpeg".toMediaTypeOrNull()) else file.asRequestBody(
+            if (type == "image") file.asRequestBody("image/*".toMediaTypeOrNull()) else file.asRequestBody(
                 "application/pdf".toMediaTypeOrNull()
             )
-        return MultipartBody.Part.createFormData(type, file.name, requestBody)
+        return MultipartBody.Part.createFormData("file", file.name, requestBody)
     }
 }

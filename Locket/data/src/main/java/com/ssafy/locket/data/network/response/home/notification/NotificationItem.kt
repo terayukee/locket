@@ -1,4 +1,4 @@
-package com.ssafy.locket.data.network.response.notification
+package com.ssafy.locket.data.network.response.home.notification
 
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper

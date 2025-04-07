@@ -1,6 +1,6 @@
 package com.ssafy.locket.data.network.api
 
-import com.ssafy.locket.data.network.response.notification.NotificationResponse
+import com.ssafy.locket.data.network.response.home.notification.NotificationResponse
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Query

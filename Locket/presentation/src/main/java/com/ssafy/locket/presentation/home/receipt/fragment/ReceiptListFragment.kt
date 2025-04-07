@@ -8,6 +8,7 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.FileProvider
@@ -21,11 +22,14 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentReceiptListBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.AvailableReceiptAdapter
 import com.ssafy.locket.presentation.home.receipt.viewmodel.FileTypeSelectionUiState
+import com.ssafy.locket.presentation.home.receipt.viewmodel.NavigateToDetailEvent
 import com.ssafy.locket.presentation.home.receipt.viewmodel.PaymentReceiptListState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionUiState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
 import com.ssafy.locket.presentation.home.receipt.viewmodel.SelectedReceiptState
+import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -98,21 +102,22 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            receiptFileSelectionViewModel.receiptDetail.collect { uiState ->
+            receiptFileSelectionViewModel.navigationEvent.collect { uiState ->
                 when(uiState) {
-                    is ReceiptDetailState.Success -> {
+                    is NavigateToDetailEvent.Loading -> {
+                        Log.d(TAG, "onViewCreated: loading")
+                        binding.progressBar.visibility = View.VISIBLE
+                        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                    }
+                    is NavigateToDetailEvent.Move -> {
+                        binding.progressBar.visibility = View.GONE
+                        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
                     findNavController().navigate(R.id.action_receiptListFragment_to_receiptDetailFragment)
                     }
-                    is ReceiptDetailState.Error -> {
-
+                    is NavigateToDetailEvent.Initial -> {
+                        Log.d(TAG, "onViewCreated: error")
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "오류가 발생했습니다. 잠시후 다시 시도해주세요")
                     }
-                    is ReceiptDetailState.Loading -> {
-                        // 오래 걸린다면 로딩 애니메이션 넣을까?
-                    }
-                    is ReceiptDetailState.Initial -> {
-
-                    }
-
                 }
             }
         }
