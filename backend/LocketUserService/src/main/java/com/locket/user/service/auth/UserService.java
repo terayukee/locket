@@ -159,9 +159,9 @@ public class UserService {
         }
     }
 
-    private void validatePaymentPassword(Integer paymentPassword) {
+    private void validatePaymentPassword(String paymentPassword) {
         if (paymentPassword != null) {
-            if (paymentPassword < 100000 || paymentPassword > 999999) {
+            if (paymentPassword.length() != 6) {
                 throw new IllegalArgumentException("결제 비밀번호는 6자리 숫자여야 합니다.");
             }
         }

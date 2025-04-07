@@ -7,5 +7,5 @@ import lombok.Setter;
 @Setter
 public class PaymentPasswordRequest {
     private long userId;
-    private int paymentPassword;
+    private String paymentPassword;
 }

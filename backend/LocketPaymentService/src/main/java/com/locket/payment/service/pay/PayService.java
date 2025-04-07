@@ -370,7 +370,7 @@ public class PayService {
 
     public boolean verifyPaymentPassword(PaymentPasswordRequest passwordRequest) {
         long userId = passwordRequest.getUserId();
-        int inputPassword = passwordRequest.getPaymentPassword();
+        String inputPassword = passwordRequest.getPaymentPassword();
         log.info("입력한 결제 PW : {}", inputPassword);
 
         String key = "user:" + userId + ":auth";
@@ -382,10 +382,10 @@ public class PayService {
                 throw new NoSuchElementException("등록된 간편 비밀번호가 없습니다.");
             }
 
-            int storedPassword = Integer.parseInt(value.toString());
+            String storedPassword = value.toString();
             log.info("저장된 결제 PW : {}, 입력한 결제 PW : {}", storedPassword, inputPassword);
 
-            return storedPassword == inputPassword;
+            return storedPassword.equals(inputPassword);
 
         } catch (NumberFormatException e) {
             throw new IllegalStateException("Redis에 저장된 비밀번호 형식이 올바르지 않습니다.");
