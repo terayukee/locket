@@ -55,9 +55,10 @@ class CategoryService:
             store_name_upper = store_name.upper()
 
             # 1. 브랜드 매칭
-            for brand, info in self.mappings['chain_stores'].items():
-                if any(name.upper() in store_name_upper for name in info['names']):
-                    category = info['category']
+            for brand_key, brand_info in self.mappings['chain_stores'].items():
+                # names 배열의 각 이름과 매칭 시도
+                if any(name.upper() in store_name_upper for name in brand_info['names']):
+                    category = brand_info['category']
                     logger.info(f"브랜드 매칭: {store_name} -> {category}")
                     return category
 
