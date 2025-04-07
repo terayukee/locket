@@ -420,7 +420,7 @@ async def get_payment_amount(transaction_id: str) -> int:
         logger.info(f"Eureka 서비스 조회 시작: ELASTICSEARCH-SERVICE")
         # do_service를 사용하여 서비스 URL 조회 및 API 경로 추가
         logger.info("do_service 호출 전")
-        elastic_service = f"http://elasticsearch-service:8083/payment/{transaction_id}"
+        elastic_service = f"https://j12d204.p.ssafy.io/api/elasticsearch/payment/{transaction_id}"
 
         logger.info(f"do_service 호출 결과: {elastic_service}")
         logger.info(f"조회된 Elasticsearch API URL: {elastic_service}")
