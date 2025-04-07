@@ -17,8 +17,11 @@ import com.ssafy.locket.presentation.databinding.FragmentExpenseAnalysisBinding
 import com.ssafy.locket.presentation.finance.adapter.CategoryPaymentRVAdapter
 import com.ssafy.locket.presentation.finance.viewmodel.AnalysisViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.GetFeedbackState
+import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
 import java.time.YearMonth
 
@@ -30,6 +33,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     private lateinit var categoryPaymentRVAdapter: CategoryPaymentRVAdapter
 
     private val analysisViewModel : AnalysisViewModel by activityViewModels()
+    private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
 
     private var currentMonth = YearMonth.now()
     private val startMonth = YearMonth.of(2025, 1)
@@ -42,9 +46,10 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         initEvent()
         getFeedbackData()
         Log.d(TAG,"시작")
-
+        financeSharedViewModel.initYearMonth()
         //연습용 ai 기능되면 데이터 가져오는 거 됨
         analysisViewModel.getFeedback(2025,3)
+
     }
 
     fun initEvent(){
@@ -53,7 +58,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.tvPaymentData.text = getString(R.string.finance_won, CommonUtils.makeComma(100000))
         binding.tvYearMonth.text = getString(R.string.finance_year_month, currentMonth.year, currentMonth.monthValue)
         binding.btnPrevMonthIcon.setOnClickListener {
             updateTitle(currentMonth.minusMonths(1))
@@ -61,6 +65,37 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
 
         binding.btnNextMonthIcon.setOnClickListener {
             updateTitle(currentMonth.plusMonths(1))
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                financeSharedViewModel.selectedYearMonth.collect {
+                    if(it > YearMonth.of(2029,12)) {
+                        binding.btnNextMonthIcon.isEnabled = false
+                    } else if (it < YearMonth.of(2020,2)) {
+                        binding.btnPrevMonthIcon.isEnabled = false
+                    } else {
+                        binding.btnPrevMonthIcon.isEnabled = true
+                        binding.btnNextMonthIcon.isEnabled = true
+                    }
+                    binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, it.year, it.monthValue)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            financeSharedViewModel.selectedYearMonthTotalPayment.collect { uiState ->
+                when(uiState) {
+                    is TotalPaymentState.Success -> {
+                        binding.tvPaymentData.text = resources.getString(R.string.finance_won, CommonUtils.makeCommaDecimal(uiState.totalPayment))
+                    }
+                    is TotalPaymentState.Error -> {
+                        Log.d(TAG, "initUI: Error payment ${uiState.message}")
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                    }
+                    else -> Log.d(TAG, "initUI: Payment Initial or Loading")
+                }
+            }
         }
     }
 
@@ -71,6 +106,8 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         binding.tvYearMonth.text = getString(R.string.finance_year_month, month.year, month.monthValue)
         binding.btnPrevMonthIcon.isEnabled = month > startMonth
         binding.btnNextMonthIcon.isEnabled = month < endMonth
+
+        financeSharedViewModel.setYearMonth(currentMonth)
     }
 
     private fun initAdapter() {
