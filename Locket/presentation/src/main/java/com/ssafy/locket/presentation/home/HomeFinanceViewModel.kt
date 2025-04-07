@@ -6,7 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
-import com.ssafy.locket.usecase.payment_history.GetPaymentMonthlyTotalUseCase
+import com.ssafy.locket.usecase.finance.payment_history.GetPaymentMonthlyTotalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

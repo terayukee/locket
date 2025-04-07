@@ -4,11 +4,11 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.model.payment_history.PaymentCalendar
-import com.ssafy.locket.model.payment_history.PaymentDailyHistory
-import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
-import com.ssafy.locket.usecase.payment_history.GetMonthlyCalendarPaymentUseCase
-import com.ssafy.locket.usecase.payment_history.GetMonthlyPaymentHistoryUseCase
+import com.ssafy.locket.model.finance.payment_history.PaymentCalendar
+import com.ssafy.locket.model.finance.payment_history.PaymentDailyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyHistory
+import com.ssafy.locket.usecase.finance.payment_history.GetMonthlyCalendarPaymentUseCase
+import com.ssafy.locket.usecase.finance.payment_history.GetMonthlyPaymentHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

@@ -6,5 +6,6 @@ import kotlinx.parcelize.Parcelize
 @Parcelize
 data class Gifticon(
     val id: Long,
-    val name: String
+    val name: String,
+    val characterName: String
 ): BaseModel

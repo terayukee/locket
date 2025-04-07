@@ -33,14 +33,13 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
     private val budgetViewModel : BudgetViewModel by activityViewModels()
 
-
     private val today = LocalDate.now()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        var progress = 210
-        binding.progressBar.setProgress(progress)
+//
+//        var progress = 210
+//        binding.progressBar.setProgress(progress)
 
 //        binding.tvBudgetLeftNo.visibility = View.VISIBLE // 예산설정 안 된 경우
         binding.groupBudget.visibility = View.VISIBLE // 예산설정 한 경우
@@ -76,45 +75,55 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
         initEvent()
     }
 
-    private fun getDaysInCurrentMonth(): Int {
-        return YearMonth.of(today.year, today.month).lengthOfMonth()
+    private fun getDaysInCurrentMonth(year:Int, month: Int): Int {
+        return YearMonth.of(year, month).lengthOfMonth()
     }
 
     fun initEvent(){
-        
-        //나중에 날짜 year,month 나오면 여기에 넣으면 바로 데이터 들어옴
-        budgetViewModel.getBudgetStatus(2025,4)
+        viewLifecycleOwner.lifecycleScope.launch {
+            financeSharedViewModel.selectedYearMonth.collect {
+                budgetViewModel.getBudgetStatus(it.year, it.monthValue)
+            }
+        }
     }
 
     fun observeViewModel(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                budgetViewModel.getBudgetStatus.collect { reponse->
-                    if(reponse is GetBudgetStatusState.Success) {
-                        Log.d(TAG,reponse.budgetStatus.toString())
-                        val today = LocalDate.now()
-                        val currentMonth = today.monthValue
-                        val budget = reponse.budgetStatus.budget.monthly.remaining
+                budgetViewModel.getBudgetStatus.collect { response->
+                    if(response is GetBudgetStatusState.Success) {
+                        if(response.budgetStatus.hasBudget) {
+                            val today = LocalDate.now()
+                            val budget = response.budgetStatus.budget.monthly
+                            val daysInSelectedMonth = getDaysInCurrentMonth(budget.year, budget.month) + 1
 
-                        binding.tvBudgetLeft.text = CommonUtils.makeComma(reponse.budgetStatus.budget.monthly.remaining)+"원 남음"// budget 대신 남은 예산으로 변경
-                        val budgetLeftDaily = when (currentMonth) {
-                            2 -> budget/(29-today.dayOfMonth)
-                            1, 3, 5, 7, 8, 10, 12 -> budget/(32-today.dayOfMonth)
-                            else -> budget/(31-today.dayOfMonth)
+                            if(budget.target >= budget.spent) { // 예산 남거나 다 씀
+                                val budgetLeftDaily = when (budget.month) {
+                                    2 -> budget.remaining/(daysInSelectedMonth-today.dayOfMonth)
+                                    1, 3, 5, 7, 8, 10, 12 -> budget.remaining/(daysInSelectedMonth-today.dayOfMonth)
+                                    else -> budget.remaining/(daysInSelectedMonth-today.dayOfMonth)
+                                }
+
+                                binding.tvBudgetLeft.text = getString(R.string.finance_budget_left, CommonUtils.makeComma(budget.remaining))
+                                binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, CommonUtils.makeComma(budgetLeftDaily))
+                            } else { // 예산보다 많이 사용함
+                                binding.tvBudgetLeft.text = getString(R.string.finance_budget_more, CommonUtils.makeComma(budget.spent - budget.target))
+                                binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, "0")
+                            }
+
+                            binding.tvBudget.text = getString(R.string.finance_won, CommonUtils.makeComma(budget.target))
+                            binding.progressBar.setProgress(budget.progress.toInt())
+                            binding.tvRecommendBudgetToday.text = getString(R.string.finance_won, CommonUtils.makeComma((budget.target/daysInSelectedMonth)*today.dayOfMonth))
                         }
-                        binding.tvBudgetLeftDaily.text = "하루 예산 "+ CommonUtils.makeComma(budgetLeftDaily)+"원"
-                        Log.d(TAG,"출력"+reponse.budgetStatus.budget.monthly.progress.toString())
-                        binding.progressBar.setProgress(reponse.budgetStatus.budget.monthly.progress.toInt())
-                        binding.tvBudget.text = CommonUtils.makeComma(budget)+"원 남음"
-                        binding.tvRecommendBudgetToday.text = CommonUtils.makeComma((budget/getDaysInCurrentMonth())*today.dayOfMonth)+"원"
                     }
                 }
             }
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
+    override fun onPause() {
+        super.onPause()
         mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
+        Log.d(TAG, "onPause: setDefault")
     }
 }

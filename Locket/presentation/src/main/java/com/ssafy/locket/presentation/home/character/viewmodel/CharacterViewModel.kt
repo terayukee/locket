@@ -7,11 +7,13 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.CharacterAction
 import com.ssafy.locket.model.home.character.CharacterInfo
 import com.ssafy.locket.model.home.character.CharacterResult
+import com.ssafy.locket.model.home.character.Gifticon
 import com.ssafy.locket.model.home.character.Toy
 import com.ssafy.locket.model.home.character.characterCoolTime
 import com.ssafy.locket.usecase.home.character.CheckCharacterUseCase
 import com.ssafy.locket.usecase.home.character.CompleteCharacterUseCase
 import com.ssafy.locket.usecase.home.character.CreateCharacterUseCase
+import com.ssafy.locket.usecase.home.character.GetCharacterInfoUseCase
 import com.ssafy.locket.usecase.home.character.GrowCharacterUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +34,8 @@ class CharacterViewModel @Inject constructor(
     private val createCharacterUseCase: CreateCharacterUseCase,
     private val checkCharacterUseCase: CheckCharacterUseCase,
     private val growCharacterUseCase: GrowCharacterUseCase,
-    private val completeCharacterUseCase: CompleteCharacterUseCase
+    private val completeCharacterUseCase: CompleteCharacterUseCase,
+    private val getCharacterInfoUseCase: GetCharacterInfoUseCase
 ): ViewModel() {
 
     private val _navigationEvent = MutableSharedFlow<NavigationEvent>()
@@ -48,6 +51,25 @@ class CharacterViewModel @Inject constructor(
         _characterInfo.value = CharacterInfoState.Loading
     }
 
+    fun getCharacter() {
+        viewModelScope.launch {
+            getCharacterInfoUseCase()
+                .onStart {  }
+                .catch { e ->
+                    Log.d(TAG, "getCharacter: ${e.message}")
+                }
+                .collect { status ->
+                    when(status) {
+                        is ResponseStatus.Success -> {
+                            _characterInfo.value = CharacterInfoState.Success(status.data)
+                        }
+                        is ResponseStatus.Error -> {
+                            _characterInfo.value = CharacterInfoState.Error(status.error.message)
+                        }
+                    }
+                }
+        }
+    }
     fun checkCharacter() {
         viewModelScope.launch(Dispatchers.IO) {
             checkCharacterUseCase()
@@ -162,7 +184,6 @@ class CharacterViewModel @Inject constructor(
                 }
         }
     }
-
 }
 
 sealed class NavigationEvent {

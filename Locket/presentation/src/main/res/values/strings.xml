@@ -36,6 +36,7 @@
     <string name="finance_calendar_bottom_sheet_count">총 %d건</string>
 
     <string name="finance_budget_left">%s원 남음</string>
+    <string name="finance_budget_more">%s원 초과</string>
     <string name="finance_budget_left_daily">하루 예산 %s원 </string>
     <string name="finance_won">%s원</string>
 

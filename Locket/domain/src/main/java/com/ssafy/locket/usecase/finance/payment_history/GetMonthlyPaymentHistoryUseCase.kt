@@ -1,8 +1,8 @@
-package com.ssafy.locket.usecase.payment_history
+package com.ssafy.locket.usecase.finance.payment_history
 
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.home.character.GifticonList
-import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyHistory
 import com.ssafy.locket.repository.finance.payment_history.PaymentHistoryRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject

@@ -18,7 +18,7 @@ class GifticonRVAdapter: ListAdapter<Gifticon, GifticonRVAdapter.CustomViewHolde
     private lateinit var context: Context
 
     interface ItemClickListener {
-        fun onClick(view: View, position: Int)
+        fun onClick(view: View, data: Gifticon, position: Int)
     }
 
     companion object CustomComparator : DiffUtil.ItemCallback<Gifticon>() {
@@ -36,7 +36,7 @@ class GifticonRVAdapter: ListAdapter<Gifticon, GifticonRVAdapter.CustomViewHolde
         fun bind(item: Gifticon) {
             binding.tvGifticonName.text = item.name
             binding.root.setOnClickListener{
-                itemClickListener.onClick(it, adapterPosition)
+                itemClickListener.onClick(it, item, adapterPosition)
             }
         }
     }

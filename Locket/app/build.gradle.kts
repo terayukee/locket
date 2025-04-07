@@ -6,6 +6,7 @@ plugins {
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    alias(libs.plugins.firebase.crashlytics)
 }
 val properties = Properties().apply {
     load(rootProject.file("apikey.properties").inputStream())
@@ -84,9 +85,14 @@ dependencies {
     implementation ("com.kakao.sdk:v2-user:2.20.1")
 
     //파이어베이스
-    implementation(platform("com.google.firebase:firebase-bom:33.11.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+
+    implementation(libs.firebase.crashlytics.ktx)
+
 }
 
 kapt {
     correctErrorTypes = true
 }
+
+

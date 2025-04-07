@@ -51,7 +51,6 @@
         android:id="@+id/et_goal_budget"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="300,000"
         android:gravity="end"
         android:backgroundTint="#BCB5C2"
         android:inputType="number"

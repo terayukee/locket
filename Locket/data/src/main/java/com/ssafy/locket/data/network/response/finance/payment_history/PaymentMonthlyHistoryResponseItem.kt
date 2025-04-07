@@ -2,7 +2,7 @@ package com.ssafy.locket.data.network.response.finance.payment_history
 
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
-import com.ssafy.locket.model.payment_history.PaymentHistoryItem
+import com.ssafy.locket.model.finance.payment_history.PaymentHistoryItem
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 

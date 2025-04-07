@@ -1,148 +1,26 @@
 {
   "project_info": {
-    "project_number": "969571691661",
-    "firebase_url": "https://myfirebasechat-77190-default-rtdb.firebaseio.com",
-    "project_id": "myfirebasechat-77190",
-    "storage_bucket": "myfirebasechat-77190.firebasestorage.app"
+    "project_number": "552257486041",
+    "project_id": "locket-a4505",
+    "storage_bucket": "locket-a4505.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:969571691661:android:b98c21fb2c83eae97b46c4",
-        "android_client_info": {
-          "package_name": "com.example.prepay"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "969571691661-27r27tb6229jgrsfi6civie80251ddh5.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.prepay",
-            "certificate_hash": "438aa60bf0051bf46bbea61239a30e8f1289e568"
-          }
-        },
-        {
-          "client_id": "969571691661-4dfds0mbkocvpi3n5tpelb5b79952feg.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.prepay",
-            "certificate_hash": "2caf1861d1bf34802f21b2390ff718dba396de27"
-          }
-        },
-        {
-          "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC0QT9kDzGq8S1UHlZJlpz0V_PpCfrNZZo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:969571691661:android:110f9e8ea84497da7b46c4",
-        "android_client_info": {
-          "package_name": "com.ssafy.firebase_1"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "969571691661-92dhl06fnfkal9k21bvnsq5eb10s3n82.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.ssafy.firebase_1",
-            "certificate_hash": "4cd9f121de7ba08e593fe8af281dbe8e94b07d3c"
-          }
-        },
-        {
-          "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC0QT9kDzGq8S1UHlZJlpz0V_PpCfrNZZo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:969571691661:android:abd1bab45dfa15db7b46c4",
-        "android_client_info": {
-          "package_name": "com.ssafy.firebase_2"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyC0QT9kDzGq8S1UHlZJlpz0V_PpCfrNZZo"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:969571691661:android:c07bb3cacb8c7c437b46c4",
+        "mobilesdk_app_id": "1:552257486041:android:8293910c450585261212c8",
         "android_client_info": {
           "package_name": "com.ssafy.locket"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyC0QT9kDzGq8S1UHlZJlpz0V_PpCfrNZZo"
+          "current_key": "AIzaSyAQkK1wIhYm83gXuO5zbJN1LyVT3rUMHbU"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "969571691661-lpp1a24m43ndbpfutcqj8655r1quioh0.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

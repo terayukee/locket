@@ -50,7 +50,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private val budgetViewModel : BudgetViewModel by activityViewModels()
 
-    private val homeFinanceViewModel: HomeFinanceViewModel by viewModels()
+    private val homeFinanceViewModel: HomeFinanceViewModel by activityViewModels()
 
     private var backPressedTime: Long = 0
 

@@ -1,17 +1,14 @@
-package com.ssafy.locket.model.payment_history
+package com.ssafy.locket.model.finance.payment_history
 
 import com.ssafy.locket.model.base.BaseModel
 import kotlinx.parcelize.Parcelize
 import java.math.BigDecimal
 
 @Parcelize
-data class PaymentHistoryItem(
+data class PaymentDailyHistoryItem(
     val id: String,
     val cardName: String,
-    val category: String,
+    val category: String?,
     val storeName: String,
-    val totalAmount: BigDecimal,
-    val year: Int,
-    val month: Int,
-    val day: Int
+    val totalAmount: BigDecimal
 ): BaseModel

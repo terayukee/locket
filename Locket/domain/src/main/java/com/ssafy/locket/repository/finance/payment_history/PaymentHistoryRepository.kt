@@ -1,10 +1,10 @@
 package com.ssafy.locket.repository.finance.payment_history
 
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.model.payment_history.PaymentCalendar
-import com.ssafy.locket.model.payment_history.PaymentDailyHistory
-import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
-import com.ssafy.locket.model.payment_history.PaymentMonthlyTotal
+import com.ssafy.locket.model.finance.payment_history.PaymentCalendar
+import com.ssafy.locket.model.finance.payment_history.PaymentDailyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyTotal
 import kotlinx.coroutines.flow.Flow
 
 interface PaymentHistoryRepository {

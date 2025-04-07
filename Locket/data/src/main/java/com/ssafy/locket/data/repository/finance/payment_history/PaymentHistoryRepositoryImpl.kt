@@ -10,10 +10,10 @@ import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMon
 import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyHistoryResponse.Companion.toDomainModel
 import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyTotalResponse.Companion.toDomainModel
 import com.ssafy.locket.model.base.ResponseStatus
-import com.ssafy.locket.model.payment_history.PaymentCalendar
-import com.ssafy.locket.model.payment_history.PaymentDailyHistory
-import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
-import com.ssafy.locket.model.payment_history.PaymentMonthlyTotal
+import com.ssafy.locket.model.finance.payment_history.PaymentCalendar
+import com.ssafy.locket.model.finance.payment_history.PaymentDailyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyTotal
 import com.ssafy.locket.repository.finance.payment_history.PaymentHistoryRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.collect

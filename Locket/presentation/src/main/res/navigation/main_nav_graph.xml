@@ -259,7 +259,11 @@
         android:label="fragment_gifticon_list"
         tools:layout="@layout/fragment_gifticon_list" >
         <action
-            android:id="@+id/action_gifticonListFragment_to_characterDoneFragment"
-            app:destination="@id/characterDoneFragment" />
+            android:id="@+id/action_gifticonListFragment_to_gifticonDetailFragment"
+            app:destination="@id/gifticonDetailFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/gifticonDetailFragment"
+        android:name="com.ssafy.locket.presentation.home.character.fragment.GifticonDetailFragment"
+        android:label="GifticonDetailFragment" />
 </navigation>

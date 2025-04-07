@@ -9,8 +9,8 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.locket.model.finance.Payment
-import com.ssafy.locket.model.payment_history.PaymentDailyHistoryItem
-import com.ssafy.locket.model.payment_history.PaymentHistoryItem
+import com.ssafy.locket.model.finance.payment_history.PaymentDailyHistoryItem
+import com.ssafy.locket.model.finance.payment_history.PaymentHistoryItem
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemPaymentBinding
 import com.ssafy.locket.presentation.utils.CommonUtils

@@ -17,8 +17,10 @@ import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentEditBudgetBinding
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
 import com.ssafy.locket.presentation.finance.viewmodel.SetBudgetState
 import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
+import com.ssafy.locket.presentation.utils.CommonUtils
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.time.LocalDate
@@ -37,6 +39,7 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
 
         binding.tvTitle.text = getString(R.string.finance_budget_edit_title, LocalDate.now().monthValue)
 
+
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
@@ -45,7 +48,21 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
             // TODO api 전송
             val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
             budgetViewModel.setBudgetGoal(rawNumber.toInt())
-            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
+            findNavController().popBackStack()
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            budgetViewModel.getBudgetStatus.collect { uiState ->
+                when(uiState) {
+                    is GetBudgetStatusState.Success -> {
+                        binding.etGoalBudget.hint = CommonUtils.makeComma(uiState.budgetStatus.budget.monthly.target)
+                    }
+                    is GetBudgetStatusState.Error -> {
+                        Log.e(TAG, uiState.message)
+                    }
+                    else -> {}
+                }
+            }
         }
     }
 

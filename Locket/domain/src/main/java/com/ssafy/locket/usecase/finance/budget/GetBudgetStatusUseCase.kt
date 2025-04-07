@@ -1,4 +1,4 @@
-package com.ssafy.locket.usecase.budget
+package com.ssafy.locket.usecase.finance.budget
 
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.budget.SetBudget

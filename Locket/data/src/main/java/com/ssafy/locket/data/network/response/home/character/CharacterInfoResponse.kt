@@ -3,6 +3,7 @@ package com.ssafy.locket.data.network.response.home.character
 import com.google.gson.annotations.SerializedName
 import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
+import com.ssafy.locket.data.network.response.home.character.ToyResponse.Companion.toDomainModel
 import com.ssafy.locket.model.home.character.CharacterInfo
 import com.ssafy.locket.model.home.character.Toy
 import kotlinx.parcelize.Parcelize
@@ -17,7 +18,7 @@ class CharacterInfoResponse(
     @SerializedName("foodCount") val foodCount: Int,
     @SerializedName("level") val level: Int,
     @SerializedName("totalExpForNextLevel")  val totalExpForNextLevel: Int,
-    @SerializedName("toy") val toy: Toy,
+    @SerializedName("toy") val toy: ToyResponse,
     @SerializedName("userId") val userId: Long
 ): BaseResponse {
     companion object: DataMapper<CharacterInfoResponse, CharacterInfo> {
@@ -30,7 +31,7 @@ class CharacterInfoResponse(
                 foodCount = this.foodCount,
                 level = this.level,
                 totalExpForNextLevel = this.totalExpForNextLevel,
-                toy = this.toy,
+                toy = this.toy.toDomainModel(),
             )
         }
     }

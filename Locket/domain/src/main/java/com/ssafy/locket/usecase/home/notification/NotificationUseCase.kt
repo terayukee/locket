@@ -1,4 +1,4 @@
-package com.ssafy.locket.usecase.notification
+package com.ssafy.locket.usecase.home.notification
 
 import android.util.Log
 import com.ssafy.locket.model.base.ResponseStatus

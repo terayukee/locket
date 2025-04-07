@@ -5,7 +5,7 @@ import com.ssafy.locket.data.network.common.BaseResponse
 import com.ssafy.locket.data.network.mapper.DataMapper
 import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyHistoryResponse.Companion.toDomainModel
 import com.ssafy.locket.data.network.response.finance.payment_history.PaymentMonthlyHistoryResponseItem.Companion.toDomainModel
-import com.ssafy.locket.model.payment_history.PaymentMonthlyHistory
+import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyHistory
 import kotlinx.parcelize.Parcelize
 
 @Parcelize

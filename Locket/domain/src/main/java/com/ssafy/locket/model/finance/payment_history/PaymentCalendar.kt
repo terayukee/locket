@@ -1,4 +1,4 @@
-package com.ssafy.locket.model.payment_history
+package com.ssafy.locket.model.finance.payment_history
 
 import com.google.gson.annotations.SerializedName
 import com.ssafy.locket.model.base.BaseModel

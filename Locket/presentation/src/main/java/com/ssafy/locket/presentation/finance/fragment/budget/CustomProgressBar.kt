@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
+import android.provider.CalendarContract.Colors
 import android.util.AttributeSet
 import android.util.Log
 import android.view.View
@@ -108,11 +109,33 @@ class CustomProgressBar @JvmOverloads constructor(
 
             // 텍스트 x 좌표 계산
             textX = if(progress > 100) (progressWidth * (100 / 100f)) - textWidth / 2 - paddingPx
+            else if(progress == 0) textWidth + paddingPx
             else (progressWidth * (progress / 100f)) - textWidth / 2 - paddingPx
 
-            // 텍스트 그리기
+            if (progress == 0) paint.color = resources.getColor(R.color.disabled)
+            else paint.color = Color.WHITE
+             // 텍스트 그리기
             canvas.drawText(percentText, textX, height / 2f + paint.textSize / 2f, paint)
         }
+
+        /*
+             // 텍스트 너비 계산
+    val textWidth = paint.measureText(percentText)
+    val progressWidth = width.toFloat()
+    val paddingPx = horizontalPadding * resources.displayMetrics.density
+
+    // 진행 영역 계산 (최대 100%로 제한)
+    val effectiveProgress = if (progress > 100) 100f else progress.toFloat()
+    val progressPosition = progressWidth * (effectiveProgress / 100f)
+
+    // 텍스트 x 좌표: 진행 위치 + 패딩 (오른쪽 정렬)
+    var textX = progressPosition + paddingPx
+
+    // 텍스트가 화면을 벗어나지 않도록 보정
+    if (textX + textWidth > progressWidth) {
+        textX = progressWidth - textWidth
+    }
+         */
     }
 
 }

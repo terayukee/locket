@@ -9,13 +9,15 @@ import kotlinx.parcelize.Parcelize
 data class GifticonResponse(
     val receivedAt: String,
     val rewardId: Long,
-    val rewardName: String
+    val rewardName: String,
+    val characterName: String
 ):BaseResponse {
     companion object : DataMapper<GifticonResponse, Gifticon> {
         override fun GifticonResponse.toDomainModel(): Gifticon {
             return Gifticon(
                 id = this.rewardId,
-                name = this.rewardName
+                name = this.rewardName,
+                characterName = this.characterName
             )
         }
     }

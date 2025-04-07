@@ -8,9 +8,9 @@ import com.ssafy.locket.model.finance.budget.SetBudget
 import com.ssafy.locket.model.finance.budget.feedback.Feedback
 import com.ssafy.locket.model.finance.budget.feedback.ShortFeedback
 import com.ssafy.locket.model.finance.budget.status.BudgetStatus
-import com.ssafy.locket.usecase.budget.GetBudgetStatusUseCase
-import com.ssafy.locket.usecase.budget.SetBugetGoalUseCase
-import com.ssafy.locket.usecase.budget.getShortFeedbackUseCase
+import com.ssafy.locket.usecase.finance.budget.GetBudgetStatusUseCase
+import com.ssafy.locket.usecase.finance.budget.SetBugetGoalUseCase
+import com.ssafy.locket.usecase.finance.budget.getShortFeedbackUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
