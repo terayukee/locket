@@ -54,7 +54,7 @@ spring:
           predicates:
             - Path=/api/ai/**
           filters:
-            - RewritePath=/api/ai/(?<segment>/?.*), /${segment}
+#            - RewritePath=/api/ai/(?<segment>/?.*), /${segment}
             - StripPrefix=2
           order: 10
 
