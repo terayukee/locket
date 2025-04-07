@@ -177,9 +177,35 @@ public class PetController {
         return ResponseEntity.ok(response);
     }
 
-    @Operation(summary = "기프티콘 목록 조회", description = "사용자가 획득한 기프티콘(리워드) 목록을 조회합니다.")
+    @Operation(summary = "기프티콘 목록 조회", description = "사용자가 획득한 기프티콘(리워드) 목록과 캐릭터 이름을 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "기프티콘 목록 조회 성공"),
+            @ApiResponse(
+                    responseCode = "200",
+                    description = "기프티콘 목록 조회 성공",
+                    content = @Content(
+                            schema = @Schema(implementation = RewardListResponseDto.class),
+                            examples = @ExampleObject(
+                                    value = """
+                                        {
+                                          "rewards": [
+                                            {
+                                              "rewardId": 1,
+                                              "rewardName": "스타벅스 아메리카노",
+                                              "characterName": "수줍은 말랑냥",
+                                              "receivedAt": "2025-04-01T12:34:56.789Z"
+                                            },
+                                            {
+                                              "rewardId": 2,
+                                              "rewardName": "스타벅스 아메리카노",
+                                              "characterName": "수줍은 말랑냥",
+                                              "receivedAt": "2025-03-15T09:22:33.456Z"
+                                            }
+                                          ]
+                                        }
+                                        """
+                            )
+                    )
+            ),
             @ApiResponse(
                     responseCode = "401",
                     description = "인증되지 않은 사용자",
@@ -187,13 +213,13 @@ public class PetController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     value = """
-                                            {
-                                              "status": 401,
-                                              "error": "Unauthorized",
-                                              "message": "인증되지 않은 사용자입니다.",
-                                              "timestamp": "2025-04-01T12:34:56.789Z"
-                                            }
-                                            """
+                                        {
+                                          "status": 401,
+                                          "error": "Unauthorized",
+                                          "message": "인증되지 않은 사용자입니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
                             )
                     )
             ),
@@ -204,13 +230,13 @@ public class PetController {
                             schema = @Schema(implementation = ErrorResponse.class),
                             examples = @ExampleObject(
                                     value = """
-                                            {
-                                              "status": 404,
-                                              "error": "Not Found",
-                                              "message": "사용자를 찾을 수 없습니다.",
-                                              "timestamp": "2025-04-01T12:34:56.789Z"
-                                            }
-                                            """
+                                        {
+                                          "status": 404,
+                                          "error": "Not Found",
+                                          "message": "사용자를 찾을 수 없습니다.",
+                                          "timestamp": "2025-04-01T12:34:56.789Z"
+                                        }
+                                        """
                             )
                     )
             )

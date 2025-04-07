@@ -15,6 +15,7 @@ import java.time.LocalDateTime;
 public class RewardDto {
     private Long rewardId;
     private String rewardName;
+    private String characterName;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime receivedAt;
 }
