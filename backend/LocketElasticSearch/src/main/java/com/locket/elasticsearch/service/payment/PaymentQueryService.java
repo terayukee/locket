@@ -35,8 +35,11 @@ public class PaymentQueryService {
      */
     private List<PaymentHistory> getPaymentsInMonth(long userId, int year, int month) {
         DateRange range = DateTimeUtil.getMonthRangeUtc(year, month);
-        return paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month);
+        return paymentHistoryRepository.findByBuyerIdAndYearAndMonth(userId, year, month).stream()
+                .sorted(Comparator.comparing(PaymentHistory::getCreatedAt).reversed())
+                .collect(Collectors.toList());
     }
+
 
     /**
      * 월별 일자별 소비 내역 + 총합
@@ -123,12 +126,12 @@ public class PaymentQueryService {
             throw new IllegalArgumentException("userId는 null일 수 없습니다.");
         }
 
-        List<PaymentHistory> payments = paymentHistoryRepository.findByBuyerIdAndPaymentStatusAndReceiptUploadedAndNeedItemCheck(
-                userId,
-                "SUCCESS",
-                false,
-                true
-        );
+        List<PaymentHistory> payments = paymentHistoryRepository
+                .findByBuyerIdAndPaymentStatusAndReceiptUploadedAndNeedItemCheck(
+                        userId, "SUCCESS", false, true)
+                .stream()
+                .sorted(Comparator.comparing(PaymentHistory::getCreatedAt).reversed())
+                .toList();
 
         List<ReceiptPaymentDto.Receipt> receipts = payments.stream()
                 .map(payment -> ReceiptPaymentDto.Receipt.builder()
@@ -195,7 +198,9 @@ public class PaymentQueryService {
                                 payment -> payment,
                                 (p1, p2) -> p1
                         ),
-                        map -> new ArrayList<>(map.values())
+                        map -> map.values().stream()
+                                .sorted(Comparator.comparing(PaymentHistory::getCreatedAt).reversed())
+                                .collect(Collectors.toList())
                 ));
     }
 
