@@ -1,5 +1,6 @@
 package com.ssafy.locket.presentation.home.character.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,13 +27,22 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
     FragmentCharacterGrowthBinding::bind,
     R.layout.fragment_character_growth
 ){
+    private var mContext: Context? = null
     private var isTimerRunning = false
     private lateinit var timerRunnable: Runnable
-    private val handler = Handler(Looper.getMainLooper())
+    private val timerHandler = Handler(Looper.getMainLooper())
     private var minRemain = testCharacterCoolTime
     private val characterViewModel: CharacterViewModel by activityViewModels()
     private var gifResId: Int = -1
     private var imageResId: Int = -1
+    private lateinit var pendingGifRunnable: Runnable
+    private val gifHandler = Handler(Looper.getMainLooper())
+    private var isGifLoading = false
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        mContext = context
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -64,25 +74,42 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             characterViewModel.characterInfo.collect { uiState ->
                 if(uiState is CharacterInfoState.Success) {
-                    if(uiState.characterInfo.level == 4) characterViewModel.completeCharacter()
+                    if(uiState.characterInfo.level == 4) {
+                        binding.ivMissionToyBg.isEnabled = false
+                        binding.ivCharacterGrowthBg.isEnabled = false
+                        characterViewModel.completeCharacter()
+                    }
                     else {
                         val level = uiState.characterInfo.level
                         gifResId = resources.getIdentifier("gif_character_level_$level", "raw", requireContext().packageName)
                         imageResId = resources.getIdentifier("image_character_level_$level", "drawable", requireContext().packageName)
                         if(uiState.characterInfo.isInit == false) {
-                            Glide.with(requireContext())
-                                .load(gifResId)
-                                .placeholder(imageResId)
-                                .into(binding.ivCharacter)
-                            binding.ivCharacter.postDelayed({
-                                Glide.with(requireContext())
-                                    .load(imageResId)
+                            mContext?.let {
+                                Glide.with(it)
+                                    .load(gifResId)
+                                    .placeholder(imageResId)
                                     .into(binding.ivCharacter)
-                            }, 2000)
+                            }
+                            loadCharacterAnimation()
+
+//                            mContext?.let { context ->
+//                                binding?.let {
+//
+//                                    binding.ivCharacter.postDelayed({
+//                                        Glide.with(context)
+//                                            .load(imageResId)
+//                                            .into(binding.ivCharacter)
+//                                    }, 2000)
+//                                }
+//                            }
                         } else {
-                            Glide.with(requireContext())
-                                .load(imageResId)
-                                .into(binding.ivCharacter)
+                            mContext?.let { context ->
+                                binding?.let {
+                                    Glide.with(context)
+                                        .load(imageResId)
+                                        .into(binding.ivCharacter)
+                                }
+                            }
                         }
                     }
                     binding.tvCharacterName.text = uiState.characterInfo.name
@@ -128,7 +155,7 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                         getString(R.string.home_character_toy_remain_time, minRemain+1)
                     minRemain--
 
-                    handler.postDelayed(this, 60000)
+                    timerHandler.postDelayed(this, 60000)
                 } else {
                     stopTimer() // 타이머 종료
                     binding.ivMissionToyBg.isEnabled = true
@@ -136,19 +163,41 @@ class CharacterGrowthFragment: BaseFragment<FragmentCharacterGrowthBinding>(
                 }
             }
         }
-
-        handler.post(timerRunnable)
+        timerHandler.post(timerRunnable)
     }
 
+    private fun loadCharacterAnimation() {
+        isGifLoading = true
+        pendingGifRunnable = object : Runnable {
+            override fun run() {
+                if(isGifLoading) {
+                    mContext?.let {
+                        Glide.with(it)
+                            .load(imageResId)
+                            .into(binding.ivCharacter)
+                    }
+                }
+            }
+        }
+        gifHandler.postDelayed(pendingGifRunnable, 2000)
+    }
+
+    private fun stopLoadCharacterAnimation() {
+        if(isGifLoading) {
+            isGifLoading = false
+            gifHandler.removeCallbacks(pendingGifRunnable)
+        }
+    }
     private fun stopTimer() {
         if (isTimerRunning) {
             isTimerRunning = false
-            handler.removeCallbacks(timerRunnable)
+            timerHandler.removeCallbacks(timerRunnable)
         }
     }
 
     override fun onPause() {
         super.onPause()
         stopTimer()
+        stopLoadCharacterAnimation()
     }
 }
