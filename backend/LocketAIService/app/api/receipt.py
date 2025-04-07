@@ -1,3 +1,4 @@
+import httpx
 from fastapi import APIRouter, UploadFile, File
 
 from app.schema.error.model import ErrorResponse
@@ -11,6 +12,7 @@ import base64
 from io import BytesIO
 from pdf2image import convert_from_bytes
 import logging
+from py_eureka_client import eureka_client
 
 logger = logging.getLogger(__name__)
 
@@ -18,12 +20,18 @@ router = APIRouter()
 ocr_service = OCRService()
 classifier = ItemClassifier()
 
-async def _process_receipt(image_data: str) -> ReceiptResponse:
+async def _process_receipt(image_data: str, expected_amount: int = None) -> ReceiptResponse:
     """영수증 이미지 처리 공통 로직"""
     try:
         # OCR 처리
         ocr_result = await ocr_service.extract_text(image_data)
         logger.info(f"OCR 처리 결과: {ocr_result['storeName']}")
+
+        # 결제 금액 검증
+        if expected_amount is not None:
+            if ocr_result['totalAmount'] != expected_amount:
+                logger.error(f"금액 불일치: OCR={ocr_result['totalAmount']}, Expected={expected_amount}")
+                raise ReceiptException(error_code=ReceiptErrorCode.AMOUNT_MISMATCH)
 
         # 품목 분류
         classified_result = await classifier.classify_receipt(ocr_result)
@@ -34,11 +42,16 @@ async def _process_receipt(image_data: str) -> ReceiptResponse:
         actual_total = classified_result['totalAmount']
 
         if total_sum > actual_total:
+            # 할인이 적용된 경우
             discount = total_sum - actual_total
             max_amount_item = max(classified_result['items'],
                                   key=lambda x: x['itemAmount'])
             max_amount_item['itemAmount'] -= discount
             logger.info(f"할인 금액 처리: {discount}원")
+        elif total_sum < actual_total:
+            # 할인이 아닌 경우에 총액이 맞지 않으면 에러
+            logger.error(f"총액 불일치: Items={total_sum}, Total={actual_total}")
+            raise ReceiptException(error_code=ReceiptErrorCode.TOTAL_AMOUNT_MISMATCH)
 
         # 카테고리별 금액 계산
         category_amount = {}
@@ -197,6 +210,9 @@ async def process_receipt_from_camera(
 ):
     logger.info(f"카메라 영수증 처리 시작: transaction_id={transaction_id}")
     try:
+        # 결제 금액 조회
+        expected_amount = await get_payment_amount(transaction_id)
+        logger.info(f"조회된 결제 금액: {expected_amount}원")
         if not file:
             raise ReceiptException(
                 error_code=ReceiptErrorCode.FILE_NOT_FOUND,
@@ -211,7 +227,7 @@ async def process_receipt_from_camera(
         contents = await file.read()
         image_data = base64.b64encode(contents).decode('utf-8')
 
-        return await _process_receipt(image_data)
+        return await _process_receipt(image_data, expected_amount)
 
     except ReceiptException as e:
         logger.error(f"영수증 처리 실패: {str(e)}")
@@ -355,6 +371,9 @@ async def process_receipt_pdf(
 ):
     logger.info(f"PDF 거래명세표 처리 시작: transaction_id={transaction_id}")
     try:
+        # 결제 금액 조회
+        expected_amount = await get_payment_amount(transaction_id)
+        logger.info(f"조회된 결제 금액: {expected_amount}원")
         if not file:
             raise ReceiptException(
                 error_code=ReceiptErrorCode.FILE_NOT_FOUND,
@@ -387,8 +406,42 @@ async def process_receipt_pdf(
         # 이미지 데이터를 base64로 인코딩
         image_data = base64.b64encode(img_byte_arr).decode('utf-8')
 
-        return await _process_receipt(image_data)
+        return await _process_receipt(image_data, expected_amount)
 
     except ReceiptException as e:
         logger.error(f"영수증 처리 실패: {str(e)}")
         raise e
+
+
+async def get_payment_amount(transaction_id: str) -> int:
+    """결제 금액 조회"""
+    try:
+        # Eureka에서 elasticsearch-service 조회
+        elastic_service = await eureka_client.get_client().get_client_service_url('LOCKET-ELASTICSEARCH-SERVICE')
+        if not elastic_service:
+            raise Exception("ElasticSearch service not found")
+
+        # 결제 정보 조회 API 호출
+        url = f"{elastic_service}/payment/available/{transaction_id}"
+        async with httpx.AsyncClient() as client:
+            response = await client.get(url)
+
+            if response.status_code != 200:
+                raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
+
+            payment_data = response.json()
+            # receipts 리스트에서 해당 transaction_id를 가진 결제 내역 찾기
+            payment = next(
+                (receipt for receipt in payment_data['receipts']
+                 if receipt['transactionId'] == transaction_id),
+                None
+            )
+
+            if not payment:
+                raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
+
+            return payment['amount']  # 결제 금액 반환
+
+    except Exception as e:
+        logger.error(f"결제 정보 조회 실패: {str(e)}")
+        raise
