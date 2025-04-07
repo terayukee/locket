@@ -3,6 +3,7 @@ package com.ssafy.locket.presentation.payment
 import android.os.Bundle
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import androidx.biometric.BiometricPrompt
@@ -24,6 +25,8 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 import java.security.KeyStore
 import javax.crypto.KeyGenerator
+
+private const val TAG = "PaymentPasswordFragment"
 @AndroidEntryPoint
 class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
     FragmentPaymentPasswordBinding::bind,
@@ -41,6 +44,7 @@ class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             paymentPasswordViewModel.isPasswordVerify.collect {
+                Log.d(TAG,it.toString())
                 if(it) certifymove()
                 else {
                     CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "비밀번호가 틀렸습니다. 다시 입력해주세요.")

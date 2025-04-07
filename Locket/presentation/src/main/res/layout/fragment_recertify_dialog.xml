@@ -50,36 +50,35 @@
                 android:id="@+id/btn_pay"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="비밀번호 결제"
-                app:cornerRadius="10dp"
-                android:textSize="12dp"
-                android:fontFamily="@font/pretendard_regular"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
                 android:backgroundTint="#E9E9EA"
+                android:fontFamily="@font/pretendard_regular"
+                android:text="비밀번호 결제"
                 android:textColor="#424242"
-                app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/btn_recertify"
+                android:textSize="12dp"
+                app:cornerRadius="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.1"
                 app:layout_constraintHorizontal_chainStyle="packed"
-                app:layout_constraintWidth_percent="0.4"
-                app:layout_constraintHorizontal_bias="0.4"/>
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
+                app:layout_constraintWidth_percent="0.4" />
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/btn_recertify"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="재인증 설정"
-                app:cornerRadius="10dp"
-                android:textSize="12dp"
-                android:fontFamily="@font/pretendard_regular"
                 android:layout_marginTop="16dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
-                app:layout_constraintStart_toEndOf="@id/btn_logout"
+                android:fontFamily="@font/pretendard_regular"
+                android:text="재인증 설정"
+                android:textSize="12dp"
+                app:cornerRadius="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintWidth_percent="0.4"
-                app:layout_constraintHorizontal_bias="0.6"/>
+                app:layout_constraintHorizontal_bias="0.9"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/tv_subtitle"
+                app:layout_constraintWidth_percent="0.4" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </com.google.android.material.card.MaterialCardView>
 </androidx.constraintlayout.widget.ConstraintLayout>

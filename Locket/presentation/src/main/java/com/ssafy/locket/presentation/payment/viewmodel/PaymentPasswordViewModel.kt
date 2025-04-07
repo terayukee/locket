@@ -36,7 +36,7 @@ class PaymentPasswordViewModel @Inject constructor(
                     when(status) {
                         is ResponseStatus.Success -> {
                             Log.d(TAG, "checkPassword: Success ${status.data}")
-                            _isPasswordVerify.emit(true)
+                            _isPasswordVerify.emit(status.data.valid)
                         }
                         is ResponseStatus.Error -> {
                             Log.d(TAG, "checkPassword: Error ${status.error.message}")
