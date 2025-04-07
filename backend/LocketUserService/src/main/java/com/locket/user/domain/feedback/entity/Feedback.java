@@ -39,4 +39,13 @@ public class Feedback {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
+
+    public void setFeedbackText(String feedbackText) {
+        this.feedbackText = feedbackText;
+    }
+
+    public void setGoalId(Long goalId) {
+        this.goalId = goalId;
+    }
+
 }

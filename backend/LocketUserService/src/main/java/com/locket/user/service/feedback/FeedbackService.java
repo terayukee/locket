@@ -132,15 +132,27 @@ public class FeedbackService {
 
             String jsonResult = objectMapper.writeValueAsString(summarized);
 
-            // DB 저장
-            Feedback feedback = Feedback.builder()
-                    .userId(userId)
-                    .goalId(goal.getGoalId())
-                    .feedbackText(jsonResult)
-                    .feedbackYear(year)
-                    .feedbackMonth(month)
-                    .build();
-            feedbackRepository.save(feedback);
+            // 기존 DB에 데이터가 있다면 Update, 없다면 DB에 저장
+            Optional<Feedback> existingFeedbackOpt = feedbackRepository
+                    .findByUserIdAndFeedbackYearAndFeedbackMonth(userId, year, month);
+
+            if (existingFeedbackOpt.isPresent()) {
+                Feedback existingFeedback = existingFeedbackOpt.get();
+                existingFeedback.setFeedbackText(jsonResult);
+                existingFeedback.setGoalId(goal.getGoalId());
+                feedbackRepository.save(existingFeedback);
+                log.info("✅ 기존 피드백을 업데이트했습니다: userId={}, year={}, month={}", userId, year, month);
+            } else {
+                Feedback feedback = Feedback.builder()
+                        .userId(userId)
+                        .goalId(goal.getGoalId())
+                        .feedbackText(jsonResult)
+                        .feedbackYear(year)
+                        .feedbackMonth(month)
+                        .build();
+                feedbackRepository.save(feedback);
+                log.info("✅ 새 피드백을 저장했습니다: userId={}, year={}, month={}", userId, year, month);
+            }
 
             return ResponseEntity.ok()
                     .header("Content-Type", "application/json")
