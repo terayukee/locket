@@ -2,6 +2,9 @@ spring:
   config:
     activate:
       on-profile: prod
+  web:
+    resources:
+      add-mappings: true
 
   application:
     name: locket-api-gateway
