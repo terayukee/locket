@@ -17,7 +17,7 @@ public class WebClientConfig {
     @Bean
     public WebClient webClient() {
         return WebClient.builder()
-                .baseUrl(env.getProperty("locket.ai.service.url", "http://localhost:8000"))
+                .baseUrl(env.getProperty("locket.ai.service.url", "https://j12d204.p.ssafy.io"))
                 .build();
     }
 }
