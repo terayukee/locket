@@ -23,6 +23,8 @@ springdoc:
         url: /api/users/v3/api-docs
       - name: "Locket ElasticSearch Service"
         url: /api/elasticsearch/v3/api-docs
+      - name: "Locket AI Service"
+        url: http://localhost:8080/api/ai/openapi.json
 
 management:
   endpoints:
