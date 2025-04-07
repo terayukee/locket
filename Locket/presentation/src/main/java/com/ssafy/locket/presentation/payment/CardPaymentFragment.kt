@@ -221,6 +221,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                         0
                     )
                 }
+
                 binding.tvCardName.text = cards[position].cardName
                 if(cards[selectedPosition].monthlyUsage>=300000){
                     binding.tvBalanceDescription.text = "전월 실적: 0원 남음"

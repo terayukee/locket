@@ -102,32 +102,33 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
 
     private fun observeLoginState() {
         lifecycleScope.launchWhenStarted {
-            loginViewModel.loginState.collect { isRegistered ->
-                when (isRegistered) {
-                    true -> {
-                        Log.d(TAG, "홈 화면으로 갑니다")
+            loginViewModel.loginState.collect { status ->
+                when (status) {
+                    is LoginStatus.Success -> {
                         val intent = Intent(requireContext(), MainActivity::class.java)
-                        if(isNotification) {
-                            intent.putExtra("notification","notification")
+                        if (isNotification) {
+                            intent.putExtra("notification", "notification")
                         }
                         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
                     }
-                    false -> {
-                        Log.d(TAG, "회원가입 화면으로 이동")
+                    is LoginStatus.Error -> {
                         lifecycleScope.launch {
                             val token = userDataStoreSource.kakaoAccessToken.first()
                             loginViewModel.updateAccessToken(token ?: "")
                         }
                         val currentDestination = findNavController().currentDestination?.id
-                        if (currentDestination == R.id.signInFragment) { // ✅ 현재 Fragment가 signInFragment인지 확인
+                        if (currentDestination == R.id.signInFragment) {
                             findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment)
                         }
                         loginViewModel.resetLoginState()
+                        loginViewModel.resetLoginState()
                     }
-                    null -> Unit // 🔥 초기 상태(null)일 경우 아무 동작 안 함
+                    LoginStatus.Idle -> {
+
+                    }
                 }
-                isClick = false // 네비게이션 처리 후 다시 클릭 가능하게 변경
+                isClick = false
             }
         }
     }
