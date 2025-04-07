@@ -442,7 +442,7 @@ async def get_payment_amount(transaction_id: str) -> int:
             logger.info(f"수신된 결제 데이터: {payment_data}")
 
             # 새로운 응답 형식에 맞춰 금액 추출
-            amount = payment_data.get('totalAmount')  # 'amount' -> 'totalAmount'로 변경
+            amount = payment_data.get('amount')
             if amount is None:
                 logger.error("결제 금액 정보 없음")
                 raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
