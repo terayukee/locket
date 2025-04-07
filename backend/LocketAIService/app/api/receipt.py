@@ -417,9 +417,9 @@ async def get_payment_amount(transaction_id: str) -> int:
     """결제 금액 조회"""
     try:
         # Eureka에서 elasticsearch-service 조회
-        logger.info(f"Eureka 서비스 조회 시작: LOCKET-ELASTICSEARCH-SERVICE")
+        logger.info(f"Eureka 서비스 조회 시작: ELASTICSEARCH-SERVICE")
         # do_service를 사용하여 서비스 URL 조회 및 API 경로 추가
-        elastic_service = await eureka_client.get_client().do_service('LOCKET-ELASTICSEARCH-SERVICE',
+        elastic_service = await eureka_client.get_client().do_service('ELASTICSEARCH-SERVICE',
                                                                       f"/payment/available/{transaction_id}")
         logger.info(f"조회된 Elasticsearch API URL: {elastic_service}")
 
