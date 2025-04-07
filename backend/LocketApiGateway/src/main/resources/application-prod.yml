@@ -37,6 +37,10 @@ spring:
             - Path=/api/users/**
           filters:
             - RewritePath=/api/users/(?<segment>.*), /${segment}
+            - PreserveHostHeader
+            - name: JwtGatewayFilter
+              args:
+                enabled: true
           order: 10
 
         - id: elasticsearch-service
