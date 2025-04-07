@@ -50,6 +50,31 @@ public class PaymentQueryController {
         }
     }
 
+    @GetMapping("/{transactionId}")
+    @Operation(
+            summary = "결제 금액 조회",
+            description = "transaction_id로 결제 금액을 조회합니다."
+    )
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "조회 성공"),
+            @ApiResponse(responseCode = "404", description = "결제 내역을 찾을 수 없음"),
+            @ApiResponse(responseCode = "500", description = "서버 오류")
+    })
+    public ResponseEntity<Map<String, Object>> getPaymentAmount(
+            @PathVariable String transactionId
+    ) {
+        try {
+            PaymentHistory payment = paymentQueryService.getPaymentByTransactionId(transactionId);
+            return ResponseEntity.ok(Map.of(
+                    "transactionId", transactionId,
+                    "amount", payment.getTotalAmount()
+            ));
+        } catch (Exception e) {
+            log.error("Failed to get payment amount for transaction {}: {}", transactionId, e.getMessage());
+            throw new RuntimeException("결제 금액 조회 중 오류가 발생했습니다.");
+        }
+    }
+
     @GetMapping("/history")
     @Operation(
             summary = "월 단위 결제 내역 전체 조회",
