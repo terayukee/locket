@@ -4,7 +4,6 @@ spring:
       on-profile: prod
   web:
     resources:
-      static-locations: classpath:/META-INF/resources/,classpath:/resources/,classpath:/static/,classpath:/public/
       add-mappings: true
 
   application:
@@ -59,13 +58,6 @@ spring:
             - StripPrefix=2
           order: 10
 
-        - id: swagger-static
-          uri: forward:/  # 정적 리소스를 Gateway 자체에서 서빙하도록 설정
-          predicates:
-            - Path=/swagger-ui.html, /webjars/**, /swagger-ui/**
-          order: 0
-
-
         # 서비스별 Swagger 문서 라우팅
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE
@@ -106,9 +98,9 @@ spring:
         - id: locket-ai-service-docs
           uri: lb://LOCKET-AI-SERVICE
           predicates:
-            - Path=/api/ai/v3/api-docs
+            - Path=/api/ai/v3/openapi.json
           filters:
-            - RewritePath=/api/ai/v3/api-docs(?<remaining>/?.*), /openapi.json${remaining}
+            - RewritePath=/api/ai/v3/openapi.json(?<remaining>/?.*), /openapi.json${remaining}
             - RemoveRequestHeader=Host
           order: 1
 
@@ -140,7 +132,7 @@ springdoc:
         url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
 #        url: https://j12d204.p.ssafy.io:8083/elasticsearch-doc
       - name: "4. Locket AI Service"
-        url: https://j12d204.p.ssafy.io/api/ai/v3/api-docs
+        url: https://j12d204.p.ssafy.io/api/ai/openapi.json
 
 management:
   endpoints:
