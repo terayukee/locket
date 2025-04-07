@@ -24,21 +24,23 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .allowedOrigins("https://j12d204.p.ssafy.io", "http://localhost:8080")
                 .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .exposedHeaders("Authorization")
+                .exposedHeaders("Authorization", "X-User-Id", "Auth-User-Id")
                 .allowCredentials(true);
     }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(userAuthorizationInterceptor)
-                .addPathPatterns("/api/users/**")
-                .addPathPatterns("/api/users/pet/**")
-                .addPathPatterns("/api/budget/**")
-                .addPathPatterns("/api/feedback/**")
-                .addPathPatterns("/api/notifications/**")
-                .addPathPatterns("/api/products/liked")
-                .addPathPatterns("/api/products/*/like")
-                .addPathPatterns("/api/products/*/alert");
+                .addPathPatterns("/**")
+                .excludePathPatterns(
+                        "/login", "/signup", "/refresh", "/test/**", "/v3/api-docs/**", "/swagger-ui/**");
+//                .addPathPatterns("/api/users/**")
+//                .addPathPatterns("/pet/**")
+//                .addPathPatterns("/budget/**")
+//                .addPathPatterns("/notifications/**")
+//                .addPathPatterns("/products/liked")
+//                .addPathPatterns("/products/*/like")
+//                .addPathPatterns("/products/*/alert");
 
     }
 

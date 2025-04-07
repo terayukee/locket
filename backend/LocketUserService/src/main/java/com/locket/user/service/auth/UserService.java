@@ -190,6 +190,7 @@ public class UserService {
         redisTemplate.opsForValue().set(key + ":refreshToken", refreshToken, 7, TimeUnit.DAYS);
 
         log.info("로그인 완료 및 토큰 발급: userId={}", userId);
+        log.info("Redis에 결제 비밀번호 저장: 키={}, 값={}", key, user.getPaymentPassword());
 
         return LoginResponseDto.builder()
                 .userId(userId)
@@ -263,4 +264,32 @@ public class UserService {
 
         log.info("회원 탈퇴 처리 완료 (논리적 삭제): userId={}", userId);
     }
+
+    @Transactional
+    public void updateFingerprintStatus(Long userId) {
+        log.info("지문 등록 상태 변경 요청: userId={}", userId);
+
+        User user = userRepository.findByUserIdAndIsDeletedFalse(userId)
+                .orElseThrow(() -> {
+                    log.warn("지문 등록 상태를 변경할 사용자를 찾을 수 없음: userId={}", userId);
+                    return new ResourceNotFoundException("사용자를 찾을 수 없습니다.");
+                });
+
+        if (user.getFingerprintRegistered()) {
+            log.warn("이미 지문이 등록되어 있음: userId={}", userId);
+            throw new IllegalArgumentException("이미 지문이 등록되어 있습니다.");
+        }
+
+        user.setFingerprintRegistered(true);
+        userRepository.save(user);
+
+        // Redis에도 업데이트
+        String key = "user:" + userId + ":auth";
+        redisTemplate.opsForHash().put(key, "fingerprintRegistered", "true");
+
+        log.info("지문 등록 상태 변경 완료: userId={}", userId);
+    }
+
+
+
 }

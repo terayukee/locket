@@ -8,6 +8,8 @@ spring:
     gateway:
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Origin
+        - AddResponseHeader=Access-Control-Allow-Headers, Content-Type, Authorization, X-User-Id, X-Auth-UserId
+        - PreserveHostHeader
       globalcors:
         add-to-simple-url-handler-mapping: true
         corsConfigurations:
@@ -16,15 +18,15 @@ spring:
             allowedMethods: "*"
             allowedHeaders: "*"
             allowCredentials: true
-            exposedHeaders: "Authorization, Content-Disposition"
+            exposedHeaders: "Authorization, Content-Disposition, X-User-Id, X-Auth-UserId"
       routes:
-        # 서비스 라우팅
         - id: payment-service
           uri: lb://PAYMENT-SERVICE
           predicates:
             - Path=/api/payment/**
           filters:
             - RewritePath=/api/payment/(?<segment>.*), /${segment}
+            - PreserveHostHeader
 
         - id: user-service
           uri: lb://USER-SERVICE
@@ -32,6 +34,11 @@ spring:
             - Path=/api/users/**
           filters:
             - RewritePath=/api/users/(?<segment>.*), /${segment}
+            - PreserveHostHeader
+            - name: JwtGatewayFilter
+              args:
+                enabled: true
+
 
         - id: elasticsearch-service
           uri: lb://ELASTICSEARCH-SERVICE
@@ -39,6 +46,7 @@ spring:
             - Path=/api/elasticsearch/**
           filters:
             - RewritePath=/api/elasticsearch/(?<segment>.*), /${segment}
+            - PreserveHostHeader
 
         - id: locket-ai-service
 #          uri: lb://LOCKET-AI-SERVICE
@@ -48,8 +56,8 @@ spring:
           filters:
             - StripPrefix=2
             - RewritePath=/api/ai/(?<segment>.*), /${segment}
+            - PreserveHostHeader
 
-        # 서비스별 API 문서 경로
         - id: payment-service-docs
           uri: lb://PAYMENT-SERVICE
           predicates:
@@ -95,9 +103,9 @@ management:
         enabled: true
 
 jwt:
-  secret: ${JWT_SECRET:my-secret-jwt-key-for-dev-only}
-  access-exp: ${JWT_ACCESS_EXP:86400000}
-  refresh-exp: ${JWT_REFRESH_EXP:604800000}
+  secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}
+  access-exp: ${JWT_ACCESS_EXP:86400000}   # 24시간
+  refresh-exp: ${JWT_REFRESH_EXP:604800000} # 7일
 
 springdoc:
   api-docs:

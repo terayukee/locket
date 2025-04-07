@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
-@RequiresUser(ownerOnly = true)
 @Tag(name = "🛒 Product", description = "상품 관련 API")
 public class ProductController {
 
@@ -98,6 +97,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser
     @GetMapping
     public ResponseEntity<ProductListResponseDTO> getProductsByCategory(
             @Parameter(description = "카테고리 번호(1~11)", required = true)
@@ -183,6 +183,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser
     @GetMapping("/{productId}")
     public ResponseEntity<ProductDetailResponseDTO> getProductDetail(
             @PathVariable Integer productId,
@@ -278,6 +279,7 @@ public class ProductController {
                     )
             )
     )
+    @RequiresUser(ownerOnly = false)
     @PostMapping("/{productId}/like")
     public ResponseEntity<ProductLikeResponseDTO> toggleProductLike(
             @PathVariable Integer productId,
@@ -379,6 +381,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = true)
     @GetMapping("/liked")
     public ResponseEntity<ProductLikedListResponseDTO> getLikedProducts(
             @Parameter(description = "사용자 ID", required = true)
@@ -464,6 +467,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = false)
     @PostMapping("/{productId}/alert")
     public ResponseEntity<ProductAlertResponseDTO> setProductPriceAlert(
             @PathVariable Integer productId,
@@ -501,6 +505,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser(ownerOnly = false)
     @PatchMapping("/{productId}/price")
     public ResponseEntity<Void> updateProductPrice(
             @PathVariable Integer productId,
@@ -548,6 +553,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser
     @GetMapping("/happiness")
     public ResponseEntity<ProductListResponseDTO> getHappinessProducts() {
         ProductListResponseDTO response = productService.getHappinessProducts();
@@ -635,6 +641,7 @@ public class ProductController {
                     )
             )
     })
+    @RequiresUser
     @GetMapping("/search")
     public ResponseEntity<ProductSearchResponseDTO> getProducts(
             @Parameter(description = "검색할 상품 이름", required = true)

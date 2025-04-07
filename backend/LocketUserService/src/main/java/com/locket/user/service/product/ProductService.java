@@ -179,10 +179,6 @@ public class ProductService {
         int pageNumber = (page == null || page < 1) ? 0 : page - 1;
         int pageSize = (size == null || size <= 0) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
 
-        if (pageSize > PaginationConstants.MAX_PAGE_SIZE) {
-            pageSize = PaginationConstants.MAX_PAGE_SIZE;
-        }
-
         Pageable pageable = PageRequest.of(pageNumber, pageSize);
 
         Page<ProductUserPreference> preferencesPage = productUserPreferenceRepository
@@ -274,7 +270,7 @@ public class ProductService {
 
     public ProductSearchResponseDTO searchProducts(String productName, int page) {
         int pageIndex = (page < 1) ? 0 : page - 1;
-        int pageSize = 30; // 한 페이지에 보여줄 상품 개수
+        int pageSize = PaginationConstants.DEFAULT_PAGE_SIZE; // 한 페이지에 보여줄 상품 개수
 
         Pageable pageable = PageRequest.of(pageIndex, pageSize, Sort.by(Sort.Direction.DESC, "id"));
         Page<Product> productPage = productRepository.findByProductNameContaining(productName, pageable);

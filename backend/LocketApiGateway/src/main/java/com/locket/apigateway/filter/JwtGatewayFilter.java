@@ -24,30 +24,31 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
 
     private final JwtUtil jwtUtil;
 
-    // 인증이 필요 없는 URL 패턴들 (그대로 유지)
+    // 인증이 필요 없는 URL 패턴들
     private final List<Pattern> excludedPatterns = Arrays.asList(
+            Pattern.compile("^/api/users$"),
             Pattern.compile("^/api/users/login$"),
             Pattern.compile("^/api/users/signup$"),
             Pattern.compile("^/api/users/refresh$"),
+            Pattern.compile("^/api/users/test/auth/(\\d+)$"),
+            Pattern.compile("^/api/users/test/redis/(\\d+)$"),
             Pattern.compile("^/swagger-ui.html$"),
             Pattern.compile("^/swagger-ui/.*$"),
             Pattern.compile("^/v3/api-docs/.*$"),
             Pattern.compile("^/v3/api-docs$"),
             Pattern.compile("^/webjars/.*$")
+
     );
 
     // 사용자 관련 API 패턴
     private final List<Pattern> userApiPatterns = Arrays.asList(
-            Pattern.compile("^/api/users/(\\d+)(?:/.*)?$"),
-            Pattern.compile("^/api/user-profiles/(\\d+)(?:/.*)?$"),
-            Pattern.compile("^/api/accounts/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/users/pet(?:\\?.*)?$"),
             Pattern.compile("^/api/users/test/auth/(\\d+)$"),
-            Pattern.compile("^/api/budget(?:/.*)?$"),
-            Pattern.compile("^/api/feedback/(\\d+)(?:/.*)?$"),
-            Pattern.compile("^/api/notifications(?:/.*)?$"),
-            Pattern.compile("^/api/products/liked(?:\\?.*userId=(\\d+))?$"),
-            Pattern.compile("^/api/products/(\\d+)/like$")
+            Pattern.compile("^/api/users/budget(?:/.*)?$"),
+            Pattern.compile("^/api/users/feedback/(\\d+)(?:/.*)?$"),
+            Pattern.compile("^/api/users/notifications(?:/.*)?$"),
+            Pattern.compile("^/api/users/products/liked(?:\\?.*userId=(\\d+))?$"),
+            Pattern.compile("^/api/users/products/(\\d+)/like$")
     );
 
     public JwtGatewayFilter(JwtUtil jwtUtil) {
@@ -65,7 +66,13 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
 
             log.info("Processing JWT authentication for path: {}", path);
 
+            if (path.contains("/test/auth/")) {
+                log.info("테스트 인증 경로 인증 우회: {}", path);
+                return chain.filter(exchange);
+            }
+
             if (isExcludedPath(path)) {
+                log.info("제외 패턴에 포함된 경로: {}", path);
                 return chain.filter(exchange);
             }
 
@@ -110,19 +117,36 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
                 // X-User-Id 헤더에 userId를 넣어 내부 서비스로 전달
                 ServerHttpRequest mutatedRequest = request.mutate()
                         .header("X-User-Id", String.valueOf(userId))
+                        .header("X-Auth-UserId", String.valueOf(userId))
                         .build();
 
+                log.info("Added X-User-Id header: {}, path: {}", userId, path);
+                log.info("Request headers after mutation: {}", mutatedRequest.getHeaders());
+
                 return chain.filter(exchange.mutate().request(mutatedRequest).build());
+
 
             } catch (Exception e) {
                 log.error("JWT 인증 처리 중 오류 발생", e);
                 return onError(exchange, e.getMessage(), HttpStatus.UNAUTHORIZED);
             }
         };
+
     }
 
     private boolean isExcludedPath(String path) {
-        return excludedPatterns.stream().anyMatch(pattern -> pattern.matcher(path).matches());
+
+        if (excludedPatterns.stream().anyMatch(pattern -> pattern.matcher(path).matches())) {
+            return true;
+        }
+
+        if (path.contains("/test/auth/")) {
+            log.info("테스트 인증 경로 인증 우회: {}", path);
+            return true;
+        }
+
+        log.info("인증 필요 경로: {}", path);
+        return false;
     }
 
     private Long extractUserIdFromPath(String path) {
