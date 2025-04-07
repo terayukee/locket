@@ -27,11 +27,22 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
     // 인증이 필요 없는 URL 패턴들
     private final List<Pattern> excludedPatterns = Arrays.asList(
             Pattern.compile("^/api/users$"),
+
+            // 로그인, 회원가입, 리프레시 토큰
             Pattern.compile("^/api/users/login$"),
+            Pattern.compile("^/login$"),
             Pattern.compile("^/api/users/signup$"),
+            Pattern.compile("^/signup$"),
             Pattern.compile("^/api/users/refresh$"),
+            Pattern.compile("^/refresh$"),
+
+            // 테스트용 인증/레디스 경로 - 적용 전/후 모두 대응
             Pattern.compile("^/api/users/test/auth/(\\d+)$"),
             Pattern.compile("^/api/users/test/redis/(\\d+)$"),
+            Pattern.compile("^/test/auth/(\\d+)$"),
+            Pattern.compile("^/test/redis/(\\d+)$"),
+
+            // 스웨거
             Pattern.compile("^/swagger-ui.html$"),
             Pattern.compile("^/swagger-ui/.*$"),
             Pattern.compile("^/v3/api-docs/.*$"),
