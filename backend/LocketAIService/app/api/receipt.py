@@ -417,19 +417,28 @@ async def get_payment_amount(transaction_id: str) -> int:
     """결제 금액 조회"""
     try:
         # Eureka에서 elasticsearch-service 조회
-        elastic_service = await eureka_client.get_client().get_client_service_url('LOCKET-ELASTICSEARCH-SERVICE')
+        logger.info(f"Eureka 서비스 조회 시작: LOCKET-ELASTICSEARCH-SERVICE")
+        # do_service를 사용하여 서비스 URL 조회 및 API 경로 추가
+        elastic_service = await eureka_client.get_client().do_service('LOCKET-ELASTICSEARCH-SERVICE',
+                                                                      f"/payment/available/{transaction_id}")
+        logger.info(f"조회된 Elasticsearch API URL: {elastic_service}")
+
         if not elastic_service:
+            logger.error("ElasticSearch service not found in Eureka")
             raise Exception("ElasticSearch service not found")
 
-        # 결제 정보 조회 API 호출
-        url = f"{elastic_service}/payment/available/{transaction_id}"
+        # 결제 정보 조회 API 호출 (URL 직접 사용)
         async with httpx.AsyncClient() as client:
-            response = await client.get(url)
+            response = await client.get(elastic_service)
+            logger.info(f"API 응답 상태 코드: {response.status_code}")
 
             if response.status_code != 200:
+                logger.error(f"API 호출 실패: status_code={response.status_code}")
                 raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
 
             payment_data = response.json()
+            logger.info(f"수신된 결제 데이터: {payment_data}")
+
             # receipts 리스트에서 해당 transaction_id를 가진 결제 내역 찾기
             payment = next(
                 (receipt for receipt in payment_data['receipts']
@@ -438,10 +447,14 @@ async def get_payment_amount(transaction_id: str) -> int:
             )
 
             if not payment:
+                logger.error(f"결제 내역 없음: transaction_id={transaction_id}")
                 raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
 
+            logger.info(f"조회된 결제 금액: {payment['amount']}원")
             return payment['amount']  # 결제 금액 반환
 
     except Exception as e:
         logger.error(f"결제 정보 조회 실패: {str(e)}")
-        raise
+        if isinstance(e, ReceiptException):
+            raise
+        raise ReceiptException(error_code=ReceiptErrorCode.PAYMENT_NOT_FOUND)
