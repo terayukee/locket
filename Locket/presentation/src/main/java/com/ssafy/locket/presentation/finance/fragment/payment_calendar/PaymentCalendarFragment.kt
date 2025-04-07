@@ -20,6 +20,7 @@ import com.ssafy.locket.presentation.databinding.CalendarDayBinding
 import com.ssafy.locket.presentation.databinding.FragmentPaymentCalendarBinding
 import com.ssafy.locket.presentation.finance.viewmodel.DailyPaymentState
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.OpenDialogState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentCalendarState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryViewModel
@@ -178,23 +179,32 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                 paymentHistoryViewModel.getMonthlyPaymentCalendar(it.year, it.monthValue)
             }
         }
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                selectedDayViewModel.selectedDayPayments.collect { uiState ->
-                    when(uiState) {
-                        is SelectedDayPaymentsState.Success -> {
-                            Log.d(TAG, "initUI: success")
-                            if (uiState.paymentDailyHistory.list.isNotEmpty()) dialog.show(childFragmentManager, "payment")
-                        }
-                        is SelectedDayPaymentsState.Error -> {
-                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
-                        }
-                        else -> Log.d(TAG, "initUI: SelectedDayPaymentsState else")
+                selectedDayViewModel.openDialog.collect { uiState ->
+                    if(uiState is OpenDialogState.Opened) {
+                        dialog.show(childFragmentManager, "payment")
                     }
                 }
             }
         }
+
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                selectedDayViewModel.selectedDayPayments.collect { uiState ->
+//                    when(uiState) {
+//                        is SelectedDayPaymentsState.Success -> {
+//                            Log.d(TAG, "initUI: success")
+//                            if (uiState.paymentDailyHistory.list.isNotEmpty()) dialog.show(childFragmentManager, "payment")
+//                        }
+//                        is SelectedDayPaymentsState.Error -> {
+//                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+//                        }
+//                        else -> Log.d(TAG, "initUI: SelectedDayPaymentsState else")
+//                    }
+//                }
+//            }
+//        }
     }
 
     override fun onDestroyView() {
