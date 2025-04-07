@@ -23,6 +23,7 @@ import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import java.time.YearMonth
 
 private const val TAG = "FinanceFragment"
@@ -36,6 +37,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
+    private val today = LocalDate.now()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -46,7 +48,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collect {
-                    if(it > YearMonth.of(2029,12)) {
+                    if(it >= YearMonth.of(today.year,today.monthValue)) {
                         binding.btnNextMonthIcon.isEnabled = false
                     } else if (it < YearMonth.of(2020,2)) {
                         binding.btnPrevMonthIcon.isEnabled = false

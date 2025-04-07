@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".presentation.finance.fragments.payment_list.PaymentListFragment">
+    android:paddingHorizontal="24dp"
+    tools:context=".finance.fragment.payment_list.PaymentListFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_payment"

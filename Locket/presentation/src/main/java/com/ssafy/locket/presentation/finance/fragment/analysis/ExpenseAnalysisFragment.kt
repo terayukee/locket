@@ -93,6 +93,23 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                 }
             }
         }
+
+//        viewLifecycleOwner.lifecycleScope.launch {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//                analysisViewModel.getFeedback.collect { uiState ->
+//                    when(uiState) {
+//                        is CategoryPaymentState.Success -> {
+//                            categoryPaymentRVAdapter.submitList(uiState.categoryPaymentList)
+//                        }
+//                        is CategoryPaymentState.Error -> {
+//                            Log.d(TAG, "initUI: Error payment ${uiState.message}")
+//                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+//                        }
+//                        else -> Log.d(TAG, "initUI: Payment Initial or Loading")
+//                    }
+//                }
+//            }
+//        }
     }
 
 
@@ -114,11 +131,12 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        val tmpList : List<CategoryPayment> = listOf(CategoryPayment("shopping",45.2f, 3000), CategoryPayment("cafe",22.2f, 85000))
-        categoryPaymentRVAdapter.submitList(tmpList)
+
+//        val tmpList : List<CategoryPayment> = listOf(CategoryPayment("shopping",45.2f, 3000), CategoryPayment("cafe",22.2f, 85000))
+//        categoryPaymentRVAdapter.submitList(tmpList)
     }
 
-    fun getFeedbackData(){
+    fun getFeedbackData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 analysisViewModel.getFeedback.collect { getFeedback ->
@@ -129,5 +147,4 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             }
         }
     }
-
 }

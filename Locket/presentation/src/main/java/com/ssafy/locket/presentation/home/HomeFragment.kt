@@ -96,7 +96,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         binding.tvPaymentTitle.text = getString(R.string.home_payment_month, today.monthValue)
 
-        binding.tvPaymentData.text = getString(R.string.finance_won, CommonUtils.makeComma(200000))
+//        binding.tvPaymentData.text = getString(R.string.finance_won, CommonUtils.makeComma(200000))
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {

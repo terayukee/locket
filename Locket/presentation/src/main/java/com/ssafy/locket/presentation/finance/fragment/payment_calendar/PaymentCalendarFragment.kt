@@ -44,8 +44,9 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 ) {
     private var selectedDate = LocalDate.now()
     private var currentMonth = YearMonth.now()
+    private val today = LocalDate.now()
     private val startMonth = YearMonth.of(2020, 1)
-    private val endMonth = YearMonth.of(2030, 12)
+    private val endMonth = YearMonth.of(today.year, today.monthValue)
     private val daysOfWeek = daysOfWeek(DayOfWeek.MONDAY)
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
     private val paymentHistoryViewModel: PaymentHistoryViewModel by activityViewModels()
@@ -142,7 +143,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                     val element = uiState.paymentCalendar.dailySpending.find { it.date == date.format(format) }
                     if(element != null) {
                         paymentText.apply {
-                            setText(getString(R.string.finance_calendar_payment,CommonUtils.makeComma(element.amount)))
+                            setText(getString(R.string.finance_calendar_payment,CommonUtils.makeComma(element.amount*10000)))
                         }
                     }
                 }

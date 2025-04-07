@@ -51,16 +51,14 @@ class SelectedDayViewModel @Inject constructor(
                     when(status) {
                         is ResponseStatus.Success -> {
                             _selectedDayPayments.value = SelectedDayPaymentsState.Success(status.data)
-                            if(status.data.list.size > 0) _openDialog.emit(OpenDialogState.Opened)
+                            if(status.data.list.isNotEmpty()) _openDialog.emit(OpenDialogState.Opened)
                         }
                         is ResponseStatus.Error -> {
                             _selectedDayPayments.value = SelectedDayPaymentsState.Error(status.error.message)
                         }
                     }
-
                 }
         }
-
     }
 
     fun clearSelectedDayPayments() {
