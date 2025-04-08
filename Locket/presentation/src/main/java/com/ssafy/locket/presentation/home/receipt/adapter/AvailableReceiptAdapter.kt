@@ -35,12 +35,12 @@ class AvailableReceiptAdapter(): ListAdapter<Receipt, AvailableReceiptAdapter.Cu
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: Receipt) {
-            val categoryImg: Int = when (item.category) {
-                "shopping" -> R.drawable.ic_finance_category_shopping
-                "food" -> R.drawable.ic_finance_category_food
-                "cafe" -> R.drawable.ic_finance_category_cafe
-                "home" -> R.drawable.ic_finance_category_home
-                "transportation" -> R.drawable.ic_finance_category_transportation
+            val categoryImg : Int = when(item.category) {
+                "쇼핑" -> R.drawable.ic_finance_category_shopping
+                "식비" -> R.drawable.ic_finance_category_food
+                "카페/디저트" -> R.drawable.ic_finance_category_cafe
+                "생활" -> R.drawable.ic_finance_category_home
+                "교통" -> R.drawable.ic_finance_category_transportation
                 else -> R.drawable.ic_finance_category_etc
             }
 

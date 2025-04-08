@@ -191,13 +191,22 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
         }
     }
 
+    override fun onPause() {
+        super.onPause()
+        binding.progressBar.visibility = View.GONE
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+        receiptFileSelectionViewModel.clearNavigationEvent()
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         receiptFileSelectionViewModel.clearSelectedType()
+        receiptFileSelectionViewModel.clearNavigationEvent()
     }
 
     override fun onResume() {
         super.onResume()
         receiptFileSelectionViewModel.clearSelectedType()
+        receiptFileSelectionViewModel.clearNavigationEvent()
     }
 }

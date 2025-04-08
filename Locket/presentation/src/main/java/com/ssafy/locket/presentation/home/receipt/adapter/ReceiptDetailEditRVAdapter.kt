@@ -10,16 +10,23 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.ssafy.locket.model.home.receipt.Receipt
 import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.databinding.ItemReceiptEditBinding
+import com.ssafy.locket.presentation.home.receipt.adapter.AvailableReceiptAdapter.ItemClickListener
 import com.ssafy.locket.presentation.utils.CommonUtils
 
 private const val TAG = "ReceiptDetailEditRVAdap"
 class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRVAdapter.CustomViewHolder>(
     ReceiptDetailRVAdapter
 ) {
+    lateinit var itemClickListener: ItemClickListener
     private val categoryType = arrayOf("식비", "카페/디저트", "생활", "쇼핑", "교통", "기타")
     private lateinit var context: Context
+
+    interface ItemClickListener {
+        fun onClick(view: View, data: ReceiptDetail, position: Int)
+    }
 
     inner class CustomViewHolder(private val binding: ItemReceiptEditBinding) :
         RecyclerView.ViewHolder(binding.root) {
@@ -40,8 +47,9 @@ class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRV
                         position: Int,
                         id: Long
                     ) {
-                        val selectedItem = parent?.getItemAtPosition(position)
+                        val selectedItem : ReceiptDetail = parent?.getItemAtPosition(position) as ReceiptDetail
                         Log.d(TAG, "onItemSelected: $selectedItem")
+                        itemClickListener.onClick(view!!, selectedItem, position)
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {

@@ -27,9 +27,6 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
 ) {
     private lateinit var receiptDetailRVAdapter: ReceiptDetailRVAdapter
     private val receiptFileSelectionViewModel : ReceiptFileSelectionViewModel by activityViewModels()
-    private val processedReceiptViewModel: ProcessedReceiptViewModel by activityViewModels()
-
-    private var processedReceipt: ProcessedReceipt? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,7 +41,7 @@ class ReceiptDetailFragment : BaseFragment<FragmentReceiptDetailBinding>(
             receiptFileSelectionViewModel.receiptDetail.collect { uiState ->
                 if(uiState is ReceiptDetailState.Success) {
                     val item = uiState.processReceipt
-                    processedReceipt = item
+                    Log.d(TAG, "initUI: ${item.items}")
                     binding.tvStore.text = item.storeName
                     binding.tvTotalPrice.text = getString(R.string.finance_won, CommonUtils.makeComma(item.totalAmount))
                     receiptDetailRVAdapter.submitList(item.items)

@@ -9,6 +9,7 @@ import com.ssafy.locket.model.home.receipt.ProcessedReceipt
 import com.ssafy.locket.model.home.receipt.Receipt
 import com.ssafy.locket.model.home.receipt.ReceiptDetail
 import com.ssafy.locket.presentation.finance.viewmodel.OpenDialogState
+import com.ssafy.locket.presentation.home.character.viewmodel.NavigationEvent
 import com.ssafy.locket.usecase.home.receipt.GetAllAvailableReceiptsUseCase
 import com.ssafy.locket.usecase.home.receipt.ProcessReceiptUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -82,6 +83,13 @@ class ReceiptFileSelectionViewModel @Inject constructor(
         _receiptDetail.value = ReceiptDetailState.Initial
     }
 
+    fun setReceiptDetail(processReceipt: ProcessedReceipt) {
+        _receiptDetail.value = ReceiptDetailState.Success(processReceipt)
+    }
+
+    fun clearNavigationEvent() {
+        _navigationEvent.trySend(NavigateToDetailEvent.Initial)
+    }
     fun getAllAvailableReceipts() {
         viewModelScope.launch {
             getAllAvailableReceiptsUseCase()
