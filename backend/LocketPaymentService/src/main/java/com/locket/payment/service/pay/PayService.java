@@ -395,9 +395,13 @@ public class PayService {
     }
 
     public BigDecimal getMonthlyTotalAmount(long userId, int year, int month) {
-        List<MonthPaymentDto> paymentList = paymentHistoryFeignClient.getMonthPayments(userId, year, month);
+        List<MonthPaymentDto> paymentList = paymentHistoryFeignClient
+                .getMonthPayments(userId, year, month)
+                .getPayments(); // ✅ 추가로 .getPayments() 호출 필요
+
         return paymentList.stream()
                 .map(MonthPaymentDto::getTotalAmount)
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
+
 }
