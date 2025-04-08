@@ -12,8 +12,8 @@
     <ImageView
         android:id="@+id/logo_locket"
         android:layout_width="108dp"
-        android:layout_height="34dp"
-        android:src="@drawable/logo_home_locket"
+        android:layout_height="48dp"
+        android:background="@drawable/logo_home_locket"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -91,9 +91,9 @@
 
     <ImageView
         android:id="@+id/iv_payment_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_home_payment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ic_home_payment"
         app:layout_constraintBottom_toBottomOf="@+id/iv_payment_icon_bg"
         app:layout_constraintEnd_toEndOf="@+id/iv_payment_icon_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_payment_icon_bg"
@@ -184,9 +184,9 @@
 
     <ImageView
         android:id="@+id/iv_budget_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_home_budget"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ic_home_budget"
         app:layout_constraintBottom_toBottomOf="@+id/iv_budget_icon_bg"
         app:layout_constraintEnd_toEndOf="@+id/iv_budget_icon_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_budget_icon_bg"

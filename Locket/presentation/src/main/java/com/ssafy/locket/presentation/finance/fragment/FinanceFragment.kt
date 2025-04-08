@@ -167,7 +167,6 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             })
     }
 
-
     override fun onDestroyView() {
         super.onDestroyView()
 //        financeSharedViewModel.initYearMonth()

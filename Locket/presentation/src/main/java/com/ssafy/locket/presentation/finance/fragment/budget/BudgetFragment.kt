@@ -105,9 +105,9 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
-        Log.d(TAG, "onPause: setDefault")
+        Log.d(TAG, "onStop: setDefault")
     }
 }

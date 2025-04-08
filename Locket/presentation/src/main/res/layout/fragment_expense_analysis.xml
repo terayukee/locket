@@ -164,7 +164,7 @@
             android:layout_marginTop="16dp"
             app:layout_constraintDimensionRatio="1"
             app:layout_constraintWidth_percent="0.5995"
-            android:src="@drawable/test_image_character"
+            android:src="@drawable/image_analysis_caffeine_vampire"
             app:layout_constraintStart_toStartOf="@+id/tv_feedback_content"
             app:layout_constraintEnd_toEndOf="@+id/tv_feedback_content"
             app:layout_constraintTop_toBottomOf="@+id/tv_pattern_analysis"/>

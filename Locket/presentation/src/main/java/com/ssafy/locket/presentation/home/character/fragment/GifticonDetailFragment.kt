@@ -42,8 +42,8 @@ class GifticonDetailFragment : BaseFragment<FragmentCharacterDoneBinding>(
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         gifticonViewModel.clearGifticon()
     }
 }

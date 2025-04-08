@@ -216,8 +216,8 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         stopTimer()
         stopLoadCharacterAnimation()
     }
