@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".graph.fragment.ProductDetailFragment"
-    android:background="@color/white"
-    android:paddingTop="16dp">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/iv_back"
@@ -87,7 +86,7 @@
                 android:letterSpacing="-0.02"
                 android:fontFamily="@font/pretendard_regular"
                 android:textColor="#818181"
-                android:textSize="12sp"
+                android:textSize="16sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_product_title"
                 app:layout_constraintTop_toBottomOf="@+id/tv_product_title" />
 
@@ -99,7 +98,7 @@
                 android:text=""
                 android:fontFamily="@font/pretendard_bold"
                 android:textColor="#FF3433"
-                android:textSize="12sp"
+                android:textSize="14sp"
                 app:layout_constraintStart_toStartOf="@+id/tv_highest_price"
                 app:layout_constraintTop_toBottomOf="@+id/tv_highest_price" />
 
@@ -119,12 +118,12 @@
                 android:id="@+id/iv_like_btn"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="5sp"
+                android:layout_marginTop="8dp"
                 android:layout_marginEnd="24dp"
                 android:src="@drawable/ic_all_empty_heart"
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_review"
+                app:layout_constraintTop_toTopOf="@+id/tv_highest_price"
                 app:layout_constraintWidth_percent="0.07" />
 
             <View
@@ -211,16 +210,16 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <!-- 오른쪽 카드뷰 -->
-            <androidx.cardview.widget.CardView
+            <com.google.android.material.card.MaterialCardView
                 android:id="@+id/cv_notification_setting"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:elevation="4dp"
-                app:cardBackgroundColor="#00CBBF"
                 app:cardCornerRadius="16dp"
                 android:visibility="invisible"
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="24dp"
+                app:cardBackgroundColor="@android:color/transparent"
                 app:layout_constraintTop_toTopOf="@+id/iv_coupang_move"
                 app:layout_constraintBottom_toBottomOf="@+id/iv_coupang_move"
                 app:layout_constraintStart_toEndOf="@+id/iv_coupang_move"
@@ -255,19 +254,8 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/iv_setting"
-                        android:layout_width="16dp"
-                        android:layout_height="16dp"
-                        android:layout_marginStart="4dp"
-                        android:src="@drawable/ic_all_arrow"
-                        app:layout_constraintBottom_toBottomOf="@+id/tv_setting"
-                        app:layout_constraintStart_toEndOf="@+id/tv_setting"
-                        app:layout_constraintTop_toTopOf="@+id/tv_setting"
-                        app:tint="@color/white" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
-            </androidx.cardview.widget.CardView>
+            </com.google.android.material.card.MaterialCardView>
         </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

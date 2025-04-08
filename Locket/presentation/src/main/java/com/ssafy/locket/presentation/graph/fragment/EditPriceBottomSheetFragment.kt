@@ -1,6 +1,10 @@
 package com.ssafy.locket.presentation.graph.fragment
 
+import android.app.Dialog
+import android.content.Context
+import android.content.DialogInterface
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -8,8 +12,15 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.inputmethod.InputMethodManager
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.activityViewModels
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
+import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.FragmentEditPriceBottomSheetBinding
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
@@ -20,6 +31,35 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
     private val binding get() = _binding!!
     private var isFormatting = false
     private val viewModel: EditPriceViewModel by activityViewModels()
+
+
+    override fun onStart() {
+        super.onStart()
+
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        bottomSheet?.let {
+            val behavior = com.google.android.material.bottomsheet.BottomSheetBehavior.from(it)
+            behavior.isDraggable = false // 드래그 불가능하게 설정
+            behavior.state = com.google.android.material.bottomsheet.BottomSheetBehavior.STATE_EXPANDED // 항상 확장 상태
+            it.layoutParams.height = ViewGroup.LayoutParams.WRAP_CONTENT
+        }
+    }
+
+    override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        val dialog = super.onCreateDialog(savedInstanceState)
+        dialog.setOnShowListener {
+            val bottomSheet = (dialog as BottomSheetDialog).findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+            bottomSheet?.let {
+                val behavior = BottomSheetBehavior.from(it)
+                behavior.state = BottomSheetBehavior.STATE_EXPANDED
+                behavior.isDraggable = false
+            }
+        }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        dialog.window?.setDimAmount(0.2f)
+        return dialog
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -35,16 +75,36 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
         initView()
         initEvent()
         setupNumberFormatting()
+        binding.root.fitsSystemWindows = true
+        binding.root.clipToPadding = true
+        binding.root.setOnTouchListener { v, event ->
+            binding.tvWantPrice.clearFocus()
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            view?.let { imm.hideSoftInputFromWindow(it.windowToken, 0) }
+            false
+        }
+    }
+
+    override fun onDismiss(dialog: DialogInterface) {
+        super.onDismiss(dialog)
+        val rootView = requireActivity().findViewById<View>(R.id.whiteBackgroundOverlay)
+        rootView.visibility = View.GONE
     }
 
     fun initView(){
         if(viewModel.editprice.value==""){
             binding.tvWantPrice.hint = "설정 안됨"
             binding.btnClear.isEnabled = false
-            binding.btnClear.setBackgroundColor(Color.parseColor("#C9C9C9"))
+            binding.btnClear.setBackgroundResource(R.drawable.bg_bottom_btn_clear)
         }
         else {
             binding.tvWantPrice.hint = "현재 가격은 "+ CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
+            //binding.btnClear.setBackgroundColor(Color.parseColor("#00CBBF"))
+        }
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(0, 0, 0, systemBarsInsets.bottom)
+            insets
         }
     }
     
