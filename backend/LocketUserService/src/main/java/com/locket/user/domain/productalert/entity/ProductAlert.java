@@ -22,6 +22,9 @@ public class ProductAlert {
     @Column(name = "user_id", nullable = false)
     private Long userId;
 
+    @Column(name = "product_id", nullable = false)
+    private Integer productId;
+
     @Column(nullable = false, columnDefinition = "TEXT")
     private String message;
 

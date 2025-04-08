@@ -78,14 +78,14 @@ class OCRService:
                         'itemId': item_id,
                         'itemName': item['name']['formatted']['value'],
                         'itemQuantity': int(item['count']['formatted']['value']),
-                        'itemAmount': int(item['price']['price']['formatted']['value'])
+                        'itemAmount': int(item['price']['unitPrice']['formatted']['value'])
                     }
                     items.append(item_data)
                     item_id += 1
                     logger.info(f"추출된 상품 정보: {item_data}")
 
-            # 총액 추출
-            total_amount = int(receipt_data['totalPrice']['price']['formatted']['value'])
+            # 총액 추출 - 각 상품의 단가 * 수량의 합계로 계산
+            total_amount = sum(item['itemAmount'] * item['itemQuantity'] for item in items)
             logger.info(f"추출된 총액: {total_amount}")
 
             # 결과 데이터 구성

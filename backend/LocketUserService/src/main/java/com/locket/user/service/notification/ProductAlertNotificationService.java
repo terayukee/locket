@@ -60,6 +60,7 @@ public class ProductAlertNotificationService {
                     .message(content)
                     .isRead(false)
                     .alertPrice(alertPrice)
+                    .productId(product.getId())
                     .build());
 
         }
