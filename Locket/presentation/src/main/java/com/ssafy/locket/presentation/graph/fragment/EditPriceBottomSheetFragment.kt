@@ -89,6 +89,7 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
         super.onDismiss(dialog)
         val rootView = requireActivity().findViewById<View>(R.id.whiteBackgroundOverlay)
         rootView.visibility = View.GONE
+        binding.tvWantPrice.setText("")
     }
 
     fun initView(){
@@ -99,7 +100,6 @@ class EditPriceBottomSheetFragment() : BottomSheetDialogFragment() {
         }
         else {
             binding.tvWantPrice.hint = "현재 가격은 "+ CommonUtils.formatNumber(viewModel.editprice.value)+" 원 입니다"
-            //binding.btnClear.setBackgroundColor(Color.parseColor("#00CBBF"))
         }
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBarsInsets = insets.getInsets(WindowInsetsCompat.Type.systemBars())
