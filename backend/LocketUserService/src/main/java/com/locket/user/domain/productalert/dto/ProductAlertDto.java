@@ -12,4 +12,5 @@ public class ProductAlertDto {
     private String message;
     private Boolean isRead;
     private Integer alertPrice;
+    private Integer productId;
 }

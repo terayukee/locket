@@ -16,6 +16,7 @@ public class UserAlertDto {
     private String message;
     private boolean isRead;
     private Integer alertPrice; // goal은 null일 수 있음
+    private Integer productId;
 
     @JsonIgnore // ❌ 응답에서 제외
     private LocalDateTime createdAt;
