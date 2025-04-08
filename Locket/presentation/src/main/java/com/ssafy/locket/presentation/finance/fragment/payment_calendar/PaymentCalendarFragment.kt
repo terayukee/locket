@@ -2,6 +2,7 @@ package com.ssafy.locket.presentation.finance.fragment.payment_calendar
 
 import android.os.Bundle
 import android.util.Log
+import android.view.MotionEvent
 import android.view.View
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
@@ -9,6 +10,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -115,8 +117,8 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
     private fun updateTitle() {
         val month = binding.calendar.findFirstVisibleMonth()?.yearMonth ?: return
-        val year = month.year.toString() + "년"
         currentMonth = month
+        Log.d(TAG, "updateTitle: ${currentMonth.year} ${currentMonth.monthValue}")
         financeSharedViewModel.setYearMonth(currentMonth)
     }
 
@@ -180,6 +182,15 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
     private fun initUI() {
         dialog = PaymentCalendarBottomSheetFragment()
+
+        binding.calendar.setOnScrollChangeListener { _, _, _, _, _ ->
+            val prevMonth = financeSharedViewModel.selectedYearMonth.value
+            val firstVisibleYearMonth = binding.calendar.findFirstVisibleMonth()?.yearMonth
+            if (firstVisibleYearMonth != null && firstVisibleYearMonth != prevMonth) {
+                financeSharedViewModel.setYearMonth(firstVisibleYearMonth)
+            }
+        }
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 paymentHistoryViewModel.monthlyPaymentCalendar.collect { uiState ->

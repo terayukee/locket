@@ -35,7 +35,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
 
     private var currentMonth = YearMonth.now()
     private val startMonth = YearMonth.of(2020, 2)
-    private val endMonth = YearMonth.of(2025, 4)
+    private val endMonth = YearMonth.now()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -43,8 +43,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         initAdapter()
         initEvent()
         getFeedbackData()
-        Log.d(TAG,"시작")
-        financeSharedViewModel.initYearMonth()
     }
 
     fun initEvent(){
@@ -93,23 +91,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                 }
             }
         }
-
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                analysisViewModel.getFeedback.collect { uiState ->
-//                    when(uiState) {
-//                        is CategoryPaymentState.Success -> {
-//                            categoryPaymentRVAdapter.submitList(uiState.categoryPaymentList)
-//                        }
-//                        is CategoryPaymentState.Error -> {
-//                            Log.d(TAG, "initUI: Error payment ${uiState.message}")
-//                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
-//                        }
-//                        else -> Log.d(TAG, "initUI: Payment Initial or Loading")
-//                    }
-//                }
-//            }
-//        }
     }
 
 
@@ -130,10 +111,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             adapter = categoryPaymentRVAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-
-
-//        val tmpList : List<CategoryPayment> = listOf(CategoryPayment("shopping",45.2f, 3000), CategoryPayment("cafe",22.2f, 85000))
-//        categoryPaymentRVAdapter.submitList(tmpList)
     }
 
     fun getFeedbackData() {

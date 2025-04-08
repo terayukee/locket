@@ -57,7 +57,16 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
                 paymentHistoryViewModel.monthlyPaymentHistory.collect { uiState ->
                     when(uiState) {
                         is PaymentHistoryState.Success -> {
-                            paymentRVAdapter.submitList(uiState.paymentMonthlyHistory.list)
+                            if(uiState.paymentMonthlyHistory.list.size == 0) {
+                                binding.tvNoPayment.visibility = View.VISIBLE
+                                binding.rvPayment.visibility = View.GONE
+                            }
+                            else {
+                                binding.rvPayment.visibility = View.VISIBLE
+                                paymentRVAdapter.submitList(uiState.paymentMonthlyHistory.list)
+                                binding.tvNoPayment.visibility = View.GONE
+                                binding.rvPayment.smoothScrollToPosition(0)
+                            }
                         }
                         is PaymentHistoryState.Error -> {
                             Log.d(TAG, "initUI: ${uiState.message}")

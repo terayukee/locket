@@ -47,7 +47,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         financeSharedViewModel.initYearMonth()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collect {
                     if (it >= YearMonth.of(today.year, today.monthValue)) {
                         binding.btnNextMonthIcon.isEnabled = false
@@ -60,11 +60,11 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     binding.tvYearMonth.text =
                         resources.getString(R.string.finance_year_month, it.year, it.monthValue)
                 }
-            }
+//            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonthTotalPayment.collect { uiState ->
                     when (uiState) {
                         is TotalPaymentState.Success -> {
@@ -85,7 +85,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
                         else -> Log.d(TAG, "initUI: Payment Initial or Loading")
                     }
-                }
+//                }
             }
         }
 

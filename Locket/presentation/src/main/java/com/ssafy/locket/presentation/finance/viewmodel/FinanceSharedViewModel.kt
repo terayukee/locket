@@ -34,6 +34,7 @@ class FinanceSharedViewModel @Inject constructor(
     fun setYearMonth(newYearMonth: YearMonth) {
         viewModelScope.launch {
             _selectedYearMonth.update { newYearMonth }
+            Log.d(TAG, "setYearMonth: newYearMonth ${newYearMonth.year} ${newYearMonth.monthValue}")
             // TODO api 연결하여 로직 추가 예정
             getTotalPayment(newYearMonth.year, newYearMonth.monthValue)
         }
