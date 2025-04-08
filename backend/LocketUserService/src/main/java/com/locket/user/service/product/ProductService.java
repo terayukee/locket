@@ -209,20 +209,25 @@ public class ProductService {
             throw new InvalidRequestException("isAlert 값은 필수입니다.");
         }
 
+        if (Boolean.TRUE.equals(isAlert)) {
+            if (alertPrice == null || alertPrice <= 0) {
+                throw new InvalidRequestException("알림 설정 금액은 0원보다 커야 합니다.");
+            }
+        }
+
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new ProductNotFoundException(productId));
 
-        // isAlert가 true일 때, alertPrice가 null이면 예외 발생
-        if (Boolean.TRUE.equals(isAlert) && alertPrice == null) {
-            throw new InvalidRequestException("알림 설정 시 알림 가격(alertPrice)은 필수입니다.");
-        }
 
         ProductUserPreference preference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
                 .orElse(new ProductUserPreference(null, product, userId, false, false, null));
 
+        if (Boolean.TRUE.equals(isAlert)) {
+            preference.setAlertPrice(alertPrice);
+        }
+
         preference.setAlert(isAlert);
-        preference.setAlertPrice(isAlert ? alertPrice : null);  // 알림 해제 시 알림 가격도 null로 설정
 
         ProductUserPreference savedPreference = productUserPreferenceRepository.save(preference);
 
