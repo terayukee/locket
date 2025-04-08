@@ -2,7 +2,7 @@ package com.locket.user.controller.notification;
 
 import com.locket.user.domain.notification.dto.UserAlertDto;
 import com.locket.user.security.RequiresUser;
-import com.locket.user.service.notification.UserAlertService;
+import com.locket.user.service.notification.AlertListService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ import java.util.Map;
 )
 public class NotificationController {
 
-    private final UserAlertService userAlertService;
+    private final AlertListService userAlertService;
 
     @GetMapping("/all")
     @Operation(

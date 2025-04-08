@@ -5,7 +5,7 @@ import com.locket.user.domain.product.constant.PaginationConstants;
 import com.locket.user.domain.product.dto.*;
 import com.locket.user.domain.product.entity.*;
 import com.locket.user.domain.product.repository.*;
-import com.locket.user.service.notification.ProductAlertNotificationService;
+import com.locket.user.service.notification.ProductNotificationService;
 import com.locket.user.exception.CategoryNotFoundException;
 import com.locket.user.exception.InvalidRequestException;
 import com.locket.user.exception.ProductNotFoundException;
@@ -24,8 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeFormatterBuilder;
-import java.time.temporal.ChronoField;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
@@ -40,7 +38,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final ProductUserPreferenceRepository productUserPreferenceRepository;
-    private final ProductAlertNotificationService productAlertNotificationService;
+    private final ProductNotificationService productAlertNotificationService;
     private final UserRepository userRepository;
     private final Logger log = LoggerFactory.getLogger(ProductService.class);
 

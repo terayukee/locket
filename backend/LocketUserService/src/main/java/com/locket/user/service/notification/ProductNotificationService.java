@@ -17,7 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductAlertNotificationService {
+public class ProductNotificationService {
 
     private final ProductUserPreferenceRepository preferenceRepository;
     private final UserRepository userRepository;
