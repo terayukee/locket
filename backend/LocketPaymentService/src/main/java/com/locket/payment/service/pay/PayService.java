@@ -306,7 +306,11 @@ public class PayService {
     }
 
     public List<CardInfoDto> getCardsWithMonthlyUsage(long userId) {
+        log.info("➡️ 카드 조회 시작: userId = {}", userId);
+
         List<CardInfo> cards = cardInfoRepository.findByUserId(userId);
+        log.info("🔢 사용자 카드 개수: {}", cards.size());
+
         if (cards.isEmpty()) {
             throw new NoSuchElementException("해당 사용자에게 등록된 카드가 없습니다.");
         }
@@ -316,21 +320,34 @@ public class PayService {
 
         return cards.stream()
                 .map(card -> {
-                    BigDecimal monthlyUsage = paymentHistoryFeignClient
-                            .getMonthlyTotalAmountByCard(userId, card.getCardId(), year, month)
-                            .getTotalAmount();
+                    log.info("🧾 카드 정보 - cardId: {}, cardName: {}", card.getCardId(), card.getCardName());
 
-                    // 혜택 조회
+                    BigDecimal monthlyUsage = BigDecimal.ZERO;
+
+                    try {
+                        CardMonthlyUsageDto usageDto = paymentHistoryFeignClient
+                                .getMonthlyTotalAmountByCard(userId, card.getCardId(), year, month);
+                        monthlyUsage = usageDto.getTotalAmount();
+                        log.info("📊 월간 사용금액 조회 완료 - cardId: {}, usage: {}", card.getCardId(), monthlyUsage);
+                    } catch (Exception e) {
+                        log.error("💥 Feign 호출 실패 - 카드 ID: {}, 에러: {}", card.getCardId(), e.getMessage());
+                        throw new RuntimeException("월간 사용금액 조회 실패: cardId=" + card.getCardId(), e);
+                    }
+
                     List<CardBenefitDto> benefits = new ArrayList<>();
                     if (card.getCardCatalog() != null) {
+                        log.info("🎁 카드 혜택 있음 - cardId: {}", card.getCardId());
                         List<CardBenefit> benefitEntities = card.getCardCatalog().getBenefits();
-                        benefits = benefitEntities.stream()
-                                .map(b -> CardBenefitDto.builder()
-                                        .benefitId(b.getBenefitId())
-                                        .item(b.getItem())
-                                        .benefitDetail(b.getBenefitDetail())
-                                        .build())
-                                .collect(Collectors.toList());
+                        if (benefitEntities != null) {
+                            benefits = benefitEntities.stream()
+                                    .map(b -> CardBenefitDto.builder()
+                                            .benefitId(b.getBenefitId())
+                                            .item(b.getItem())
+                                            .benefitDetail(b.getBenefitDetail())
+                                            .build())
+                                    .collect(Collectors.toList());
+                            log.info("✅ 혜택 {}건 추가됨", benefits.size());
+                        }
                     }
 
                     return CardInfoDto.builder()
@@ -344,11 +361,12 @@ public class PayService {
                             .createdAt(card.getCreatedAt())
                             .updatedAt(card.getUpdatedAt())
                             .monthlyUsage(monthlyUsage)
-                            .benefits(benefits)  // ✅ 혜택 포함
+                            .benefits(benefits)
                             .build();
                 })
                 .collect(Collectors.toList());
     }
+
 
 
     public boolean getFingerprintRegisteredFromRedis(long userId) {
