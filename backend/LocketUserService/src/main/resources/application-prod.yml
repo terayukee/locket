@@ -84,3 +84,8 @@ swagger:
 
 PERPLEXITY:
   API_KEY: ${PERPLEXITY_API_KEY}
+
+logging:
+  level:
+    root: WARN
+    com.locket: WARN
