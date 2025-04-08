@@ -107,7 +107,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                 bottomSheet.show(parentFragmentManager, EditPriceDialogFragment.TAG)
             }
         }
-        binding.ivLikeBtn.expandTouchArea(50)
+        binding.ivLikeBtn.expandTouchArea(100)
         binding.ivLikeBtn.setOnClickListener {
             isHeartFilled = !isHeartFilled
             if (isHeartFilled) {
@@ -183,14 +183,14 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
 
         val highPriceDataSet = LineDataSet(adjustedHighPriceEntries, "최고가").apply {
-            color = Color.RED
+            color = Color.parseColor("#C9C9C9")
             lineWidth = 2f
             setDrawCircles(false)
             setDrawValues(false)
         }
 
         val lowPriceDataSet = LineDataSet(adjustedLowPriceEntries, "최저가").apply {
-            color = Color.parseColor("#C9C9C9")
+            color = Color.RED
             lineWidth = 2f
             setDrawCircles(false)
             setDrawValues(false)
@@ -222,7 +222,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
 
         lineChart.apply {
-            data = LineData(highPriceDataSet, lowPriceDataSet)
+            data = LineData(highPriceDataSet,lowPriceDataSet)
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false

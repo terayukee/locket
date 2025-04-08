@@ -72,6 +72,8 @@
             app:destination="@id/recommendProductListFragment" />
         <action
             android:id="@+id/action_productListFragment_to_productDetailFragment"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
             app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
@@ -81,7 +83,9 @@
         tools:layout="@layout/fragment_like_product_list" >
         <action
             android:id="@+id/action_likeProductListFragment_to_productDetailFragment"
-            app:destination="@id/productDetailFragment" />
+            app:destination="@id/productDetailFragment"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"/>
     </fragment>
     <fragment
         android:id="@+id/searchProductListFragment"
@@ -90,6 +94,8 @@
         tools:layout="@layout/fragment_search_product_list" >
         <action
             android:id="@+id/action_searchProductListFragment_to_productDetailFragment"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
             app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment
@@ -99,6 +105,8 @@
         tools:layout="@layout/fragment_category_product_list" >
         <action
             android:id="@+id/action_categoryProductListFragment_to_productDetailFragment"
+            app:popEnterAnim="@anim/fade_in"
+            app:popExitAnim="@anim/fade_out"
             app:destination="@id/productDetailFragment" />
     </fragment>
     <fragment

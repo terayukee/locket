@@ -52,11 +52,18 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
     private val userInfoViewModel: UserInfoViewModel by activityViewModels()
     @Inject
     lateinit var userDataStoreSource: UserDataStoreSource
+    private var popupWindow: PopupWindow? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initView()
         initEvent()
+        initView()
+    }
+
+    override fun onDestroyView() {
+        popupWindow?.dismiss()
+        popupWindow = null
+        super.onDestroyView()
     }
 
     fun initEvent(){
@@ -72,7 +79,13 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
             imm.showSoftInput(binding.editAge, InputMethodManager.SHOW_IMPLICIT)
         }
         binding.layoutJob.setOnClickListener {
-            showPopupWindow(it)
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.editAge.windowToken, 0)
+            binding.editAge.clearFocus()
+            // 약간 지연 후 Popup 띄우기 (자연스럽게 보이게)
+            binding.root.postDelayed({
+                showPopupWindow(it)
+            }, 100)
         }
         binding.editAge.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {
@@ -103,7 +116,7 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
 
         binding.btnChange.setOnClickListener {
             if (isBirthValid) {
-                if(binding.editAge.text.toString().toInt()<=1930||binding.editAge.text.toString().toInt()>=2026){
+                if(binding.editAge.text.toString().toInt()<1930||binding.editAge.text.toString().toInt()>=2026){
                     isBirthValid = false
                     binding.editAge.text.clear()
                     Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 수정해 입력해주세요", Toast.LENGTH_LONG).show()
@@ -148,28 +161,34 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
         }
     }
 
-
     private fun showPopupWindow(view: View) {
-        val inflater = LayoutInflater.from(requireContext())
-        val popupBinding = PopupJobMenuBinding.inflate(inflater) // ViewBinding 사용
+        // 이미 팝업이 열려있으면 닫고 반환
+        if (popupWindow != null && popupWindow?.isShowing == true) {
+            popupWindow?.dismiss()
+            popupWindow = null
+            return
+        }
 
-        // PopupWindow 설정
-        val popupWindow = PopupWindow(
+        val inflater = LayoutInflater.from(requireContext())
+        val popupBinding = PopupJobMenuBinding.inflate(inflater)
+
+        popupWindow = PopupWindow(
             popupBinding.root,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
+            true  // 여기를 true로 변경
         )
 
-        //크기 설정
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
         val screenWidth = displayMetrics.widthPixels
-        val popupWidth = (screenWidth * 0.85).toInt()  // 화면 너비의 90% 크기로 설정
-        popupWindow.width = popupWidth
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupWindow.isOutsideTouchable = true
-        popupWindow.showAsDropDown(view, -view.x.toInt(), 0)
+        val popupWidth = (screenWidth * 0.85).toInt()
+        popupWindow?.width = popupWidth
+        popupWindow?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow?.isOutsideTouchable = true
+        popupWindow?.isTouchable = true
+
+        popupWindow?.showAsDropDown(view, -view.x.toInt(), 0)
 
         val clickListener = View.OnClickListener { clickedView ->
             val jobTitle = when (clickedView.id) {
@@ -180,11 +199,16 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
             }
             binding.tvJobSelect.text = jobTitle
             checkIfJobSelected()
-            popupWindow.dismiss()
+            popupWindow?.dismiss()
         }
+
         popupBinding.popupItemStudent.setOnClickListener(clickListener)
         popupBinding.popupItemEmployee.setOnClickListener(clickListener)
         popupBinding.popupItemSelfEmployed.setOnClickListener(clickListener)
+
+        popupWindow?.setOnDismissListener {
+            popupWindow = null
+        }
     }
 
     private fun checkIfFormIsValid() {
@@ -214,6 +238,7 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
                 binding.tvNickname.text = it.nickname  // nickname을 TextView에 설정
                 binding.tvJobSelect.text = it.userJob
                 binding.editAge.setText(it.birthYear.toString())
+                binding.layoutAge.setBackgroundResource(R.drawable.bg_card_border_inactive)
             }
         }
     }
