@@ -71,3 +71,8 @@ springdoc:
 
 swagger:
   server-url: https://j12d204.p.ssafy.io/api/payment
+
+feign:
+  client:
+    elasticsearch-service:
+      url: http://172.26.5.222:8083

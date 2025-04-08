@@ -24,3 +24,7 @@ feign:
   client:
     elasticsearch-service:
       url: http://localhost:8083
+
+logging:
+  level:
+    com.locket: INFO

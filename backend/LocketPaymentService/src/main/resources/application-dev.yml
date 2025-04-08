@@ -19,3 +19,8 @@ eureka:
 
 swagger:
   server-url: http://localhost:8080/api/payment
+
+feign:
+  client:
+    elasticsearch-service:
+      url: http://localhost:8083
