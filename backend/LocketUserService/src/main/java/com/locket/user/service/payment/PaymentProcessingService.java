@@ -20,7 +20,7 @@ public class PaymentProcessingService {
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
 
-        // 삼성카드로 결제한 경우 사료 추가
+        // [결제 후처리 1] 삼성카드로 결제한 경우 사료 추가
         if (isSamsungCardPayment(event)) {
             Long userId = event.getBuyerId();
             log.info("👉 삼성카드 결제! 사용자 {}에게 사료 지급 : {}", userId);
@@ -37,8 +37,11 @@ public class PaymentProcessingService {
                     event.getCardName(), event.getBuyerId());
         }
 
-        // ➤ 예산 초과 확인 및 알림 + 업데이트 서비스 호출
+        // [결제 후처리 2] ➤ 예산 초과 확인 및 알림 + 업데이트 서비스 호출
         budgetNotificationService.handleBudgetNotification(event);
+
+        // [결제 후처리 3] 결제 완료 시 사용자에게 FCM 알림
+
     }
 
     private boolean isSamsungCardPayment(PaymentSuccessEvent event) {

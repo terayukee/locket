@@ -47,6 +47,7 @@ public class UserAlertService {
                     .message(alert.getMessage())
                     .isRead(!alert.getIsRead())
                     .alertPrice(alert.getAlertPrice())
+                    .productId(alert.getProductId())
                     .createdAt(alert.getCreatedAt())
                     .formattedDate(alert.getCreatedAt().format(formatter))  // 🆕
                     .build());

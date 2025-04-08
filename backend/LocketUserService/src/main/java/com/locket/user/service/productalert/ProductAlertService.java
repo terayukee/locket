@@ -20,6 +20,7 @@ public class ProductAlertService {
                 .message(dto.getMessage())
                 .isRead(dto.getIsRead())
                 .alertPrice(dto.getAlertPrice())
+                .productId(dto.getProductId())
                 .createdAt(LocalDateTime.now())
                 .build();
 
