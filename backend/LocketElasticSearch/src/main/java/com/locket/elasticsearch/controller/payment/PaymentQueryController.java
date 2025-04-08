@@ -52,26 +52,27 @@ public class PaymentQueryController {
 
     @GetMapping("/{transactionId}")
     @Operation(
-            summary = "결제 금액 조회",
-            description = "transaction_id로 결제 금액을 조회합니다."
+            summary = "결제 정보 조회",
+            description = "transaction_id로 결제 금액과 상호명을 조회합니다."
     )
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "조회 성공"),
             @ApiResponse(responseCode = "404", description = "결제 내역을 찾을 수 없음"),
             @ApiResponse(responseCode = "500", description = "서버 오류")
     })
-    public ResponseEntity<Map<String, Object>> getPaymentAmount(
+    public ResponseEntity<Map<String, Object>> getPaymentInfo(
             @PathVariable String transactionId
     ) {
         try {
             PaymentHistory payment = paymentQueryService.getPaymentByTransactionId(transactionId);
             return ResponseEntity.ok(Map.of(
                     "transactionId", transactionId,
-                    "amount", payment.getTotalAmount()
+                    "amount", payment.getTotalAmount(),
+                    "storeName", payment.getStoreName()
             ));
         } catch (Exception e) {
-            log.error("Failed to get payment amount for transaction {}: {}", transactionId, e.getMessage());
-            throw new RuntimeException("결제 금액 조회 중 오류가 발생했습니다.");
+            log.error("Failed to get payment info for transaction {}: {}", transactionId, e.getMessage());
+            throw new RuntimeException("결제 정보 조회 중 오류가 발생했습니다.");
         }
     }
 

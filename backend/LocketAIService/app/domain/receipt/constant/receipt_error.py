@@ -12,6 +12,7 @@ class ReceiptErrorCode(Enum):
     AMOUNT_MISMATCH = 1008        # 결제 금액 불일치
     TOTAL_AMOUNT_MISMATCH = 1009  # 총액과 항목 합계 불일치
     PAYMENT_NOT_FOUND = 1010    # 결제 내역 없음
+    STORE_NAME_MISMATCH = 1011  # 상호명 불일치
 
     # 500 에러 (1500-1999)
     OCR_ERROR = 1501            # OCR 처리 실패
@@ -30,6 +31,7 @@ class ReceiptErrorMessage(Enum):
     AMOUNT_MISMATCH = "결제 금액이 영수증 금액과 일치하지 않습니다"
     TOTAL_AMOUNT_MISMATCH = "영수증 총액이 카테고리 합계와 일치하지 않습니다"
     PAYMENT_NOT_FOUND = "해당하는 결제 내역을 찾을 수 없습니다"
+    STORE_NAME_MISMATCH = "상호명이 결제 내역과 일치하지 않습니다"
 
     # 500 에러 메시지
     OCR_ERROR = "영수증 인식 처리에 실패했습니다"
