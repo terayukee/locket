@@ -62,9 +62,9 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/api/users/products/(\\d+)/like$"),
 
             // ✅ 결제 (prefix 포함)
-            Pattern.compile("^/api/payment/cards(?:\\?.*userId=(\\d+))?$"),
-            Pattern.compile("^/api/payment/auth-info/fingerprint(?:\\?.*userId=(\\d+))?$"),
-            Pattern.compile("^/api/payment/monthly-total(?:\\?.*userId=(\\d+))?$"),
+            Pattern.compile("^/api/payment/cards$"),
+            Pattern.compile("^/api/payment/monthly-total$"),
+            Pattern.compile("^/api/payment/auth-info/fingerprint$"),
             Pattern.compile("^/api/payment/auth/verify-password$"),
             Pattern.compile("^/api/payment/nfc$"),
             Pattern.compile("^/api/payment/validate-card$"),
@@ -75,15 +75,7 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/monthly-total(?:\\?.*userId=(\\d+))?$"),
             Pattern.compile("^/auth/verify-password$"),
             Pattern.compile("^/nfc$"),
-            Pattern.compile("^/validate-card$"),
-
-            // ✅ 결제 관련 API (Query Params)
-            Pattern.compile("^/api/payment/cards$"),
-            Pattern.compile("^/api/payment/monthly-total$"),
-            Pattern.compile("^/api/payment/auth-info/fingerprint$"),
-            Pattern.compile("^/api/payment/auth/verify-password$"),
-            Pattern.compile("^/api/payment/nfc$"),
-            Pattern.compile("^/api/payment/validate-card$")
+            Pattern.compile("^/validate-card$")
     );
 
     public JwtGatewayFilter(JwtUtil jwtUtil) {
