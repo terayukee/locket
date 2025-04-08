@@ -17,11 +17,11 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class ProductAlertNotificationService {
+public class ProductNotificationService {
 
     private final ProductUserPreferenceRepository preferenceRepository;
     private final UserRepository userRepository;
-    private final NotificationService notificationService;
+    private final FirebaseSendService notificationService;
     private final ProductAlertService productAlertService;
 
     public void notifyUsersIfPriceDrops(Product product) {
@@ -46,7 +46,7 @@ public class ProductAlertNotificationService {
                     .productId(product.getId())
                     .build();
 
-            notificationService.sendBudgetAlert(dto);  // ✅ 재사용
+            notificationService.sendFcmNotification(dto);  // ✅ 재사용
             log.info("📲 상품 가격 알림 전송 완료: userId={}, productId={}", user.getUserId(), product.getId());
 
             preferenceRepository.save(preference);

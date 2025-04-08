@@ -59,7 +59,23 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
             Pattern.compile("^/api/users/feedback/(\\d+)(?:/.*)?$"),
             Pattern.compile("^/api/users/notifications(?:/.*)?$"),
             Pattern.compile("^/api/users/products/liked(?:\\?.*userId=(\\d+))?$"),
-            Pattern.compile("^/api/users/products/(\\d+)/like$")
+            Pattern.compile("^/api/users/products/(\\d+)/like$"),
+
+            // ✅ 결제 (prefix 포함)
+            Pattern.compile("^/api/payment/cards$"),
+            Pattern.compile("^/api/payment/monthly-total$"),
+            Pattern.compile("^/api/payment/auth-info/fingerprint$"),
+            Pattern.compile("^/api/payment/auth/verify-password$"),
+            Pattern.compile("^/api/payment/nfc$"),
+            Pattern.compile("^/api/payment/validate-card$"),
+
+            // ✅ 결제 (prefix 제거된 실제 경로 - StripPrefix 고려)
+            Pattern.compile("^/cards(?:\\?.*userId=(\\d+))?$"),
+            Pattern.compile("^/auth-info/fingerprint(?:\\?.*userId=(\\d+))?$"),
+            Pattern.compile("^/monthly-total(?:\\?.*userId=(\\d+))?$"),
+            Pattern.compile("^/auth/verify-password$"),
+            Pattern.compile("^/nfc$"),
+            Pattern.compile("^/validate-card$")
     );
 
     public JwtGatewayFilter(JwtUtil jwtUtil) {

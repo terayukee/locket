@@ -27,6 +27,9 @@ spring:
           filters:
             - RewritePath=/api/payment/(?<segment>.*), /${segment}
             - PreserveHostHeader
+            - name: JwtGatewayFilter
+              args:
+                enabled: true
 
         - id: user-service
           uri: lb://USER-SERVICE

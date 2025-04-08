@@ -14,7 +14,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class UserAlertService {
+public class AlertListService {
 
     private final GoalAlertRepository goalAlertRepository;
     private final ProductAlertRepository productAlertRepository;

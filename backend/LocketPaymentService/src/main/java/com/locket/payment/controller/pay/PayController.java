@@ -1,6 +1,7 @@
 package com.locket.payment.controller.pay;
 
 import com.locket.payment.domain.pay.dto.*;
+import com.locket.payment.security.RequiresUser;
 import com.locket.payment.service.pay.PayService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,11 +23,12 @@ import java.util.NoSuchElementException;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "💳 결제 API", description = "결제 및 카드 관련 기능들을 제공합니다.")
-@RequestMapping("/api/payment")
+//@RequestMapping("/api/payment")
 public class PayController {
 
     private final PayService payService;
 
+    @RequiresUser(ownerOnly = true)
     @PostMapping("/nfc")
     @Operation(
             summary = "🧾 결제 처리",
@@ -98,6 +100,7 @@ public class PayController {
         return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
     }
 
+    @RequiresUser(ownerOnly = true)
     @GetMapping("/cards")
     @Operation(
             summary = "💳 내 카드 목록 조회",
@@ -137,6 +140,7 @@ public class PayController {
         }
     }
 
+    @RequiresUser(ownerOnly = true)
     @GetMapping("/auth-info/fingerprint")
     @Operation(
             summary = "🧬 지문 등록 여부 조회",
@@ -167,6 +171,7 @@ public class PayController {
         }
     }
 
+    @RequiresUser(ownerOnly = true)
     @PostMapping("/auth/verify-password")
     @Operation(
             summary = "🔐 간편 결제 비밀번호 검증",
@@ -220,6 +225,7 @@ public class PayController {
         }
     }
 
+    @RequiresUser(ownerOnly = true)
     @GetMapping("/monthly-total")
     @Operation(
             summary = "📊 월간 총 결제 금액 조회",

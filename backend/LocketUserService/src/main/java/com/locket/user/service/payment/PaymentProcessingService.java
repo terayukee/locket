@@ -2,6 +2,7 @@ package com.locket.user.service.payment;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
 import com.locket.user.service.notification.BudgetNotificationService;
+import com.locket.user.service.notification.PaymentNotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ public class PaymentProcessingService {
 
     private final BudgetNotificationService budgetNotificationService;
     private final CharacterService characterService;
+    private final PaymentNotificationService paymentNotificationService;
 
     public void processPaymentSuccess(PaymentSuccessEvent event) {
         log.info("✅ Processing Payment Success Event: {}", event);
@@ -41,7 +43,7 @@ public class PaymentProcessingService {
         budgetNotificationService.handleBudgetNotification(event);
 
         // [결제 후처리 3] 결제 완료 시 사용자에게 FCM 알림
-
+        paymentNotificationService.notifyPaymentComplete(event);
     }
 
     private boolean isSamsungCardPayment(PaymentSuccessEvent event) {

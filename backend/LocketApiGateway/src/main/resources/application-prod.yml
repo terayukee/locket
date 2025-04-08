@@ -29,6 +29,9 @@ spring:
             - Path=/api/payment/**
           filters:
             - RewritePath=/api/payment/(?<segment>/?.*), /${segment}
+            - name: JwtGatewayFilter
+              args:
+                enabled: true
           order: 10
 
         - id: user-service

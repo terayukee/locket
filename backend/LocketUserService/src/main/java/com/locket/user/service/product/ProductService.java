@@ -5,7 +5,7 @@ import com.locket.user.domain.product.constant.PaginationConstants;
 import com.locket.user.domain.product.dto.*;
 import com.locket.user.domain.product.entity.*;
 import com.locket.user.domain.product.repository.*;
-import com.locket.user.service.notification.ProductAlertNotificationService;
+import com.locket.user.service.notification.ProductNotificationService;
 import com.locket.user.exception.CategoryNotFoundException;
 import com.locket.user.exception.InvalidRequestException;
 import com.locket.user.exception.ProductNotFoundException;
@@ -38,7 +38,7 @@ public class ProductService {
     private final CategoryRepository categoryRepository;
     private final PriceHistoryRepository priceHistoryRepository;
     private final ProductUserPreferenceRepository productUserPreferenceRepository;
-    private final ProductAlertNotificationService productAlertNotificationService;
+    private final ProductNotificationService productAlertNotificationService;
     private final UserRepository userRepository;
     private final Logger log = LoggerFactory.getLogger(ProductService.class);
 

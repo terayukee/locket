@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @AllArgsConstructor
 @Builder
 public class MonthPaymentDto {
-    private Long id;
+    private String id;
     private int day;
     private String paymentCategory;
     private String cardName;

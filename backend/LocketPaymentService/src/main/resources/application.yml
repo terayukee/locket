@@ -3,7 +3,7 @@ server:
 
 spring:
   application:
-    name: payment-service
+    name: PAYMENT-SERVICE
   datasource:
     hikari:
       maximum-pool-size: 15   # 병렬 요청 수 대비 충분한 값
