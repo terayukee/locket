@@ -12,7 +12,6 @@ import com.locket.user.domain.notification.dto.FcmMessageDto;
 import com.locket.user.feign.PaymentHistoryFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -26,7 +25,7 @@ public class BudgetNotificationService {
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
     private final GoalAlertRepository goalAlertRepository;
-    private final NotificationService notificationService;
+    private final FirebaseNotificationService notificationService;
     private final PaymentHistoryFeignClient paymentHistoryFeignClient;
 
     public void handleBudgetNotification(PaymentSuccessEvent event) {
@@ -84,7 +83,7 @@ public class BudgetNotificationService {
                     .title("💰 예산 초과 알림")
                     .content(content)
                     .build();
-            notificationService.sendBudgetAlert(dto);
+            notificationService.sendFcmNotification(dto);
 
             // ✅ 알림 저장
             GoalAlert alert = GoalAlert.create(userId, goal.getGoalId(), content);
@@ -169,7 +168,7 @@ public class BudgetNotificationService {
                 .title("💰 예산 초과 알림")
                 .content(content)
                 .build();
-        notificationService.sendBudgetAlert(dto);
+        notificationService.sendFcmNotification(dto);
 
         goalAlertRepository.save(GoalAlert.create(userId, goal.getGoalId(), content));
 

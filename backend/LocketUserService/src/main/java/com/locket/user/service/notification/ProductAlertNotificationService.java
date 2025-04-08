@@ -21,7 +21,7 @@ public class ProductAlertNotificationService {
 
     private final ProductUserPreferenceRepository preferenceRepository;
     private final UserRepository userRepository;
-    private final NotificationService notificationService;
+    private final FirebaseNotificationService notificationService;
     private final ProductAlertService productAlertService;
 
     public void notifyUsersIfPriceDrops(Product product) {
@@ -46,7 +46,7 @@ public class ProductAlertNotificationService {
                     .productId(product.getId())
                     .build();
 
-            notificationService.sendBudgetAlert(dto);  // ✅ 재사용
+            notificationService.sendFcmNotification(dto);  // ✅ 재사용
             log.info("📲 상품 가격 알림 전송 완료: userId={}, productId={}", user.getUserId(), product.getId());
 
             // 알림 발송 후 is_alert(알림 발송 희망) 필드를 false로 변경
