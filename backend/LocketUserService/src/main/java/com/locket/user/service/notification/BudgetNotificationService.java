@@ -25,7 +25,7 @@ public class BudgetNotificationService {
     private final GoalRepository goalRepository;
     private final UserRepository userRepository;
     private final GoalAlertRepository goalAlertRepository;
-    private final FirebaseNotificationService notificationService;
+    private final FirebaseSendService notificationService;
     private final PaymentHistoryFeignClient paymentHistoryFeignClient;
 
     public void handleBudgetNotification(PaymentSuccessEvent event) {

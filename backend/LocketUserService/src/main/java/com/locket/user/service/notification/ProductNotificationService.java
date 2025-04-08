@@ -21,7 +21,7 @@ public class ProductNotificationService {
 
     private final ProductUserPreferenceRepository preferenceRepository;
     private final UserRepository userRepository;
-    private final FirebaseNotificationService notificationService;
+    private final FirebaseSendService notificationService;
     private final ProductAlertService productAlertService;
 
     public void notifyUsersIfPriceDrops(Product product) {
