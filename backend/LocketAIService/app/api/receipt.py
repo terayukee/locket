@@ -38,7 +38,7 @@ async def _process_receipt(image_data: str, expected_amount: int = None) -> Rece
         logger.info(f"품목 분류 결과: {len(classified_result['items'])}개 항목")
 
         # 할인 금액 처리
-        total_sum = sum(item['itemAmount'] * item['itemQuantity'] for item in classified_result['items'])  # 단가 * 수량
+        total_sum = sum(item['itemAmount'] * item['itemQuantity'] for item in classified_result['items'])
         actual_total = classified_result['totalAmount']
 
         if total_sum > actual_total:
@@ -49,7 +49,6 @@ async def _process_receipt(image_data: str, expected_amount: int = None) -> Rece
             max_amount_item['itemAmount'] -= int(discount / max_amount_item['itemQuantity'])  # 단가 조정
             logger.info(f"할인 금액 처리: {discount}원")
         elif total_sum < actual_total:
-            # 할인이 아닌 경우에 총액이 맞지 않으면 에러
             logger.error(f"총액 불일치: Items={total_sum}, Total={actual_total}")
             raise ReceiptException(error_code=ReceiptErrorCode.TOTAL_AMOUNT_MISMATCH)
 
@@ -57,7 +56,7 @@ async def _process_receipt(image_data: str, expected_amount: int = None) -> Rece
         category_amount = {}
         for item in classified_result['items']:
             category = item['itemCategory']
-            amount = item['itemAmount'] * item['itemQuantity']  # 단가 * 수량
+            amount = item['itemAmount'] * item['itemQuantity']
             category_amount[category] = category_amount.get(category, 0) + amount
 
         logger.info(f"카테고리별 금액: {category_amount}")
