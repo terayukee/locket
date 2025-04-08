@@ -99,7 +99,10 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
         }
+        val rootView = requireActivity().findViewById<View>(R.id.whiteBackgroundOverlay)
+
         binding.cvNotificationSetting.setOnClickListener {
+            rootView.visibility = View.VISIBLE
             bottomSheet.show(parentFragmentManager, EditPriceBottomSheetFragment.TAG)
         }
         binding.ivLikeBtn.setOnClickListener {
@@ -127,9 +130,11 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             editViewModel.editprice.collect { editprice ->
                 if(editprice==""){
                     binding.tvSetting.text = "설정 안됨"
+                    binding.cvNotificationSetting.setCardBackgroundColor(Color.parseColor("#DADADA"))
                 }
                 else{
                     binding.tvSetting.text = CommonUtils.formatNumber(editprice)+"원"
+                    binding.cvNotificationSetting.setCardBackgroundColor(Color.parseColor("#00CBBF"))
                 }
             }
         }
@@ -193,14 +198,14 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         val avgPrice = (maxPrice + minPrice) / 2
 
         leftAxis.apply {
-            addLimitLine(LimitLine(avgPrice, "6개월 평균가: ${String.format("%.1f", avgPrice)}원").apply {
+            addLimitLine(LimitLine(avgPrice, "6개월 평균가: ${avgPrice.toInt()}원").apply {
                 lineColor = Color.parseColor("#00CBBF")
                 lineWidth = 2f
                 labelPosition = LimitLine.LimitLabelPosition.LEFT_TOP
                 enableDashedLine(10f, 10f, 0f)
             })
 
-            addLimitLine(LimitLine(minPrice, "6개월 최저가: ${minPrice}원").apply {
+            addLimitLine(LimitLine(minPrice, "6개월 최저가: ${minPrice.toInt()}원").apply {
                 lineColor = Color.RED
                 textColor = Color.RED
                 lineWidth = 2f
@@ -279,10 +284,12 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                             binding.ivCoupangMove.visibility = View.VISIBLE
                             if(productDetail.productDetailInfo.alertPrice==0){
                                 binding.tvSetting.text ="설정 안됨"
+                                binding.cvNotificationSetting.setCardBackgroundColor(Color.parseColor("#DADADA"))
                                 editViewModel.updatePrice("")
                             }
                             else{
                                 binding.tvSetting.text = CommonUtils.makeComma(productDetail.productDetailInfo.alertPrice)+"원"
+                                binding.cvNotificationSetting.setCardBackgroundColor(Color.parseColor("#00CBBF"))
                                 editViewModel.updatePrice(CommonUtils.makeComma(productDetail.productDetailInfo.alertPrice))
                             }
                         }

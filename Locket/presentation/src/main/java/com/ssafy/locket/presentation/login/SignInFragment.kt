@@ -109,8 +109,10 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                         if (isNotification) {
                             intent.putExtra("notification", "notification")
                         }
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
                         startActivity(intent)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK)
+                        requireActivity().overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                        requireActivity().finishAffinity()
                     }
                     is LoginStatus.Error -> {
                         lifecycleScope.launch {

@@ -41,8 +41,10 @@
 
         <activity
             android:name=".presentation.common.view.MainActivity"
-            android:exported="false"
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize"
             android:screenOrientation="nosensor">
+
 <!--            <intent-filter>-->
 <!--                <action android:name="android.intent.action.MAIN" />-->
 <!--                <category android:name="android.intent.category.LAUNCHER" />-->

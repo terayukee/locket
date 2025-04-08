@@ -23,6 +23,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import com.bumptech.glide.Glide
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.common.view.MainActivity
@@ -86,7 +87,7 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
 
         // Initialize vibrator
         vibrator = ContextCompat.getSystemService(requireContext(), Vibrator::class.java)!!
-
+        updateCardImage()
         applyCardRotationAnimation()
         startTimer()
         startContinuousVibration()
@@ -113,6 +114,22 @@ class NfcPaymentFragment : BaseFragment<FragmentNfcPaymentBinding>(
                     }
                     else -> {}
                 }
+            }
+        }
+    }
+    private fun updateCardImage() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            val paymentCardState = selectedPaymentCardViewModel.selectedPaymentCard.first()
+            if (paymentCardState is SelectedPaymentCardState.Selected) {
+                Log.d(TAG,"카드"+paymentCardState.paymentCard.cardId.toString())
+                val cardImageRes = when (paymentCardState.paymentCard.cardName) {
+                    "SAMSUNG" -> R.drawable.ic_payment_card_img
+                    "KB 청춘대로 싱글" -> R.drawable.image_kb_card
+                    "롯데 LOCA 365" -> R.drawable.image_lotte_card
+                    "NH 올바른 FLEX" -> R.drawable.image_nh_card
+                    else -> R.drawable.ic_payment_card_img
+                }
+                binding.ivCard.setImageResource(cardImageRes)
             }
         }
     }
