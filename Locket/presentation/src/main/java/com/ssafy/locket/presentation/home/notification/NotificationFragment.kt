@@ -3,23 +3,18 @@ package com.ssafy.locket.presentation.home.notification
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.ssafy.locket.model.home.Notification
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentNotificationBinding
-import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
 import com.ssafy.locket.presentation.home.character.viewmodel.NotificationState
 import com.ssafy.locket.presentation.home.character.viewmodel.NotificationViewModel
 import com.ssafy.locket.presentation.home.notification.adapter.NotificationListRVAdapter
-import com.ssafy.locket.presentation.login.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -61,7 +56,7 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
         }
     }
 
-    fun getNotificationData(){
+    fun getNotificationData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 notificationViewModel.notificationList.collect { notificationList ->

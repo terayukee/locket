@@ -191,8 +191,8 @@ class ReceiptListFragment : BaseFragment<FragmentReceiptListBinding>(
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         binding.progressBar.visibility = View.GONE
         requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
         receiptFileSelectionViewModel.clearNavigationEvent()
