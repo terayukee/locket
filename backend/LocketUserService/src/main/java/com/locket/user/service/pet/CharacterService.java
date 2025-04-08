@@ -141,13 +141,17 @@ public class CharacterService {
     }
 
     private Character createNewCharacter(Long userId) {
+        return createNewCharacter(userId, 0);
+    }
+
+    private Character createNewCharacter(Long userId, int initialFoodCount) {
         String characterName = generateRandomCharacterName();
         Character character = Character.builder()
                 .characterName(characterName)
                 .userId(userId)
                 .exp(0)
                 .createdAt(LocalDateTime.now())
-                .foodCount(0)
+                .foodCount(initialFoodCount)
                 .toyAvailable(true)
                 .nextToyAvailableTime(null)
                 .build();
@@ -159,15 +163,18 @@ public class CharacterService {
         Character character = characterRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
 
-        // 최대 레벨 체크
-        int level = calculateLevel(character.getExp());
-        if (level < PetConstants.MAX_LEVEL) {
-            throw new IllegalArgumentException("캐릭터가 최대 레벨에 도달하지 않았습니다.");
-        }
+        // 캐릭터 이름과 사료 개수 저장
+        String characterName = character.getCharacterName();
+        int foodCount = character.getFoodCount();
 
-        //보상 후 삭제
-        RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD);
+        // 보상 생성 시 캐릭터 이름 전달
+        RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD, characterName);
+
+        // 캐릭터 삭제
         characterRepository.delete(character);
+
+        // 새 캐릭터 생성 (사료 개수 전달)
+        createNewCharacter(userId, foodCount);
 
         return rewardDto;
     }

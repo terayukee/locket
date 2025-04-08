@@ -28,17 +28,9 @@ public class RewardService {
     @Value("${app.image.base-url:/images}")
     private String imageBaseUrl;
 
-    //유저에게 새로운 보상을 생성하고, RewardDto로 반환한다.
     @Transactional
-    public RewardDto createReward(Long userId, String rewardName) {
-
+    public RewardDto createReward(Long userId, String rewardName, String characterName) {
         String imageUrl = imageBaseUrl + "/rewards/" + PetConstants.STARBUCKS_AMERICANO_IMAGE_NAME;
-
-        String characterName = null;
-        Optional<Character> characterOpt = characterRepository.findByUserId(userId);
-        if (characterOpt.isPresent()) {
-            characterName = characterOpt.get().getCharacterName();
-        }
 
         Reward reward = Reward.builder()
                 .userId(userId)
