@@ -66,7 +66,7 @@ class OCRService:
             receipt_data = ocr_result['images'][0]['receipt']['result']
 
             # 상호명 추출
-            store_name = receipt_data.get('storeInfo', {}).get('name', {}).get('formatted', {}).get('value', '알 수 없음')
+            store_name = receipt_data.get('storeInfo', {}).get('name', {}).get('text', '알 수 없음')
             logger.info(f"추출된 상호명: {store_name}")
 
             # 상품 정보 추출
@@ -74,21 +74,42 @@ class OCRService:
             item_id = 1
             for subresult in receipt_data.get('subResults', []):
                 for item in subresult.get('items', []):
+                    quantity = int(item['count']['formatted']['value'])
+
+                    try:
+                        # 영수증 형식 시도 (unitPrice)
+                        item_amount = int(item['price']['unitPrice']['formatted']['value'])
+                        logger.info(f"영수증 형식 단가 추출: {item_amount}")
+                    except KeyError:
+                        try:
+                            # PDF 형식 시도 (price/quantity)
+                            total_price = int(item['price']['price']['formatted']['value'])
+                            item_amount = total_price // quantity  # 단가 = 총액/수량
+                            logger.info(f"PDF 형식 단가 계산: {total_price} / {quantity} = {item_amount}")
+                        except KeyError as e:
+                            logger.error(f"가격 정보를 찾을 수 없습니다: {str(e)}")
+                            raise ReceiptException(error_code=ReceiptErrorCode.PARSING_ERROR)
+
                     item_data = {
                         'itemId': item_id,
-                        'itemName': item['name']['formatted']['value'],
-                        'itemQuantity': int(item['count']['formatted']['value']),
-                        'itemAmount': int(item['price']['unitPrice']['formatted']['value'])
+                        'itemName': item['name']['text'],
+                        'itemQuantity': quantity,
+                        'itemAmount': item_amount
                     }
                     items.append(item_data)
                     item_id += 1
                     logger.info(f"추출된 상품 정보: {item_data}")
 
-            # 총액 추출 - 각 상품의 단가 * 수량의 합계로 계산
-            total_amount = sum(item['itemAmount'] * item['itemQuantity'] for item in items)
-            logger.info(f"추출된 총액: {total_amount}")
+            # 총액 추출
+            try:
+                # OCR에서 인식된 실제 총액 사용
+                total_amount = int(receipt_data['totalPrice']['price']['formatted']['value'])
+                logger.info(f"OCR 인식된 총액: {total_amount}")
+            except KeyError:
+                # 총액이 없는 경우 계산된 합계 사용
+                total_amount = sum(item['itemAmount'] * item['itemQuantity'] for item in items)
+                logger.info(f"계산된 총액: {total_amount}")
 
-            # 결과 데이터 구성
             parsed_data = {
                 'storeName': store_name,
                 'items': items,
