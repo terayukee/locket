@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "💳 결제 API", description = "결제 및 카드 관련 기능들을 제공합니다.")
-@RequestMapping("/api/payment")
+//@RequestMapping("/api/payment")
 public class PayController {
 
     private final PayService payService;
