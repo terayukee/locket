@@ -3,8 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/bg_bottom_sheet"
-    android:paddingBottom="24dp">
+    android:backgroundTint="@color/white"
+    android:background="@drawable/bg_bottom_sheet">
 
     <View
         android:id="@+id/view_handle"
@@ -54,7 +54,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="8dp"
         android:gravity="center"
         android:letterSpacing="-0.02"
         android:text="상품별로 원하는 가격을 설정하여 알림을 받을 수 있어요."
@@ -69,7 +69,7 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_bottom_btn"
         android:letterSpacing="-0.02"
         android:text="설정 해제"
@@ -86,7 +86,7 @@
         android:layout_width="0dp"
         android:layout_height="56dp"
         android:layout_marginHorizontal="24dp"
-        android:layout_marginTop="24dp"
+        android:layout_marginTop="16dp"
         android:background="@drawable/bg_bottom_btn"
         android:letterSpacing="-0.02"
         android:text="완료"
@@ -98,4 +98,11 @@
         app:layout_constraintTop_toBottomOf="@+id/tv_info"
         app:layout_constraintWidth_percent="0.4" />
 
+    <TextView
+        android:id="@+id/text1"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_clear" />
 </androidx.constraintlayout.widget.ConstraintLayout>

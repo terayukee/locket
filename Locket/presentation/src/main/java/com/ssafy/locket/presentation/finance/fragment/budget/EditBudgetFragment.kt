@@ -63,30 +63,71 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
                     else -> {}
                 }
             }
+            if(binding.etGoalBudget.text.toString()!="") {
+                val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
+                budgetViewModel.setBudgetGoal(rawNumber.toInt())
+            }
+            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
         }
     }
 
     private fun validateInputForm(editText: EditText) = with(binding) {
-        var result = ""
         val decimalFormat = DecimalFormat("#,###")
 
         editText.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, i1: Int, i2: Int, i3: Int) {
-            }
+            private var beforeText = ""
+            private var cursorPosition = 0
+            private var isFormatting = false
+            private var isDeleting = false
+            private var deletedChar = ""
+            private var deleteIndex = 0
 
-            override fun onTextChanged(charSequence: CharSequence?, i1: Int, i2: Int, i3: Int) {
-                if (!TextUtils.isEmpty(charSequence!!.toString()) && charSequence.toString() != result) {
-                    result =
-                        decimalFormat.format(charSequence.toString().replace(",", "").toDouble())
-                    editText.setText(result)
-
-                    editText.setSelection(result.length)
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                beforeText = s.toString()
+                cursorPosition = editText.selectionStart
+                isDeleting = count > after
+                if (isDeleting && s != null && count == 1) {
+                    deletedChar = s.substring(start, start + count)
+                    deleteIndex = start
                 }
             }
 
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
+            override fun afterTextChanged(s: Editable?) {
+                if (isFormatting) return
+                val original = s.toString()
+                var cleanString = original.replace(",", "")
+                if (cleanString.isEmpty()) return
+                // 쉼표 바로 뒤에서 삭제한 경우 처리
+                if (isDeleting && deletedChar == "," && deleteIndex > 0) {
+                    val indexToRemove = deleteIndex - beforeText.take(deleteIndex).count { it == ',' }
+                    if (indexToRemove > 0 && indexToRemove <= cleanString.length) {
+                        cleanString = cleanString.removeRange(indexToRemove - 1, indexToRemove)
+                    }
+                }
+                try {
+                    val parsed = cleanString.toDouble()
+                    val formatted = decimalFormat.format(parsed)
+                    if (formatted != original) {
+                        isFormatting = true
+                        editText.setText(formatted)
+                        // 커서 위치 보정
+                        val commaCountBefore = beforeText.take(cursorPosition).count { it == ',' }
+                        val commaCountNow = formatted.take(cursorPosition).count { it == ',' }
+                        val adjustment = commaCountNow - commaCountBefore
+                        val newCursor = (cursorPosition + adjustment).coerceIn(0, formatted.length)
+                        try {
+                            editText.setSelection(newCursor)
+                        } catch (e: Exception) {
+                            editText.setSelection(formatted.length)
+                        }
+                        isFormatting = false
+                    }
+                } catch (e: NumberFormatException) {
+                    // 예외 무시
+                }
+            }
         })
     }
 }

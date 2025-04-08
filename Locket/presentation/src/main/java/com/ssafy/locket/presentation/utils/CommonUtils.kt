@@ -2,9 +2,12 @@ package com.ssafy.locket.presentation.utils
 
 import android.content.Context
 import android.content.res.Resources
+import android.graphics.Rect
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.TouchDelegate
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import com.ssafy.locket.presentation.databinding.ToastMultiLineCustomBinding
 import com.ssafy.locket.presentation.databinding.ToastSingleLineCustomBinding
@@ -99,6 +102,19 @@ object CommonUtils {
             .divide(BigDecimal(10000), 0, RoundingMode.DOWN)
     }
 
+    fun View.expandTouchArea(extraPadding: Int = 30) {
+        val parentView = this.parent as? ViewGroup ?: return
+
+        parentView.post {
+            val rect = Rect()
+            this.getHitRect(rect)
+            rect.top -= extraPadding
+            rect.bottom += extraPadding
+            rect.left -= extraPadding
+            rect.right += extraPadding
+            parentView.touchDelegate = TouchDelegate(rect, this)
+        }
+    }
 }
 
 sealed class ToastType {

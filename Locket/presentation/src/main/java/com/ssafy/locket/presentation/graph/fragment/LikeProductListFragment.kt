@@ -52,8 +52,11 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            userId = (userDataStoreSource.userId.first()?: 0).toInt()
-            loadMoreData()  // 첫 페이지 데이터 로드
+            userId = (userDataStoreSource.userId.first() ?: 0).toInt()
+            currentPage = 1 // 페이지 초기화
+            productLikeList.clear() // 리스트도 초기화
+            productLikeAdapter.notifyDataSetChanged()
+            loadMoreData()  // 새로 로드
         }
     }
 

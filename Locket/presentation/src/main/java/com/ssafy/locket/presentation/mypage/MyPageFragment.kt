@@ -42,11 +42,11 @@ class MyPageFragment : BaseFragment<FragmentMyPageBinding>(
         binding.ivEdit.setOnClickListener {
             findNavController().navigate(R.id.action_myPageFragment_to_editUserInfoFragment)
         }
-        binding.ivLogoutMove.setOnClickListener {
+        binding.clLogout.setOnClickListener {
             val dialogFragment = LogoutDialogFragment()
             dialogFragment.show(parentFragmentManager, "logout_dialog")
         }
-        binding.ivDeleteMove.setOnClickListener {
+        binding.clDeleteAccount.setOnClickListener {
             findNavController().navigate(R.id.action_myPageFragment_to_deleteAccountFragment)
         }
     }

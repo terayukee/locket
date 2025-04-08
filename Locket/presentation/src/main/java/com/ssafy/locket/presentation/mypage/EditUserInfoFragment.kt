@@ -1,5 +1,6 @@
 package com.ssafy.locket.presentation.mypage
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -10,9 +11,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -27,6 +30,7 @@ import com.ssafy.locket.presentation.databinding.FragmentEditUserInfoBinding
 import com.ssafy.locket.presentation.databinding.PopupJobMenuBinding
 import com.ssafy.locket.presentation.home.UserInfoState
 import com.ssafy.locket.presentation.home.UserInfoViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils.expandTouchArea
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -60,7 +64,14 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.ivJobDropdown.setOnClickListener {
+        binding.layoutAge.setOnClickListener {
+            binding.editAge.requestFocus()
+            binding.editAge.setSelection(binding.editAge.text.length)
+            // 키보드 띄우기
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.editAge, InputMethodManager.SHOW_IMPLICIT)
+        }
+        binding.layoutJob.setOnClickListener {
             showPopupWindow(it)
         }
         binding.editAge.addTextChangedListener(object : TextWatcher {
@@ -81,6 +92,14 @@ class EditUserInfoFragment : BaseFragment<FragmentEditUserInfoBinding>(
                 checkIfFormIsValid()  // 양식이 유효한지 확인하는 함수 호출
             }
         })
+
+        binding.root.setOnTouchListener { _, _ ->
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.editAge.windowToken, 0)
+            binding.editAge.clearFocus() // 포커스 해제
+            false
+        }
+
 
         binding.btnChange.setOnClickListener {
             if (isBirthValid) {
