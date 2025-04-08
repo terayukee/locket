@@ -18,6 +18,26 @@ class OCRService:
             'Content-Type': 'application/json'
         }
 
+
+    def validate_store_name(self, ocr_store_name: str, payment_store_name: str) -> bool:
+        """
+        OCR로 인식한 상호명과 결제 정보의 상호명을 비교
+
+        Args:
+            ocr_store_name (str): OCR로 인식한 상호명
+            payment_store_name (str): 결제 정보의 상호명
+
+        Returns:
+            bool: 상호명이 일치하면 True, 불일치하면 False
+        """
+        # 상호명 정규화 (공백 제거, 소문자 변환)
+        ocr_name = ocr_store_name.replace(" ", "").lower()
+        payment_name = payment_store_name.replace(" ", "").lower()
+
+        # 둘 중 하나가 다른 하나에 포함되어 있으면 True
+        return ocr_name in payment_name or payment_name in ocr_name
+
+
     async def extract_text(self, image_data: str, file_format: str = 'jpg') -> Dict:
         """이미지에서 텍스트 추출"""
         request_json = {
