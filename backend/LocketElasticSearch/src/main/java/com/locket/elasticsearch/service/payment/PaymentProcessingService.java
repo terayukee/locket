@@ -39,22 +39,40 @@ public class PaymentProcessingService {
         if (DEFAULT_CATEGORY.equals(paymentCategory)) {
             try {
                 log.info("카테고리 분류 요청 - 상호명 : {}", event.getStoreName());
+
                 Map<String, Object> response = webClient.post()
                         .uri("/api/ai/category/classify")
                         .bodyValue(Map.of("storeName", event.getStoreName()))
                         .retrieve()
                         .bodyToMono(new ParameterizedTypeReference<Map<String, Object>>() {})
                         .block();
-                if (response != null && response.get("paymentCategory") != null) {
-                    paymentCategory = (String) response.get("paymentCategory");
-                    needItemCheck = Boolean.TRUE.equals(response.get("needItemCheck"));
-                    log.info("카테고리 분류 성공 - 카테고리: {}, 품목확인필요: {}",
-                            paymentCategory, needItemCheck);
+
+                if (response != null) {
+                    Object categoryObj = response.get("paymentCategory");
+                    Object itemCheckObj = response.get("needItemCheck");
+
+                    if (categoryObj instanceof String categoryStr && !categoryStr.isBlank()) {
+                        paymentCategory = categoryStr;
+
+                        if (DEFAULT_CATEGORY.equals(categoryStr)) {
+                            log.warn("AI 응답에서 '기타' 카테고리 반환됨 - 상호명: {}", event.getStoreName());
+                        }
+
+                        if (itemCheckObj instanceof Boolean) {
+                            needItemCheck = (Boolean) itemCheckObj;
+                        } else {
+                            log.warn("needItemCheck 값이 boolean이 아님 - 기본값 사용(true)");
+                        }
+
+                        log.info("카테고리 분류 성공 - 카테고리: {}, 품목확인필요: {}", paymentCategory, needItemCheck);
+                    } else {
+                        log.warn("AI 응답에서 유효하지 않은 paymentCategory - 기본값 '기타' 사용됨, 응답 내용: {}", response);
+                    }
                 } else {
-                    log.warn("카테고리 분류 실패, 기본 카테고리 사용");
+                    log.warn("AI 응답이 null - 기본 카테고리 사용, storeName: {}", event.getStoreName());
                 }
             } catch (Exception e) {
-                log.warn("⚠️ 카테고리 분류 서비스 호출 실패, 기본 카테고리 사용 - 상호명: {}, 오류: {}",
+                log.warn("카테고리 분류 서비스 호출 실패, 기본 카테고리 사용 - 상호명: {}, 오류: {}",
                         event.getStoreName(), e.getMessage());
                 // 기본값 유지
             }

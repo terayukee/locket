@@ -8,13 +8,13 @@ class Category(str, Enum):
     TRANSPORT = "교통"
     ETC = "기타"
 
-class StoreType(str, Enum):
-    RESTAURANT = "음식점"
-    CAFE = "카페"
-    RETAIL = "소매점"
-    SERVICE = "서비스"
-
-class ItemCheckRule(str, Enum):
-    ALWAYS = "항상 필요"
-    NEVER = "필요없음"
-    CONDITIONAL = "조건부"
+# class StoreType(str, Enum):
+#     RESTAURANT = "음식점"
+#     CAFE = "카페"
+#     RETAIL = "소매점"
+#     SERVICE = "서비스"
+#
+# class ItemCheckRule(str, Enum):
+#     ALWAYS = "항상 필요"
+#     NEVER = "필요없음"
+#     CONDITIONAL = "조건부"
