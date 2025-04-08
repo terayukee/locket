@@ -51,7 +51,6 @@ public class ProductAlertNotificationService {
 
             // 알림 발송 후 is_alert(알림 발송 희망) 필드를 false로 변경
             preference.setAlert(false);
-            preference.setAlertPrice(null);
             preferenceRepository.save(preference);
 
             // 상품 알림 DB 저장
