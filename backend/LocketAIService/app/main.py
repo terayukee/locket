@@ -7,6 +7,8 @@ from datetime import datetime
 from app.common.exception.base_exception import BaseException
 from app.common.constant.status import StatusCode, CommonErrorMessage
 from app.config.settings import settings
+from fastapi import APIRouter, Response
+from prometheus_client import Counter, generate_latest, CONTENT_TYPE_LATEST
 
 from .api import receipt, category, feedback
 import logging
@@ -26,6 +28,13 @@ EUREKA_SERVER = os.getenv("EUREKA_SERVER", "http://localhost:8761/eureka")
 SERVICE_HOST = os.getenv("SERVICE_HOST", "localhost")
 ENV = os.getenv("ENV", "prod")
 
+router = APIRouter()
+REQUEST_COUNT = Counter("request_count", "Total request count")
+
+@router.get("/metrics")
+def metrics():
+    REQUEST_COUNT.inc()
+    return Response(generate_latest(), media_type=CONTENT_TYPE_LATEST)
 
 def create_app() -> FastAPI:
     """FastAPI 애플리케이션 생성 및 설정"""
@@ -126,15 +135,16 @@ def create_app() -> FastAPI:
 
 def _register_routers(app: FastAPI) -> None:
     from app.api import feedback, category, receipt
+    from app import metrics
 
     routers = [
         (receipt.router, "/api/ai/receipt", "영수증 등록"),
         (category.router, "/api/ai/category", "카테고리 분류"),
-        (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백")
+        (feedback.router, "/api/ai/feedback", "소비 한 줄 피드백"),
+        (metrics.router, "", "Prometheus Metrics")
     ]
     for router, prefix, tag in routers:
         app.include_router(router, prefix=prefix, tags=[tag])
-
 
 # 앱 실행
 app = create_app()
