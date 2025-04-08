@@ -15,6 +15,8 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
+import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
+import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentEditBudgetBinding
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
@@ -31,6 +33,7 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
     R.layout.fragment_edit_budget
 ) {
     private val budgetViewModel : BudgetViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -44,11 +47,14 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
             findNavController().popBackStack()
         }
         
-        binding.btnBudgetSet.setOnClickListener { 
-            // TODO api 전송
-            val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
-            budgetViewModel.setBudgetGoal(rawNumber.toInt())
-            findNavController().popBackStack()
+        binding.btnBudgetSet.setOnClickListener {
+            if(binding.etGoalBudget.text.toString()!="") {
+                val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
+                budgetViewModel.setBudgetGoal(rawNumber.toInt())
+            }
+            mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
+            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
+
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -63,11 +69,6 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
                     else -> {}
                 }
             }
-            if(binding.etGoalBudget.text.toString()!="") {
-                val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
-                budgetViewModel.setBudgetGoal(rawNumber.toInt())
-            }
-            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
         }
     }
 

@@ -1,5 +1,6 @@
 package com.ssafy.locket.presentation.home.notification
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -12,15 +13,20 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.ssafy.locket.model.home.Notification
+import com.ssafy.locket.model.home.character.Gifticon
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
+import com.ssafy.locket.presentation.common.view.MainActivity
+import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.databinding.FragmentNotificationBinding
 import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
+import com.ssafy.locket.presentation.home.character.adapter.GifticonRVAdapter
 import com.ssafy.locket.presentation.home.character.viewmodel.NotificationState
 import com.ssafy.locket.presentation.home.character.viewmodel.NotificationViewModel
 import com.ssafy.locket.presentation.home.notification.adapter.NotificationListRVAdapter
 import com.ssafy.locket.presentation.login.LoginViewModel
 import dagger.hilt.android.AndroidEntryPoint
+import dagger.hilt.android.internal.managers.ViewComponentManager
 import kotlinx.coroutines.launch
 
 
@@ -58,6 +64,28 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
 
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
+        }
+
+        recentNotificationListRVAdapter.itemClickListener = object : NotificationListRVAdapter.ItemClickListener {
+            override fun onClick(view: View, data: Notification, position: Int) {
+                if(data.type == "goal") (getActivityContext(requireContext()) as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
+                else if(data.type == "product") (getActivityContext(requireContext()) as MainActivity).setBottomNavigationIndex(R.id.lowest_price_graph)
+            }
+        }
+
+        prevNotificationListRVAdapter.itemClickListener = object : NotificationListRVAdapter.ItemClickListener {
+            override fun onClick(view: View, data: Notification, position: Int) {
+                if(data.type == "goal") (getActivityContext(requireContext()) as MainActivity).setBottomNavigationIndex(R.id.household_account_book)
+                else if(data.type == "product") (getActivityContext(requireContext()) as MainActivity).setBottomNavigationIndex(R.id.lowest_price_graph)
+            }
+        }
+    }
+
+    fun getActivityContext(context: Context): Context {
+        return if (context is ViewComponentManager.FragmentContextWrapper) {
+            context.baseContext
+        } else {
+            context
         }
     }
 

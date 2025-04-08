@@ -166,7 +166,11 @@
         android:id="@+id/notificationFragment"
         android:name="com.ssafy.locket.presentation.home.notification.NotificationFragment"
         android:label="fragment_notification"
-        tools:layout="@layout/fragment_notification" />
+        tools:layout="@layout/fragment_notification" >
+        <action
+            android:id="@+id/action_notificationFragment_to_financeFragment"
+            app:destination="@id/financeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/editBudgetFragment"
         android:name="com.ssafy.locket.presentation.finance.fragment.budget.EditBudgetFragment"
