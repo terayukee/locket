@@ -8,7 +8,6 @@ services:
     networks:
       - spring-locket
       - monitoring
-      - shared-net
 
   user-service:
     image: maru1203/spring-locket-user-service:latest
@@ -17,7 +16,6 @@ services:
     networks:
       - spring-locket
       - monitoring
-      - shared-net
     depends_on:
       - discovery
 
@@ -28,7 +26,6 @@ services:
     networks:
       - spring-locket
       - monitoring
-      - shared-net
 
   api-gateway:
     image: maru1203/spring-locket-api-gateway:latest
@@ -37,12 +34,9 @@ services:
     networks:
       - spring-locket
       - monitoring
-      - shared-net
 
 networks:
   spring-locket:
     external: true
   monitoring:
-    external: true
-  shared-net:
     external: true

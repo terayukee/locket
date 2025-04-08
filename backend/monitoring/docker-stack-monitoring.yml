@@ -10,7 +10,6 @@ services:
     networks:
       - monitoring
       - spring-locket
-      - shared-net
 
   grafana:
     image: grafana/grafana:latest
@@ -22,7 +21,6 @@ services:
     networks:
       - monitoring
       - spring-locket
-      - shared-net
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:latest
@@ -36,7 +34,6 @@ services:
     networks:
       - monitoring
       - spring-locket
-      - shared-net
 
   node-exporter:
     image: prom/node-exporter:latest
@@ -45,12 +42,9 @@ services:
     networks:
       - monitoring
       - spring-locket
-      - shared-net
 
 networks:
   monitoring:
     external: true
   spring-locket:
-    external: true
-  shared-net:
     external: true
