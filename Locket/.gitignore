@@ -13,7 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
-*.properties
+apikey.properties
 /app/google-services.json
 .idea
 .kotlin
