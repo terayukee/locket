@@ -61,8 +61,9 @@
                 android:id="@+id/iv_star"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="8dp"
                 android:src="@drawable/ic_product_star"
+                android:visibility="invisible"
                 app:layout_constraintEnd_toStartOf="@+id/tv_review"
                 app:layout_constraintTop_toTopOf="@+id/tv_product_title" />
 
@@ -118,12 +119,13 @@
                 android:id="@+id/iv_like_btn"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginTop="16dp"
                 android:layout_marginEnd="24dp"
                 android:src="@drawable/ic_all_empty_heart"
+                android:visibility="invisible"
                 app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_highest_price"
+                app:layout_constraintTop_toBottomOf="@+id/iv_star"
                 app:layout_constraintWidth_percent="0.07" />
 
             <View
@@ -176,6 +178,7 @@
                 android:layout_height="0dp"
                 android:layout_marginTop="12dp"
                 android:paddingBottom="20dp"
+                android:visibility="invisible"
                 app:layout_constraintDimensionRatio="1.3802:1"
                 app:layout_constraintEnd_toEndOf="@+id/tv_chart_description"
                 app:layout_constraintStart_toStartOf="@+id/tv_chart_description"
