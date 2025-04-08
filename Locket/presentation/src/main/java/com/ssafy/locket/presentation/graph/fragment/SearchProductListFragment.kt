@@ -38,7 +38,7 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        initData()
         initEvent()
         initAdapter()
         getSearchInfo()
@@ -51,6 +51,11 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
         }
     }
 
+    fun initData(){
+        page = 1
+        isLoading = false
+        productSearchList = mutableListOf()
+    }
     private fun initEvent() {
         binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
@@ -73,15 +78,27 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 productViewModel.productSearchInfo.collect { productSearch ->
                     if (productSearch is ProductSearchState.Success) {
-                        Log.d(TAG, "검색 결과: ${productSearch.productSearchInfo.products}")
+                        val products = productSearch.productSearchInfo.products ?: emptyList()
+                        Log.d(TAG, "검색 결과: $products")
 
                         if (page == 1) {
-                            productSearchList.clear() // 첫 페이지면 초기화
+                            productSearchList.clear()
                         }
 
-                        productSearchList.addAll(productSearch.productSearchInfo.products)
+                        // 새 데이터 추가
+                        productSearchList.addAll(products)
                         productSearchAdapter.notifyDataSetChanged()
-                        isLoading = false // 로딩 완료
+
+                        // 리스트가 비어있을 경우 empty 텍스트 보이기
+                        if (productSearchList.isEmpty()) {
+                            binding.rvSearchList.visibility = View.GONE
+                            binding.tvEmptyProduct.visibility = View.VISIBLE
+                        } else {
+                            binding.rvSearchList.visibility = View.VISIBLE
+                            binding.tvEmptyProduct.visibility = View.GONE
+                        }
+
+                        isLoading = false
                     }
                 }
             }

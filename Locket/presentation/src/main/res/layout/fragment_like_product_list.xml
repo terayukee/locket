@@ -5,31 +5,32 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".presentation.graph.LikeProductListFragment"
-    android:paddingTop="16dp"
-    android:background="@color/white"
-    android:paddingHorizontal="24dp">
+    android:background="@color/white">
 
     <ImageView
         android:id="@+id/iv_back"
-        android:layout_width="24sp"
-        android:layout_height="24sp"
-        android:src="@drawable/ic_all_left_arrow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="-1"
+        android:src="@drawable/ic_all_arrow"
+        android:padding="16dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/tv_product_title"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="2dp"
-        android:letterSpacing="-0.02"
-        android:textSize="18sp"
+        android:layout_height="wrap_content"
         android:fontFamily="@font/pretendard_bold"
+        android:letterSpacing="-0.02"
         android:text="관심목록"
+        android:textSize="18sp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_back"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="@+id/iv_back" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_like_list"

@@ -4,18 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#F6F7F9"
-    tools:context=".presentation.mypage.MyPageFragment">
+    android:background="#F6F7F9">
 
 
     <ImageView
         android:id="@+id/iv_back"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackgroundBorderless"
-        android:src="@drawable/ic_all_left_arrow"
+        android:scaleX="-1"
+        android:src="@drawable/ic_all_arrow"
+        android:padding="16dp"
+        android:layout_marginStart="8dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -104,13 +103,17 @@
 
             <ImageView
                 android:id="@+id/iv_edit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:layout_constraintHorizontal_bias="0.95"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="16dp"
+                android:padding="8dp"
                 android:src="@drawable/ic_mypage_edit"
+                app:layout_constraintBottom_toBottomOf="@+id/tv_profile_age"
+                app:layout_constraintDimensionRatio="1"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.95"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/tv_profile_name" />
+                app:layout_constraintWidth_percent="0.15" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
@@ -131,100 +134,108 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <!-- 로그아웃 -->
-            <ImageView
-                android:id="@+id/iv_logout"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="24dp"
-                android:src="@drawable/ic_mypage_logout"
-                app:layout_constraintBottom_toBottomOf="@id/tv_logout_text"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_logout_text"
-                app:layout_constraintWidth_percent="0.07"
-                app:tint="#4CD2C0" />
-
-            <TextView
-                android:id="@+id/tv_logout_text"
-                android:layout_width="0dp"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_logout"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_percent="0.7"
-                android:paddingVertical="16dp"
-                android:text="로그아웃"
-                android:fontFamily="@font/pretendard_regular"
-                android:letterSpacing="-0.02"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                app:layout_constraintHorizontal_bias="0.15"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/iv_logout"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ImageView
-                android:id="@+id/iv_logout_move"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintWidth_percent="0.05"
-                app:layout_constraintHorizontal_bias="0.95"
-                android:src="@drawable/ic_all_arrow"
-                app:layout_constraintBottom_toBottomOf="@id/tv_logout_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_logout_text" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <View
-                android:id="@+id/divider2"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                app:layout_constraintWidth_percent="1"
-                android:background="#F0F0F0"
-                app:layout_constraintTop_toBottomOf="@id/tv_logout_text"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent" />
+                <ImageView
+                    android:id="@+id/iv_logout"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="24dp"
+                    android:src="@drawable/ic_mypage_logout"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_logout_text"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_logout_text"
+                    app:layout_constraintWidth_percent="0.07"
+                    app:tint="#4CD2C0" />
 
-            <ImageView
-                android:id="@+id/iv_delete_account"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                android:layout_marginStart="24dp"
-                android:src="@drawable/ic_mypage_delete"
-                app:layout_constraintBottom_toBottomOf="@id/tv_delete_account_text"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_delete_account_text"
-                app:layout_constraintWidth_percent="0.07"
-                app:tint="#4CD2C0" />
+                <TextView
+                    android:id="@+id/tv_logout_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_regular"
+                    android:letterSpacing="-0.02"
+                    android:paddingVertical="16dp"
+                    android:text="로그아웃"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.15"
+                    app:layout_constraintStart_toEndOf="@id/iv_logout"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.7" />
 
-            <TextView
-                android:id="@+id/tv_delete_account_text"
-                android:layout_width="0dp"
+                <ImageView
+                    android:id="@+id/iv_logout_move"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_all_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_logout_text"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_logout_text"
+                    app:layout_constraintWidth_percent="0.05" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <!-- 회원탈퇴 그룹 -->
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/cl_delete_account"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                app:layout_constraintWidth_percent="0.7"
-                android:paddingVertical="16dp"
-                android:text="회원탈퇴"
-                android:fontFamily="@font/pretendard_regular"
-                android:letterSpacing="-0.02"
-                android:textColor="#000000"
-                android:textSize="16sp"
-                app:layout_constraintHorizontal_bias="0.15"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toEndOf="@id/iv_delete_account"
-                app:layout_constraintTop_toBottomOf="@id/divider2" />
-
-            <ImageView
-                android:id="@+id/iv_delete_move"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintDimensionRatio="1:1"
-                app:layout_constraintWidth_percent="0.05"
-                app:layout_constraintHorizontal_bias="0.95"
-                android:src="@drawable/ic_all_arrow"
-                app:layout_constraintBottom_toBottomOf="@id/tv_delete_account_text"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@id/tv_delete_account_text" />
+                app:layout_constraintTop_toBottomOf="@+id/cl_logout">
+
+                <ImageView
+                    android:id="@+id/iv_delete_account"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:layout_marginStart="24dp"
+                    android:src="@drawable/ic_mypage_delete"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_delete_account_text"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_delete_account_text"
+                    app:layout_constraintWidth_percent="0.07"
+                    app:tint="#4CD2C0" />
+
+                <TextView
+                    android:id="@+id/tv_delete_account_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/pretendard_regular"
+                    android:letterSpacing="-0.02"
+                    android:paddingVertical="16dp"
+                    android:text="회원탈퇴"
+                    android:textColor="#000000"
+                    android:textSize="16sp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.15"
+                    app:layout_constraintStart_toEndOf="@id/iv_delete_account"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintWidth_percent="0.7" />
+
+                <ImageView
+                    android:id="@+id/iv_delete_move"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/ic_all_arrow"
+                    app:layout_constraintBottom_toBottomOf="@id/tv_delete_account_text"
+                    app:layout_constraintDimensionRatio="1:1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.95"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/tv_delete_account_text"
+                    app:layout_constraintWidth_percent="0.05" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>

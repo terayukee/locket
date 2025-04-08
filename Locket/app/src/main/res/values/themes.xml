@@ -9,7 +9,7 @@
         <item name="android:checkboxStyle">@style/customCheckboxFontStyle</item>
         <!-- Customize your light theme here. -->
         <item name="colorPrimary">@color/primary</item>
-
+        <item name="android:windowBackground">@color/white</item>
         <item name="windowNoTitle">true</item>
         <item name="android:windowIsTranslucent">true</item>
         <item name="android:statusBarColor">#B4AEC2</item>

@@ -1,5 +1,6 @@
 package com.ssafy.locket.presentation.login.register_user_info
 
+import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -9,6 +10,7 @@ import android.util.DisplayMetrics
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.PopupWindow
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -48,7 +50,7 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.ivJobSelect.setOnClickListener {
+        binding.cvJobSelect.setOnClickListener {
             showPopupWindow(it)
         }
 
@@ -85,6 +87,21 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
                 }
             }
         }
+
+        binding.cvBirthyear.setOnClickListener {
+            binding.etBirth.requestFocus()
+            binding.etBirth.setSelection(binding.etBirth.text.length)
+            // 키보드 띄우기
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.showSoftInput(binding.etBirth, InputMethodManager.SHOW_IMPLICIT)
+        }
+
+        binding.root.setOnTouchListener { _, _ ->
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.etBirth.windowToken, 0)
+            binding.etBirth.clearFocus() // 포커스 해제
+            false
+        }
     }
 
     private fun showPopupWindow(view: View) {
@@ -107,7 +124,7 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
         popupWindow.width = popupWidth
         popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         popupWindow.isOutsideTouchable = true
-        popupWindow.showAsDropDown(view, -view.x.toInt(), 0)
+        popupWindow.showAsDropDown(view)
 
         val clickListener = View.OnClickListener { clickedView ->
             val jobTitle = when (clickedView.id) {
