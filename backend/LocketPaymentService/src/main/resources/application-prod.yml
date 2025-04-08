@@ -76,3 +76,8 @@ feign:
   client:
     elasticsearch-service:
       url: http://172.26.5.222:8083
+
+logging:
+  level:
+    root: WARN
+    com.locket: WARN  # 우리 서비스 패키지
