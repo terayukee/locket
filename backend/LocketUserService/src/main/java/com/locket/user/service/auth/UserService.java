@@ -5,7 +5,7 @@ import com.locket.user.domain.auth.dto.*;
 import com.locket.user.domain.auth.entity.User;
 import com.locket.user.domain.auth.entity.UserJob;
 import com.locket.user.domain.auth.repository.UserRepository;
-import com.locket.user.exception.ResourceNotFoundException;
+import com.locket.common.exception.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

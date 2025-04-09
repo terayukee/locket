@@ -78,8 +78,7 @@ public class PayController {
             )
     })
     public ResponseEntity<PaymentResponse> processPayment(
-            @RequestBody PaymentRequest request,
-            @RequestHeader("Authorization") String token
+            @RequestBody PaymentRequest request
     ) {
         return payService.processPayment(request);
     }
@@ -108,8 +107,7 @@ public class PayController {
             )
     )
     public ResponseEntity<?> validateCard(
-            @RequestBody PaymentRequest request,
-            @RequestHeader("Authorization") String token
+            @RequestBody PaymentRequest request
     ) {
         return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
     }
@@ -127,40 +125,26 @@ public class PayController {
             @ApiResponse(responseCode = "500", description = "🟠 서버 내부 오류", content = @Content(schema = @Schema(implementation = ErrorResponse.class)))
     })
     public ResponseEntity<?> getMyCards(
-            @RequestHeader("Authorization") String token,
             @RequestParam long userId
     ) {
-        try {
-            List<CardInfoDto> cards = payService.getCardsWithMonthlyUsage(userId);
-            return ResponseEntity.ok(Map.of(
-                    "cardList", cards,
-                    "count", cards.size()
-            ));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(ErrorResponse.of(404, "NOT_FOUND", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(ErrorResponse.of(500, "INTERNAL_ERROR", e.getMessage()));
-        }
+        List<CardInfoDto> cards = payService.getCardsWithMonthlyUsage(userId);
+        return ResponseEntity.ok(Map.of(
+                "cardList", cards,
+                "count", cards.size()
+        ));
     }
 
     @RequiresUser(ownerOnly = true)
     @GetMapping("/auth-info/fingerprint")
     @Operation(summary = "🧬 지문 등록 여부 조회", description = "Redis에서 사용자의 지문 등록 여부를 조회합니다.")
     public ResponseEntity<?> checkFingerprintRegistered(
-            @RequestHeader("Authorization") String token,
             @RequestParam long userId
     ) {
-        try {
-            boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
-            return ResponseEntity.ok(Map.of(
-                    "userId", userId,
-                    "fingerprintRegistered", registered
-            ));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(ErrorResponse.of(404, "NOT_FOUND", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(ErrorResponse.of(500, "INTERNAL_ERROR", e.getMessage()));
-        }
+        boolean registered = payService.getFingerprintRegisteredFromRedis(userId);
+        return ResponseEntity.ok(Map.of(
+                "userId", userId,
+                "fingerprintRegistered", registered
+        ));
     }
 
     @RequiresUser(ownerOnly = true)
@@ -187,22 +171,13 @@ public class PayController {
             )
     )
     public ResponseEntity<?> verifyPaymentPassword(
-            @RequestHeader("Authorization") String token,
             @RequestBody PaymentPasswordRequest passwordRequest
     ) {
-        try {
-            boolean isValid = payService.verifyPaymentPassword(passwordRequest);
-            return ResponseEntity.ok(Map.of(
-                    "userId", passwordRequest.getUserId(),
-                    "valid", isValid
-            ));
-        } catch (NoSuchElementException e) {
-            return ResponseEntity.status(404).body(ErrorResponse.of(404, "NOT_FOUND", e.getMessage()));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(400).body(ErrorResponse.of(400, "BAD_REQUEST", e.getMessage()));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(ErrorResponse.of(500, "INTERNAL_ERROR", e.getMessage()));
-        }
+        boolean isValid = payService.verifyPaymentPassword(passwordRequest);
+        return ResponseEntity.ok(Map.of(
+                "userId", passwordRequest.getUserId(),
+                "valid", isValid
+        ));
     }
 
     @RequiresUser(ownerOnly = true)
@@ -218,17 +193,13 @@ public class PayController {
             @RequestParam int year,
             @RequestParam int month
     ) {
-        try {
-            BigDecimal total = payService.getMonthlyTotalAmount(userId, year, month);
-            return ResponseEntity.ok(Map.of(
-                    "userId", userId,
-                    "year", year,
-                    "month", month,
-                    "totalAmount", total
-            ));
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body(ErrorResponse.of(500, "INTERNAL_ERROR", e.getMessage()));
-        }
+        BigDecimal total = payService.getMonthlyTotalAmount(userId, year, month);
+        return ResponseEntity.ok(Map.of(
+                "userId", userId,
+                "year", year,
+                "month", month,
+                "totalAmount", total
+        ));
     }
 
 }

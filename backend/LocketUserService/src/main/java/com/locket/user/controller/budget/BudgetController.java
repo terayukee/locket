@@ -4,7 +4,7 @@ import com.locket.user.domain.budget.dto.BudgetSetRequestDto;
 import com.locket.user.domain.budget.dto.BudgetSetResponseDto;
 import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
 import com.locket.user.domain.budget.dto.BudgetFeedbackResponse;
-import com.locket.user.exception.ErrorResponse;
+import com.locket.common.exception.ErrorResponse;
 import com.locket.user.security.RequiresUser;
 import com.locket.user.service.budget.BudgetService;
 import com.locket.user.service.budget.BudgetFeedbackService;

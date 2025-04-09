@@ -1,7 +1,7 @@
 package com.locket.user.controller.pet;
 
 import com.locket.user.domain.pet.dto.*;
-import com.locket.user.exception.ErrorResponse;
+import com.locket.common.exception.ErrorResponse;
 import com.locket.user.security.RequiresUser;
 import com.locket.user.service.pet.CharacterService;
 import com.locket.user.service.pet.RewardService;
