@@ -23,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.text.NumberFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -156,6 +157,7 @@ public class ProductService {
                     .isLiked(true)
                     .isAlert(false)
                     .alertPrice(null)
+                    .createdAt(LocalDateTime.now())
                     .build();
             newLikeStatus = true;
         }

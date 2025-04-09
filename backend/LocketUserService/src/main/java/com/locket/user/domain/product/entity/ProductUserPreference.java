@@ -33,6 +33,6 @@ public class ProductUserPreference {
 
     private Integer alertPrice;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 }
