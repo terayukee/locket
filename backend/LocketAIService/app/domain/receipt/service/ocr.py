@@ -101,7 +101,7 @@ class OCRService:
             text = text.replace(wrong, correct)
         return text.strip()
 
-    def _parse_receipt_data(self, ocr_result: Dict) -> Dict:
+    def _parse_receipt_data(self, ocr_result: Dict, payment_store_name: str) -> Dict:
         """OCR 결과 파싱"""
         try:
             receipt_data = ocr_result['images'][0]['receipt']['result']
@@ -159,7 +159,7 @@ class OCRService:
                 logger.info(f"계산된 총액: {total_amount}")
 
             parsed_data = {
-                'storeName': store_name,
+                'storeName': payment_store_name,
                 'items': items,
                 'totalAmount': total_amount
             }
