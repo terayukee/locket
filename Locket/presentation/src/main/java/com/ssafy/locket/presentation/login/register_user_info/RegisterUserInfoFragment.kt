@@ -27,13 +27,10 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
     FragmentRegisterUserInfoBinding::bind,
     R.layout.fragment_register_user_info
 ) {
-
-    //버튼 색깔 지정하기 위한 변수
-    var isJobSelected = false
-    var isBirthValid = false
-    //회원가입 위한 변수
+    private var isJobSelected = false
+    private var isBirthValid = false
     private val loginViewModel: LoginViewModel by activityViewModels()
-
+    private var popupWindow: PopupWindow? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -41,47 +38,58 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
         initEvent()
     }
 
-    fun initializeVariable(){
+    override fun onDestroyView() {
+        popupWindow?.dismiss()
+        popupWindow = null
+        super.onDestroyView()
+    }
+
+    private fun initializeVariable() {
         isJobSelected = false
         isBirthValid = false
     }
 
-    fun initEvent(){
+    private fun initEvent() {
         binding.ivBack.setOnClickListener {
             findNavController().popBackStack()
         }
+
         binding.cvJobSelect.setOnClickListener {
+            // 키보드 내리기
+            val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(binding.etBirth.windowToken, 0)
+            binding.etBirth.clearFocus()
+
             showPopupWindow(it)
         }
 
         binding.etBirth.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun onTextChanged(charSequence: CharSequence?, start: Int, before: Int, count: Int) {}
-
-            override fun afterTextChanged(editable: Editable?) {
-                // 4자리 숫자가 입력되었는지 확인
-                isBirthValid = editable.toString().length == 4
-                if (isBirthValid) {
-                    binding.layoutBirthyear.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
-                } else {
-                    binding.layoutBirthyear.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
-                }
-                checkIfFormIsValid()  // 양식이 유효한지 확인하는 함수 호출
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                isBirthValid = s.toString().length == 4
+                binding.layoutBirthyear.setBackgroundResource(
+                    if (isBirthValid) R.drawable.bg_card_border_active
+                    else R.drawable.bg_card_border_inactive
+                )
+                checkIfFormIsValid()
             }
         })
 
         binding.btnNext.setOnClickListener {
             if (isJobSelected && isBirthValid) {
-                if(binding.etBirth.text.toString().toInt()<=1930||binding.etBirth.text.toString().toInt()>=2026){
+                val year = binding.etBirth.text.toString().toInt()
+                if (year <= 1930 || year >= 2026) {
                     isBirthValid = false
                     binding.etBirth.text.clear()
-                    CommonUtils.showMultiLineCustomToast(requireContext(), "유효하지 않은 입력입니다", "연도를 1930년도 이후나 2025년도 밑으로 입력해주세요")
-//                    Toast.makeText(requireContext(),"연도를 1930년도 이후나 2025년도 밑으로 입력해주세요",Toast.LENGTH_LONG).show()
-                }
-                else{
+                    CommonUtils.showMultiLineCustomToast(
+                        requireContext(),
+                        "유효하지 않은 입력입니다",
+                        "연도를 1930년도 이후나 2025년도 밑으로 입력해주세요"
+                    )
+                } else {
                     loginViewModel.updateUserJob(binding.tvJoblabel.text.toString())
-                    loginViewModel.updateBirthYear(binding.etBirth.text.toString().toInt())
+                    loginViewModel.updateBirthYear(year)
                     findNavController().navigate(R.id.action_registerUserInfoFragment_to_registerPasswordFragment)
                     binding.etBirth.text.clear()
                 }
@@ -91,7 +99,6 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
         binding.cvBirthyear.setOnClickListener {
             binding.etBirth.requestFocus()
             binding.etBirth.setSelection(binding.etBirth.text.length)
-            // 키보드 띄우기
             val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.showSoftInput(binding.etBirth, InputMethodManager.SHOW_IMPLICIT)
         }
@@ -99,32 +106,39 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
         binding.root.setOnTouchListener { _, _ ->
             val imm = requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(binding.etBirth.windowToken, 0)
-            binding.etBirth.clearFocus() // 포커스 해제
+            binding.etBirth.clearFocus()
             false
         }
     }
 
     private fun showPopupWindow(view: View) {
-        val inflater = LayoutInflater.from(requireContext())
-        val popupBinding = PopupJobMenuBinding.inflate(inflater) // ViewBinding 사용
+        // 이미 열려있으면 닫고 반환
+        if (popupWindow != null && popupWindow?.isShowing == true) {
+            popupWindow?.dismiss()
+            return
+        }
 
-        // PopupWindow 설정
-        val popupWindow = PopupWindow(
+        // 새 팝업 생성
+        val inflater = LayoutInflater.from(requireContext())
+        val popupBinding = PopupJobMenuBinding.inflate(inflater)
+
+        // 새 PopupWindow 인스턴스 생성
+        popupWindow = PopupWindow(
             popupBinding.root,
             ViewGroup.LayoutParams.WRAP_CONTENT,
             ViewGroup.LayoutParams.WRAP_CONTENT,
-            true
+            true  // focusable을 true로 변경
         )
 
-        //크기 설정
         val displayMetrics = DisplayMetrics()
         requireActivity().windowManager.defaultDisplay.getMetrics(displayMetrics)
-        val screenWidth = displayMetrics.widthPixels
-        val popupWidth = (screenWidth * 0.85).toInt()  // 화면 너비의 90% 크기로 설정
-        popupWindow.width = popupWidth
-        popupWindow.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-        popupWindow.isOutsideTouchable = true
-        popupWindow.showAsDropDown(view)
+        popupWindow?.width = (displayMetrics.widthPixels * 0.85).toInt()
+        popupWindow?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        popupWindow?.isOutsideTouchable = true
+        popupWindow?.isTouchable = true
+
+        // 팝업 표시
+        popupWindow?.showAsDropDown(view)
 
         val clickListener = View.OnClickListener { clickedView ->
             val jobTitle = when (clickedView.id) {
@@ -135,31 +149,34 @@ class RegisterUserInfoFragment : BaseFragment<FragmentRegisterUserInfoBinding>(
             }
             binding.tvJoblabel.text = jobTitle
             checkIfJobSelected()
-            popupWindow.dismiss()
+            popupWindow?.dismiss()
         }
+
         popupBinding.popupItemStudent.setOnClickListener(clickListener)
         popupBinding.popupItemEmployee.setOnClickListener(clickListener)
         popupBinding.popupItemSelfEmployed.setOnClickListener(clickListener)
+
+        // 팝업이 닫힐 때 참조 정리
+        popupWindow?.setOnDismissListener {
+            popupWindow = null
+        }
     }
 
     private fun checkIfJobSelected() {
         isJobSelected = binding.tvJoblabel.text.toString() != "직업을 선택해주세요"
-        if (isJobSelected) {
-            binding.layoutJobSelect.setBackgroundResource(R.drawable.bg_card_border_active) // 선택된 상태 테두리
-        } else {
-            binding.layoutJobSelect.setBackgroundResource(R.drawable.bg_card_border_inactive) // 기본 테두리
-        }
+        binding.layoutJobSelect.setBackgroundResource(
+            if (isJobSelected) R.drawable.bg_card_border_active
+            else R.drawable.bg_card_border_inactive
+        )
         checkIfFormIsValid()
     }
 
     private fun checkIfFormIsValid() {
-        // 직업이 선택되었고, 생년월일이 4자리 숫자로 입력되었을 때만 버튼을 활성화
-        if (isJobSelected && isBirthValid) {
-            binding.btnNext.isEnabled = true
-            binding.btnNext.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorButtonActive))  // 활성화된 색상
-        } else {
-            binding.btnNext.isEnabled = false
-            binding.btnNext.setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.colorButtonInactive))  // 비활성화된 색상
-        }
+        binding.btnNext.isEnabled = isJobSelected && isBirthValid
+        val colorRes = if (binding.btnNext.isEnabled)
+            R.color.colorButtonActive
+        else
+            R.color.colorButtonInactive
+        binding.btnNext.setBackgroundColor(ContextCompat.getColor(requireContext(), colorRes))
     }
 }

@@ -2,11 +2,13 @@ package com.ssafy.locket.presentation.graph.fragment
 
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.Rect
 import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
+import android.view.TouchDelegate
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
@@ -44,7 +46,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
     R.layout.fragment_product_detail
 ) {
     private val editViewModel: EditPriceViewModel by activityViewModels()
-    val bottomSheet = EditPriceBottomSheetFragment.newInstance()
+    val bottomSheet = EditPriceDialogFragment.newInstance()
     //카테고리 번호 알기 위함
     var productId = -1
     private val productViewModel: ProductViewModel by activityViewModels()
@@ -99,12 +101,13 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         binding.ivBack.setOnClickListener {
             findNavController().navigateUp()
         }
-        val rootView = requireActivity().findViewById<View>(R.id.whiteBackgroundOverlay)
 
         binding.cvNotificationSetting.setOnClickListener {
-            rootView.visibility = View.VISIBLE
-            bottomSheet.show(parentFragmentManager, EditPriceBottomSheetFragment.TAG)
+            if (parentFragmentManager.findFragmentByTag(EditPriceDialogFragment.TAG) == null) {
+                bottomSheet.show(parentFragmentManager, EditPriceDialogFragment.TAG)
+            }
         }
+        binding.ivLikeBtn.expandTouchArea(100)
         binding.ivLikeBtn.setOnClickListener {
             isHeartFilled = !isHeartFilled
             if (isHeartFilled) {
@@ -180,14 +183,14 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
 
         val highPriceDataSet = LineDataSet(adjustedHighPriceEntries, "최고가").apply {
-            color = Color.RED
+            color = Color.parseColor("#C9C9C9")
             lineWidth = 2f
             setDrawCircles(false)
             setDrawValues(false)
         }
 
         val lowPriceDataSet = LineDataSet(adjustedLowPriceEntries, "최저가").apply {
-            color = Color.parseColor("#C9C9C9")
+            color = Color.RED
             lineWidth = 2f
             setDrawCircles(false)
             setDrawValues(false)
@@ -219,7 +222,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
 
         lineChart.apply {
-            data = LineData(highPriceDataSet, lowPriceDataSet)
+            data = LineData(highPriceDataSet,lowPriceDataSet)
             description.isEnabled = false
             legend.isEnabled = false
             axisRight.isEnabled = false
@@ -278,6 +281,9 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                         url = productDetail.productDetailInfo.coupangUrl
                         setupLineChart(productDetail.productDetailInfo.priceHistory)
                         isHeartFilled = productDetail.productDetailInfo.liked
+                        binding.ivLikeBtn.visibility = View.VISIBLE
+                        binding.ivStar.visibility = View.VISIBLE
+                        binding.chartPriceGraph.visibility = View.VISIBLE
                         if(isHeartFilled){
                             binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)
                             binding.cvNotificationSetting.visibility = View.VISIBLE
@@ -304,4 +310,16 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         }
     }
 
+    fun View.expandTouchArea(extraPadding: Int) {
+        val parent = this.parent as View
+        parent.post {
+            val rect = Rect()
+            this.getHitRect(rect)
+            rect.top -= extraPadding
+            rect.bottom += extraPadding
+            rect.left -= extraPadding
+            rect.right += extraPadding
+            parent.touchDelegate = TouchDelegate(rect, this)
+        }
+    }
 }

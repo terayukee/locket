@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.navigation.NavController
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ssafy.locket.model.graph.Product
@@ -42,3 +43,4 @@ class ProductAdapter(var productList: List<Product>, private val navController: 
         return productList.size
     }
 }
+
