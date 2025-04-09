@@ -87,7 +87,7 @@ public class ProductService {
         // 사용자 상품 정보
         ProductUserPreference userPreference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
-                .orElse(new ProductUserPreference(null, product, userId, false, false, null, null));
+                .orElse(new ProductUserPreference(null, product, userId, false, false, null, null, null));
 
         // 가격 히스토리 조회
         List<PriceHistory> priceHistories = priceHistoryRepository.findByProductIdOrderByPriceDateAsc(productId);
@@ -158,6 +158,7 @@ public class ProductService {
                     .isAlert(false)
                     .alertPrice(null)
                     .createdAt(LocalDateTime.now())
+                    .updatedAt(LocalDateTime.now())
                     .build();
             newLikeStatus = true;
         }
@@ -180,7 +181,7 @@ public class ProductService {
 
         // 정렬된 찜 목록 가져오기
         List<ProductUserPreference> preferences = productUserPreferenceRepository
-                .findByUserIdAndIsLikedTrueOrderByCreatedAtAsc(userId);
+                .findByUserIdAndIsLikedTrueOrderByUpdatedAtAsc(userId);
 
         // DTO 변환
         List<ProductSummaryDTO> likedProducts = preferences.stream()
@@ -219,7 +220,7 @@ public class ProductService {
 
         ProductUserPreference preference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
-                .orElse(new ProductUserPreference(null, product, userId, false, false, null, null));
+                .orElse(new ProductUserPreference(null, product, userId, false, false, null, null, null));
 
         if (Boolean.TRUE.equals(isAlert)) {
             preference.setAlertPrice(alertPrice);
