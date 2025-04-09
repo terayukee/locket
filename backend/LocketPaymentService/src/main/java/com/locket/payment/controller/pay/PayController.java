@@ -77,7 +77,7 @@ public class PayController {
             )
     })
     public ResponseEntity<PaymentResponse> processPayment(
-            @RequestBody PaymentRequest request
+            @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
         return payService.processPayment(request);
     }
@@ -170,7 +170,7 @@ public class PayController {
             )
     )
     public ResponseEntity<?> verifyPaymentPassword(
-            @RequestBody PaymentPasswordRequest passwordRequest
+            @org.springframework.web.bind.annotation.RequestBody PaymentPasswordRequest passwordRequest
     ) {
         boolean isValid = payService.verifyPaymentPassword(passwordRequest);
         return ResponseEntity.ok(Map.of(
