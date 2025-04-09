@@ -1,5 +1,6 @@
 package com.locket.user.service.budget;
 
+import com.locket.payment.dto.PaymentHistoryDto;
 import com.locket.user.domain.budget.dto.BudgetMonthlyStatusDto;
 import com.locket.user.domain.budget.dto.BudgetSetRequestDto;
 import com.locket.user.domain.budget.dto.BudgetSetResponseDto;
@@ -7,7 +8,6 @@ import com.locket.user.domain.budget.dto.BudgetStatusResponseDto;
 import com.locket.user.domain.budget.entity.Goals;
 import com.locket.user.domain.budget.repository.GoalsRepository;
 import com.locket.user.domain.budget.repository.PaymentTransactionRepository;
-import com.locket.user.domain.payment.dto.PaymentHistoryDto;
 import com.locket.user.feign.PaymentHistoryFeignClient;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +31,12 @@ public class BudgetService {
     @Transactional
     public BudgetSetResponseDto setMonthlyBudget(BudgetSetRequestDto requestDto) {
 
+        final int MAX_BUDGET_AMOUNT = 1_000_000_000;
+
+        if (requestDto.getAmount() >= MAX_BUDGET_AMOUNT) {
+            throw new IllegalArgumentException("예산 목표 설정 금액은 10억 원까지 가능합니다.");
+        }
+
         LocalDateTime now = LocalDateTime.now();
         int currentYear = now.getYear();
         int currentMonth = now.getMonthValue();
@@ -50,6 +56,8 @@ public class BudgetService {
             goalEntity = Goals.builder()
                     .userId(requestDto.getUserId())
                     .goalAmount(requestDto.getAmount())
+                    .goalYear(currentYear)
+                    .goalMonth(currentMonth)
                     .isAchieved(false)
                     .createdAt(now)
                     .build();
@@ -94,8 +102,13 @@ public class BudgetService {
             }
 
             // 진행률 계산
-            BigDecimal progress = totalUsed.multiply(BigDecimal.valueOf(100))
-                    .divide(BigDecimal.valueOf(goalAmount), 2, RoundingMode.HALF_UP);
+            BigDecimal progress;
+            if (goalAmount <= 0) {
+                progress = BigDecimal.ZERO;
+            } else {
+                progress = totalUsed.multiply(BigDecimal.valueOf(100))
+                        .divide(BigDecimal.valueOf(goalAmount), 2, RoundingMode.HALF_UP);
+            }
 
             BudgetMonthlyStatusDto monthlyDto = BudgetMonthlyStatusDto.builder()
                     .year(year)

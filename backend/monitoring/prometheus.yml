@@ -1,0 +1,26 @@
+global:
+  scrape_interval: 15s
+
+scrape_configs:
+  - job_name: 'spring-actuator'
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets:
+          - '172.26.5.222:8761'                        # LocketDiscovery
+          - '172.26.5.222:8082'                        # LocketUserService
+          - '172.26.5.222:8081'                        # LocketPaymentService
+          - 'spring-locket_api-gateway:8080'           # LocketApiGateway
+          - 'spring-locket-elasticsearch:8083'         # LocketElasticServices
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['monitoring_cadvisor:8080']
+
+  - job_name: 'node-exporter'
+    static_configs:
+      - targets: ['monitoring_node-exporter:9100']
+
+  - job_name: 'ai-service'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['spring-locket-ai-service:8500']

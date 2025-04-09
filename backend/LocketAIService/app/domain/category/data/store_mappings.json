@@ -1,0 +1,576 @@
+{
+  "chain_stores": {
+    "CAFE_스타벅스": {
+      "names": ["스타벅스", "STARBUCKS", "(주)스타벅스커피코리아"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_이디야": {
+      "names": ["이디야", "EDIYA", "(주)이디야커피"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_투썸플레이스": {
+      "names": ["투썸플레이스", "TWOSOME", "(주)투썸플레이스"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_빽다방": {
+      "names": ["빽다방", "PAIK'S COFFEE", "(주)빽다방"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_카페베네": {
+      "names": ["카페베네", "CAFÉ BENÉ", "(주)카페베네"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_폴바셋": {
+      "names": ["폴바셋", "PAUL BASSA", "(주)폴바셋"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_메가커피": {
+      "names": ["메가커피", "MEGA COFFEE"],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_컴포즈커피": {
+      "names": [
+        "컴포즈커피",
+        "COMPOSE COFFEE",
+        "(주)컴포즈커피"
+      ],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_할리스": {
+      "names": [
+        "할리스",
+        "HOLLYS",
+        "할리스커피",
+        "(주)할리스에프앤비"
+      ],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+    "CAFE_더벤티": {
+      "names": [
+        "더벤티",
+        "THE VENTI",
+        "(주)더벤티"
+      ],
+      "category": "카페/디저트",
+      "needs_item_check": false
+    },
+
+    "FOOD_맘스터치": {
+      "names": [
+        "맘스터치",
+        "MOMS TOUCH",
+        "(주)해마로푸드서비스"
+      ],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_BHC": {
+      "names": [
+        "BHC",
+        "비에이치씨",
+        "(주)BHC"
+      ],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_교촌치킨": {
+      "names": [
+        "교촌치킨",
+        "교촌",
+        "KYOCHON",
+        "(주)교촌에프앤비"
+      ],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_굽네": {
+      "names": [
+        "굽네치킨",
+        "굽네",
+        "GOOBNE",
+        "(주)지앤푸드"
+      ],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_BBQ": {
+      "names": [
+        "BBQ",
+        "비비큐",
+        "(주)제너시스비비큐"
+      ],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_한솥도시락": {
+      "names": [
+        "한솥도시락",
+        "한솥",
+        "(주)한솥"
+      ],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_버거킹": {
+      "names": ["버거킹", "BURGER KING", "(주)비케이알"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_롯데리아": {
+      "names": ["롯데리아", "LOTTERIA", "(주)롯데GRS"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_맥도날드": {
+      "names": ["맥도날드", "MCDONALD'S", "(주)한국맥도날드"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_피자헛": {
+      "names": ["피자헛", "PIZZA HUT", "(주)한국피자헛"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_도미노피자": {
+      "names": ["도미노피자", "DOMINO'S", "(주)청오디피케이"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_파파존스": {
+      "names": ["파파존스", "PAPA JOHN'S", "(주)한국파파존스"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_KFC": {
+      "names": ["KFC", "(주)케이에프씨코리아"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_본죽": {
+      "names": ["본죽", "BONJUK", "(주)본아이에프"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_신전떡볶이": {
+      "names": ["신전떡볶이", "SHINJEON"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_죠스떡볶이": {
+      "names": ["죠스떡볶이", "JOES TTEOKBOKKI"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_홍콩반점": {
+      "names": ["홍콩반점", "홍콩반점0410", "(주)더본코리아"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_백스비어": {
+      "names": ["백스비어", "BECK'S BEER"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_피자스쿨": {
+      "names": ["피자스쿨", "PIZZA SCHOOL"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_피자에땅": {
+      "names": ["피자에땅", "PIZZA ETANG"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_미스터피자": {
+      "names": ["미스터피자", "MR PIZZA", "(주)MP그룹"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_본도시락": {
+      "names": ["본도시락", "BONSIRAK", "(주)본아이에프"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_한솥": {
+      "names": ["한솥", "한솥도시락", "(주)한솥"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_놀부": {
+      "names": ["놀부보쌈", "놀부부대찌개", "(주)놀부"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_명륜진사갈비": {
+      "names": ["명륜진사갈비", "MYEONGRYUN JINSAGALBI", "(주)명륜당"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_두찜": {
+      "names": ["두찜", "DOO JJIM", "(주)두찜"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_땅스부대찌개": {
+      "names": ["땅스부대찌개", "TANG'S Budae Jjigae", "(주)땅스푸드"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_네네치킨": {
+      "names": ["네네치킨", "NENE CHICKEN", "(주)혜인식품"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_노랑통닭": {
+      "names": ["노랑통닭", "Norang Tongdak", "(주)노랑푸드"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_멕시카나": {
+      "names": ["멕시카나", "Mexicana", "(주)멕시카나"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_페리카나": {
+      "names": ["페리카나", "Pelicana", "(주)페리카나"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_피자알볼로": {
+      "names": ["피자알볼로", "Pizza Alvolo", "(주)알볼로에프앤씨"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_연안식당": {
+      "names": ["연안식당", "YEONAN SIKDANG", "(주)디딤"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+
+
+    "SHOP_위메프": {
+      "names": [
+        "위메프",
+        "WEMAKEPRICE",
+        "(주)위메프"
+      ],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_티몬": {
+      "names": [
+        "티몬",
+        "TMON",
+        "(주)티켓몬스터"
+      ],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_CU": {
+      "names": ["CU", "씨유", "BGF리테일"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_GS25": {
+      "names": ["GS25", "(주)지에스리테일"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_세븐일레븐": {
+      "names": ["세븐일레븐", "SEVEN ELEVEN"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_이마트24": {
+      "names": ["이마트24", "EMART24"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_이마트": {
+      "names": ["이마트", "EMART", "(주)이마트"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_홈플러스": {
+      "names": ["홈플러스", "HOMEPLUS", "(주)홈플러스"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_롯데마트": {
+      "names": ["롯데마트", "LOTTEMART", "(주)롯데마트"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_쿠팡": {
+      "names": ["쿠팡", "COUPANG", "(주)쿠팡"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_11번가": {
+      "names": ["11번가", "11ST", "(주)11번가"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_지마켓": {
+      "names": ["지마켓", "G마켓", "GMARKET"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_라온": {
+      "names": ["라온"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_다이소": {
+      "names": ["다이소", "DAISO"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_인터파크": {
+      "names": ["인터파크", "INTERPARK"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "TRANS_철도공사": {
+      "names": ["한국철도공사", "KORAIL", "코레일", "KTX", "ITX", "무궁화호"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_SR": {
+      "names": ["SR", "SRT", "(주)에스알"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_티머니": {
+      "names": ["티머니", "TMONEY", "(주)티머니"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_레일플러스": {
+      "names": ["레일플러스", "RAILPLUS"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_서울교통": {
+      "names": ["서울교통공사", "SEOUL METRO"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_지방교통": {
+      "names": ["부산교통공사", "대구도시철도공사", "인천교통공사", "광주도시철도공사", "대전도시철도공사"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_카카오모빌리티": {
+      "names": ["카카오모빌리티", "KMOBILITY", "카카오T", "카카오택시"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_기타택시": {
+      "names": ["우티", "UT", "T맵택시", "TMAP TAXI", "마카롱택시"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_쏘카": {
+      "names": ["쏘카", "SOCAR", "(주)쏘카"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_그린카": {
+      "names": ["그린카", "GREENCAR", "(주)그린카"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_피플카": {
+      "names": ["피플카", "PEOPLE CAR"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_렌터카": {
+      "names": ["롯데렌터카", "LOTTE RENTAL", "SK렌터카", "AJ렌터카"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_케이카": {
+      "names": ["케이카", "K CAR"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "TRANS_주차": {
+      "names": ["파킹클라우드", "PARKING CLOUD", "아이파킹", "IPARKING", "모두의주차장", "시그넷파킹"],
+      "category": "교통",
+      "needs_item_check": false
+    },
+    "LIFE_SK텔레콤": {
+      "names": ["SK텔레콤", "SKT", "(주)SK텔레콤"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_KT": {
+      "names": ["KT", "(주)KT"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_LG유플러스": {
+      "names": ["LG유플러스", "LGU+", "(주)엘지유플러스"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_알뜰폰": {
+      "names": ["SK텔링크", "KT엠모바일", "LG헬로모바일", "헬로모바일", "프리티", "스노우맨", "이야기모바일", "KB국민카드알뜰폰"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_SK브로드밴드": {
+      "names": ["SK브로드밴드", "(주)SK브로드밴드"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_케이블방송": {
+      "names": ["KT올레tv", "LG헬로비전", "딜라이브", "D'LIVE", "CJ헬로", "티브로드", "TBROAD"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_전력공사": {
+      "names": ["한국전력공사", "KEPCO"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_수자원공사": {
+      "names": ["한국수자원공사", "K-WATER"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_가스공사": {
+      "names": ["한국가스공사", "KOGAS"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_도시가스": {
+      "names": ["서울도시가스", "인천도시가스", "경동도시가스", "예스코", "YESCO", "삼천리도시가스"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_상수도": {
+      "names": ["서울상수도", "부산상수도", "대구상수도", "인천상수도"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "LIFE_관리비": {
+      "names": ["이지스밸류플러스", "한국부동산원", "이빌린", "벨라트릭스"],
+      "category": "생활",
+      "needs_item_check": false
+    },
+    "FOOD_배민": {
+      "names": ["배달의민족", "BAEMIN", "(주)우아한형제들"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_요기요": {
+      "names": ["요기요", "YOGIYO", "(주)위대한상상"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_쿠팡이츠": {
+      "names": ["쿠팡이츠", "COUPANG EATS"],
+      "category": "식비",
+      "needs_item_check": false
+    },
+    "FOOD_기타배달": {
+      "names": ["배달특급", "띵동", "DDINGDONG"],
+      "category": "식비",
+      "needs_item_check": false
+    }
+  },
+
+  "category_keywords": {
+    "카페/디저트": [
+      "카페",
+      "디저트",
+      "케이크",
+      "빙수",
+      "스무디",
+      "라떼",
+      "제과점",
+      "베이커리",
+      "커피",
+      "아이스크림",
+      "브런치",
+      "커피숍", "생과일", "쿠키", "와플"
+    ],
+    "쇼핑": [
+      "스토어",
+      "할인점",
+      "편의점",
+      "드럭스토어",
+      "백화점",
+      "몰",
+      "마트",
+      "아울렛",
+      "창고형", "리빙", "잡화", "화장품", "문구", "홈쇼핑", "의류", "가전", "생활용품", "패션"
+    ],
+    "식비": [
+      "초밥",
+      "분식",
+      "피자",
+      "족발",
+      "레스토랑",
+      "치킨",
+      "짬뽕",
+      "도시락",
+      "쭈꾸미",
+      "김밥",
+      "돈까스",
+      "삼겹살",
+      "라멘",
+      "버거",
+      "식당",
+      "보쌈",
+      "회",
+      "국밥",
+      "짜장",
+      "식당",
+      "막창",
+      "횟집",
+      "토스트",
+      "김치",
+      "찌개",
+      "복어",
+      "샤브샤브", "칼국수", "국수", "중식", "한식", "양식", "찜", "덮밥", "탕", "면", "바베큐", "포차", "족발보쌈"
+
+    ],
+    "교통": [
+      "택시",
+      "버스",
+      "지하철",
+      "주차장",
+      "기차", "셔틀", "셔틀버스", "환승", "고속버스"
+    ],
+    "생활": [
+      "통신",
+      "가스",
+      "전기",
+      "수도",
+      "게임",
+      "PC",
+      "보드게임",
+      "뮤지컬",
+      "병원",
+      "약국",
+      "영화",
+      "뮤지컬",
+      "극장",
+      "연극",
+      "만화", "의료", "진료", "건강검진", "동물병원", "미용", "세탁", "헬스장", "필라테스", "문화센터"
+    ]
+  }
+}

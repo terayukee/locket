@@ -65,6 +65,15 @@ pipeline {
                                     echo "❌ 빌드 실패: backend-elasticsearch - ${err}"
                                 }
                             }
+                            if (changes.any { it.startsWith("backend/LocketAIService/") }) {
+                                echo "🔍 변경 감지됨: backend-ai"
+                                try {
+                                    build job: 'backend-ai'
+                                    echo "✅ 빌드 성공: backend-ai"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-ai - ${err}"
+                                }
+                            }
                         }
 
                         // 2. 변경 감지 준비

@@ -18,4 +18,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
   CMD curl -f http://localhost:8083/actuator/health || exit 1
 
 # 6. 애플리케이션 실행 명령어
-ENTRYPOINT ["java", "-jar", "app.jar"]
+#ENTRYPOINT ["java", "-jar", "app.jar", "--spring.profiles.active=prod"]
+ENTRYPOINT ["java", "-Dserver.tomcat.relaxed-host-chars=_", "-Dserver.tomcat.reject-illegal-header=false", "-jar", "app.jar", "--spring.profiles.active=prod"]

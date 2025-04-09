@@ -2,6 +2,7 @@ package com.locket.user.controller.notification;
 
 import com.locket.kafka.event.PaymentSuccessEvent;
 import com.locket.user.domain.notification.dto.BudgetTestRequest;
+import com.locket.user.security.RequiresUser;
 import com.locket.user.service.notification.BudgetNotificationService;
 import com.locket.user.service.notification.BudgetNotificationService.NotificationResult;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,7 +30,8 @@ import java.util.Map;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/notification/test")
+@RequestMapping("/notification/test")
+@RequiresUser(ownerOnly = true)
 @Tag(name = "🔔 FCM 알림 테스트", description = "FCM 예산 초과 알림 테스트용 API")
 public class BudgetNotificationTestController {
 

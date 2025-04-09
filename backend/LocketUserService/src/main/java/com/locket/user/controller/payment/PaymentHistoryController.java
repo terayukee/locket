@@ -1,11 +1,12 @@
 package com.locket.user.controller.payment;
 
+import com.locket.user.security.RequiresUser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/payment/history")
+@RequestMapping("/payment/history")
 @RequiredArgsConstructor
 public class PaymentHistoryController {
 

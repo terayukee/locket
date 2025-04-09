@@ -14,7 +14,10 @@ public interface BankAccountRepository extends JpaRepository<BankAccount, Intege
     // 계좌 ID를 통해 계좌 정보를 조회
     Optional<BankAccount> findById(Integer accountId);
 
-    // 동시성 제어 (비관적 락 적용)
-    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    // 🔁 기존 비관적 락은 제거
+    // @Lock(LockModeType.PESSIMISTIC_WRITE)
+    // Optional<BankAccount> findByAccountId(Integer accountId);
+
+    // ✅ 낙관적 락에서는 일반 조회 메서드 사용 가능
     Optional<BankAccount> findByAccountId(Integer accountId);
 }

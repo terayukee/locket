@@ -45,7 +45,6 @@ public class CharacterService {
 
         ToyInfoDto toyInfo = ToyInfoDto.builder()
                 .isAvailable(toyAvailable)
-                .nextAvailableTime(nextAvailableTime)
                 .remainingTimeMinutes(remainingMinutes)
                 .build();
 
@@ -108,7 +107,15 @@ public class CharacterService {
             levelUp = true;
         }
 
-        // 저장
+        // 장난감 남은 시간 계산
+        long remainingMinutes = 0;
+        boolean toyAvailable = character.isToyAvailableNow();
+
+        if (!toyAvailable && character.getNextToyAvailableTime() != null) {
+            remainingMinutes = ChronoUnit.MINUTES.between(LocalDateTime.now(), character.getNextToyAvailableTime());
+            if (remainingMinutes < 0) remainingMinutes = 0;
+        }
+
         characterRepository.save(character);
 
         return ExpActionResponse.builder()
@@ -119,6 +126,8 @@ public class CharacterService {
                 .level(level)
                 .expPercentage(expPercentage)
                 .levelUp(levelUp)
+                .toyRemainingTimeMinutes(remainingMinutes)
+                .toyAvailable(toyAvailable)
                 .build();
     }
 
@@ -131,23 +140,18 @@ public class CharacterService {
         return getCharacterInfo(userId);
     }
 
-    // (단순히 캐릭터만 생성하고 싶다면 이 메서드를 직접 호출)
-    @Transactional
-    public void createCharacter(Long userId) {
-        if (characterRepository.existsByUserId(userId)) {
-            throw new IllegalArgumentException("이미 캐릭터를 보유하고 있습니다.");
-        }
-        createNewCharacter(userId);
+    private Character createNewCharacter(Long userId) {
+        return createNewCharacter(userId, 0);
     }
 
-    private Character createNewCharacter(Long userId) {
+    private Character createNewCharacter(Long userId, int initialFoodCount) {
         String characterName = generateRandomCharacterName();
         Character character = Character.builder()
                 .characterName(characterName)
                 .userId(userId)
                 .exp(0)
                 .createdAt(LocalDateTime.now())
-                .foodCount(0)
+                .foodCount(initialFoodCount)
                 .toyAvailable(true)
                 .nextToyAvailableTime(null)
                 .build();
@@ -158,12 +162,6 @@ public class CharacterService {
     public RewardDto completeCharacterAndDelete(Long userId) {
         Character character = characterRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
-
-        // 최대 레벨 체크
-        int level = calculateLevel(character.getExp());
-        if (level < PetConstants.MAX_LEVEL) {
-            throw new IllegalArgumentException("캐릭터가 최대 레벨에 도달하지 않았습니다.");
-        }
 
         // 캐릭터 이름과 사료 개수 저장
         String characterName = character.getCharacterName();
@@ -201,7 +199,7 @@ public class CharacterService {
     private String generateRandomCharacterName() {
         String personality = PetConstants.PERSONALITY_LIST.get(random.nextInt(PetConstants.PERSONALITY_LIST.size()));
         String adjective = PetConstants.ADJECTIVE_LIST.get(random.nextInt(PetConstants.ADJECTIVE_LIST.size()));
-        return personality + " " + adjective;
+        return personality + " " + adjective + "냥";
     }
 
     // 레벨 계산
@@ -231,5 +229,18 @@ public class CharacterService {
             return 0;
         }
         return PetConstants.LEVEL_THRESHOLDS[level] - PetConstants.LEVEL_THRESHOLDS[level - 1];
+    }
+
+    @Transactional
+    public CharacterDeleteResponseDto deleteCharacter(Long userId) {
+        Character character = characterRepository.findByUserId(userId)
+                .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
+
+        characterRepository.delete(character);
+
+        return CharacterDeleteResponseDto.builder()
+                .userId(userId)
+                .deleted(true)
+                .build();
     }
 }

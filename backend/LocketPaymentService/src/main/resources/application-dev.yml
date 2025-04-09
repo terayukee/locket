@@ -16,3 +16,15 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka  # 로컬 Eureka 서버 사용
+
+swagger:
+  server-url: http://localhost:8080/api/payment
+
+feign:
+  client:
+    elasticsearch-service:
+      url: http://localhost:8083
+
+logging:
+  level:
+    com.locket: INFO

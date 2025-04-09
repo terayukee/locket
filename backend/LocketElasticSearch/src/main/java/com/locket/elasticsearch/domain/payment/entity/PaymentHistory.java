@@ -10,12 +10,14 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import java.util.Map;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ToString
 @Document(indexName = "payment_history")
 public class PaymentHistory {
 
@@ -56,7 +58,7 @@ public class PaymentHistory {
     private String storeName;  // ✅ 매장명 필드 추가
 
     @Field(type = FieldType.Boolean)
-    private boolean receiptUploaded;  // ✅ 영수증 업로드 여부 추가
+    private boolean receiptUploaded = false;  // ✅ 영수증 업로드 여부 추가 + 기본값 false 추가
 
     @Field(type = FieldType.Keyword)
     private String paymentStatus;
@@ -77,6 +79,16 @@ public class PaymentHistory {
     @Field(type = FieldType.Nested)
     private List<OrderDetail> orders;
 
+    @Field(type = FieldType.Boolean)
+    private boolean needItemCheck; // 카테고리 분류 관련(품목 데이터 분류 필요 여부)
+
+    @Field(type = FieldType.Nested)
+    private List<ReceiptItem> receiptItems;
+
+    @Field(type = FieldType.Object)
+    private Map<String, Integer> categoryAmount;
+
+
     @Getter
     @Setter
     @NoArgsConstructor
@@ -95,5 +107,27 @@ public class PaymentHistory {
 
         @Field(type = FieldType.Keyword)
         private String paymentOrderStatus;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ReceiptItem {
+        @Field(type = FieldType.Long)
+        private Long itemId;
+
+        @Field(type = FieldType.Keyword)
+        private String itemName;
+
+        @Field(type = FieldType.Integer)
+        private int itemQuantity;
+
+        @Field(type = FieldType.Integer)
+        private int itemAmount;
+
+        @Field(type = FieldType.Keyword)
+        private String itemCategory;
     }
 }

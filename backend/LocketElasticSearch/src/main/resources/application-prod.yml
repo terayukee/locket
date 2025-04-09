@@ -1,10 +1,33 @@
 server:
   port: 8083
+  tomcat:
+    relaxed-host-chars: "_"
+    reject-illegal-header: false
+
+ELASTICSEARCH:
+  URIS: ${ELASTICSEARCH_URIS}
+  USERNAME: ${ELASTICSEARCH_USERNAME}
+  PASSWORD: ${ELASTICSEARCH_PASSWORD}
 
 spring:
+  application:
+    name: elasticsearch-service
   config:
     activate:
       on-profile: prod
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            exposedHeaders: "Authorization, Content-Disposition"
 
   kafka:
     consumer:
@@ -15,8 +38,19 @@ spring:
     username: ${ELASTICSEARCH_USERNAME}
     password: ${ELASTICSEARCH_PASSWORD}
 
+  locket:
+    receipt:
+      service:
+        url: https://j12d204.p.ssafy.io:8500
+
 eureka:
+  instance:
+    instance-id: elasticsearch-service:${server.port}
+    prefer-ip-address: false
+    hostname: elasticsearch-service
   client:
+    register-with-eureka: true
+    fetch-registry: true
     service-url:
       defaultZone: http://j12d204.p.ssafy.io:8761/eureka
 
@@ -24,5 +58,44 @@ management:
   endpoints:
     web:
       exposure:
-        include: health
+        include: health, info, prometheus, gateway, readiness, liveness
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
 
+#springdoc:
+#  api-docs:
+#    enabled: true
+#    path: /elasticsearch-docs
+#  swagger-ui:
+#    path: /elasticsearch-docs/swagger-ui.html
+#  default-consumes-media-type: application/json
+#  default-produces-media-type: application/json
+
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /v3/api-docs
+  swagger-ui:
+    path: /v3/api-docs/swagger-ui.html
+#    config-url: /v3/api-docs/swagger-config
+
+swagger:
+  server-url: https://j12d204.p.ssafy.io/api/elasticsearch
+
+locket:
+  ai:
+    service:
+      url: http://j12d204.p.ssafy.io:8500

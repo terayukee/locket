@@ -1,9 +1,16 @@
 server:
-  port: 0  # 랜덤 포트 사용
+  port: 8081  # 랜덤 포트 사용
 
 spring:
   application:
-    name: payment-service
+    name: PAYMENT-SERVICE
+  datasource:
+    hikari:
+      maximum-pool-size: 15   # 병렬 요청 수 대비 충분한 값
+      minimum-idle: 30
+      idle-timeout: 300000     # 5분
+      max-lifetime: 1800000    # 30분
+      connection-timeout: 3000 # 3초 (너무 길게 대기하지 않게)
   profiles:
     active: dev
     include: key  # application-key.yml 포함 (DB, Kafka 정보)
@@ -36,12 +43,23 @@ management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 springdoc:
   api-docs:
     enabled: true
-    path: /api/payment/v3/api-docs
+    path: /v3/api-docs
+  swagger-ui:
+    path: /payment-docs/swagger-ui.html
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
 

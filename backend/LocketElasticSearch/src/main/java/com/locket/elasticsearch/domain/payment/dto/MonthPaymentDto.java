@@ -4,12 +4,13 @@ import lombok.*;
 
 import java.math.BigDecimal;
 
-@Getter
-@Setter
+@Getter @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class MonthPaymentDto {
+    private String id;
+    private int day;
     private String paymentCategory;
     private String cardName;
     private String storeName;
