@@ -5,6 +5,7 @@ import re
 from typing import Dict
 from app.config.settings import settings
 from openai import AsyncOpenAI
+import unicodedata
 
 from ..constant.category_const import Category
 from ..dto.category_dto import CategoryRequestDto, CategoryResponseDto
@@ -99,34 +100,42 @@ class CategoryService:
             raise CategoryException(error_code=CategoryErrorCode.CLASSIFICATION_ERROR)
 
     def _normalize_store_name(self, name: str) -> str:
-        """상호명 전처리: 괄호 제거, 특수문자 제거, 공백 정리"""
+        """상호명 전처리: 괄호 제거, 특수문자 제거, 공백 정리, 유니코드 정규화"""
+        name = unicodedata.normalize("NFC", name)    # 한글 정규화
         name = name.upper()
-        name = re.sub(r"\([^)]*\)", "", name)       # 괄호 제거
-        name = re.sub(r"[^\w\s]", "", name)         # 특수문자 제거
-        name = re.sub(r"\s+", " ", name).strip()    # 공백 정리
+        name = re.sub(r"\([^)]*\)", "", name)        # 괄호 제거
+        name = re.sub(r"[^\w\s]", "", name)          # 특수문자 제거
+        name = re.sub(r"\s+", " ", name).strip()     # 공백 정리
         return name
 
     async def _classify_category(self, store_name: str) -> str:
         store_name_upper = self._normalize_store_name(store_name)
+        logger.debug(f"[매핑 디버그] 정규화된 상호명: {store_name_upper}")
         matched_by_brand = False
         matched_by_keyword = False
 
         # 1. 브랜드 매칭
         for brand_key, brand_info in self.mappings['chain_stores'].items():
-            if any(name.upper() in store_name_upper for name in brand_info['names']):
-                category = brand_info['category']
-                logger.info(f"브랜드 매칭 성공: '{store_name}' → 카테고리 '{category}' (브랜드 키: {brand_key})")
-                matched_by_brand = True
-                return category
+            for name in brand_info['names']:
+                normalized_name = self._normalize_store_name(name)
+                if normalized_name in store_name_upper:
+                    category = brand_info['category']
+                    logger.info(f"브랜드 매칭 성공: '{store_name}' → 카테고리 '{category}' (브랜드 키: {brand_key})")
+                    logger.debug(f"[매핑 디버그] '{store_name_upper}'에 '{normalized_name}' 포함 여부 확인 → 매칭됨")
+                    matched_by_brand = True
+                    return category
 
         # 2. 키워드 매칭
         for category, keywords in self.mappings['category_keywords'].items():
-            if any(keyword.upper() in store_name_upper for keyword in keywords):
-                logger.info(f"키워드 매칭 성공: '{store_name}' → 카테고리 '{category}' (키워드 기반)")
-                matched_by_keyword = True
-                return category
+            for keyword in keywords:
+                normalized_keyword = self._normalize_store_name(keyword)
+                if normalized_keyword in store_name_upper:
+                    logger.info(f"키워드 매칭 성공: '{store_name}' → 카테고리 '{category}' (키워드: {keyword})")
+                    logger.debug(f"[매핑 디버그] '{store_name_upper}'에 '{normalized_keyword}' 포함 여부 확인 → 매칭됨")
+                    matched_by_keyword = True
+                    return category
 
-        # 3. fallback 룰 적용 시도
+        # 3. fallback 룰
         fallback_map = {
             "커피": Category.CAFE.value,
             "치킨": Category.FOOD.value,
@@ -141,11 +150,11 @@ class CategoryService:
         }
 
         for keyword, fallback_category in fallback_map.items():
-            if keyword.upper() in store_name_upper:
+            if self._normalize_store_name(keyword) in store_name_upper:
                 logger.info(f"'기타' fallback 적용 - 키워드 '{keyword}' 발견 → 카테고리 '{fallback_category}'")
                 return fallback_category
 
-        # 4. LLM 분류 시도
+        # 4. LLM fallback
         try:
             category = await self.llm_classifier.classify_store_name(store_name)
             logger.info(f"LLM fallback 분류 성공: '{store_name}' → '{category}'")
