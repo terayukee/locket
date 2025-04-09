@@ -6,6 +6,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.AllArgsConstructor;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(
         name = "product_user_preferences",
@@ -32,4 +34,7 @@ public class ProductUserPreference {
     private boolean isAlert;
 
     private Integer alertPrice;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

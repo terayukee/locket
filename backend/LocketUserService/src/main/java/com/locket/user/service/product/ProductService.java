@@ -89,7 +89,7 @@ public class ProductService {
         // 사용자 상품 정보
         ProductUserPreference userPreference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
-                .orElse(new ProductUserPreference(null, product, userId, false, false, null));
+                .orElse(new ProductUserPreference(null, product, userId, false, false, null, null));
 
         // 가격 히스토리 조회
         List<PriceHistory> priceHistories = priceHistoryRepository.findByProductIdOrderByPriceDateAsc(productId);
@@ -153,7 +153,7 @@ public class ProductService {
             preference.setLiked(newLikeStatus);
 
         } else {
-            preference = new ProductUserPreference(null, product, userId, true, false, null);
+            preference = new ProductUserPreference(null, product, userId, true, false, null, null);
             newLikeStatus = true;
         }
 
@@ -177,7 +177,9 @@ public class ProductService {
         int pageNumber = (page == null || page < 1) ? 0 : page - 1;
         int pageSize = (size == null || size <= 0) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
 
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Sort sort = Sort.by(Sort.Direction.ASC, "createdAt"); // 또는 preference.createdAt
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
 
         Page<ProductUserPreference> preferencesPage = productUserPreferenceRepository
                 .findByUserIdAndIsLikedTrue(userId, pageable);
@@ -219,7 +221,7 @@ public class ProductService {
 
         ProductUserPreference preference = productUserPreferenceRepository
                 .findByProductIdAndUserId(productId, userId)
-                .orElse(new ProductUserPreference(null, product, userId, false, false, null));
+                .orElse(new ProductUserPreference(null, product, userId, false, false, null, null));
 
         if (Boolean.TRUE.equals(isAlert)) {
             preference.setAlertPrice(alertPrice);
