@@ -1,6 +1,9 @@
 import requests
 import json
 from typing import Dict
+
+import unicodedata
+
 from app.config.settings import settings
 from ..exception.receipt_exception import ReceiptException
 from ..constant.receipt_error import ReceiptErrorCode
@@ -80,22 +83,39 @@ class OCRService:
             logger.error(f"OCR 처리 중 오류 발생: {str(e)}")
             raise ReceiptException(error_code=ReceiptErrorCode.OCR_ERROR)
 
+    def _clean_text(self, text: str) -> str:
+        """OCR 텍스트 후처리: 잘못 인식된 특수문자/숫자 보정"""
+        if not text:
+            return text
+        text = unicodedata.normalize("NFC", text)  # 한글 정규화
+        # 자주 발생하는 오타 패턴 교정
+        corrections = {
+            '화0트': '화이트',
+            '0트': '이트',
+            '보드마카세트(흑3개': '보드마카세트(흑3개입)',
+            '"': '',  # 따옴표
+            '.': '',  # 마침표
+            '(': '', ')': '',  # 괄호
+        }
+        for wrong, correct in corrections.items():
+            text = text.replace(wrong, correct)
+        return text.strip()
+
     def _parse_receipt_data(self, ocr_result: Dict) -> Dict:
         """OCR 결과 파싱"""
         try:
             receipt_data = ocr_result['images'][0]['receipt']['result']
 
-            # 상호명 추출
-            store_name = receipt_data.get('storeInfo', {}).get('name', {}).get('text', '알 수 없음')
+            # 상호명 정리 적용
+            store_name_raw = receipt_data.get('storeInfo', {}).get('name', {}).get('text', '알 수 없음')
+            store_name = self._clean_text(store_name_raw)
             logger.info(f"추출된 상호명: {store_name}")
 
-            # 상품 정보 추출
+            # 상품 정보
             items = []
             item_id = 1
             for subresult in receipt_data.get('subResults', []):
                 for item in subresult.get('items', []):
-
-                    # 수량 추출 - count가 없거나 비정상일 경우 기본값 1 사용
                     try:
                         quantity = int(item.get('count', {}).get('formatted', {}).get('value', 1))
                         if quantity <= 0:
@@ -104,7 +124,6 @@ class OCRService:
                         logger.warning(f"count 필드 누락 또는 비정상 값: 기본값 1 사용 - item: {item.get('name', {}).get('text', '이름 없음')}")
                         quantity = 1
 
-                    # 단가 추출 - unitPrice 없으면 price / quantity 계산 시도
                     try:
                         item_amount = int(item.get('price', {}).get('unitPrice', {}).get('formatted', {}).get('value'))
                         logger.info(f"영수증 형식 단가 추출: {item_amount}")
@@ -117,9 +136,13 @@ class OCRService:
                             logger.error(f"가격 정보를 찾을 수 없습니다: {str(e)}")
                             raise ReceiptException(error_code=ReceiptErrorCode.PARSING_ERROR)
 
+                    # 상품명 정리 적용
+                    raw_item_name = item.get('name', {}).get('text', '이름 없음')
+                    item_name = self._clean_text(raw_item_name)
+
                     item_data = {
                         'itemId': item_id,
-                        'itemName': item.get('name', {}).get('text', '이름 없음'),
+                        'itemName': item_name,
                         'itemQuantity': quantity,
                         'itemAmount': item_amount
                     }
@@ -127,13 +150,11 @@ class OCRService:
                     item_id += 1
                     logger.info(f"추출된 상품 정보: {item_data}")
 
-            # 총액 추출
+            # 총액
             try:
-                # OCR에서 인식된 실제 총액 사용
                 total_amount = int(receipt_data['totalPrice']['price']['formatted']['value'])
                 logger.info(f"OCR 인식된 총액: {total_amount}")
             except KeyError:
-                # 총액이 없는 경우 계산된 합계 사용
                 total_amount = sum(item['itemAmount'] * item['itemQuantity'] for item in items)
                 logger.info(f"계산된 총액: {total_amount}")
 
@@ -143,7 +164,6 @@ class OCRService:
                 'totalAmount': total_amount
             }
             logger.info(f"최종 파싱 결과: {json.dumps(parsed_data, indent=2, ensure_ascii=False)}")
-
             return parsed_data
 
         except KeyError as e:
