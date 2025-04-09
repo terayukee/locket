@@ -6,9 +6,9 @@ scrape_configs:
     metrics_path: '/actuator/prometheus'
     static_configs:
       - targets:
-          - 'spring-locket_discovery:8761'             # LocketDiscovery
-          - 'spring-locket_user-service:8082'          # LocketUserService
-          - 'spring-locket_payment-service:8081'       # LocketPaymentService
+          - '172.26.5.222:8761'                        # LocketDiscovery
+          - '172.26.5.222:8082'                        # LocketUserService
+          - '172.26.5.222:8081'                        # LocketPaymentService
           - 'spring-locket_api-gateway:8080'           # LocketApiGateway
           - 'spring-locket-elasticsearch:8083'         # LocketElasticServices
 

@@ -18,6 +18,7 @@ public class FeedbackAnalyzer {
         double totalSpent = data.getPaymentHistories().stream().mapToDouble(p -> p.getTotalAmount().doubleValue()).sum();
 
         List<FeedbackResult.CategoryBreakdown> breakdownList = data.getCategoryStats().stream()
+                .sorted(Comparator.comparingDouble(FeedbackCategoryStatDto::getAmount).reversed())
                 .map(stat -> FeedbackResult.CategoryBreakdown.builder()
                         .category(stat.getCategory())
                         .amount(stat.getAmount())
