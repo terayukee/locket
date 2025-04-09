@@ -122,19 +122,13 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                     if(getFeedback is GetFeedbackState.Success) {
                         Log.d(TAG,getFeedback.feedback.toString())
                         val feedback = getFeedback.feedback
-                        if(feedback.totalAmount.equals(financeSharedViewModel.selectedYearMonthTotalPayment.value)) {
-                            setupPieChart()
-                            binding.progressBar.visibility = View.GONE
-                            binding.groupAnalysis.visibility = View.VISIBLE
-                            binding.tvNoAnalysis.visibility = View.GONE
-                            loadPieChartData(feedback.categoryBreakdownList)
-                            binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
-                            categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
-                        } else {
-                            binding.progressBar.visibility = View.GONE
-                            binding.tvNoAnalysis.visibility = View.VISIBLE
-                            binding.groupAnalysis.visibility = View.GONE
-                        }
+                        setupPieChart()
+                        binding.progressBar.visibility = View.GONE
+                        binding.groupAnalysis.visibility = View.VISIBLE
+                        binding.tvNoAnalysis.visibility = View.GONE
+                        loadPieChartData(feedback.categoryBreakdownList)
+                        binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
+                        categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
                     } else if(getFeedback is GetFeedbackState.Error) {
                         Log.d(TAG, "getFeedbackData: Error")
                         binding.progressBar.visibility = View.GONE

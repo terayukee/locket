@@ -53,30 +53,29 @@
         android:maxLength="3"
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
-        app:layout_constraintEnd_toStartOf="@+id/sp_category"
+        app:layout_constraintEnd_toStartOf="@+id/tv_category_dropdown"
         app:layout_constraintStart_toEndOf="@+id/et_unit_price"
         app:layout_constraintTop_toTopOf="@+id/et_product_name"
         tools:text="1" />
 
-    <Spinner
-        android:id="@+id/sp_category"
-        style="@style/Widget.AppCompat.Spinner"
+    <TextView
+        android:id="@+id/tv_category_dropdown"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="4dp"
+        android:paddingVertical="8dp"
+        android:paddingEnd="12dp"
+        android:background="@drawable/bg_receipt_spinner"
+        android:text=""
         android:textColor="@color/text"
         android:textSize="16sp"
-        android:gravity="center"
-        android:dropDownWidth="match_parent"
-        android:background="@drawable/bg_receipt_spinner"
-        android:layout_marginStart="4dp"
-        android:dropDownVerticalOffset="36dp"
-        android:popupBackground="@android:color/white"
-        android:paddingVertical="8dp"
+        android:gravity="center_vertical"
+        android:clickable="true"
+        android:focusable="true"
         app:layout_constraintHorizontal_weight="4"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/et_count"
         app:layout_constraintTop_toTopOf="@+id/et_product_name"
         tools:text="식비" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>

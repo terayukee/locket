@@ -1,8 +1,10 @@
 package com.ssafy.locket.presentation.home.receipt.fragment
 
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -48,6 +50,17 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
 //            receiptFileSelectionViewModel.updateReceipt(ReceiptDetailState.Success(ProcessedReceipt(receiptDetail.storeName, )))
             findNavController().navigate(R.id.action_editReceiptDetailFragment_to_receiptDetailFragment)
         }
+
+        binding.rvReceiptDetail.setOnTouchListener { v, event ->
+            // 포커스된 뷰가 있으면 포커스 제거 및 키보드 내림
+            val currentFocus = activity?.currentFocus
+            if (currentFocus != null) {
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(currentFocus.windowToken, 0)
+                currentFocus.clearFocus()
+            }
+            false
+        }
     }
 
     private fun initAdapter() {
@@ -58,6 +71,16 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
             layoutManager = LinearLayoutManager(requireContext())
         }
 
+        receiptDetailEditRVAdapter.itemClickListener = object : ReceiptDetailEditRVAdapter.ItemClickListener {
+            override fun onClick(view: View, data: ReceiptDetail, position: Int) {
+                // ✅ ViewModel에 반영하지 않고, 로컬의 processedReceipt만 업데이트
+                processedReceipt = processedReceipt?.copy(
+                    items = processedReceipt?.items?.toMutableList()?.apply {
+                        set(position, data.copy())
+                    } ?: listOf()
+                )
+            }
+        }
 //        receiptDetailEditRVAdapter.itemClickListener = object : ReceiptDetailEditRVAdapter.ItemClickListener {
 //            override fun onClick(view: View, data: String, position: Int) {
 //                val newItem = processedReceipt?.items?.get(position)?.copy(
