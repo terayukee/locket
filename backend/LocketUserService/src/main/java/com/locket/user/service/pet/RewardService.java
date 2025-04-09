@@ -63,7 +63,6 @@ public class RewardService {
                     .rewardName(reward.getRewardName())
                     .characterName(reward.getCharacterName())
                     .receivedAt(reward.getReceivedAt())
-                    // imageUrl 제외
                     .build();
             dtos.add(dto);
         }

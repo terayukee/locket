@@ -3,7 +3,9 @@ package com.locket.user.service.pet;
 import com.locket.user.domain.pet.constant.PetConstants;
 import com.locket.user.domain.pet.dto.*;
 import com.locket.user.domain.pet.entity.Character;
+import com.locket.user.domain.pet.entity.UserFoodCount;
 import com.locket.user.domain.pet.repository.CharacterRepository;
+import com.locket.user.domain.pet.repository.UserFoodCountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -11,7 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -19,7 +23,7 @@ public class CharacterService {
 
     private final CharacterRepository characterRepository;
     private final RewardService rewardService;
-
+    private final UserFoodCountRepository userFoodCountRepository;
     private final Random random = new Random();
 
     @Transactional(readOnly = true)
@@ -141,7 +145,10 @@ public class CharacterService {
     }
 
     private Character createNewCharacter(Long userId) {
-        return createNewCharacter(userId, 0);
+        int initialFoodCount = userFoodCountRepository.findByUserId(userId)
+                .map(foodCount -> foodCount.getFoodCount())
+                .orElse(0);
+        return createNewCharacter(userId, initialFoodCount);
     }
 
     private Character createNewCharacter(Long userId, int initialFoodCount) {
@@ -163,14 +170,27 @@ public class CharacterService {
         Character character = characterRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
 
-        // 캐릭터 이름과 사료 개수 저장
         String characterName = character.getCharacterName();
         int foodCount = character.getFoodCount();
+
+        // 사료 개수 저장
+        userFoodCountRepository.findByUserId(userId).ifPresentOrElse(
+                userFoodCount -> {
+                    userFoodCount.updateFoodCount(foodCount);
+                    userFoodCountRepository.save(userFoodCount);
+                },
+                () -> {
+                    UserFoodCount newUserFoodCount = UserFoodCount.builder()
+                            .userId(userId)
+                            .foodCount(foodCount)
+                            .build();
+                    userFoodCountRepository.save(newUserFoodCount);
+                }
+        );
 
         // 보상 생성 시 캐릭터 이름 전달
         RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD, characterName);
 
-        // 캐릭터 삭제 (새 캐릭터를 생성하지 않음)
         characterRepository.delete(character);
 
         return rewardDto;
@@ -235,6 +255,21 @@ public class CharacterService {
     public CharacterDeleteResponseDto deleteCharacter(Long userId) {
         Character character = characterRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
+
+        int foodCount = character.getFoodCount();
+        userFoodCountRepository.findByUserId(userId).ifPresentOrElse(
+                userFoodCount -> {
+                    userFoodCount.updateFoodCount(foodCount);
+                    userFoodCountRepository.save(userFoodCount);
+                },
+                () -> {
+                    UserFoodCount newUserFoodCount = UserFoodCount.builder()
+                            .userId(userId)
+                            .foodCount(foodCount)
+                            .build();
+                    userFoodCountRepository.save(newUserFoodCount);
+                }
+        );
 
         characterRepository.delete(character);
 
