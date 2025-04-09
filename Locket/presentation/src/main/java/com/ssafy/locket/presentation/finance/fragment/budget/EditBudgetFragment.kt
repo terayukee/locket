@@ -50,9 +50,14 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
         binding.btnBudgetSet.setOnClickListener {
             if(binding.etGoalBudget.text.toString()!="") {
                 val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
-                budgetViewModel.setBudgetGoal(rawNumber.toInt())
+                if(rawNumber.toInt()>0){
+                    budgetViewModel.setBudgetGoal(rawNumber.toInt())
+                }
+                else{
+                    binding.etGoalBudget.setText("")
+                    CommonUtils.showMultiLineCustomToast(requireContext(), "가격 설정", "1원 이상의 가격을 입력해 주세요")
+                }
             }
-
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -82,7 +87,7 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
                     }
                     is GetBudgetStatusState.Error -> {
                         Log.e(TAG, uiState.message)
-                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                        //CommonUtils.showMultiLineCustomToast(requireContext(), "가격 설정", "1원 이상의 가격을 입력해 주세요")
                     }
                     else -> {}
                 }

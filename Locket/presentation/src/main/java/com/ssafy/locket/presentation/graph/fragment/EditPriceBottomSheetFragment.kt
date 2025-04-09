@@ -25,6 +25,7 @@ import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.FragmentEditPriceBottomSheetBinding
 import com.ssafy.locket.presentation.graph.viewmodel.EditPriceViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 
 private const val TAG = "EditPriceBottomSheetFra"
 class EditPriceDialogFragment : DialogFragment() {
@@ -86,10 +87,16 @@ class EditPriceDialogFragment : DialogFragment() {
             val input = binding.tvWantPrice.text.toString()
             if (input.isNotEmpty()) {
                 val raw = input.replace(",", "")
-                viewModel.updatePrice(raw)
-                binding.tvWantPrice.setText("")
+                if(raw.toInt()>0){
+                    viewModel.updatePrice(raw)
+                    binding.tvWantPrice.setText("")
+                    dismiss()
+                }
+                else{
+                    binding.tvWantPrice.setText("")
+                    CommonUtils.showMultiLineCustomToast(requireContext(), "가격 설정","1원이상의 가격을 입력해주세요")
+                }
             }
-            dismiss()
         }
         binding.btnClear.setOnClickListener {
             viewModel.updatePrice("")
