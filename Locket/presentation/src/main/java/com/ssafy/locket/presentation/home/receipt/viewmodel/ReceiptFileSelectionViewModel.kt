@@ -52,6 +52,9 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     private val _receiptDetail = MutableStateFlow<ReceiptDetailState>(ReceiptDetailState.Initial)
     val receiptDetail: StateFlow<ReceiptDetailState> = _receiptDetail.asStateFlow() // ocr 처리한 영수증 정보
 
+    private val _editedReceiptDetail = MutableStateFlow<ReceiptDetailState>(ReceiptDetailState.Initial)
+    val editedReceiptDetail: StateFlow<ReceiptDetailState> = _receiptDetail.asStateFlow()
+
     private val _navigationEvent = Channel<NavigateToDetailEvent>(Channel.BUFFERED)
     val navigationEvent = _navigationEvent.receiveAsFlow()
 
@@ -90,6 +93,53 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     fun clearNavigationEvent() {
         _navigationEvent.trySend(NavigateToDetailEvent.Initial)
     }
+
+    fun setEditReceipt() {
+        _editedReceiptDetail.value = ReceiptDetailState.Success((_receiptDetail.value as ReceiptDetailState.Success).processReceipt)
+//        _receiptDetail.value.let { receiptState ->
+//            _editedReceiptDetail.value = receiptState
+//        }
+    }
+
+    fun updateReceiptItem(updatedItem: ReceiptDetail) {
+        val currentState = _editedReceiptDetail.value
+
+        Log.d(TAG, "updateReceiptItem: state ${currentState}")
+        if (currentState is ReceiptDetailState.Success) {
+            val currentReceipt = currentState.processReceipt
+
+            val updatedItems = currentReceipt.items.map { item ->
+                if (item.itemId == updatedItem.itemId) updatedItem else item
+            }
+
+            val updatedCategoryAmount = recalculateCategoryAmounts(updatedItems)
+
+            val updatedReceipt = currentReceipt.copy(
+                items = updatedItems,
+                categoryAmount = updatedCategoryAmount
+            )
+
+            Log.d(TAG, "updateReceiptItem: ${updatedReceipt.items}")
+            _editedReceiptDetail.value = ReceiptDetailState.Success(updatedReceipt)
+        }
+    }
+
+    fun setReceiptDetailEdited() {
+        _editedReceiptDetail.value.let { editedState ->
+            _receiptDetail.value = editedState
+        }
+    }
+
+    private fun recalculateCategoryAmounts(items: List<ReceiptDetail>): Map<String, Double> {
+        return items
+            .filter { it.itemCategory != null }
+            .groupBy { it.itemCategory!! }
+            .mapValues { (_, items) ->
+                items.sumOf { it.itemAmount.toDouble() * it.itemQuantity }
+            }
+    }
+
+
     fun getAllAvailableReceipts() {
         viewModelScope.launch {
             getAllAvailableReceiptsUseCase()
@@ -134,10 +184,6 @@ class ReceiptFileSelectionViewModel @Inject constructor(
                     }
                 }
         }
-    }
-
-    fun updateReceipt(newState: ReceiptDetailState) {
-        _receiptDetail.value = newState
     }
 }
 sealed class SelectedReceiptState {

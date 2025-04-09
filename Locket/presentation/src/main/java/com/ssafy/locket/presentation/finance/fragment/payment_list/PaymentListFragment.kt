@@ -30,11 +30,6 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
     private val paymentHistoryViewModel: PaymentHistoryViewModel by activityViewModels()
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
 
-//    override fun onResume() {
-//        super.onResume()
-//        financeSharedViewModel.initYearMonth()
-//    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,7 +55,7 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
     private fun initUI() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                paymentHistoryViewModel.monthlyPaymentHistory.collect { uiState ->
+                paymentHistoryViewModel.monthlyPaymentHistory.collectLatest { uiState ->
                     when(uiState) {
                         is PaymentHistoryState.Success -> {
                             if(uiState.paymentMonthlyHistory.list.size == 0) {

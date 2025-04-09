@@ -1,14 +1,19 @@
 package com.ssafy.locket.presentation.finance.fragment
 
+import android.graphics.Typeface
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.ViewGroup
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
+import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
+import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.ssafy.locket.presentation.common.view.MainActivity
 import com.ssafy.locket.presentation.R
@@ -22,8 +27,8 @@ import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.YearMonth
 
 private const val TAG = "FinanceFragment"
@@ -36,24 +41,17 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
     private val budgetViewModel: BudgetViewModel by activityViewModels()
 
-    //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
     private val today = YearMonth.now()
-
-    override fun onResume() {
-        super.onResume()
-//        Log.d(TAG, "lifecycle test onResume: ")
-//        financeSharedViewModel.initYearMonth()
-    }
+    private val fonts = arrayOf(R.font.pretendard_regular, R.font.pretendard_bold)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Log.d(TAG, "lifecycle test onViewCreated: ")
         initTabLayout()
         financeSharedViewModel.initYearMonth()
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                financeSharedViewModel.selectedYearMonth.collect {
+                financeSharedViewModel.selectedYearMonth.collectLatest {
                     if (it >= YearMonth.of(today.year, today.monthValue)) {
                         binding.btnNextMonthIcon.isEnabled = false
                     } else if (it < YearMonth.of(2020, 2)) {
@@ -122,6 +120,8 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             budgetViewModel.getBudgetStatus(newYearMonth.year, newYearMonth.monthValue)
         }
         backEvent()
+
+        binding.tabLayout.getTabAt(binding.tabLayout.selectedTabPosition)?.select()
     }
 
     private fun initTabLayout() {
@@ -136,13 +136,18 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             isUserInputEnabled = false
         }
 
+        binding.tabLayout.post {
+            // 0번째 탭이 선택된 상태에서 텍스트 스타일 적용
+            val tabTextView = getTextViewFromTab(binding.tabLayout.getTabAt(0)!!)
+            tabTextView?.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
+        }
+
         TabLayoutMediator(binding.tabLayout, binding.tabVp) { tab, position ->
             tab.text = if (position == 0) "내역" else if (position == 1) "달력" else "예산"
         }.attach()
 
         viewLifecycleOwner.lifecycleScope.launch {
             mainViewModel.selectedFinanceTab.collect { state ->
-                Log.d(TAG, "initTabLayout: $state")
                 if (state is FinanceNavigationState.Budget) {
                     binding.tabVp.setCurrentItem(2, false)
                     binding.tabLayout.getTabAt(2)?.select()
@@ -152,6 +157,35 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                 }
             }
         }
+
+        binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
+            override fun onTabSelected(tab: TabLayout.Tab) {
+                val tabTextView = getTextViewFromTab(tab)
+                tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[1])
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab) {
+                val tabTextView = getTextViewFromTab(tab)
+                tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[0])
+            }
+
+            override fun onTabReselected(tab: TabLayout.Tab) {
+            }
+        })
+    }
+
+    private fun getTextViewFromTab(tab: TabLayout.Tab): TextView? {
+        val tabLayout = tab.parent as TabLayout
+        val tabStrip = tabLayout.getChildAt(0) as ViewGroup
+        val tabView = tabStrip.getChildAt(tab.position) as ViewGroup
+
+        for (i in 0 until tabView.childCount) {
+            val child = tabView.getChildAt(i)
+            if (child is TextView) {
+                return child
+            }
+        }
+        return null
     }
 
     fun backEvent() {
@@ -171,10 +205,5 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     }
                 }
             })
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-//        financeSharedViewModel.initYearMonth()
     }
 }

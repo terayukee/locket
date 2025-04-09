@@ -84,7 +84,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            financeSharedViewModel.selectedYearMonthTotalPayment.collect { uiState ->
+            financeSharedViewModel.selectedYearMonthTotalPayment.collectLatest { uiState ->
                 when(uiState) {
                     is TotalPaymentState.Success -> {
                         binding.tvPaymentData.text = resources.getString(R.string.finance_won, CommonUtils.makeCommaDecimal(uiState.totalPayment))
@@ -118,7 +118,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     private fun getFeedbackData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                analysisViewModel.getFeedback.collect{ getFeedback ->
+                analysisViewModel.getFeedback.collectLatest{ getFeedback ->
                     if(getFeedback is GetFeedbackState.Success) {
                         Log.d(TAG,getFeedback.feedback.toString())
                         val feedback = getFeedback.feedback

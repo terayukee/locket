@@ -141,10 +141,12 @@ internal class ReceiptFileRepositoryImpl @Inject constructor(
                 when (result) {
                     is ApiResponse.Success -> {
                         Log.d(TAG, "saveReceipt: Success ${result.data}")
+                        emit(ResponseStatus.Success(result.data))
                     }
 
                     is ApiResponse.Error -> {
                         Log.d(TAG, "saveReceipt Error in impl: ${result.error.message}")
+                        emit(ResponseStatus.Error(result.error.toDomainModel()))
                     }
                 }
             }.collect()

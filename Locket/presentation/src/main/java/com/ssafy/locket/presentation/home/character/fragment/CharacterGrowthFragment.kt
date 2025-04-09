@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -39,6 +40,12 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
     private lateinit var pendingGifRunnable: Runnable
     private val gifHandler = Handler(Looper.getMainLooper())
     private var isGifLoading = false
+
+    private val clickHandler = Handler(Looper.getMainLooper())
+    private var clickCount = 0
+
+    private val CLICK_INTERVAL_THRESHOLD = 800 // 연속 클릭으로 간주할 최대 시간 간격 (밀리초)
+    private var lastClickTime = 0L
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -215,6 +222,64 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
             timerHandler.removeCallbacks(timerRunnable)
         }
     }
+
+    private val clickTimeoutRunnable = Runnable {
+        if (clickCount > 0) {
+            processConsecutiveClicks(clickCount)
+            clickCount = 0
+        }
+    }
+
+    private fun processConsecutiveClicks(count: Int) {
+        // 클릭 횟수가 1이면 연속 클릭이 아니므로 무시
+        if (count <= 1) return
+
+        // 화면 클릭 차단
+        requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+
+        // 서버에 데이터 전송
+//        sendDataToServer(count)
+
+        requireActivity().window.addFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+    }
+
+//    private fun sendDataToServer(count: Int) {
+//        // UI 업데이트
+//        countText.text = "서버에 $count 회 전송 중..."
+//
+//        // 코루틴으로 네트워크 작업 처리
+//        CoroutineScope(Dispatchers.IO).launch {
+//            var successCount = 0
+//
+//            for (i in 1..count) {
+//                try {
+//                    val result = sendSingleRequest(i)
+//                    if (result) successCount++
+//
+//                    // UI 스레드에서 진행 상황 업데이트
+//                    withContext(Dispatchers.Main) {
+//                        countText.text = "전송 중: $successCount / $count"
+//                    }
+//
+//                    // 각 요청 사이에 약간의 지연
+//                    delay(300)
+//                } catch (e: Exception) {
+//                    e.printStackTrace()
+//                }
+//            }
+//
+//            // UI 스레드에서 작업 완료 처리
+//            withContext(Dispatchers.Main) {
+//                countText.text = "전송 완료: $successCount / $count"
+//                overlay.visibility = View.GONE
+//                Toast.makeText(
+//                    this@MainActivity,
+//                    "$count회 연속 클릭 데이터 전송 완료: $successCount/$count 성공",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        }
+//    }
 
     override fun onStop() {
         super.onStop()

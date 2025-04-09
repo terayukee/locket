@@ -20,8 +20,11 @@ import com.ssafy.locket.presentation.home.receipt.adapter.ReceiptDetailEditRVAda
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptDetailState
 import com.ssafy.locket.presentation.home.receipt.viewmodel.ReceiptFileSelectionViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
+import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
+private const val TAG = "EditReceiptDetailFragme"
+@AndroidEntryPoint
 class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>(
     FragmentEditReceiptDetailBinding::bind,
     R.layout.fragment_edit_receipt_detail
@@ -46,6 +49,7 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
         }
 
         binding.btnConfirm.setOnClickListener {
+            receiptFileSelectionViewModel.setReceiptDetailEdited()
 //            val receiptDetail = (receiptFileSelectionViewModel.receiptDetail.value as? ReceiptDetailState.Success)?.processReceipt
 //            receiptFileSelectionViewModel.updateReceipt(ReceiptDetailState.Success(ProcessedReceipt(receiptDetail.storeName, )))
             findNavController().navigate(R.id.action_editReceiptDetailFragment_to_receiptDetailFragment)
@@ -74,11 +78,13 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
         receiptDetailEditRVAdapter.itemClickListener = object : ReceiptDetailEditRVAdapter.ItemClickListener {
             override fun onClick(view: View, data: ReceiptDetail, position: Int) {
                 // ✅ ViewModel에 반영하지 않고, 로컬의 processedReceipt만 업데이트
-                processedReceipt = processedReceipt?.copy(
-                    items = processedReceipt?.items?.toMutableList()?.apply {
-                        set(position, data.copy())
-                    } ?: listOf()
-                )
+                Log.d(TAG, "onClick: processedReceiptDetail ${data}")
+                receiptFileSelectionViewModel.updateReceiptItem(data)
+//                processedReceipt = processedReceipt?.copy(
+//                    items = processedReceipt?.items?.toMutableList()?.apply {
+//                        set(position, data.copy())
+//                    } ?: listOf()
+//                )
             }
         }
 //        receiptDetailEditRVAdapter.itemClickListener = object : ReceiptDetailEditRVAdapter.ItemClickListener {

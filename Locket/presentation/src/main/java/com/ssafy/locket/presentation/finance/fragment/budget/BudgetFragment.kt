@@ -16,7 +16,6 @@ import com.ssafy.locket.presentation.databinding.FragmentBudgetBinding
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
-import com.ssafy.locket.presentation.finance.viewmodel.GetFeedbackState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
@@ -41,7 +40,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                financeSharedViewModel.selectedYearMonth.collect {
+                financeSharedViewModel.selectedYearMonth.collectLatest {
                     binding.btnBudgetSet.isEnabled = it.year == today.year && it.monthValue == today.monthValue
                 }
             }
@@ -71,11 +70,11 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     fun observeViewModel(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                budgetViewModel.getBudgetStatus.collect { response->
+                budgetViewModel.getBudgetStatus.collectLatest { response->
                     if(response is GetBudgetStatusState.Success) {
+                        val today = LocalDate.now()
+                        val budget = response.budgetStatus.budget.monthly
                         if(response.budgetStatus.hasBudget) {
-                            val today = LocalDate.now()
-                            val budget = response.budgetStatus.budget.monthly
                             val daysInSelectedMonth = getDaysInCurrentMonth(budget.year, budget.month) + 1
 
                             binding.groupBudget.visibility = View.VISIBLE
@@ -100,8 +99,15 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
                             binding.progressBar.setProgress(budget.progress.toInt())
                             binding.tvRecommendBudgetToday.text = getString(R.string.finance_won, CommonUtils.makeComma((budget.target/daysInSelectedMonth)*today.dayOfMonth))
                         } else {
+                            if(budget.year == today.year && budget.month == today.monthValue) {
+                                binding.tvBudgetLeftNo.text = getString(R.string.finance_budget_no_set_title)
+                            } else {
+                                binding.tvBudgetLeftNo.text = getString(R.string.finance_budget_no_set_title_prev)
+                            }
                             binding.tvBudgetLeftNo.visibility = View.VISIBLE
                             binding.groupBudget.visibility = View.INVISIBLE
+                            binding.tvBudgetLeft.text = getString(R.string.finance_budget_left, "0")
+                            binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, "0")
                         }
                     }
                 }

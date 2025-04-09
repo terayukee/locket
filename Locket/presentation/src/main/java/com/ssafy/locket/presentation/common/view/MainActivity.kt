@@ -42,9 +42,7 @@ class MainActivity : AppCompatActivity() {
         checkPermission()
 
         val flag = intent.getStringExtra("notification") ?: ""
-        Log.d(TAG, "onCreate: flag ${flag} ${flag == "notification"}")
         if("notification" == flag) {
-            Log.d(TAG, "onCreate: notification in mainActivity ")
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
             val navController = navHostFragment.navController
@@ -92,10 +90,21 @@ class MainActivity : AppCompatActivity() {
         bottomNavigationView.labelVisibilityMode = NavigationBarView.LABEL_VISIBILITY_LABELED
 
         bottomNavigationView.setOnItemSelectedListener { item ->
-            navController.currentDestination?.id?.let {
+            val destinationMap = mapOf(
+                R.id.home to R.id.homeFragment,
+                R.id.household_account_book to R.id.financeFragment,
+                R.id.lowest_price_graph to R.id.productListFragment,
+                R.id.payment to R.id.cardPaymentFragment
+            )
+
+            navController.currentDestination?.id?.let { currentDestinationId ->
+                if (destinationMap[item.itemId] == currentDestinationId) {
+                    return@setOnItemSelectedListener false
+                }
+
                 val navigateOptions = NavOptions.Builder()
                     .setLaunchSingleTop(true)
-                    .setPopUpTo(it, true)
+                    .setPopUpTo(currentDestinationId, true)
                     .build()
 
                 when (item.itemId) {
@@ -105,23 +114,19 @@ class MainActivity : AppCompatActivity() {
                         null,
                         navigateOptions
                     )
-
                     R.id.lowest_price_graph -> navController.navigate(
                         R.id.productListFragment,
                         null,
                         navigateOptions
                     )
-
                     R.id.payment -> navController.navigate(
                         R.id.cardPaymentFragment,
                         null,
                         navigateOptions
                     )
-
                     else -> false
                 }
             }
-
             true
         }
         hideBottomNavigationView(navController)

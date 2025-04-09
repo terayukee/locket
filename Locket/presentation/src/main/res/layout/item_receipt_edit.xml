@@ -15,32 +15,31 @@
         android:textColor="@color/text"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/et_unit_price"
+        app:layout_constraintEnd_toStartOf="@+id/tv_unit_price"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintHorizontal_weight="7"
         tools:text="맑은물에 반모 촌두부 2개입, 300g, 1개" />
 
-    <EditText
-        android:id="@+id/et_unit_price"
+    <TextView
+        android:id="@+id/tv_unit_price"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/text"
         android:textSize="16sp"
         android:gravity="center"
         android:background="@android:color/transparent"
-        android:inputType="number"
         android:maxLines="1"
         android:maxLength="6"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
-        app:layout_constraintEnd_toStartOf="@+id/et_count"
+        app:layout_constraintEnd_toStartOf="@+id/tv_count"
         app:layout_constraintStart_toEndOf="@+id/et_product_name"
         app:layout_constraintTop_toTopOf="@+id/et_product_name"
         app:layout_constraintHorizontal_weight="3"
         tools:text="3500" />
 
-    <EditText
-        android:id="@+id/et_count"
+    <TextView
+        android:id="@+id/tv_count"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:textColor="@color/text"
@@ -54,7 +53,7 @@
         android:background="@android:color/transparent"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
         app:layout_constraintEnd_toStartOf="@+id/tv_category_dropdown"
-        app:layout_constraintStart_toEndOf="@+id/et_unit_price"
+        app:layout_constraintStart_toEndOf="@+id/tv_unit_price"
         app:layout_constraintTop_toTopOf="@+id/et_product_name"
         tools:text="1" />
 
@@ -75,7 +74,7 @@
         app:layout_constraintHorizontal_weight="4"
         app:layout_constraintBottom_toBottomOf="@+id/et_product_name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/et_count"
+        app:layout_constraintStart_toEndOf="@+id/tv_count"
         app:layout_constraintTop_toTopOf="@+id/et_product_name"
         tools:text="식비" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -37,39 +37,38 @@ class ReceiptDetailEditRVAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReceiptDetail) {
-            // 기본 데이터 설정
             binding.etProductName.text = item.itemName
-            binding.etUnitPrice.hint = CommonUtils.makeComma(item.itemAmount)
-            binding.etCount.hint = item.itemQuantity.toString()
+            binding.tvUnitPrice.text = CommonUtils.makeComma(item.itemAmount)
+            binding.tvCount.text = item.itemQuantity.toString()
             if (item.itemCategory == "카페/디저트") {
                 binding.tvCategoryDropdown.text = "카페"
             } else {
                 binding.tvCategoryDropdown.text = item.itemCategory
             }
 
+//            binding.tvCategoryDropdown.setOnClickListener {
+//                // 👉 단가, 수량 입력창 포커스 해제
+////                binding.etUnitPrice.clearFocus()
+////                binding.etCount.clearFocus()
+////                val imm =
+////                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+////                imm.hideSoftInputFromWindow(binding.tvUnitPrice.windowToken, 0)
+//                val popupView =
+//                    LayoutInflater.from(context).inflate(R.layout.drop_down_listview, null)
+//                val popupWindow = PopupWindow(
+//                    popupView,
+//                    binding.tvCategoryDropdown.width,
+//                    ViewGroup.LayoutParams.WRAP_CONTENT,
+//                    true
+//                )
+//            }
             binding.tvCategoryDropdown.setOnClickListener {
                 // 👉 단가, 수량 입력창 포커스 해제
-                binding.etUnitPrice.clearFocus()
-                binding.etCount.clearFocus()
-                val imm =
-                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-                imm.hideSoftInputFromWindow(binding.etUnitPrice.windowToken, 0)
-                val popupView =
-                    LayoutInflater.from(context).inflate(R.layout.drop_down_listview, null)
-                val popupWindow = PopupWindow(
-                    popupView,
-                    binding.tvCategoryDropdown.width,
-                    ViewGroup.LayoutParams.WRAP_CONTENT,
-                    true
-                )
-            }
-            binding.tvCategoryDropdown.setOnClickListener {
-                // 👉 단가, 수량 입력창 포커스 해제
-                binding.etUnitPrice.clearFocus()
-                binding.etCount.clearFocus()
-                val imm =
-                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-                imm.hideSoftInputFromWindow(binding.etUnitPrice.windowToken, 0)
+//                binding.etUnitPrice.clearFocus()
+//                binding.etCount.clearFocus()
+//                val imm =
+//                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+//                imm.hideSoftInputFromWindow(binding.etUnitPrice.windowToken, 0)
                 val popupView =
                     LayoutInflater.from(context).inflate(R.layout.drop_down_listview, null)
                 val popupWindow = PopupWindow(
@@ -85,8 +84,9 @@ class ReceiptDetailEditRVAdapter :
                 listView.setOnItemClickListener { _, _, position, _ ->
                     val selected = categoryType[position]
                     binding.tvCategoryDropdown.text = selected
-                    item.itemCategory = selected
-                    itemClickListener?.onClick(binding.tvCategoryDropdown, item, adapterPosition)
+//                    item.itemCategory = selected
+                    val updatedItem = item.copy(itemCategory = selected)
+                    itemClickListener.onClick(binding.tvCategoryDropdown, updatedItem, adapterPosition)
                     popupWindow.dismiss()
                 }
                 popupWindow.isOutsideTouchable = true
@@ -94,7 +94,6 @@ class ReceiptDetailEditRVAdapter :
                 popupWindow.showAsDropDown(binding.tvCategoryDropdown)
             }
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {

@@ -27,6 +27,9 @@
     <string name="finance_home_budget_feedback_more">%s만원 초과했어요</string>
     <string name="finance_home_budget_feedback_same">예산을 모두 사용했어요</string>
 
+    <string name="finance_budget_no_set_title">이번 달 예산을 설정해주세요</string>
+    <string name="finance_budget_no_set_title_prev">당월은 예산 정보가 없습니다</string>
+
     <string name="finance_year_month">%1$d년 %2$d월</string>
 
     <string name="finance_calendar_day_payment_detail">%1$s | %2$s</string>

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import android.view.ViewConfiguration
 import android.widget.TextView
 import androidx.core.content.res.ResourcesCompat
 import androidx.fragment.app.activityViewModels
@@ -42,6 +43,7 @@ import java.time.LocalDate
 import java.time.Year
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
+import kotlin.math.truncate
 
 private const val TAG = "PaymentCalendarFragment"
 
@@ -73,15 +75,37 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         financeSharedViewModel.initYearMonth()
-        binding.calendar.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
-            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
-                return if (e.action == MotionEvent.ACTION_MOVE) {
-                    true
-                } else {
-                    super.onInterceptTouchEvent(rv, e)
+        var downX = 0f
+        var downY = 0f
+
+        binding.calendar.setOnTouchListener { _, event ->
+            when (event.actionMasked) {
+                MotionEvent.ACTION_DOWN -> {
+                    downX = event.x
+                    downY = event.y
+                    // false 반환 → 여기서는 이벤트를 소비하지 않음(달력 내부 로직으로 전달됨)
+                    false
                 }
+
+                MotionEvent.ACTION_MOVE -> {
+                    val dx = kotlin.math.abs(event.x - downX)
+                    val dy = kotlin.math.abs(event.y - downY)
+                    val threshold = ViewConfiguration.get(requireContext()).scaledTouchSlop
+
+                    // 사용자가 손가락을 임계값 이상 움직였다면 = 스크롤 시도
+                    if (dx > threshold || dy > threshold) {
+                        // true 반환 → 이벤트 소비(스와이프/스크롤 동작 막기)
+                        true
+                    } else {
+                        // 아직 크게 움직이지 않았으므로, 클릭(탭) 가능성 있음
+                        false
+                    }
+                }
+
+                // UP, CANCEL 등은 상황에 맞게 처리 (여기서는 기본적으로 false)
+                else -> false
             }
-        })
+        }
 
         val currentMonth = financeSharedViewModel.selectedYearMonth.value
 
@@ -99,6 +123,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
             init {
                 view.setOnClickListener {
                     if (day.position == DayPosition.MonthDate) {
+                        Log.d(TAG, "onViewCreated: dateclicked")
                         dateClicked(date = day.date)
                     }
                 }
@@ -122,6 +147,8 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 //        binding.calendar.monthScrollListener = { updateTitle() }
         binding.calendar.setup(startMonth, endMonth, daysOfWeek.first())
         binding.calendar.scrollToMonth(currentMonth)
+        
+        dialog = PaymentCalendarBottomSheetFragment()
 
         updateDayWeekColor()
         initObserver()
@@ -155,6 +182,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         binding.calendar.notifyDateChanged(date) // 새로운 선택값
         selectedDayViewModel.setSelectedDay(date)
         selectedDayViewModel.setSelectedDayPayments(date.year, date.monthValue, date.dayOfMonth)
+        Log.d(TAG, "dateClicked: selectedDayPayments")
     }
 
     private fun bindDate(
@@ -207,7 +235,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     }
 
     private fun initUI() {
-        dialog = PaymentCalendarBottomSheetFragment()
+//        dialog = PaymentCalendarBottomSheetFragment()
 
 //
 //        var scrollDirection = "NONE"
@@ -283,7 +311,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                selectedDayViewModel.openDialog.collect { uiState ->
+                selectedDayViewModel.openDialog.collectLatest { uiState ->
                     if (uiState is OpenDialogState.Opened && !dialog.isAdded) {
                         Log.d(TAG, "initUI: dialog is added")
                         dialog.show(childFragmentManager, "payment")
@@ -295,7 +323,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                paymentHistoryViewModel.monthlyPaymentCalendar.collect { uiState ->
+                paymentHistoryViewModel.monthlyPaymentCalendar.collectLatest { uiState ->
                     when (uiState) {
                         is PaymentCalendarState.Success -> {
                             uiState.paymentCalendar.dailySpending.map { // 월단위 결제내역 캘린더에 mapping
@@ -317,15 +345,5 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                 }
             }
         }
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-//        scrollListener?.let {
-//            binding.calendar.removeOnScrollListener(it)
-//            Log.d(TAG, "onPause: scrollListener 제거")
-//        }
-//        scrollListener = null
     }
 }

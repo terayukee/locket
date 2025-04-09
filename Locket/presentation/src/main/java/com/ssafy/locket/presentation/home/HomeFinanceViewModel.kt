@@ -44,7 +44,7 @@ class HomeFinanceViewModel @Inject constructor(
 
     private val currentYearMonth: YearMonth = YearMonth.now()
 
-    fun getMonthTotal(){
+    fun getMonthTotal() {
         viewModelScope.launch {
             getPaymentMonthlyTotalUseCase(currentYearMonth.year, currentYearMonth.monthValue)
                 .onStart {  }
