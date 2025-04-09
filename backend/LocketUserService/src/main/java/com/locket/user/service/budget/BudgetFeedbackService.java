@@ -121,9 +121,9 @@ public class BudgetFeedbackService {
             // 카테고리별 금액 계산
             Map<String, Integer> categoryAmounts = calculateCategoryAmounts(histories);
 
-            // 예산 대비 지출 비율 계산 - progress 필드 사용
+            // 예산 대비 지출 비율 계산
             BudgetMonthlyStatusDto monthlyStatus = budgetStatus.getBudget().getMonthly();
-            double spentRatio = monthlyStatus.getProgress().doubleValue();  // 수정된 부분
+            double spentRatio = monthlyStatus.getSpent().doubleValue() / monthlyStatus.getTarget();
 
             // 피드백 메시지 결정
             String feedback;
