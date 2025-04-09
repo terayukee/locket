@@ -63,7 +63,7 @@ async def _process_receipt(image_data: str, expected_amount: int = None, expecte
     """영수증 이미지 처리 공통 로직"""
     try:
         # OCR 처리
-        ocr_result = await ocr_service.extract_text(image_data)
+        ocr_result = await ocr_service.extract_text(image_data, expected_store_name)
         logger.info(f"OCR 처리 결과: {ocr_result['storeName']}")
 
         # 결제 금액과 상호명 검증

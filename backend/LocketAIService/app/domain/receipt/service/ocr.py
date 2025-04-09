@@ -41,7 +41,7 @@ class OCRService:
         return ocr_name in payment_name or payment_name in ocr_name
 
 
-    async def extract_text(self, image_data: str, file_format: str = 'jpg') -> Dict:
+    async def extract_text(self, image_data: str, payment_store_name: str, file_format: str = 'jpg') -> Dict:
         """이미지에서 텍스트 추출"""
         request_json = {
             'images': [
@@ -75,7 +75,7 @@ class OCRService:
                 logger.error(f"OCR API Error: {error_message}")
                 raise ReceiptException(error_code=ReceiptErrorCode.OCR_ERROR)
 
-            return self._parse_receipt_data(result)
+            return self._parse_receipt_data(result, payment_store_name)
 
         except ReceiptException:
             raise
