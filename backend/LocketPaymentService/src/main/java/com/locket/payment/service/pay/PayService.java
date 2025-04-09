@@ -14,6 +14,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.locket.common.exception.InvalidRequestException;
 
 import java.math.BigDecimal;
 import java.time.*;
@@ -42,29 +43,26 @@ public class PayService {
      */
     public ResponseEntity<Map<String, String>> validateCardAndBalance(int cardId, BigDecimal amount) {
         Map<String, String> response = new HashMap<>();
-        try {
-            // 1️⃣ 카드 정보 조회
-            CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
-                    .orElseThrow(() -> new IllegalArgumentException("유효하지 않은 카드 번호입니다."));
 
-            BankAccount bankAccount = cardInfo.getBankAccount();
+        log.info("조회할 카드 ID: {}", cardId);
+        // 1️⃣ 카드 정보 조회
+        CardInfo cardInfo = cardInfoRepository.findByCardId(cardId)
+                .orElseThrow(() -> new InvalidRequestException("유효하지 않은 카드 번호입니다."));
 
+        BankAccount bankAccount = cardInfo.getBankAccount();
 
-            // 2️⃣ 잔액 확인
-            if (bankAccount.getBalance().compareTo(amount) < 0) {
-                response.put("status", "FAIL");
-                response.put("message", "잔액이 부족합니다.");
-                return ResponseEntity.badRequest().body(response);
-            }
-
-            response.put("status", "OK");
-            response.put("message", "카드 유효 및 잔액 충분");
-            return ResponseEntity.ok(response);
-        } catch (Exception e) {
-            response.put("status", "FAIL");
-            response.put("message", e.getMessage());
-            return ResponseEntity.badRequest().body(response);
+        if (bankAccount == null) {
+            throw new InvalidRequestException("해당 카드에 연결된 계좌가 없습니다.");
         }
+
+        // 2️⃣ 잔액 확인
+        if (bankAccount.getBalance().compareTo(amount) < 0) {
+            throw new InvalidRequestException("잔액이 부족합니다.");
+        }
+
+        response.put("status", "OK");
+        response.put("message", "카드 유효 및 잔액 충분");
+        return ResponseEntity.ok(response);
     }
 
     @Transactional

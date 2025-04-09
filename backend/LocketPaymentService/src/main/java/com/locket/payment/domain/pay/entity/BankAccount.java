@@ -53,5 +53,6 @@ public class BankAccount {
         this.balance = this.balance.subtract(amount);
         this.updatedAt = LocalDateTime.now();
     }
+
 }
 

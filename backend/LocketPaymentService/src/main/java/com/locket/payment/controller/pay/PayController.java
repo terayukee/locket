@@ -29,7 +29,6 @@ public class PayController {
 
     private final PayService payService;
 
-    @RequiresUser(ownerOnly = true)
     @PostMapping("/nfc")
     @Operation(
             summary = "📎 결제 처리",
@@ -107,7 +106,7 @@ public class PayController {
             )
     )
     public ResponseEntity<?> validateCard(
-            @RequestBody PaymentRequest request
+            @org.springframework.web.bind.annotation.RequestBody PaymentRequest request
     ) {
         return payService.validateCardAndBalance(request.getCardId(), request.getAmount());
     }
