@@ -153,7 +153,13 @@ public class ProductService {
             preference.setLiked(newLikeStatus);
 
         } else {
-            preference = new ProductUserPreference(null, product, userId, true, false, null, null);
+            preference = ProductUserPreference.builder()
+                    .product(product)
+                    .userId(userId)
+                    .isLiked(true)
+                    .isAlert(false)
+                    .alertPrice(null)
+                    .build();
             newLikeStatus = true;
         }
 
