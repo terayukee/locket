@@ -325,6 +325,16 @@
       "category": "쇼핑",
       "needs_item_check": true
     },
+    "SHOP_라온": {
+      "names": ["라온"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
+    "SHOP_다이소": {
+      "names": ["다이소", "DAISO"],
+      "category": "쇼핑",
+      "needs_item_check": true
+    },
     "SHOP_인터파크": {
       "names": ["인터파크", "INTERPARK"],
       "category": "쇼핑",
