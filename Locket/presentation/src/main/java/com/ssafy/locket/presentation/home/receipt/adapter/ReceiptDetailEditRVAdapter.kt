@@ -1,6 +1,5 @@
 package com.ssafy.locket.presentation.home.receipt.adapter
 
-import android.R
 import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,20 +7,27 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.ListView
+import android.widget.PopupWindow
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.ssafy.locket.model.home.receipt.Receipt
 import com.ssafy.locket.model.home.receipt.ReceiptDetail
+import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.databinding.ItemReceiptEditBinding
 import com.ssafy.locket.presentation.home.receipt.adapter.AvailableReceiptAdapter.ItemClickListener
 import com.ssafy.locket.presentation.utils.CommonUtils
 
 private const val TAG = "ReceiptDetailEditRVAdap"
-class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRVAdapter.CustomViewHolder>(
-    ReceiptDetailRVAdapter
-) {
-    lateinit var itemClickListener: ItemClickListener
-    private val categoryType = arrayOf("식비", "카페/디저트", "생활", "쇼핑", "교통", "기타")
+class ReceiptDetailEditRVAdapter :
+    ListAdapter<ReceiptDetail, ReceiptDetailEditRVAdapter.CustomViewHolder>(
+        ReceiptDetailRVAdapter
+    ) {
+
+    // 안전한 null 허용으로 수정
+    var itemClickListener: ItemClickListener? = null
+
+    private val categoryType = arrayOf("식비", "카페", "생활", "쇼핑", "교통", "기타")
     private lateinit var context: Context
 
     interface ItemClickListener {
@@ -30,44 +36,51 @@ class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRV
 
     inner class CustomViewHolder(private val binding: ItemReceiptEditBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(item: ReceiptDetail) {
 
+        fun bind(item: ReceiptDetail) {
+            // 기본 데이터 설정
             binding.etProductName.text = item.itemName
             binding.etUnitPrice.hint = CommonUtils.makeComma(item.itemAmount)
             binding.etCount.hint = item.itemQuantity.toString()
+            if(item.itemCategory=="카페/디저트"){
+                binding.tvCategoryDropdown.text = "카페"
+            }
+            else{
+                binding.tvCategoryDropdown.text = item.itemCategory
+            }
 
-            val spinnerAdapter = ArrayAdapter(context, R.layout.simple_spinner_item, categoryType)
-            spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            binding.spCategory.adapter = spinnerAdapter
+            binding.tvCategoryDropdown.setOnClickListener {
+                // 👉 단가, 수량 입력창 포커스 해제
+                binding.etUnitPrice.clearFocus()
+                binding.etCount.clearFocus()
+                val imm = context.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
+                imm.hideSoftInputFromWindow(binding.etUnitPrice.windowToken, 0)
+                val popupView = LayoutInflater.from(context).inflate(R.layout.drop_down_listview, null)
+                val popupWindow = PopupWindow(popupView, binding.tvCategoryDropdown.width, ViewGroup.LayoutParams.WRAP_CONTENT, true)
+                val listView = popupView.findViewById<ListView>(R.id.listView)
 
-            binding.spCategory.onItemSelectedListener =
-                object : AdapterView.OnItemSelectedListener {
-                    override fun onItemSelected(
-                        parent: AdapterView<*>?,
-                        view: View?,
-                        position: Int,
-                        id: Long
-                    ) {
-                        val selectedItem= parent?.getItemAtPosition(position) as String
-                        Log.d(TAG, "onItemSelected: $selectedItem")
-
-//                        itemClickListener.onClick(view!!, selectedItem, position)
-                    }
-
-                    override fun onNothingSelected(parent: AdapterView<*>?) {
-                        // empty here
-                    }
+                listView.adapter = ArrayAdapter(context, android.R.layout.simple_list_item_1, categoryType)
+                listView.setOnItemClickListener { _, _, position, _ ->
+                    val selected = categoryType[position]
+                    binding.tvCategoryDropdown.text = selected
+                    item.itemCategory = selected
+                    itemClickListener?.onClick(binding.tvCategoryDropdown, item, adapterPosition)
+                    popupWindow.dismiss()
                 }
+                popupWindow.isOutsideTouchable = true
+                popupWindow.elevation = 10f
+                popupWindow.showAsDropDown(binding.tvCategoryDropdown)
+            }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ReceiptDetailEditRVAdapter.CustomViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         context = parent.context
         val binding = ItemReceiptEditBinding.inflate(LayoutInflater.from(context), parent, false)
         return CustomViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ReceiptDetailEditRVAdapter.CustomViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: CustomViewHolder, position: Int) {
         holder.bind(getItem(position))
     }
 }

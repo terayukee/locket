@@ -35,7 +35,12 @@ class ReceiptDetailRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailRVAdapter.
             binding.tvProductName.text = item.itemName
             binding.tvUnitPrice.text = CommonUtils.makeComma(item.itemAmount)
             binding.tvCount.text = item.itemQuantity.toString()
-            binding.tvCategory.text = item.itemCategory
+            if(item.itemCategory=="카페/디저트"){
+                binding.tvCategory.text = "카페"
+            }
+            else{
+                binding.tvCategory.text = item.itemCategory
+            }
         }
     }
 
