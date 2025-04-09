@@ -28,21 +28,27 @@ public class PerplexityClient {
 
     public PerplexitySummaryResponse summarizeFeedback(String insights, String recommendations) {
         try {
-            String prompt = """
-            아래는 사용자 소비 분석 인사이트와 절약 제안입니다.
-            아래 내용을 요약하여 다음 JSON 형식으로만 응답해 주세요. 다른 텍스트는 포함하지 마세요:
+            StringBuilder sb = new StringBuilder();
+            sb.append("""
+                아래는 사용자 소비 분석 인사이트와 절약 제안입니다.
+                아래 내용을 요약하여 다음 JSON 형식으로만 응답해 주세요. 다른 텍스트는 포함하지 마세요.
+                
+                {
+                  "insights": "여기에 소비 분석 요약",
+                  "recommendations": "여기에 절약 제안 요약"
+                }
+                
+                ⚠️ 주의사항:
+                - 숫자, 한글, 쉼표(,), 슬래시(/), 퍼센트(%)만 사용하세요.
+                - 요일은 반드시 '월요일', '화요일' 등 한글로 작성하세요.
+                
+                ## 소비 분석 인사이트
+                """);
+            sb.append(insights).append("\n\n## 절약 제안\n").append(recommendations);
 
-            {
-              "insights": "여기에 소비 분석 요약",
-              "recommendations": "여기에 절약 제안 요약"
-            }
+            String prompt = sb.toString();
 
-            ## 소비 분석 인사이트
-            %s
 
-            ## 절약 제안
-            %s
-            """.formatted(insights, recommendations);
 
             String requestBody = objectMapper.writeValueAsString(
                     Map.of(
