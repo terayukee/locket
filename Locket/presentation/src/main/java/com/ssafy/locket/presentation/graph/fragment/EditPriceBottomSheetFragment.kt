@@ -98,55 +98,68 @@ class EditPriceDialogFragment : DialogFragment() {
         }
     }
 
+
     private fun setupNumberFormatting() {
         binding.tvWantPrice.addTextChangedListener(object : TextWatcher {
             private var beforeText = ""
             private var cursorPosition = 0
             private var isDeleting = false
-            private var deletedChar = ""
-            private var deleteIndex = 0
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 beforeText = s.toString()
                 cursorPosition = binding.tvWantPrice.selectionStart
                 isDeleting = count > after
-                if (isDeleting && s != null && count == 1) {
-                    deletedChar = s.substring(start, start + count)
-                    deleteIndex = start
-                }
             }
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
             override fun afterTextChanged(s: Editable?) {
                 if (isFormatting) return
-                var digits = s.toString().replace(",", "")
-                if (digits.isEmpty()) return
+                val currentText = s.toString()
+                if (currentText == beforeText) return
 
-                if (isDeleting && deletedChar == "," && deleteIndex > 0) {
-                    val digitsBeforeCursor = beforeText.replace(",", "")
-                    val indexToRemove = deleteIndex - beforeText.take(deleteIndex).count { it == ',' }
-                    if (indexToRemove > 0 && indexToRemove <= digits.length) {
-                        digits = digits.removeRange(indexToRemove - 1, indexToRemove)
+                // 숫자만 추출 (쉼표 제거)
+                val cleanBefore = beforeText.replace(",", "")
+                var cleanCurrent = currentText.replace(",", "")
+                if (cleanCurrent.isEmpty()) return
+
+                // 숫자 위치 기준으로 커서 위치 계산
+                val digitsBeforeCursor = beforeText.substring(0, cursorPosition).replace(",", "")
+                var digitIndex = digitsBeforeCursor.length
+
+                if (isDeleting && digitIndex > 0 && digitIndex <= cleanBefore.length) {
+                    // 삭제한 문자 제거
+                    cleanCurrent = StringBuilder(cleanBefore).deleteCharAt(digitIndex - 1).toString()
+                    digitIndex -= 1
+                }
+                isFormatting = true
+                // 숫자 포맷팅
+                val formatted = CommonUtils.formatNumber(cleanCurrent)
+                binding.tvWantPrice.setText(formatted)
+                // 새 커서 위치 설정
+                val cursorPositionAfter = calculateCursorPosition(formatted, digitIndex)
+                binding.tvWantPrice.setSelection(cursorPositionAfter)
+                isFormatting = false
+            }
+
+            private fun calculateCursorPosition(formatted: String, digitIndex: Int): Int {
+                var digitsSeen = 0
+                for (i in formatted.indices) {
+                    if (formatted[i].isDigit()) {
+                        // 삭제 중이고 digitIndex까지 도달하면 현재 위치 반환
+                        if (isDeleting && digitsSeen == digitIndex) {
+                            return i
+                        }
+                        // 입력 중인데 digitIndex + 1이면 해당 위치 반환
+                        if (!isDeleting && digitsSeen == digitIndex + 1) {
+                            return i
+                        }
+                        digitsSeen++
+                    } else if (formatted[i] == ',' && digitsSeen == digitIndex) {
+                        return i + 1
                     }
                 }
-
-                isFormatting = true
-                val formatted = CommonUtils.formatNumber(digits)
-                binding.tvWantPrice.setText(formatted)
-
-                val commaCountBefore = beforeText.take(cursorPosition).count { it == ',' }
-                val commaCountNow = formatted.take(cursorPosition).count { it == ',' }
-                val adjustment = commaCountNow - commaCountBefore
-                val newCursor = (cursorPosition + adjustment).coerceIn(0, formatted.length)
-
-                try {
-                    binding.tvWantPrice.setSelection(newCursor)
-                } catch (e: Exception) {
-                    binding.tvWantPrice.setSelection(formatted.length)
-                }
-
-                isFormatting = false
+                return formatted.length
             }
         })
     }
