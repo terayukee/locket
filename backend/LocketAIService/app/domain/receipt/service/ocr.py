@@ -1,6 +1,7 @@
 import requests
 import json
 from typing import Dict
+import re
 
 import unicodedata
 
@@ -88,11 +89,14 @@ class OCRService:
         if not text:
             return text
         text = unicodedata.normalize("NFC", text)  # 한글 정규화
+
+        # 괄호 뒤 제거
+        text = re.sub(r"\(.*?\)", "", text)
+
         # 자주 발생하는 오타 패턴 교정
         corrections = {
             '화0트': '화이트',
             '0트': '이트',
-            '보드마카세트(흑3개': '보드마카세트(흑3개입)',
             '"': '',  # 따옴표
             '.': '',  # 마침표
             '(': '', ')': '',  # 괄호
