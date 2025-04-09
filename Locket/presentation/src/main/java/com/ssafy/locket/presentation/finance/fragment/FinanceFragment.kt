@@ -40,12 +40,17 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
     private var backPressedTime: Long = 0
     private val today = LocalDate.now()
 
+    override fun onResume() {
+        super.onResume()
+//        Log.d(TAG, "lifecycle test onResume: ")
+//        financeSharedViewModel.initYearMonth()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        Log.d(TAG, "lifecycle test onViewCreated: ")
         initTabLayout()
         financeSharedViewModel.initYearMonth()
-
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collect {
@@ -64,7 +69,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            repeatOnLifecycle(Lifecycle.State.STARTED) {
+//            repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonthTotalPayment.collect { uiState ->
                     when (uiState) {
                         is TotalPaymentState.Success -> {
@@ -85,7 +90,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
                         else -> Log.d(TAG, "initUI: Payment Initial or Loading")
                     }
-                }
+//                }
             }
         }
 
@@ -94,26 +99,21 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         }
 
         binding.btnPrevMonthIcon.setOnClickListener {
+            val currentYearMonth = financeSharedViewModel.selectedYearMonth.value
+            val newYearMonth = currentYearMonth.minusMonths(1)
             financeSharedViewModel.setYearMonth(
-                financeSharedViewModel.selectedYearMonth.value.minusMonths(
-                    1
-                )
+                newYearMonth
             )
-            val year = financeSharedViewModel.selectedYearMonth.value.year
-            val month = financeSharedViewModel.selectedYearMonth.value.monthValue
-            budgetViewModel.getBudgetStatus(year, month)
+            budgetViewModel.getBudgetStatus(newYearMonth.year, newYearMonth.monthValue)
         }
 
         binding.btnNextMonthIcon.setOnClickListener {
-            Log.d(TAG, financeSharedViewModel.selectedYearMonth.toString())
+            val currentYearMonth = financeSharedViewModel.selectedYearMonth.value
+            val newYearMonth = currentYearMonth.plusMonths(1)
             financeSharedViewModel.setYearMonth(
-                financeSharedViewModel.selectedYearMonth.value.plusMonths(
-                    1
-                )
+                newYearMonth
             )
-            val year = financeSharedViewModel.selectedYearMonth.value.year
-            val month = financeSharedViewModel.selectedYearMonth.value.monthValue
-            budgetViewModel.getBudgetStatus(year, month)
+            budgetViewModel.getBudgetStatus(newYearMonth.year, newYearMonth.monthValue)
         }
         backEvent()
     }
@@ -166,7 +166,6 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                 }
             })
     }
-
 
     override fun onDestroyView() {
         super.onDestroyView()

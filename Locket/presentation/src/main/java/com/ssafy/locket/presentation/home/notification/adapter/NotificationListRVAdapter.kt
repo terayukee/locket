@@ -1,8 +1,8 @@
 package com.ssafy.locket.presentation.home.notification.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -15,6 +15,11 @@ import com.ssafy.locket.presentation.databinding.ItemNotificationBinding
 class NotificationListRVAdapter:
     ListAdapter<Notification, NotificationListRVAdapter.CustomViewHolder>(CustomComparator) {
     private lateinit var context: Context
+    lateinit var itemClickListener: ItemClickListener
+
+    interface ItemClickListener {
+        fun onClick(view: View, data: Notification, position: Int)
+    }
 
     companion object CustomComparator : DiffUtil.ItemCallback<Notification>() {
         override fun areItemsTheSame(oldItem: Notification, newItem: Notification): Boolean {
@@ -48,6 +53,10 @@ class NotificationListRVAdapter:
             }
             binding.tvNotificationContent.text = item.content
             binding.tvNotificationDate.text = item.date
+
+            binding.root.setOnClickListener {
+                itemClickListener.onClick(it, item, adapterPosition)
+            }
         }
     }
 

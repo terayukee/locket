@@ -58,31 +58,31 @@ class EditReceiptDetailFragment : BaseFragment<FragmentEditReceiptDetailBinding>
             layoutManager = LinearLayoutManager(requireContext())
         }
 
-        receiptDetailEditRVAdapter.itemClickListener = object : ReceiptDetailEditRVAdapter.ItemClickListener {
-            override fun onClick(view: View, data: ReceiptDetail, position: Int) {
-                val newItem = processedReceipt?.items?.get(position)?.copy(
-                    itemCategory = data.itemCategory,
-                    itemAmount = data.itemAmount,
-                    itemQuantity = data.itemQuantity,
-                    itemName = data.itemName)
-
-                val updatedReceipt = processedReceipt?.let { receipt ->
-                    val updatedItems = receipt.items.toMutableList().apply {
-                        newItem?.let { set(position, it) }
-                    }
-
-                    receipt.copy(
-                        categoryAmount = receipt.categoryAmount,
-                        totalAmount = receipt.totalAmount,
-                        storeName = receipt.storeName,
-                        items = updatedItems
-                    )
-                }
-                updatedReceipt?.let {
-                    receiptFileSelectionViewModel.setReceiptDetail(it)
-                }
-            }
-        }
+//        receiptDetailEditRVAdapter.itemClickListener = object : ReceiptDetailEditRVAdapter.ItemClickListener {
+//            override fun onClick(view: View, data: String, position: Int) {
+//                val newItem = processedReceipt?.items?.get(position)?.copy(
+//                    itemCategory = data.itemCategory,
+//                    itemAmount = data.itemAmount,
+//                    itemQuantity = data.itemQuantity,
+//                    itemName = data.itemName)
+//
+//                val updatedReceipt = processedReceipt?.let { receipt ->
+//                    val updatedItems = receipt.items.toMutableList().apply {
+//                        newItem?.let { set(position, it) }
+//                    }
+//
+//                    receipt.copy(
+//                        categoryAmount = receipt.categoryAmount,
+//                        totalAmount = receipt.totalAmount,
+//                        storeName = receipt.storeName,
+//                        items = updatedItems
+//                    )
+//                }
+//                updatedReceipt?.let {
+//                    receiptFileSelectionViewModel.setReceiptDetail(it)
+//                }
+//            }
+//        }
     }
 
     private fun initUI() {

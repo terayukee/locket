@@ -42,7 +42,8 @@ class MainActivity : AppCompatActivity() {
         checkPermission()
 
         val flag = intent.getStringExtra("notification") ?: ""
-        if("notification".equals(flag)) {
+        Log.d(TAG, "onCreate: flag ${flag} ${flag == "notification"}")
+        if("notification" == flag) {
             Log.d(TAG, "onCreate: notification in mainActivity ")
             val navHostFragment =
                 supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
@@ -59,13 +60,11 @@ class MainActivity : AppCompatActivity() {
     private fun checkPermission() {
         if (!checker.checkPermission(this, runtimePermissions)) {
             checker.setOnGrantedListener {
-                Log.d(TAG, "checkPermission: notification check")
                 initNotification()
             }
 
             checker.requestPermissionLauncher.launch(runtimePermissions)
         } else {
-            Log.d(TAG, "checkPermission: notification check2")
             initNotification()
         }
     }
@@ -83,7 +82,6 @@ class MainActivity : AppCompatActivity() {
             notificationManager.createNotificationChannel(NotificationChannel(id, name, importance))
         }
     }
-
 
     fun initNavigationBar() {
         val navHostFragment =

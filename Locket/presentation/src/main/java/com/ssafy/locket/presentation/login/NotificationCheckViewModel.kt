@@ -13,15 +13,16 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 private const val TAG = "NotificationCheckViewModel"
+
 @HiltViewModel
 class NotificationCheckViewModel @Inject constructor(
 
-): ViewModel() {
-private val _isIconClicked = MutableSharedFlow<Boolean>()
+) : ViewModel() {
+    private val _isIconClicked = MutableSharedFlow<Boolean>(replay = 2, extraBufferCapacity = 1)
     val isIconClicked = _isIconClicked.asSharedFlow()
 
     fun setIconClicked() {
-        viewModelScope.launch{
+        viewModelScope.launch {
             _isIconClicked.emit(true)
         }
     }

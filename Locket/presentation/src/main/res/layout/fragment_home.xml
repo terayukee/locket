@@ -11,9 +11,11 @@
 
     <ImageView
         android:id="@+id/logo_locket"
-        android:layout_width="108dp"
-        android:layout_height="34dp"
-        android:src="@drawable/logo_home_locket"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.262"
+        app:layout_constraintDimensionRatio="4.7172"
+        android:background="@drawable/logo_home_locket"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -91,9 +93,9 @@
 
     <ImageView
         android:id="@+id/iv_payment_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_home_payment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ic_home_payment"
         app:layout_constraintBottom_toBottomOf="@+id/iv_payment_icon_bg"
         app:layout_constraintEnd_toEndOf="@+id/iv_payment_icon_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_payment_icon_bg"
@@ -184,9 +186,9 @@
 
     <ImageView
         android:id="@+id/iv_budget_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_home_budget"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/ic_home_budget"
         app:layout_constraintBottom_toBottomOf="@+id/iv_budget_icon_bg"
         app:layout_constraintEnd_toEndOf="@+id/iv_budget_icon_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_budget_icon_bg"
@@ -321,118 +323,64 @@
             app:layout_constraintWidth_percent="0.3361" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageView
-        android:id="@+id/iv_character_bg"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/layout_character"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        android:backgroundTint="#94B590"
         android:background="@drawable/bg_home_receipt"
-        app:layout_constraintDimensionRatio="3.7"
+        android:backgroundTint="#94B590"
+        app:layout_constraintDimensionRatio="3.8617"
         app:layout_constraintEnd_toEndOf="@+id/iv_budget_card_bg"
         app:layout_constraintStart_toStartOf="@+id/iv_budget_card_bg"
-        app:layout_constraintTop_toBottomOf="@+id/layout_receipt"/>
+        app:layout_constraintTop_toBottomOf="@+id/layout_receipt">
 
-    <TextView
-        android:id="@+id/tv_character_title"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="20dp"
-        android:fontFamily="@font/pretendard_semi_bold"
-        android:letterSpacing="-0.02"
-        android:text="캐릭터 키우기"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:gravity="end"
-        app:layout_constraintBottom_toTopOf="@+id/tv_character_content"
-        app:layout_constraintEnd_toEndOf="@+id/iv_character_bg"
-        app:layout_constraintStart_toStartOf="@+id/iv_character_bg"
-        app:layout_constraintTop_toTopOf="@+id/iv_character_bg"
-        app:layout_constraintVertical_chainStyle="packed" />
+        <TextView
+            android:id="@+id/tv_character_title"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="20dp"
+            android:fontFamily="@font/pretendard_semi_bold"
+            android:gravity="end"
+            android:letterSpacing="-0.02"
+            android:text="캐릭터 키우기"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            app:layout_constraintBottom_toTopOf="@+id/tv_character_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="@+id/layout_character"
+            app:layout_constraintTop_toTopOf="@+id/layout_character"
+            app:layout_constraintVertical_chainStyle="packed" />
 
-    <TextView
-        android:id="@+id/tv_character_content"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:letterSpacing="-0.02"
-        android:text="지금 참여하고 기프티콘 받아보세요!"
-        android:textColor="@color/white"
-        android:textSize="16sp"
-        android:gravity="end"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_character_bg"
-        app:layout_constraintEnd_toEndOf="@+id/tv_character_title"
-        app:layout_constraintStart_toStartOf="@+id/tv_character_title"
-        app:layout_constraintTop_toBottomOf="@+id/tv_character_title" />
+        <TextView
+            android:id="@+id/tv_character_content"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:letterSpacing="-0.02"
+            android:text="지금 참여하고\n기프티콘 받아보세요!"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            android:gravity="end"
+            app:layout_constraintBottom_toBottomOf="@+id/layout_character"
+            app:layout_constraintEnd_toEndOf="@+id/tv_character_title"
+            app:layout_constraintStart_toStartOf="@+id/tv_character_title"
+            app:layout_constraintTop_toBottomOf="@+id/tv_character_title" />
 
-    <ImageView
-        android:id="@+id/iv_character"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginEnd="4dp"
-        android:background="@drawable/image_home_character"
-        android:clipToPadding="false"
-        android:paddingTop="20dp"
-        android:scaleType="centerCrop"
-        android:layout_marginStart="8dp"
-        app:layout_constraintBottom_toBottomOf="@+id/iv_character_bg"
-        app:layout_constraintDimensionRatio="1.3918"
-        app:layout_constraintStart_toStartOf="@+id/iv_character_bg"
-        app:layout_constraintWidth_percent="0.3361" />
-
-<!--    <androidx.constraintlayout.widget.ConstraintLayout-->
-<!--        android:id="@+id/layout_character"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:backgroundTint="#6673FF"-->
-<!--        android:background="@drawable/bg_home_receipt"-->
-<!--        app:layout_constraintDimensionRatio="3.8617"-->
-<!--        app:layout_constraintEnd_toEndOf="@+id/iv_budget_card_bg"-->
-<!--        app:layout_constraintStart_toStartOf="@+id/iv_budget_card_bg"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/layout_receipt">-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_character_title"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginHorizontal="20dp"-->
-<!--            android:fontFamily="@font/pretendard_semi_bold"-->
-<!--            android:letterSpacing="-0.02"-->
-<!--            android:text="캐릭터 키우기"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="16sp"-->
-<!--            app:layout_constraintBottom_toTopOf="@+id/tv_character_content"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintVertical_chainStyle="packed" />-->
-
-<!--        <TextView-->
-<!--            android:id="@+id/tv_character_content"-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginTop="8dp"-->
-<!--            android:letterSpacing="-0.02"-->
-<!--            android:text="지금 참여하고 기프티콘 받아보세요!"-->
-<!--            android:textColor="@color/white"-->
-<!--            android:textSize="16sp"-->
-<!--            app:layout_constraintBottom_toBottomOf="parent"-->
-<!--            app:layout_constraintStart_toStartOf="@+id/tv_character_title"-->
-<!--            app:layout_constraintTop_toBottomOf="@+id/tv_character_title" />-->
-
-<!--        <ImageView-->
-<!--            android:layout_width="0dp"-->
-<!--            android:layout_height="0dp"-->
-<!--            android:layout_marginEnd="4dp"-->
-<!--            android:background="@drawable/ic_home_receipt"-->
-<!--            android:clipToPadding="false"-->
-<!--            android:paddingTop="20dp"-->
-<!--            android:scaleType="centerCrop"-->
-<!--            app:layout_constraintDimensionRatio="1"-->
-<!--            app:layout_constraintEnd_toEndOf="parent"-->
-<!--            app:layout_constraintTop_toTopOf="parent"-->
-<!--            app:layout_constraintWidth_percent="0.3361" />-->
-<!--    </androidx.constraintlayout.widget.ConstraintLayout>-->
+        <ImageView
+            android:id="@+id/iv_character"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/image_home_character"
+            android:clipToPadding="false"
+            android:paddingTop="20dp"
+            android:scaleType="centerCrop"
+            app:layout_constraintDimensionRatio="1"
+            app:layout_constraintStart_toStartOf="@+id/layout_character"
+            app:layout_constraintTop_toTopOf="@+id/layout_character"
+            app:layout_constraintWidth_percent="0.3747" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!--    <ImageView-->
     <!--        android:id="@+id/iv_receipt_bg"-->

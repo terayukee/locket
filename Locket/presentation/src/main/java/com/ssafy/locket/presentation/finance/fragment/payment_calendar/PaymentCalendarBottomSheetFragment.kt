@@ -137,8 +137,9 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
         (getActivityContext(requireContext()) as MainActivity).windowManager.defaultDisplay.getMetrics(displayMetrics)
         return displayMetrics.heightPixels
     }
-    override fun onPause() {
-        super.onPause()
+
+    override fun onStop() {
+        super.onStop()
         selectedDayViewModel.clearSelectedDay()
         selectedDayViewModel.clearSelectedDayPayments()
         dialog?.dismiss()

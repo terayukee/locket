@@ -109,10 +109,10 @@ class CustomProgressBar @JvmOverloads constructor(
 
             // 텍스트 x 좌표 계산
             textX = if(progress > 100) (progressWidth * (100 / 100f)) - textWidth / 2 - paddingPx
-            else if(progress == 0) textWidth + paddingPx
+            else if(progress < 10) (progressWidth * (progress / 100f)) + textWidth / 2 + paddingPx
             else (progressWidth * (progress / 100f)) - textWidth / 2 - paddingPx
 
-            if (progress == 0) paint.color = resources.getColor(R.color.disabled)
+            if (progress < 10) paint.color = resources.getColor(R.color.disabled)
             else paint.color = Color.WHITE
              // 텍스트 그리기
             canvas.drawText(percentText, textX, height / 2f + paint.textSize / 2f, paint)

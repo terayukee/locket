@@ -18,6 +18,7 @@ import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "PaymentListFragment"
@@ -29,6 +30,11 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
     private val paymentHistoryViewModel: PaymentHistoryViewModel by activityViewModels()
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
 
+//    override fun onResume() {
+//        super.onResume()
+//        financeSharedViewModel.initYearMonth()
+//    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -36,7 +42,7 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
         initUI()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            financeSharedViewModel.selectedYearMonth.collect {
+            financeSharedViewModel.selectedYearMonth.collectLatest {
                 paymentHistoryViewModel.getMonthlyPaymentHistory(it.year, it.monthValue)
             }
         }
@@ -57,7 +63,16 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
                 paymentHistoryViewModel.monthlyPaymentHistory.collect { uiState ->
                     when(uiState) {
                         is PaymentHistoryState.Success -> {
-                            paymentRVAdapter.submitList(uiState.paymentMonthlyHistory.list)
+                            if(uiState.paymentMonthlyHistory.list.size == 0) {
+                                binding.tvNoPayment.visibility = View.VISIBLE
+                                binding.rvPayment.visibility = View.GONE
+                            }
+                            else {
+                                binding.rvPayment.visibility = View.VISIBLE
+                                paymentRVAdapter.submitList(uiState.paymentMonthlyHistory.list)
+                                binding.tvNoPayment.visibility = View.GONE
+                                binding.rvPayment.smoothScrollToPosition(0)
+                            }
                         }
                         is PaymentHistoryState.Error -> {
                             Log.d(TAG, "initUI: ${uiState.message}")

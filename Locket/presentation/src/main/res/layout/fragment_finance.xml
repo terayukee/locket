@@ -17,10 +17,22 @@
         android:letterSpacing="-0.02"
         android:textColor="@color/text"
         android:textSize="20sp"
-        app:layout_constraintEnd_toStartOf="@+id/btn_prev_month_icon"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="2025년 3월" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:paddingHorizontal="16dp"
+        android:src="@drawable/ic_finance_calendar_today"
+        app:layout_constraintHorizontal_bias="0"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_prev_month_icon"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toStartOf="@+id/btn_prev_month_icon"
+        app:layout_constraintStart_toEndOf="@+id/tv_year_month"
+        app:layout_constraintTop_toTopOf="@+id/btn_prev_month_icon" />
+
 
     <ImageView
         android:id="@+id/btn_prev_month_icon"

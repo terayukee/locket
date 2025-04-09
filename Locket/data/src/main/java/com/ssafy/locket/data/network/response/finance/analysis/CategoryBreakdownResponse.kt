@@ -11,8 +11,8 @@ data class CategoryBreakdownResponse(
     val amount: BigDecimal,
     val category: String,
     val percentage: Double
-): BaseResponse {
-    companion object: DataMapper<CategoryBreakdownResponse, CategoryBreakdown> {
+) : BaseResponse {
+    companion object : DataMapper<CategoryBreakdownResponse, CategoryBreakdown> {
         override fun CategoryBreakdownResponse.toDomainModel(): CategoryBreakdown {
             return CategoryBreakdown(
                 amount = this.amount,

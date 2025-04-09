@@ -19,6 +19,7 @@ import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
 import com.ssafy.locket.presentation.finance.viewmodel.GetFeedbackState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -37,29 +38,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-//
-//        var progress = 210
-//        binding.progressBar.setProgress(progress)
 
-//        binding.tvBudgetLeftNo.visibility = View.VISIBLE // 예산설정 안 된 경우
-        binding.groupBudget.visibility = View.VISIBLE // 예산설정 한 경우
-        /*
-        val budget = 340000
-        val today = LocalDate.now()
-        val currentMonth = today.monthValue
-
-        binding.tvBudgetLeft.text = resources.getString(R.string.finance_budget_left, CommonUtils.makeComma(budget)) // budget 대신 남은 예산으로 변경
-        val budgetLeftDaily = when (currentMonth) {
-            2 -> budget/(29-today.dayOfMonth)
-            1, 3, 5, 7, 8, 10, 12 -> budget/(32-today.dayOfMonth)
-            else -> budget/(31-today.dayOfMonth)
-        }
-
-        binding.tvBudgetLeftDaily.text = resources.getString(R.string.finance_budget_left_daily, CommonUtils.makeComma(budgetLeftDaily))
-
-        binding.tvBudget.text = resources.getString(R.string.finance_budget_left, CommonUtils.makeComma(budget))
-        binding.tvRecommendBudgetToday.text = resources.getString(R.string.finance_won, CommonUtils.makeComma((budget/getDaysInCurrentMonth())*today.dayOfMonth))
-        */
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collect {
@@ -81,8 +60,10 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
 
     fun initEvent(){
         viewLifecycleOwner.lifecycleScope.launch {
-            financeSharedViewModel.selectedYearMonth.collect {
-                budgetViewModel.getBudgetStatus(it.year, it.monthValue)
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                financeSharedViewModel.selectedYearMonth.collectLatest {
+                    budgetViewModel.getBudgetStatus(it.year, it.monthValue)
+                }
             }
         }
     }
@@ -97,6 +78,8 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
                             val budget = response.budgetStatus.budget.monthly
                             val daysInSelectedMonth = getDaysInCurrentMonth(budget.year, budget.month) + 1
 
+                            binding.groupBudget.visibility = View.VISIBLE
+                            binding.tvBudgetLeftNo.visibility = View.GONE
                             if(budget.target >= budget.spent) { // 예산 남거나 다 씀
                                 val budgetLeftDaily = when (budget.month) {
                                     2 -> budget.remaining/(daysInSelectedMonth-today.dayOfMonth)
@@ -106,14 +89,19 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
 
                                 binding.tvBudgetLeft.text = getString(R.string.finance_budget_left, CommonUtils.makeComma(budget.remaining))
                                 binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, CommonUtils.makeComma(budgetLeftDaily))
+                                binding.tvBudgetLeft.setTextColor(resources.getColor(R.color.text))
                             } else { // 예산보다 많이 사용함
                                 binding.tvBudgetLeft.text = getString(R.string.finance_budget_more, CommonUtils.makeComma(budget.spent - budget.target))
                                 binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, "0")
+                                binding.tvBudgetLeft.setTextColor(resources.getColor(R.color.finance_budget_over_text))
                             }
 
                             binding.tvBudget.text = getString(R.string.finance_won, CommonUtils.makeComma(budget.target))
                             binding.progressBar.setProgress(budget.progress.toInt())
                             binding.tvRecommendBudgetToday.text = getString(R.string.finance_won, CommonUtils.makeComma((budget.target/daysInSelectedMonth)*today.dayOfMonth))
+                        } else {
+                            binding.tvBudgetLeftNo.visibility = View.VISIBLE
+                            binding.groupBudget.visibility = View.INVISIBLE
                         }
                     }
                 }
@@ -121,9 +109,9 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
         }
     }
 
-    override fun onPause() {
-        super.onPause()
+    override fun onStop() {
+        super.onStop()
         mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
-        Log.d(TAG, "onPause: setDefault")
+        Log.d(TAG, "onStop: setDefault")
     }
 }

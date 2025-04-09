@@ -5,9 +5,10 @@ import kotlinx.android.parcel.Parcelize
 
 @Parcelize
 data class Notification(
-    val id: Int,
-    val type: String,
-    val alertPrice: String?,
+    val id: Long,
+    val date: String,
     val content: String,
-    val date: String
+    val type: String,
+    val productId: Int,
+    val alertPrice: Int
 ) : BaseModel

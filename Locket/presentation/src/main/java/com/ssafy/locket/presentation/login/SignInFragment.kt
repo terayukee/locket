@@ -42,8 +42,8 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initEvent()
         observeNotificationState()
+        initEvent()
         observeLoginState()
     }
 
@@ -96,7 +96,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                     if(it) isNotification = true
                 }
             }
-
         }
     }
 
@@ -106,7 +105,9 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                 when (status) {
                     is LoginStatus.Success -> {
                         val intent = Intent(requireContext(), MainActivity::class.java)
+                        Log.d(TAG, "observeLoginState: isNotification ${isNotification}")
                         if (isNotification) {
+                            Log.d(TAG, "observeLoginState: isNotification ${isNotification}")
                             intent.putExtra("notification", "notification")
                         }
                         startActivity(intent)
@@ -123,7 +124,6 @@ class SignInFragment : BaseFragment<FragmentSignInBinding>(
                         if (currentDestination == R.id.signInFragment) {
                             findNavController().navigate(R.id.action_signInFragment_to_registerUserInfoFragment)
                         }
-                        loginViewModel.resetLoginState()
                         loginViewModel.resetLoginState()
                     }
                     LoginStatus.Idle -> {

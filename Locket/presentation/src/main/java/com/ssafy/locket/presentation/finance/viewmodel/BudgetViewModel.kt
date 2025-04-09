@@ -12,8 +12,10 @@ import com.ssafy.locket.usecase.finance.budget.GetBudgetStatusUseCase
 import com.ssafy.locket.usecase.finance.budget.SetBugetGoalUseCase
 import com.ssafy.locket.usecase.finance.budget.getShortFeedbackUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -26,8 +28,8 @@ class BudgetViewModel @Inject constructor(
     private val getBudgetStatusUseCase: GetBudgetStatusUseCase,
     private val getShortFeedbackUseCase: getShortFeedbackUseCase
 ): ViewModel() {
-    private val _setBudgetGoal = MutableStateFlow<SetBudgetState>(SetBudgetState.Initial)
-    val setBudgetGoal: StateFlow<SetBudgetState> = _setBudgetGoal
+    private val _setBudgetGoal = MutableSharedFlow<SetBudgetState>()
+    val setBudgetGoal = _setBudgetGoal.asSharedFlow()
 
     private val _getBudgetStatus = MutableStateFlow<GetBudgetStatusState>(GetBudgetStatusState.Initial)
     val getBudgetStatus: StateFlow<GetBudgetStatusState> = _getBudgetStatus
@@ -46,10 +48,10 @@ class BudgetViewModel @Inject constructor(
                     when(status) {
                         is ResponseStatus.Success -> {
                             Log.d(TAG,status.data.toString())
-                            _setBudgetGoal.value = SetBudgetState.Success(status.data)
+                            _setBudgetGoal.emit(SetBudgetState.Success(status.data))
                         }
                         is ResponseStatus.Error -> {
-                            _setBudgetGoal.value = SetBudgetState.Error(status.error.message)
+                            _setBudgetGoal.emit(SetBudgetState.Error(status.error.message))
                         }
                     }
                 }

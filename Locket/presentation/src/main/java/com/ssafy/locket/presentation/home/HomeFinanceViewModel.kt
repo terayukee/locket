@@ -4,8 +4,12 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
+import com.ssafy.locket.model.finance.budget.status.BudgetStatus
+import com.ssafy.locket.presentation.finance.viewmodel.GetShortFeedbackState
 import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.usecase.finance.budget.GetBudgetStatusUseCase
+import com.ssafy.locket.usecase.finance.budget.getShortFeedbackUseCase
 import com.ssafy.locket.usecase.finance.payment_history.GetPaymentMonthlyTotalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,7 +25,9 @@ import javax.inject.Inject
 private const val TAG = "HomeFinanceViewModel"
 @HiltViewModel
 class HomeFinanceViewModel @Inject constructor(
-    private val getPaymentMonthlyTotalUseCase: GetPaymentMonthlyTotalUseCase
+    private val getPaymentMonthlyTotalUseCase: GetPaymentMonthlyTotalUseCase,
+    private val getBudgetStatusUseCase: GetBudgetStatusUseCase,
+    private val getShortFeedbackUseCase: getShortFeedbackUseCase
 ): ViewModel(){
 
     private val _monthTotal = MutableStateFlow<TotalPaymentState>(TotalPaymentState.Initial)
@@ -30,9 +36,17 @@ class HomeFinanceViewModel @Inject constructor(
     private val _prevMonthTotal = MutableStateFlow<TotalPaymentState>(TotalPaymentState.Initial)
     val prevMonthTotal: StateFlow<TotalPaymentState> = _prevMonthTotal.asStateFlow()
 
-    fun getMonthTotal(yearMonth: YearMonth){
+    private val _monthBudget = MutableStateFlow<MonthlyBudgetState>(MonthlyBudgetState.Initial)
+    val monthBudget: StateFlow<MonthlyBudgetState> = _monthBudget.asStateFlow()
+
+    private val _shortFeedback = MutableStateFlow<GetShortFeedbackState>(GetShortFeedbackState.Initial)
+    val shortFeedback: StateFlow<GetShortFeedbackState> = _shortFeedback
+
+    private val currentYearMonth: YearMonth = YearMonth.now()
+
+    fun getMonthTotal(){
         viewModelScope.launch {
-            getPaymentMonthlyTotalUseCase(yearMonth.year, yearMonth.monthValue)
+            getPaymentMonthlyTotalUseCase(currentYearMonth.year, currentYearMonth.monthValue)
                 .onStart {  }
                 .catch { e ->
                     Log.d(TAG, "getMonthTotal: ${e.message}")
@@ -41,7 +55,7 @@ class HomeFinanceViewModel @Inject constructor(
                     when(status) {
                         is ResponseStatus.Success -> {
                             _monthTotal.value = TotalPaymentState.Success(status.data.totalAmount)
-                            getPrevMonthTotal(yearMonth.minusMonths(1), status.data.totalAmount)
+                            getPrevMonthTotal(currentYearMonth.minusMonths(1), status.data.totalAmount)
                         }
                         is ResponseStatus.Error -> {
                             _monthTotal.value = TotalPaymentState.Error(status.error.message)
@@ -71,4 +85,53 @@ class HomeFinanceViewModel @Inject constructor(
                 }
         }
     }
+
+    fun getMonthlyBudget() {
+        viewModelScope.launch {
+            getBudgetStatusUseCase(currentYearMonth.year, currentYearMonth.monthValue)
+                .onStart {  }
+                .catch { e ->
+                    Log.d(TAG, "getMonthlyBudget: ${e.message}")
+                    _monthBudget.value = MonthlyBudgetState.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
+                }
+                .collect { status ->
+                    when(status) {
+                        is ResponseStatus.Success -> {
+                            Log.d(TAG, "getMonthlyBudget: ${status.data}")
+                            _monthBudget.value = MonthlyBudgetState.Success(status.data)
+                        }
+                        is ResponseStatus.Error -> {
+                            Log.d(TAG, "getMonthlyBudget: ${status.error.message}")
+                            _monthBudget.value = MonthlyBudgetState.Error(status.error.message)
+                        }
+                    }
+                }
+        }
+    }
+
+    fun getShortFeedback(){
+        viewModelScope.launch {
+            getShortFeedbackUseCase()
+                .onStart {  }
+                .catch { e ->
+                    Log.d(TAG, "getMonthlyPaymentHistory: Error ${e.message}")
+                }
+                .collect{ status ->
+                    when(status) {
+                        is ResponseStatus.Success -> {
+                            _shortFeedback.value = GetShortFeedbackState.Success(status.data)
+                        }
+                        is ResponseStatus.Error -> {
+                            _shortFeedback.value = GetShortFeedbackState.Error(status.error.message)
+                        }
+                    }
+                }
+        }
+    }
+}
+
+sealed class MonthlyBudgetState {
+    object Initial: MonthlyBudgetState()
+    data class Success(val budgetStatus: BudgetStatus): MonthlyBudgetState()
+    data class Error(val message: String): MonthlyBudgetState()
 }

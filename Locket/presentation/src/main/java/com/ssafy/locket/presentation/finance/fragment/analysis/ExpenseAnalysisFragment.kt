@@ -1,15 +1,27 @@
 package com.ssafy.locket.presentation.finance.fragment.analysis
 
+import android.graphics.Color
 import android.os.Bundle
+import android.provider.CalendarContract.Colors
 import android.util.Log
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.github.mikephil.charting.data.PieData
+import com.github.mikephil.charting.data.PieDataSet
+import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.formatter.PercentFormatter
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import com.ssafy.locket.model.finance.CategoryPayment
+import com.ssafy.locket.model.finance.budget.feedback.CategoryBreakdown
+import com.ssafy.locket.model.finance.budget.feedback.CategoryBreakdownList
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentExpenseAnalysisBinding
@@ -20,7 +32,9 @@ import com.ssafy.locket.presentation.finance.viewmodel.GetFeedbackState
 import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.time.YearMonth
 
 private const val TAG = "ExpenseAnalysisFragment"
@@ -33,38 +47,39 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     private val analysisViewModel : AnalysisViewModel by activityViewModels()
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
 
-    private var currentMonth = YearMonth.now()
-    private val startMonth = YearMonth.of(2020, 2)
-    private val endMonth = YearMonth.of(2025, 4)
+    private val startMonth = YearMonth.of(2020, 1)
+    private val endMonth = YearMonth.now()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        financeSharedViewModel.setSelectedMode(0)
+        financeSharedViewModel.initYearMonth()
+
         initAdapter()
         initEvent()
         getFeedbackData()
-        Log.d(TAG,"시작")
-        financeSharedViewModel.initYearMonth()
     }
 
     fun initEvent(){
-        binding.tvCategoryType.text = "카페인 뱀파이어형"
-        binding.tvFeedbackContent.text = getString(R.string.finance_analysis_feedback_test)
+//        binding.tvFeedbackContent.text = getString(R.string.finance_analysis_feedback_test)
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
         }
-        binding.tvYearMonth.text = getString(R.string.finance_year_month, currentMonth.year, currentMonth.monthValue)
+
         binding.btnPrevMonthIcon.setOnClickListener {
-            updateTitle(currentMonth.minusMonths(1))
+            val currentYearMonth = financeSharedViewModel.selectedYearMonth.value
+            updateTitle(currentYearMonth.minusMonths(1))
         }
 
         binding.btnNextMonthIcon.setOnClickListener {
-            updateTitle(currentMonth.plusMonths(1))
+            val currentYearMonth = financeSharedViewModel.selectedYearMonth.value
+            updateTitle(currentYearMonth.plusMonths(1))
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                financeSharedViewModel.selectedYearMonth.collect {
+                financeSharedViewModel.selectedYearMonth.collectLatest {
                     if(it >= YearMonth.of(endMonth.year,endMonth.monthValue)) {
                         binding.btnNextMonthIcon.isEnabled = false
                     } else if (it < YearMonth.of(startMonth.year,startMonth.monthValue)) {
@@ -93,34 +108,15 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                 }
             }
         }
-
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                analysisViewModel.getFeedback.collect { uiState ->
-//                    when(uiState) {
-//                        is CategoryPaymentState.Success -> {
-//                            categoryPaymentRVAdapter.submitList(uiState.categoryPaymentList)
-//                        }
-//                        is CategoryPaymentState.Error -> {
-//                            Log.d(TAG, "initUI: Error payment ${uiState.message}")
-//                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
-//                        }
-//                        else -> Log.d(TAG, "initUI: Payment Initial or Loading")
-//                    }
-//                }
-//            }
-//        }
     }
 
 
     private fun updateTitle(month: YearMonth) {
-        currentMonth = month
-
         binding.tvYearMonth.text = getString(R.string.finance_year_month, month.year, month.monthValue)
         binding.btnPrevMonthIcon.isEnabled = month > startMonth
         binding.btnNextMonthIcon.isEnabled = month < endMonth
 
-        financeSharedViewModel.setYearMonth(currentMonth)
+        financeSharedViewModel.setYearMonth(month)
     }
 
     private fun initAdapter() {
@@ -130,21 +126,116 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             adapter = categoryPaymentRVAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-
-
-//        val tmpList : List<CategoryPayment> = listOf(CategoryPayment("shopping",45.2f, 3000), CategoryPayment("cafe",22.2f, 85000))
-//        categoryPaymentRVAdapter.submitList(tmpList)
     }
 
-    fun getFeedbackData() {
+    private fun getFeedbackData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 analysisViewModel.getFeedback.collect { getFeedback ->
                     if(getFeedback is GetFeedbackState.Success) {
                         Log.d(TAG,getFeedback.feedback.toString())
+
+                        val feedback = getFeedback.feedback
+                        setupPieChart()
+                        binding.progressBar.visibility = View.GONE
+                        binding.groupAnalysis.visibility = View.VISIBLE
+                        loadPieChartData(feedback.categoryBreakdownList)
+                        binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
+                        categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
+                    } else {
+                        Log.d(TAG, "getFeedbackData: Error")
                     }
                 }
             }
         }
+    }
+    private fun setupPieChart() {
+        binding.pieChart.apply {
+            isDrawHoleEnabled = true
+            setUsePercentValues(true)
+//            setEntryLabelTextSize(12f)
+//            setEntryLabelColor(Color.BLACK)
+//            centerText = "지출 카테고리"
+//            setCenterTextSize(20f)
+            isRotationEnabled = false
+            description.isEnabled = false
+            legend.isEnabled = false
+        }
+    }
+
+    private fun loadPieChartData(categoryBreakdownList: CategoryBreakdownList) {
+        val entries = ArrayList<PieEntry>()
+        val colors = ArrayList<Int>()
+
+        // 각 카테고리별로 사용자 정의 색상 설정
+        val categoryColors = mapOf(
+            "식비" to Color.parseColor("#FFB602"),
+            "쇼핑" to Color.parseColor("#EB4634"),
+            "생활" to Color.parseColor("#C59A6E"),
+            "교통" to Color.parseColor("#8D73A8"),
+            "카페/디저트" to Color.parseColor("#8E9FE2"),
+            "기타" to Color.parseColor("#9E9E9E")
+        )
+
+        // JSON 데이터로부터 파이차트 항목 생성
+        for (i in 0 until categoryBreakdownList.items.size) {
+            val item = categoryBreakdownList.items.get(i)
+
+            entries.add(PieEntry(item.percentage.toFloat(), item.category))
+
+            // 카테고리별 색상 추가
+            categoryColors[item.category]?.let { colors.add(it) }
+        }
+
+        var characterName: String = "기타리스트"
+        var characterImg: Int = R.drawable.image_analysis_guitarist
+        when(categoryBreakdownList.items.get(0).category) {
+            "쇼핑" -> {
+                characterName = "풀소유 플렉스 챔피언"
+                characterImg = R.drawable.image_analysis_full_flex_champion
+            }
+            "카페/디저트" -> {
+                characterName = "카페인 뱀파이어형"
+                characterImg = R.drawable.image_analysis_caffeine_vampire
+            }
+            "식비" -> {
+                characterName = "맛의 방랑자"
+                characterImg = R.drawable.image_analysis_taste_nomad
+            }
+            "생활" -> {
+                characterName = "생활의 달인"
+                characterImg = R.drawable.image_analysis_home
+            }
+            "교통" -> {
+                characterName = "도로위의 방랑자"
+                characterImg = R.drawable.image_analysis_transportation
+            }
+        }
+
+        Glide.with(requireContext())
+            .load(characterImg)
+            .into(binding.ivCategoryCharacter)
+
+        binding.tvCategoryType.text = characterName
+
+        val dataSet = PieDataSet(entries, "지출 카테고리")
+        dataSet.colors = colors
+//        dataSet.valueTextSize = 14f
+//        dataSet.valueTextColor = Color.BLACK
+        dataSet.sliceSpace = 3f
+        dataSet.setDrawValues(false)
+
+        // PieData 생성 및 설정
+        val data = PieData(dataSet)
+//        data.setValueFormatter(PercentFormatter(binding.pieChart))
+//        data.setValueTextSize(14f)
+//        data.setValueTextColor(Color.BLACK)
+
+        // 차트에 데이터 설정
+        binding.pieChart.data = data
+        binding.pieChart.invalidate() // 차트 갱신
+
+        // 애니메이션 효과 추가
+        binding.pieChart.animateY(1000)
     }
 }

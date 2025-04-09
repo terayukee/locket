@@ -71,8 +71,9 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
         super.onResume()
         initData()
     }
-    override fun onPause() {
-        super.onPause()
+
+    override fun onStop() {
+        super.onStop()
         if(editViewModel.editprice.value==""){
             productViewModel.productAlert(productId,false,0)
         }

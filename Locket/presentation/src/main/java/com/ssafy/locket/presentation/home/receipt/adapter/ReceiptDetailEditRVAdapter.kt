@@ -31,6 +31,7 @@ class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRV
     inner class CustomViewHolder(private val binding: ItemReceiptEditBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(item: ReceiptDetail) {
+
             binding.etProductName.text = item.itemName
             binding.etUnitPrice.hint = CommonUtils.makeComma(item.itemAmount)
             binding.etCount.hint = item.itemQuantity.toString()
@@ -47,9 +48,10 @@ class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRV
                         position: Int,
                         id: Long
                     ) {
-                        val selectedItem : ReceiptDetail = parent?.getItemAtPosition(position) as ReceiptDetail
+                        val selectedItem= parent?.getItemAtPosition(position) as String
                         Log.d(TAG, "onItemSelected: $selectedItem")
-                        itemClickListener.onClick(view!!, selectedItem, position)
+
+//                        itemClickListener.onClick(view!!, selectedItem, position)
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {

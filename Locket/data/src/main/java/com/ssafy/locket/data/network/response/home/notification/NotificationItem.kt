@@ -7,12 +7,13 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class NotificationItem(
-    val alertId: Int,
-    val alertPrice: String?,
+    val alertId: Long,
     val formattedDate: String,
     val message: String,
     val read: Boolean,
-    val type: String
+    val type: String,
+    val productId: Int,
+    val alertPrice: Int
 ) : BaseResponse {
     companion object : DataMapper<NotificationItem, Notification> {
         override fun NotificationItem.toDomainModel(): Notification {
@@ -21,7 +22,8 @@ data class NotificationItem(
                 type = this.type,
                 alertPrice = this.alertPrice,
                 content = this.message,
-                date = this.formattedDate
+                date = this.formattedDate,
+                productId = this.productId
             )
         }
     }
