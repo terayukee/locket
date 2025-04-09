@@ -89,8 +89,12 @@ class OCRService:
             return text
         text = unicodedata.normalize("NFC", text)  # 한글 정규화
 
-        # 괄호 등장 시 그 뒤 모두 삭제
-        text = text.split('(')[0]
+        # 괄호 쌍이 완성되지 않은 경우: 열린 괄호만 있고 닫힘이 없음
+        if '(' in text and ')' not in text:
+            text = text.split('(')[0]
+        else:
+            # 완성된 괄호쌍이 있다면 그대로 두되, 기타 오타 교정만 진행
+            pass
 
         # 자주 발생하는 오타 패턴 교정
         corrections = {
