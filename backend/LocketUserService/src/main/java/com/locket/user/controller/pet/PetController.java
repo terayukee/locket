@@ -85,16 +85,16 @@ public class PetController {
         return ResponseEntity.ok(characterInfo);
     }
 
-    @Operation(summary = "캐릭터 최대 레벨 달성 보상", description = "최대 레벨에 도달한 캐릭터에게 리워드를 부여하고 캐릭터를 리셋합니다.")
+    @Operation(summary = "캐릭터 최대 레벨 달성 보상", description = "최대 레벨에 도달한 캐릭터에게 리워드를 부여하고 캐릭터를 삭제합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "리워드 부여 및 캐릭터 리셋 성공"),
+            @ApiResponse(responseCode = "200", description = "리워드 부여 및 캐릭터 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "캐릭터가 최대 레벨에 도달하지 않음"),
             @ApiResponse(responseCode = "401", description = "인증되지 않은 사용자"),
             @ApiResponse(responseCode = "404", description = "캐릭터를 찾을 수 없음")
     })
     @PostMapping("/{userId}/complete")
-    public ResponseEntity<RewardDto> completeCharacterAndReset(@PathVariable("userId") Long userId) {
-        RewardDto reward = characterService.completeCharacterAndReset(userId);
+    public ResponseEntity<RewardDto> completeCharacterAndDelete(@PathVariable("userId") Long userId) {
+        RewardDto reward = characterService.completeCharacterAndDelete(userId);
         return ResponseEntity.ok(reward);
     }
 

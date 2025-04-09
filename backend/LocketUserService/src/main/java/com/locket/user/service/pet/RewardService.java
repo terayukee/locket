@@ -28,13 +28,14 @@ public class RewardService {
      * 유저에게 새로운 보상을 생성하고, RewardDto로 반환한다.
      */
     @Transactional
-    public RewardDto createReward(Long userId, String rewardName) {
+    public RewardDto createReward(Long userId, String rewardName, String characterName) {
         // 필요한 경우, rewardName에 따라 다른 로직을 추가할 수도 있음
         String imageUrl = imageBaseUrl + "/rewards/" + PetConstants.STARBUCKS_AMERICANO_IMAGE_NAME;
 
         Reward reward = Reward.builder()
                 .userId(userId)
                 .rewardName(rewardName)
+                .characterName(characterName)
                 .imageUrl(imageUrl)
                 .receivedAt(LocalDateTime.now())
                 .build();
@@ -44,6 +45,7 @@ public class RewardService {
         return RewardDto.builder()
                 .rewardId(saved.getRewardId())
                 .rewardName(saved.getRewardName())
+                .characterName(reward.getCharacterName())
                 .imageUrl(saved.getImageUrl())
                 .receivedAt(saved.getReceivedAt())
                 .build();
@@ -59,6 +61,7 @@ public class RewardService {
                 .map(reward -> RewardDto.builder()
                         .rewardId(reward.getRewardId())
                         .rewardName(reward.getRewardName())
+                        .characterName(reward.getCharacterName())
                         .imageUrl(reward.getImageUrl())
                         .receivedAt(reward.getReceivedAt())
                         .build())

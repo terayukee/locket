@@ -27,6 +27,9 @@ public class Reward {
     @Column(name = "reward_name", nullable = false)
     private String rewardName;
 
+    @Column(name = "character_name")
+    private String characterName;
+
     @Column(name = "image_url")
     private String imageUrl;
 

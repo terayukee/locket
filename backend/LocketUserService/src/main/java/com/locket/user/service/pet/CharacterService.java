@@ -18,7 +18,7 @@ import java.util.Random;
 public class CharacterService {
 
     private final CharacterRepository characterRepository;
-    private final RewardService rewardService;  // <-- 기존 rewardRepository 대신 RewardService 주입
+    private final RewardService rewardService;
 
     private final Random random = new Random();
 
@@ -155,7 +155,7 @@ public class CharacterService {
     }
 
     @Transactional
-    public RewardDto completeCharacterAndReset(Long userId) {
+    public RewardDto completeCharacterAndDelete(Long userId) {
         Character character = characterRepository.findByUserId(userId)
                 .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
 
@@ -165,16 +165,19 @@ public class CharacterService {
             throw new IllegalArgumentException("캐릭터가 최대 레벨에 도달하지 않았습니다.");
         }
 
-        // 보상 생성 로직을 RewardService로 위임
-        RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD);
+        // 캐릭터 이름과 사료 개수 저장
+        String characterName = character.getCharacterName();
+        int foodCount = character.getFoodCount();
 
-        // 캐릭터 리셋
-        String newCharacterName = generateRandomCharacterName();
-        character.resetCharacter(newCharacterName);
-        characterRepository.save(character);
+        // 보상 생성 시 캐릭터 이름 전달
+        RewardDto rewardDto = rewardService.createReward(userId, PetConstants.DEFAULT_REWARD, characterName);
+
+        // 캐릭터 삭제 (새 캐릭터를 생성하지 않음)
+        characterRepository.delete(character);
 
         return rewardDto;
     }
+
 
     @Transactional
     public FoodResponseDto addFood(Long userId) {

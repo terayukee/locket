@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 public class RewardDto {
     private Long rewardId;
     private String rewardName;
+    private String characterName;
     private LocalDateTime receivedAt;
     private String imageUrl;
 }
