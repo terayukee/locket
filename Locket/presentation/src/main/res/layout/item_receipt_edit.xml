@@ -63,6 +63,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="4dp"
         android:paddingVertical="8dp"
+        android:paddingStart="4dp"
         android:paddingEnd="12dp"
         android:background="@drawable/bg_receipt_spinner"
         android:text=""

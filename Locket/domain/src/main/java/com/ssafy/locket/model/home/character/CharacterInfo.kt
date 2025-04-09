@@ -13,5 +13,5 @@ data class CharacterInfo(
     val level: Int,
     val totalExpForNextLevel: Int,
     val toy: Toy,
-    val isInit: Boolean = true
+    var isInit: Boolean = true
 ): BaseModel

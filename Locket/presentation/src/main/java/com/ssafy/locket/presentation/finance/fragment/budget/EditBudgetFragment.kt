@@ -44,7 +44,7 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
 
 
         binding.btnBack.setOnClickListener {
-            findNavController().popBackStack()
+            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
         }
         
         binding.btnBudgetSet.setOnClickListener {

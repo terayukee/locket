@@ -37,6 +37,8 @@ class ReceiptDetailEditRVAdapter :
         RecyclerView.ViewHolder(binding.root) {
 
         fun bind(item: ReceiptDetail) {
+            var isInitialized = false
+
             binding.etProductName.text = item.itemName
             binding.tvUnitPrice.text = CommonUtils.makeComma(item.itemAmount)
             binding.tvCount.text = item.itemQuantity.toString()
@@ -45,23 +47,6 @@ class ReceiptDetailEditRVAdapter :
             } else {
                 binding.tvCategoryDropdown.text = item.itemCategory
             }
-
-//            binding.tvCategoryDropdown.setOnClickListener {
-//                // 👉 단가, 수량 입력창 포커스 해제
-////                binding.etUnitPrice.clearFocus()
-////                binding.etCount.clearFocus()
-////                val imm =
-////                    context.getSystemService(Context.INPUT_METHOD_SERVICE) as android.view.inputmethod.InputMethodManager
-////                imm.hideSoftInputFromWindow(binding.tvUnitPrice.windowToken, 0)
-//                val popupView =
-//                    LayoutInflater.from(context).inflate(R.layout.drop_down_listview, null)
-//                val popupWindow = PopupWindow(
-//                    popupView,
-//                    binding.tvCategoryDropdown.width,
-//                    ViewGroup.LayoutParams.WRAP_CONTENT,
-//                    true
-//                )
-//            }
             binding.tvCategoryDropdown.setOnClickListener {
                 // 👉 단가, 수량 입력창 포커스 해제
 //                binding.etUnitPrice.clearFocus()
@@ -86,7 +71,11 @@ class ReceiptDetailEditRVAdapter :
                     binding.tvCategoryDropdown.text = selected
 //                    item.itemCategory = selected
                     val updatedItem = item.copy(itemCategory = selected)
-                    itemClickListener.onClick(binding.tvCategoryDropdown, updatedItem, adapterPosition)
+                    itemClickListener.onClick(
+                        binding.tvCategoryDropdown,
+                        updatedItem,
+                        adapterPosition
+                    )
                     popupWindow.dismiss()
                 }
                 popupWindow.isOutsideTouchable = true

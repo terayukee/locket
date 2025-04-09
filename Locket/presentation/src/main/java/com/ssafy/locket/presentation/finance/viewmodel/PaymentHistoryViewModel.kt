@@ -10,6 +10,7 @@ import com.ssafy.locket.model.finance.payment_history.PaymentMonthlyHistory
 import com.ssafy.locket.usecase.finance.payment_history.GetMonthlyCalendarPaymentUseCase
 import com.ssafy.locket.usecase.finance.payment_history.GetMonthlyPaymentHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.catch
@@ -23,6 +24,9 @@ class PaymentHistoryViewModel @Inject constructor(
     private val getMonthlyPaymentHistoryUseCase: GetMonthlyPaymentHistoryUseCase,
     private val getMonthlyCalendarPaymentUseCase: GetMonthlyCalendarPaymentUseCase
 ): ViewModel(){
+    private var paymentHistoryJob: Job? = null
+    private var monthlyCalendarJob: Job? = null
+
     private val _monthlyPaymentHistory = MutableStateFlow<PaymentHistoryState>(PaymentHistoryState.Initial)
     val monthlyPaymentHistory: StateFlow<PaymentHistoryState> = _monthlyPaymentHistory
 
@@ -30,7 +34,9 @@ class PaymentHistoryViewModel @Inject constructor(
     val monthlyPaymentCalendar: StateFlow<PaymentCalendarState> = _monthlyPaymentCalendar
 
     fun getMonthlyPaymentHistory(year: Int, month: Int){
-        viewModelScope.launch {
+        paymentHistoryJob?.cancel()
+
+        paymentHistoryJob = viewModelScope.launch {
             getMonthlyPaymentHistoryUseCase(year, month)
                 .onStart {  }
                 .catch { e ->
@@ -51,7 +57,9 @@ class PaymentHistoryViewModel @Inject constructor(
     }
 
     fun getMonthlyPaymentCalendar(year: Int, month: Int){
-        viewModelScope.launch {
+        monthlyCalendarJob?.cancel()
+
+        monthlyCalendarJob = viewModelScope.launch {
             getMonthlyCalendarPaymentUseCase(year, month)
                 .onStart { Log.d(TAG, "getMonthlyPaymentCalendar: start $year $month") }
                 .catch { e ->

@@ -27,7 +27,7 @@ import com.ssafy.locket.presentation.finance.viewmodel.OpenDialogState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentCalendarState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryViewModel
-import com.ssafy.locket.presentation.finance.viewmodel.SelectedDayPaymentsState
+import com.ssafy.locket.presentation.finance.viewmodel.SelectedDayState
 import com.ssafy.locket.presentation.finance.viewmodel.SelectedDayViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
@@ -63,18 +63,10 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     private lateinit var dialog: PaymentCalendarBottomSheetFragment
     private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-//    private var scrollListener: RecyclerView.OnScrollListener? = null
-
-    override fun onResume() {
-        super.onResume()
-        initUI()
-
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        financeSharedViewModel.initYearMonth()
+        financeSharedViewModel.initYearMonthPayment()
         var downX = 0f
         var downY = 0f
 
@@ -144,7 +136,6 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
             override fun create(view: View): DayViewContainer = DayViewContainer(view)
         }
 
-//        binding.calendar.monthScrollListener = { updateTitle() }
         binding.calendar.setup(startMonth, endMonth, daysOfWeek.first())
         binding.calendar.scrollToMonth(currentMonth)
         
@@ -152,8 +143,6 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
         updateDayWeekColor()
         initObserver()
-
-        initUI()
     }
 
     private fun updateDayWeekColor() {
@@ -168,21 +157,16 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         }
     }
 
-    private fun updateTitle() {
-        val month = binding.calendar.findFirstVisibleMonth()?.yearMonth ?: return
-        Log.d(TAG, "updateTitle: ${month.year} ${month.monthValue}")
-        financeSharedViewModel.setYearMonth(month)
-    }
-
     private fun dateClicked(date: LocalDate) {
-        binding.calendar.notifyDateChanged(selectedDate) // 이전 선택값 해제
+        if(selectedDayViewModel.selectedDay.value is SelectedDayState.Exist == false) {
+            binding.calendar.notifyDateChanged(selectedDate) // 이전 선택값 해제
 
-        selectedDate = date
+            selectedDate = date
 
-        binding.calendar.notifyDateChanged(date) // 새로운 선택값
-        selectedDayViewModel.setSelectedDay(date)
-        selectedDayViewModel.setSelectedDayPayments(date.year, date.monthValue, date.dayOfMonth)
-        Log.d(TAG, "dateClicked: selectedDayPayments")
+            binding.calendar.notifyDateChanged(date) // 새로운 선택값
+            selectedDayViewModel.setSelectedDay(date)
+            selectedDayViewModel.setSelectedDayPayments(date.year, date.monthValue, date.dayOfMonth)
+        }
     }
 
     private fun bindDate(
@@ -234,73 +218,6 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         }
     }
 
-    private fun initUI() {
-//        dialog = PaymentCalendarBottomSheetFragment()
-
-//
-//        var scrollDirection = "NONE"
-//
-//        scrollListener = object : RecyclerView.OnScrollListener() {
-//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-//                when (newState) {
-//                    RecyclerView.SCROLL_STATE_IDLE -> {
-//                        Log.d(
-//                            TAG,
-//                            "onScrollStateChanged: Finished scrolling, direction=$scrollDirection"
-//                        )
-//                    }
-//                }
-//            }
-//
-//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-//                // 가로 스크롤 방향 감지
-//                if (dx != 0) {
-//                    scrollDirection = when {
-//                        dx > 0 -> "RIGHT_TO_LEFT" // 왼쪽으로 스크롤 (다음 달로)
-//                        dx < 0 -> "LEFT_TO_RIGHT" // 오른쪽으로 스크롤 (이전 달로)
-//                        else -> scrollDirection
-//                    }
-//                }
-//
-//                Log.d(TAG, "onScrolled: scrollDirection ${scrollDirection}")
-//                // 스크롤 중에도 현재 보이는 월 확인 및 업데이트
-//                val prevMonth = financeSharedViewModel.selectedYearMonth.value
-//                val firstVisibleYearMonth =
-//                    binding.calendar.findFirstVisibleMonth()?.yearMonth ?: prevMonth
-//
-//
-//                val lastVisibleYearMonth =
-//                    binding.calendar.findLastVisibleMonth()?.yearMonth ?: prevMonth
-//
-//                // 방향에 따라 적절한 월 선택
-//                if (firstVisibleYearMonth != null) {
-//                    val targetMonth = when (scrollDirection) {
-//                        "LEFT_TO_RIGHT" -> firstVisibleYearMonth
-//                        "RIGHT_TO_LEFT" -> {
-//                            lastVisibleYearMonth
-//                        }
-//
-//                        else -> prevMonth
-//                    }
-//
-//                    // 변경된 경우에만 업데이트
-//                    if (targetMonth != prevMonth) {
-//                        Log.d(
-//                            TAG,
-//                            "onScrolled: direction=$scrollDirection, changing month from $prevMonth to $targetMonth"
-//                        )
-//                        financeSharedViewModel.setYearMonth(targetMonth)
-//                    }
-//                }
-//            }
-//        }
-
-//        scrollListener?.let {
-//            binding.calendar.addOnScrollListener(it)
-//            Log.d(TAG, "initUI: scrollListener 추가")
-//        }
-    }
-
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             financeSharedViewModel.selectedYearMonth.collectLatest {// 연월 선택
@@ -311,9 +228,8 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                selectedDayViewModel.openDialog.collectLatest { uiState ->
-                    if (uiState is OpenDialogState.Opened && !dialog.isAdded) {
-                        Log.d(TAG, "initUI: dialog is added")
+                selectedDayViewModel.selectedDay.collectLatest { uiState ->
+                    if(uiState is SelectedDayState.Exist && !dialog.isAdded) {
                         dialog.show(childFragmentManager, "payment")
                         yield()
                     }
