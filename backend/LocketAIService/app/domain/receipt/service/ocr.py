@@ -1,7 +1,6 @@
 import requests
 import json
 from typing import Dict
-import re
 
 import unicodedata
 
@@ -90,8 +89,8 @@ class OCRService:
             return text
         text = unicodedata.normalize("NFC", text)  # 한글 정규화
 
-        # 괄호 뒤 제거
-        text = re.sub(r"\(.*?\)", "", text)
+        # 괄호 등장 시 그 뒤 모두 삭제
+        text = text.split('(')[0]
 
         # 자주 발생하는 오타 패턴 교정
         corrections = {
@@ -99,7 +98,6 @@ class OCRService:
             '0트': '이트',
             '"': '',  # 따옴표
             '.': '',  # 마침표
-            '(': '', ')': '',  # 괄호
         }
         for wrong, correct in corrections.items():
             text = text.replace(wrong, correct)
