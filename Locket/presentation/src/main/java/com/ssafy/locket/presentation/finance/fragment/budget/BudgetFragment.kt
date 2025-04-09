@@ -19,6 +19,7 @@ import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
 import com.ssafy.locket.presentation.finance.viewmodel.GetFeedbackState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.YearMonth
@@ -37,6 +38,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collect {
@@ -59,7 +61,7 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     fun initEvent(){
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                financeSharedViewModel.selectedYearMonth.collect {
+                financeSharedViewModel.selectedYearMonth.collectLatest {
                     budgetViewModel.getBudgetStatus(it.year, it.monthValue)
                 }
             }
@@ -87,9 +89,11 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
 
                                 binding.tvBudgetLeft.text = getString(R.string.finance_budget_left, CommonUtils.makeComma(budget.remaining))
                                 binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, CommonUtils.makeComma(budgetLeftDaily))
+                                binding.tvBudgetLeft.setTextColor(resources.getColor(R.color.text))
                             } else { // 예산보다 많이 사용함
                                 binding.tvBudgetLeft.text = getString(R.string.finance_budget_more, CommonUtils.makeComma(budget.spent - budget.target))
                                 binding.tvBudgetLeftDaily.text = getString(R.string.finance_budget_left_daily, "0")
+                                binding.tvBudgetLeft.setTextColor(resources.getColor(R.color.finance_budget_over_text))
                             }
 
                             binding.tvBudget.text = getString(R.string.finance_won, CommonUtils.makeComma(budget.target))

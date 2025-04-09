@@ -48,9 +48,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private val characterViewModel: CharacterViewModel by activityViewModels()
 
-    private val budgetViewModel : BudgetViewModel by activityViewModels()
-
-    private val homeFinanceViewModel: HomeFinanceViewModel by activityViewModels()
+    private val homeFinanceViewModel: HomeFinanceViewModel by viewModels()
 
     private var backPressedTime: Long = 0
 
@@ -64,11 +62,13 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private fun initUI() {
         val today = LocalDate.now()
-        homeFinanceViewModel.getMonthTotal(today.yearMonth)
-        budgetViewModel.getBudgetStatus(today.year, today.monthValue)
-        budgetViewModel.getShortFeedback()
+        homeFinanceViewModel.getMonthTotal()
+        homeFinanceViewModel.getMonthlyBudget()
+        homeFinanceViewModel.getShortFeedback()
+//        budgetViewModel.getBudgetStatus(today.year, today.monthValue)
+//        budgetViewModel.getShortFeedback()
 
-        binding.ivCharacterBg.setOnClickListener {
+        binding.layoutCharacter.setOnClickListener {
             characterViewModel.checkCharacter()
         }
 
@@ -155,9 +155,10 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                budgetViewModel.getBudgetStatus.collect { uiState ->
-                    if (uiState is GetBudgetStatusState.Success) {
+                homeFinanceViewModel.monthBudget.collect { uiState ->
+                    if (uiState is MonthlyBudgetState.Success) {
                         if(uiState.budgetStatus.hasBudget == false) {
+                            binding.tvBudgetData.visibility = View.INVISIBLE
                             binding.tvNoBudgetTitle.visibility = View.VISIBLE
                             binding.tvNoBudgetTitle.text = getString(R.string.home_no_budget_month)
                         } else {
@@ -172,7 +173,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
                                 binding.tvBudgetFeedback.text = getString(R.string.finance_home_budget_feedback_same)
                             }
                         }
-                    } else if(uiState is GetBudgetStatusState.Error) {
+                    } else if(uiState is MonthlyBudgetState.Error) {
                         Log.d(TAG, "initUI: GetBudgetStatusState error ${uiState.message}")
                     }
                 }
@@ -228,7 +229,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                budgetViewModel.getShortFeedback.collect { getShortFeedback ->
+                homeFinanceViewModel.shortFeedback.collect { getShortFeedback ->
                     if(getShortFeedback is GetShortFeedbackState.Success) {
                         binding.tvBudgetAiFeedback.text = getShortFeedback.shortFeedback.feedback
                     }

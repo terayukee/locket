@@ -21,8 +21,8 @@ import com.ssafy.locket.presentation.databinding.FragmentEditBudgetBinding
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
 import com.ssafy.locket.presentation.finance.viewmodel.SetBudgetState
-import com.ssafy.locket.presentation.graph.viewmodel.ProductHappyListState
 import com.ssafy.locket.presentation.utils.CommonUtils
+import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
 import java.text.DecimalFormat
 import java.time.LocalDate
@@ -52,9 +52,26 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
                 val rawNumber = binding.etGoalBudget.text.toString().replace(",", "")
                 budgetViewModel.setBudgetGoal(rawNumber.toInt())
             }
-            mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
-            findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
 
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            budgetViewModel.setBudgetGoal.collect { uiState ->
+                when(uiState) {
+                    is SetBudgetState.Success -> {
+//                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.DEFAULT, "예산이 ${CommonUtils.makeComma(uiState.setBudget.amount)}원으로 설정되었습니다")
+                        mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
+                        findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
+                    }
+                    is SetBudgetState.Error -> {
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                        mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Budget)
+                        findNavController().navigate(R.id.action_editBudgetFragment_to_financeFragment)
+                    }
+                    else -> {}
+                }
+
+            }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -65,6 +82,7 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
                     }
                     is GetBudgetStatusState.Error -> {
                         Log.e(TAG, uiState.message)
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
                     }
                     else -> {}
                 }
@@ -130,5 +148,9 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
                 }
             }
         })
+    }
+
+    override fun onStop() {
+        super.onStop()
     }
 }

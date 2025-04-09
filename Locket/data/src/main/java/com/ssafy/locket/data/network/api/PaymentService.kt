@@ -13,15 +13,15 @@ import retrofit2.http.POST
 import retrofit2.http.Query
 
 internal interface PaymentService {
-    @POST("payment/api/payment/nfc")
+    @POST("payment/nfc")
     suspend fun pay(@Query("userId") userId: Long, @Body paymentRequest: PaymentRequest): Response<PaymentResponse>
 
-    @POST("payment/api/payment/auth/verify-password")
+    @POST("payment/auth/verify-password")
     suspend fun verifyPassword(@Body passswordVerifyRequest: PassswordVerifyRequest): Response<PasswordVerifyResponse>
 
-    @GET("payment/api/payment/cards")
+    @GET("payment/cards")
     suspend fun getCards(@Query("userId") userId: Long): Response<CardListResponse>
 
-    @GET("payment/api/payment/auth-info/fingerprint")
+    @GET("payment/auth-info/fingerprint")
     suspend fun checkFingerPrintRegistered(@Query("userId") userId: Long): Response<CheckFingerprintResponse>
 }

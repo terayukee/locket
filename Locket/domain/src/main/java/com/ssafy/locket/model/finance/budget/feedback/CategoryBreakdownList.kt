@@ -5,5 +5,5 @@ import kotlinx.parcelize.Parcelize
 
 @Parcelize
 data class CategoryBreakdownList(
-    val categoryBreakdownList: List<CategoryBreakdown>
-): BaseModel
+    val items: List<CategoryBreakdown>
+) : BaseModel

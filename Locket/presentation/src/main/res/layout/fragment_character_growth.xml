@@ -141,6 +141,7 @@
         android:layout_height="0dp"
         android:background="@drawable/bg_character_mission"
         android:layout_marginHorizontal="20dp"
+        app:layout_constraintWidth_percent="0.3325"
         app:layout_constraintBottom_toBottomOf="@+id/iv_character_growth_bg"
         app:layout_constraintDimensionRatio="1"
         app:layout_constraintEnd_toStartOf="@+id/iv_mission_toy_bg"
@@ -149,9 +150,11 @@
 
     <ImageView
         android:id="@+id/image_mission_food"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:background="@drawable/ic_character_food"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.1699"
+        app:layout_constraintDimensionRatio="1"
+        android:background="@drawable/image_character_feed"
         app:layout_constraintBottom_toTopOf="@+id/tv_mission_food_title"
         app:layout_constraintEnd_toEndOf="@+id/iv_mission_food_bg"
         app:layout_constraintHorizontal_bias="0.5"
@@ -201,8 +204,10 @@
 
     <ImageView
         android:id="@+id/image_mission_toy"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.1699"
+        app:layout_constraintDimensionRatio="1"
         android:background="@drawable/ic_character_toy"
         app:layout_constraintBottom_toTopOf="@+id/tv_mission_toy_title"
         app:layout_constraintEnd_toEndOf="@+id/iv_mission_toy_bg"
