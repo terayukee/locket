@@ -41,7 +41,7 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
         initEvent()
         initAdapter()
         getSearchInfo()
-        initScrollListener()
+//        initScrollListener()
 
         lifecycleScope.launch {
             searchQuery = productViewModel.productName.first()
@@ -98,25 +98,18 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
         }
     }
 
-    private fun initScrollListener() {
-        binding.rvSearchList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager as GridLayoutManager
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-                // 스크롤이 리스트 끝에 도달하고, 로딩 중이 아닐 때 추가 데이터 요청
-                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                    && firstVisibleItemPosition >= 0
-                ) {
-                    loadMoreData()
-                }
-            }
-        })
-    }
+//    private fun initScrollListener() {
+//        binding.rvSearchList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//
+//                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+//                val visibleItemCount = layoutManager.childCount
+//                val totalItemCount = layoutManager.itemCount
+//                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+//            }
+//        })
+//    }
 
     private fun loadMoreData() {
         isLoading = true

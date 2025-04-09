@@ -7,6 +7,7 @@ import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.model.finance.payment_history.PaymentDailyHistory
 import com.ssafy.locket.usecase.finance.payment_history.GetDailyPaymentHistoryUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,11 +31,21 @@ class SelectedDayViewModel @Inject constructor(
     private val _selectedDayPayments = MutableStateFlow<SelectedDayPaymentsState>(SelectedDayPaymentsState.Initial)
     val selectedDayPayments = _selectedDayPayments.asStateFlow()
 
-    private val _openDialog = Channel<OpenDialogState>(Channel.BUFFERED)
+    private val _openDialog = Channel<OpenDialogState>(Channel.RENDEZVOUS)
     val openDialog = _openDialog.receiveAsFlow()
 
+    private var dayPaymentsJob: Job? = null
+
+    private var selectDayJob: Job? = null
+
     fun setSelectedDay(day: LocalDate) {
-        _selectedDay.value = SelectedDayState.Selected(day)
+        selectDayJob?.cancel()
+
+        selectDayJob = viewModelScope.launch {
+            if(_selectedDay.value is SelectedDayState.Initial || _selectedDay.value is SelectedDayState.Selected) {
+                _selectedDay.value = SelectedDayState.Selected(day)
+            }
+        }
     }
 
     fun clearSelectedDay() {
@@ -42,7 +53,11 @@ class SelectedDayViewModel @Inject constructor(
     }
 
     fun setSelectedDayPayments(year: Int, month: Int, day: Int) {
-        viewModelScope.launch {
+        dayPaymentsJob?.cancel()
+
+        val targetDate = LocalDate.of(year, month, day)
+
+        dayPaymentsJob = viewModelScope.launch {
             getDailyPaymentHistoryUseCase(year, month, day)
                 .onStart {  }
                 .catch {e ->
@@ -52,10 +67,18 @@ class SelectedDayViewModel @Inject constructor(
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            _selectedDayPayments.value = SelectedDayPaymentsState.Success(status.data)
-                            if(status.data.list.isNotEmpty()) {
-                                Log.d(TAG, "setSelectedDayPayments: dialog is added")
-                                _openDialog.trySend(OpenDialogState.Opened)
+                            val currentSelectedDate = when (val state = _selectedDay.value) {
+                                is SelectedDayState.Selected -> state.day
+                                is SelectedDayState.Exist -> state.day
+                                else -> null
+                            }
+                            if (currentSelectedDate == targetDate) {
+                                _selectedDayPayments.value = SelectedDayPaymentsState.Success(status.data)
+
+                                if (status.data.list.isNotEmpty()) {
+                                    _selectedDay.value = SelectedDayState.Exist(targetDate)
+                                    _openDialog.trySend(OpenDialogState.Opened)
+                                }
                             }
                         }
                         is ResponseStatus.Error -> {
@@ -75,6 +98,7 @@ class SelectedDayViewModel @Inject constructor(
 sealed class SelectedDayState {
     object Initial: SelectedDayState()
     data class Selected(val day: LocalDate): SelectedDayState()
+    data class Exist(val day: LocalDate): SelectedDayState() // 결제 내역이 있는 날
 }
 
 sealed class SelectedDayPaymentsState {

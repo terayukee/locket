@@ -59,7 +59,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        financeSharedViewModel.initYearMonth()
+        financeSharedViewModel.initYearMonthPayment()
 
         binding.progressBar.load(
             Config.Builder()

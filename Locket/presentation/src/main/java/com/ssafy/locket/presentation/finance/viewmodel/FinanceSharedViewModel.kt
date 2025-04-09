@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.ssafy.locket.model.base.ResponseStatus
 import com.ssafy.locket.usecase.finance.payment_history.GetPaymentMonthlyTotalUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,6 +24,8 @@ private const val TAG = "FinanceSharedViewModel"
 class FinanceSharedViewModel @Inject constructor(
     private val getPaymentMonthlyTotalUseCase: GetPaymentMonthlyTotalUseCase
 ): ViewModel() {
+    private var totalPaymentJob: Job? = null
+
     private val _selectedYearMonth = MutableStateFlow(YearMonth.now())
     val selectedYearMonth: StateFlow<YearMonth> = _selectedYearMonth.asStateFlow()
 
@@ -40,6 +43,9 @@ class FinanceSharedViewModel @Inject constructor(
     }
 
     fun initYearMonth() {
+        _selectedYearMonth.value = YearMonth.now()
+    }
+    fun initYearMonthPayment() {
         viewModelScope.launch {
 //            _selectedYearMonth.update { _selectedYearMonth.value }
 //            Log.d(TAG, "initYearMonth: ${_selectedYearMonth.value.year}  ${_selectedYearMonth.value.monthValue}")
@@ -48,7 +54,9 @@ class FinanceSharedViewModel @Inject constructor(
     }
 
     fun getTotalPayment(year: Int, month: Int) {
-        viewModelScope.launch {
+        totalPaymentJob?.cancel()
+
+        totalPaymentJob = viewModelScope.launch {
             getPaymentMonthlyTotalUseCase(year, month)
                 .onStart { }
                 .catch { e ->

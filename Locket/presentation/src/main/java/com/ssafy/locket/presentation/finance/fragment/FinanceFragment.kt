@@ -47,8 +47,12 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+//        binding.tabLayout.getTabAt(binding.tabLayout.selectedTabPosition)?.select()
+
         initTabLayout()
-        financeSharedViewModel.initYearMonth()
+        financeSharedViewModel.initYearMonthPayment()
+
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collectLatest {
@@ -70,7 +74,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
 //            repeatOnLifecycle(Lifecycle.State.STARTED) {
-                financeSharedViewModel.selectedYearMonthTotalPayment.collect { uiState ->
+                financeSharedViewModel.selectedYearMonthTotalPayment.collectLatest { uiState ->
                     when (uiState) {
                         is TotalPaymentState.Success -> {
                             binding.tvPaymentData.text = resources.getString(
@@ -96,6 +100,8 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
         binding.icMoveToToday.setOnClickListener {
             financeSharedViewModel.setYearMonth(today)
+            binding.btnNextMonthIcon.isEnabled = false
+            binding.btnPrevMonthIcon.isEnabled = true
         }
 
         binding.btnAnalysis.setOnClickListener {
@@ -120,40 +126,42 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             budgetViewModel.getBudgetStatus(newYearMonth.year, newYearMonth.monthValue)
         }
         backEvent()
-
-        binding.tabLayout.getTabAt(binding.tabLayout.selectedTabPosition)?.select()
     }
 
     private fun initTabLayout() {
-        binding.tabLayout.apply {
-            addTab(binding.tabLayout.newTab().setText("내역"))
-            addTab(binding.tabLayout.newTab().setText("달력"))
-            addTab(binding.tabLayout.newTab().setText("예산"))
-        }
+//        binding.tabLayout.apply {
+//            addTab(binding.tabLayout.newTab().setText("내역"))
+//            addTab(binding.tabLayout.newTab().setText("달력"))
+//            addTab(binding.tabLayout.newTab().setText("예산"))
+//        }
 
         binding.tabVp.apply {
             adapter = FinanceVPAdapter(requireActivity() as MainActivity)
             isUserInputEnabled = false
         }
 
-        binding.tabLayout.post {
-            // 0번째 탭이 선택된 상태에서 텍스트 스타일 적용
-            val tabTextView = getTextViewFromTab(binding.tabLayout.getTabAt(0)!!)
-            tabTextView?.typeface = Typeface.create("sans-serif-medium", Typeface.NORMAL)
-        }
+//        binding.tabLayout.post {
+//            // 0번째 탭이 선택된 상태에서 텍스트 스타일 적용
+//            val tabTextView = getTextViewFromTab(binding.tabLayout.getTabAt(0)!!)
+//            tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[1])
+//        }
 
         TabLayoutMediator(binding.tabLayout, binding.tabVp) { tab, position ->
             tab.text = if (position == 0) "내역" else if (position == 1) "달력" else "예산"
         }.attach()
 
         viewLifecycleOwner.lifecycleScope.launch {
-            mainViewModel.selectedFinanceTab.collect { state ->
-                if (state is FinanceNavigationState.Budget) {
-                    binding.tabVp.setCurrentItem(2, false)
-                    binding.tabLayout.getTabAt(2)?.select()
-                } else {
-                    binding.tabVp.setCurrentItem(0, false)
-                    binding.tabLayout.getTabAt(0)?.select()
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                mainViewModel.selectedFinanceTab.collectLatest { state ->
+                    binding.tabVp.post {
+                        if (state is FinanceNavigationState.Budget) {
+                            binding.tabVp.setCurrentItem(2, false)
+                            binding.tabLayout.getTabAt(2)?.select()
+                        } else {
+                            binding.tabVp.setCurrentItem(0, false)
+                            binding.tabLayout.getTabAt(0)?.select()
+                        }
+                    }
                 }
             }
         }
@@ -170,6 +178,8 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
+                val tabTextView = getTextViewFromTab(tab)
+                tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[1])
             }
         })
     }
@@ -205,5 +215,10 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     }
                 }
             })
+    }
+
+    override fun onPause() {
+        super.onPause()
+        financeSharedViewModel.initYearMonth()
     }
 }

@@ -115,9 +115,9 @@ class ProductViewModel @Inject constructor(
         }
     }
 
-    fun getLikeList(userId: Int, page: Int) {
+    fun getLikeList(userId: Int) {
         viewModelScope.launch {
-            productLikeListUseCase(userId, page)
+            productLikeListUseCase(userId)
                 .onStart { productLikeListSetLoading() }
                 .catch { e -> Log.e("ProductFragment", "Error fetching category list: ${e.message}") }
                 .firstOrNull()

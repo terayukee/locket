@@ -89,7 +89,7 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
     private fun loadMoreData() {
         isLoading = true
         lifecycleScope.launch {
-            productViewModel.getLikeList(userId, 1)
+            productViewModel.getLikeList(userId)
         }
     }
 }

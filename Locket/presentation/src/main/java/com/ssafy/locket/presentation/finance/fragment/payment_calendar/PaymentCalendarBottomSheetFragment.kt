@@ -10,7 +10,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
@@ -27,6 +29,7 @@ import com.ssafy.locket.presentation.utils.ToastType
 import com.ssafy.locket.utils.CalendarUtils.displayText
 import dagger.hilt.android.AndroidEntryPoint
 import dagger.hilt.android.internal.managers.ViewComponentManager
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 private const val TAG = "PaymentCalendarBottomSh"
@@ -71,21 +74,31 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
             dialog?.dismiss()
         }
 
+
+
         viewLifecycleOwner.lifecycleScope.launch {
-            selectedDayViewModel.selectedDay.collect { uiState ->
-                when(uiState) {
-                    is SelectedDayState.Selected -> {
-                        binding.tvDate.text = String.format(getString(R.string.finance_calendar_bottom_sheet_date),uiState.day.dayOfMonth.toString(),uiState.day.dayOfWeek.displayText())
-                    }
-                    is SelectedDayState.Initial -> {
-                        Log.d(TAG, "onViewCreated: initial")
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                selectedDayViewModel.selectedDay.collect { uiState ->
+                    when(uiState) {
+                        is SelectedDayState.Exist -> {
+                            if(selectedDayViewModel.selectedDay.value as SelectedDayState.Exist == uiState) {
+                                binding.tvDate.text = String.format(getString(R.string.finance_calendar_bottom_sheet_date),uiState.day.dayOfMonth.toString(),uiState.day.dayOfWeek.displayText())
+                            } else {
+                                dialog?.dismiss()
+                            }
+
+                        }
+                        else -> {
+                            Log.d(TAG, "onViewCreated: initial or none")
+                            dialog?.dismiss()
+                        }
                     }
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            selectedDayViewModel.selectedDayPayments.collect { uiState ->
+            selectedDayViewModel.selectedDayPayments.collectLatest { uiState ->
                 when(uiState) {
                     is SelectedDayPaymentsState.Success -> {
                         binding.tvCount.text = String.format(getString(R.string.finance_calendar_bottom_sheet_count), uiState.paymentDailyHistory.list.size)
