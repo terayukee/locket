@@ -119,7 +119,6 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
         isLoading = true
         lifecycleScope.launch {
             productViewModel.getLikeList(userId, currentPage)
-            currentPage++ // 다음 페이지 증가
         }
     }
 }

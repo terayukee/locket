@@ -3,7 +3,11 @@ package com.ssafy.locket.presentation.finance.fragment.analysis
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
 import android.view.View
+import android.view.ViewGroup
+import android.widget.PopupWindow
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
@@ -12,9 +16,12 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.github.mikephil.charting.data.Entry
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.github.mikephil.charting.highlight.Highlight
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.ssafy.locket.model.finance.budget.feedback.CategoryBreakdownList
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -47,11 +54,12 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     private val startMonth = YearMonth.of(2020, 1)
     private val endMonth = YearMonth.now()
 
+    private var tooltipWindow: PopupWindow? = null
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         financeSharedViewModel.initYearMonth()
-//        binding.progressBar.visibility = View.VISIBLE
 
         binding.progressBar.load(
             Config.Builder()
@@ -64,6 +72,12 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         initAdapter()
         initEvent()
         getFeedbackData()
+    }
+
+    override fun onDestroyView() {
+        tooltipWindow?.dismiss() // 툴팁 제거
+        tooltipWindow = null
+        super.onDestroyView()
     }
 
     fun initEvent(){
@@ -99,10 +113,8 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         }
     }
 
-
     private fun updateTitle(month: YearMonth) {
         binding.tvYearMonth.text = getString(R.string.finance_year_month, month.year, month.monthValue)
-
         financeSharedViewModel.setYearMonth(month)
     }
 
@@ -120,7 +132,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 analysisViewModel.getFeedback.collect{ getFeedback ->
                     if(getFeedback is GetFeedbackState.Success) {
-                        Log.d(TAG,getFeedback.feedback.toString())
                         val feedback = getFeedback.feedback
                         setupPieChart()
                         binding.progressBar.visibility = View.GONE
@@ -128,9 +139,8 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                         binding.tvNoAnalysis.visibility = View.GONE
                         loadPieChartData(feedback.categoryBreakdownList)
                         binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
-                        categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
+                        categoryPaymentRVAdapter.submitList(feedback.categoryBreakdownList.items)
                     } else if(getFeedback is GetFeedbackState.Error) {
-                        Log.d(TAG, "getFeedbackData: Error")
                         binding.progressBar.visibility = View.GONE
                         binding.tvNoAnalysis.visibility = View.VISIBLE
                         binding.groupAnalysis.visibility = View.GONE
@@ -143,6 +153,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             }
         }
     }
+
     private fun setupPieChart() {
         binding.pieChart.apply {
             isDrawHoleEnabled = true
@@ -150,6 +161,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             isRotationEnabled = false
             description.isEnabled = false
             legend.isEnabled = false
+            setDrawEntryLabels(false) // ✅ 항목 라벨 제거
         }
     }
 
@@ -157,68 +169,78 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         val entries = ArrayList<PieEntry>()
         val colors = ArrayList<Int>()
 
-        // 각 카테고리별로 사용자 정의 색상 설정
         val categoryColors = mapOf(
-            "식비" to Color.parseColor("#FFB602"),
+            "식비" to Color.parseColor("#8E9FE2"),
             "쇼핑" to Color.parseColor("#EB4634"),
             "생활" to Color.parseColor("#C59A6E"),
             "교통" to Color.parseColor("#8D73A8"),
-            "카페/디저트" to Color.parseColor("#8E9FE2"),
+            "카페/디저트" to Color.parseColor("#FFB602"),
             "기타" to Color.parseColor("#9E9E9E")
         )
 
-        for (i in 0 until categoryBreakdownList.items.size) {
-            val item = categoryBreakdownList.items.get(i)
-
+        categoryBreakdownList.items.forEach { item ->
             entries.add(PieEntry(item.percentage.toFloat(), item.category))
-
             categoryColors[item.category]?.let { colors.add(it) }
         }
 
-        var characterName: String = "기타리스트"
-        var characterImg: Int = R.drawable.image_analysis_guitarist
-        when(categoryBreakdownList.items.get(0).category) {
-            "쇼핑" -> {
-                characterName = "풀소유 플렉스 챔피언"
-                characterImg = R.drawable.image_analysis_full_flex_champion
-            }
-            "카페/디저트" -> {
-                characterName = "카페인 뱀파이어형"
-                characterImg = R.drawable.image_analysis_caffeine_vampire
-            }
-            "식비" -> {
-                characterName = "맛의 방랑자"
-                characterImg = R.drawable.image_analysis_taste_nomad
-            }
-            "생활" -> {
-                characterName = "생활의 달인"
-                characterImg = R.drawable.image_analysis_home
-            }
-            "교통" -> {
-                characterName = "도로위의 방랑자"
-                characterImg = R.drawable.image_analysis_transportation
-            }
+        val (characterName, characterImg) = when(categoryBreakdownList.items.firstOrNull()?.category) {
+            "쇼핑" -> "풀소유 플렉스 챔피언" to R.drawable.image_analysis_full_flex_champion
+            "카페/디저트" -> "카페인 뱀파이어형" to R.drawable.image_analysis_caffeine_vampire
+            "식비" -> "맛의 방랑자" to R.drawable.image_analysis_taste_nomad
+            "생활" -> "생활의 달인" to R.drawable.image_analysis_home
+            "교통" -> "도로위의 방랑자" to R.drawable.image_analysis_transportation
+            else -> "기타리스트" to R.drawable.image_analysis_guitarist
         }
 
-        Glide.with(requireContext())
-            .load(characterImg)
-            .into(binding.ivCategoryCharacter)
-
+        Glide.with(requireContext()).load(characterImg).into(binding.ivCategoryCharacter)
         binding.tvCategoryType.text = characterName
 
-        val dataSet = PieDataSet(entries, "지출 카테고리")
-        dataSet.colors = colors
-        dataSet.sliceSpace = 3f
-        dataSet.setDrawValues(false)
+        val dataSet = PieDataSet(entries, "지출 카테고리").apply {
+            this.colors = colors
+            sliceSpace = 3f
+            setDrawValues(false)
+        }
 
-        // PieData 생성 및 설정
-        val data = PieData(dataSet)
+        binding.pieChart.apply {
+            data = PieData(dataSet)
+            invalidate()
+            animateY(1000)
+            setOnChartValueSelectedListener(object : OnChartValueSelectedListener {
+                override fun onValueSelected(e: Entry?, h: Highlight?) {
+                    tooltipWindow?.dismiss()
+                    if (e is PieEntry) showTooltip(e.label,h!!)
+                }
+                override fun onNothingSelected() {
+                    tooltipWindow?.dismiss()
+                }
+            })
+        }
+    }
 
-        // 차트에 데이터 설정
-        binding.pieChart.data = data
-        binding.pieChart.invalidate() // 차트 갱신
 
-        // 애니메이션 효과 추가
-        binding.pieChart.animateY(1000)
+    private fun showTooltip(category: String, highlight: Highlight) {
+        val inflater = layoutInflater
+        val tooltipView = inflater.inflate(R.layout.tooltip_chart, null)
+        val tvCategory = tooltipView.findViewById<TextView>(R.id.tv_category)
+        tvCategory.text = category
+        tooltipWindow?.dismiss() // 기존 툴팁 제거
+
+        tooltipWindow = PopupWindow(
+            tooltipView,
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        ).apply {
+            isOutsideTouchable = true
+            elevation = 10f
+        }
+        // 차트의 화면 내 위치
+        val chartLocation = IntArray(2)
+        binding.pieChart.getLocationOnScreen(chartLocation)
+        // 선택된 조각의 좌표 (화면 기준)
+        val touchX = chartLocation[0] + highlight.xPx.toInt()
+        val touchY = chartLocation[1] + highlight.yPx.toInt()
+
+        // 툴팁 표시: 선택한 조각 위쪽에 약간 띄워서 표시
+        tooltipWindow?.showAtLocation(binding.pieChart, Gravity.NO_GRAVITY, touchX, touchY - 150)
     }
 }

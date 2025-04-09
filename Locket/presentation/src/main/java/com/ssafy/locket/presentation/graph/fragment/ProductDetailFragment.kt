@@ -285,6 +285,9 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                         binding.ivLikeBtn.visibility = View.VISIBLE
                         binding.ivStar.visibility = View.VISIBLE
                         binding.chartPriceGraph.visibility = View.VISIBLE
+                        binding.vUnderline.visibility = View.VISIBLE
+                        binding.tvChartTitle.visibility = View.VISIBLE
+                        binding.tvChartDescription.visibility = View.VISIBLE
                         if(isHeartFilled){
                             binding.ivLikeBtn.setImageResource(R.drawable.ic_graph_heart)
                             binding.cvNotificationSetting.visibility = View.VISIBLE
