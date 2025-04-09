@@ -47,7 +47,7 @@ class ReceiptFileSelectionViewModel @Inject constructor(
     private val _receiptFileSelectionUiState =
         MutableStateFlow<ReceiptFileSelectionUiState>(ReceiptFileSelectionUiState.Initial)
     val receiptFileSelectionUiState: StateFlow<ReceiptFileSelectionUiState> =
-        _receiptFileSelectionUiState.asStateFlow() // 선택된 처리할 영수증
+        _receiptFileSelectionUiState.asStateFlow() // 선택된 처리할 영수증 uri
 
     private val _receiptDetail = MutableStateFlow<ReceiptDetailState>(ReceiptDetailState.Initial)
     val receiptDetail: StateFlow<ReceiptDetailState> = _receiptDetail.asStateFlow() // ocr 처리한 영수증 정보

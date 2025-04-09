@@ -22,6 +22,8 @@
         tools:text="2025년 3월" />
 
     <ImageView
+        android:id="@+id/ic_move_to_today"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:paddingHorizontal="16dp"

@@ -61,7 +61,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     private lateinit var dialog: PaymentCalendarBottomSheetFragment
     private val format = DateTimeFormatter.ofPattern("yyyy-MM-dd")
 
-    private var scrollListener: RecyclerView.OnScrollListener? = null
+//    private var scrollListener: RecyclerView.OnScrollListener? = null
 
     override fun onResume() {
         super.onResume()
@@ -73,6 +73,15 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         super.onViewCreated(view, savedInstanceState)
 
         financeSharedViewModel.initYearMonth()
+        binding.calendar.addOnItemTouchListener(object : RecyclerView.SimpleOnItemTouchListener() {
+            override fun onInterceptTouchEvent(rv: RecyclerView, e: MotionEvent): Boolean {
+                return if (e.action == MotionEvent.ACTION_MOVE) {
+                    true
+                } else {
+                    super.onInterceptTouchEvent(rv, e)
+                }
+            }
+        })
 
         val currentMonth = financeSharedViewModel.selectedYearMonth.value
 
@@ -200,104 +209,75 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     private fun initUI() {
         dialog = PaymentCalendarBottomSheetFragment()
 
-        var scrollDirection = "NONE"
-
-        scrollListener = object : RecyclerView.OnScrollListener() {
-            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                when (newState) {
-                    RecyclerView.SCROLL_STATE_IDLE -> {
-                        Log.d(
-                            TAG,
-                            "onScrollStateChanged: Finished scrolling, direction=$scrollDirection"
-                        )
-                    }
-                }
-            }
-
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                // 가로 스크롤 방향 감지
-                if (dx != 0) {
-                    scrollDirection = when {
-                        dx > 0 -> "RIGHT_TO_LEFT" // 왼쪽으로 스크롤 (다음 달로)
-                        dx < 0 -> "LEFT_TO_RIGHT" // 오른쪽으로 스크롤 (이전 달로)
-                        else -> scrollDirection
-                    }
-                }
-
-                Log.d(TAG, "onScrolled: scrollDirection ${scrollDirection}")
-                // 스크롤 중에도 현재 보이는 월 확인 및 업데이트
-                val prevMonth = financeSharedViewModel.selectedYearMonth.value
-                val firstVisibleYearMonth =
-                    binding.calendar.findFirstVisibleMonth()?.yearMonth ?: prevMonth
-
-
-                val lastVisibleYearMonth =
-                    binding.calendar.findLastVisibleMonth()?.yearMonth ?: prevMonth
-
-                // 방향에 따라 적절한 월 선택
-                if (firstVisibleYearMonth != null) {
-                    val targetMonth = when (scrollDirection) {
-                        "LEFT_TO_RIGHT" -> firstVisibleYearMonth
-                        "RIGHT_TO_LEFT" -> {
-                            lastVisibleYearMonth
-                        }
-
-                        else -> prevMonth
-                    }
-
-                    // 변경된 경우에만 업데이트
-                    if (targetMonth != prevMonth) {
-                        Log.d(
-                            TAG,
-                            "onScrolled: direction=$scrollDirection, changing month from $prevMonth to $targetMonth"
-                        )
-                        financeSharedViewModel.setYearMonth(targetMonth)
-                    }
-                }
-            }
-        }
-
-        scrollListener?.let {
-            binding.calendar.addOnScrollListener(it)
-            Log.d(TAG, "initUI: scrollListener 추가")
-        }
-
-
-//        binding.calendar.setOnScrollChangeListener { _, _, _, _, _ ->
-//            val prevMonth = financeSharedViewModel.selectedYearMonth.value
-//            binding.calendar.fin
-//            val firstVisibleYearMonth = binding.calendar.findFirstVisibleMonth()?.yearMonth
-//            Log.d(TAG, "initUI: prevMonth ${prevMonth}  first ${firstVisibleYearMonth}")
-//            if (firstVisibleYearMonth != null && firstVisibleYearMonth != prevMonth) {
-//                financeSharedViewModel.setYearMonth(firstVisibleYearMonth)
-//            }
-//        }
-
-
-//        viewLifecycleOwner.lifecycleScope.launch {
-//            repeatOnLifecycle(Lifecycle.State.STARTED) {
-//                selectedDayViewModel.selectedDayPayments.collect { uiState ->
-//                    when(uiState) {
-//                        is SelectedDayPaymentsState.Success -> {
-//                            Log.d(TAG, "initUI: success")
-//                            if (uiState.paymentDailyHistory.list.isNotEmpty()) dialog.show(childFragmentManager, "payment")
-//                        }
-//                        is SelectedDayPaymentsState.Error -> {
-//                            CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
-//                        }
-//                        else -> Log.d(TAG, "initUI: SelectedDayPaymentsState else")
+//
+//        var scrollDirection = "NONE"
+//
+//        scrollListener = object : RecyclerView.OnScrollListener() {
+//            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+//                when (newState) {
+//                    RecyclerView.SCROLL_STATE_IDLE -> {
+//                        Log.d(
+//                            TAG,
+//                            "onScrollStateChanged: Finished scrolling, direction=$scrollDirection"
+//                        )
 //                    }
 //                }
 //            }
+//
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                // 가로 스크롤 방향 감지
+//                if (dx != 0) {
+//                    scrollDirection = when {
+//                        dx > 0 -> "RIGHT_TO_LEFT" // 왼쪽으로 스크롤 (다음 달로)
+//                        dx < 0 -> "LEFT_TO_RIGHT" // 오른쪽으로 스크롤 (이전 달로)
+//                        else -> scrollDirection
+//                    }
+//                }
+//
+//                Log.d(TAG, "onScrolled: scrollDirection ${scrollDirection}")
+//                // 스크롤 중에도 현재 보이는 월 확인 및 업데이트
+//                val prevMonth = financeSharedViewModel.selectedYearMonth.value
+//                val firstVisibleYearMonth =
+//                    binding.calendar.findFirstVisibleMonth()?.yearMonth ?: prevMonth
+//
+//
+//                val lastVisibleYearMonth =
+//                    binding.calendar.findLastVisibleMonth()?.yearMonth ?: prevMonth
+//
+//                // 방향에 따라 적절한 월 선택
+//                if (firstVisibleYearMonth != null) {
+//                    val targetMonth = when (scrollDirection) {
+//                        "LEFT_TO_RIGHT" -> firstVisibleYearMonth
+//                        "RIGHT_TO_LEFT" -> {
+//                            lastVisibleYearMonth
+//                        }
+//
+//                        else -> prevMonth
+//                    }
+//
+//                    // 변경된 경우에만 업데이트
+//                    if (targetMonth != prevMonth) {
+//                        Log.d(
+//                            TAG,
+//                            "onScrolled: direction=$scrollDirection, changing month from $prevMonth to $targetMonth"
+//                        )
+//                        financeSharedViewModel.setYearMonth(targetMonth)
+//                    }
+//                }
+//            }
+//        }
+
+//        scrollListener?.let {
+//            binding.calendar.addOnScrollListener(it)
+//            Log.d(TAG, "initUI: scrollListener 추가")
 //        }
     }
 
     private fun initObserver() {
         viewLifecycleOwner.lifecycleScope.launch {
             financeSharedViewModel.selectedYearMonth.collectLatest {// 연월 선택
-                binding.calendar.smoothScrollToMonth(YearMonth.of(it.year, it.monthValue))
+                binding.calendar.scrollToMonth(YearMonth.of(it.year, it.monthValue))
                 paymentHistoryViewModel.getMonthlyPaymentCalendar(it.year, it.monthValue)
-//                currentMonth = it
             }
         }
 
@@ -342,10 +322,10 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     override fun onPause() {
         super.onPause()
 
-        scrollListener?.let {
-            binding.calendar.removeOnScrollListener(it)
-            Log.d(TAG, "onPause: scrollListener 제거")
-        }
-        scrollListener = null
+//        scrollListener?.let {
+//            binding.calendar.removeOnScrollListener(it)
+//            Log.d(TAG, "onPause: scrollListener 제거")
+//        }
+//        scrollListener = null
     }
 }

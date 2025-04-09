@@ -38,7 +38,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
 
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
-    private val today = LocalDate.now()
+    private val today = YearMonth.now()
 
     override fun onResume() {
         super.onResume()
@@ -64,6 +64,8 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     }
                     binding.tvYearMonth.text =
                         resources.getString(R.string.finance_year_month, it.year, it.monthValue)
+                    if(today == it) binding.icMoveToToday.visibility = View.GONE
+                    else binding.icMoveToToday.visibility = View.VISIBLE
                 }
             }
         }
@@ -92,6 +94,10 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     }
 //                }
             }
+        }
+
+        binding.icMoveToToday.setOnClickListener {
+            financeSharedViewModel.setYearMonth(today)
         }
 
         binding.btnAnalysis.setOnClickListener {

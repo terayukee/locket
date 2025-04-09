@@ -26,8 +26,8 @@ class FinanceSharedViewModel @Inject constructor(
     private val _selectedYearMonth = MutableStateFlow(YearMonth.now())
     val selectedYearMonth: StateFlow<YearMonth> = _selectedYearMonth.asStateFlow()
 
-    private val _selectedMode = MutableStateFlow(0) // 0은 결제 내역, 예산, 분석하기 1은 캘린더
-    val selectedMode: StateFlow<Int> = _selectedMode.asStateFlow()
+//    private val _selectedMode = MutableStateFlow(0) // 0은 결제 내역, 예산, 분석하기 1은 캘린더
+//    val selectedMode: StateFlow<Int> = _selectedMode.asStateFlow()
 
     private val _selectedYearMonthTotalPayment =
         MutableStateFlow<TotalPaymentState>(TotalPaymentState.Initial)
@@ -38,7 +38,6 @@ class FinanceSharedViewModel @Inject constructor(
         viewModelScope.launch {
             _selectedYearMonth.update { newYearMonth }
             Log.d(TAG, "setYearMonth: newYearMonth ${newYearMonth.year} ${newYearMonth.monthValue}")
-            // TODO api 연결하여 로직 추가 예정
             getTotalPayment(newYearMonth.year, newYearMonth.monthValue)
         }
     }
@@ -52,9 +51,9 @@ class FinanceSharedViewModel @Inject constructor(
         }
     }
 
-    fun setSelectedMode(type: Int) {
-        _selectedMode.value = type
-    }
+//    fun setSelectedMode(type: Int) {
+//        _selectedMode.value = type
+//    }
 
     fun getTotalPayment(year: Int, month: Int) {
         viewModelScope.launch {

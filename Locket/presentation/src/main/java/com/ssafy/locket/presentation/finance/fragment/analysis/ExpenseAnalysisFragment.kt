@@ -50,9 +50,8 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        financeSharedViewModel.setSelectedMode(0)
         financeSharedViewModel.initYearMonth()
-        binding.progressBar.visibility = View.VISIBLE
+//        binding.progressBar.visibility = View.VISIBLE
 
         binding.progressBar.load(
             Config.Builder()
@@ -68,35 +67,13 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     }
 
     fun initEvent(){
-//        binding.tvFeedbackContent.text = getString(R.string.finance_analysis_feedback_test)
         binding.btnBack.setOnClickListener {
             findNavController().popBackStack()
-        }
-
-        binding.btnPrevMonthIcon.setOnClickListener {
-            val currentYearMonth = financeSharedViewModel.selectedYearMonth.value
-            updateTitle(currentYearMonth.minusMonths(1))
-        }
-
-        binding.btnNextMonthIcon.setOnClickListener {
-            val currentYearMonth = financeSharedViewModel.selectedYearMonth.value
-            updateTitle(currentYearMonth.plusMonths(1))
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 financeSharedViewModel.selectedYearMonth.collectLatest {
-                    if(it >= YearMonth.of(endMonth.year,endMonth.monthValue)) {
-                        binding.btnNextMonthIcon.isEnabled = false
-                    } else if (it < YearMonth.of(startMonth.year,startMonth.monthValue)) {
-                        binding.btnPrevMonthIcon.isEnabled = false
-                    } else {
-                        binding.btnPrevMonthIcon.isEnabled = true
-                        binding.btnNextMonthIcon.isEnabled = true
-                    }
-//                    binding.progressBar.visibility = View.VISIBLE
-//                    binding.groupAnalysis.visibility = View.GONE
-                    Log.d(TAG, "initEvent: visible change progressBar visible")
                     binding.progressBar.visibility = View.VISIBLE
                     binding.tvNoAnalysis.visibility = View.GONE
                     binding.groupAnalysis.visibility = View.GONE
@@ -125,8 +102,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
 
     private fun updateTitle(month: YearMonth) {
         binding.tvYearMonth.text = getString(R.string.finance_year_month, month.year, month.monthValue)
-        binding.btnPrevMonthIcon.isEnabled = month > startMonth
-        binding.btnNextMonthIcon.isEnabled = month < endMonth
 
         financeSharedViewModel.setYearMonth(month)
     }
@@ -143,18 +118,23 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     private fun getFeedbackData() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                analysisViewModel.getFeedback.collect { getFeedback ->
+                analysisViewModel.getFeedback.collect{ getFeedback ->
                     if(getFeedback is GetFeedbackState.Success) {
                         Log.d(TAG,getFeedback.feedback.toString())
                         val feedback = getFeedback.feedback
-                        setupPieChart()
-                        binding.progressBar.visibility = View.GONE
-                        binding.groupAnalysis.visibility = View.VISIBLE
-                        binding.tvNoAnalysis.visibility = View.GONE
-                        Log.d(TAG, "initEvent: visible change progressBar gone")
-                        loadPieChartData(feedback.categoryBreakdownList)
-                        binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
-                        categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
+                        if(feedback.totalAmount.equals(financeSharedViewModel.selectedYearMonthTotalPayment.value)) {
+                            setupPieChart()
+                            binding.progressBar.visibility = View.GONE
+                            binding.groupAnalysis.visibility = View.VISIBLE
+                            binding.tvNoAnalysis.visibility = View.GONE
+                            loadPieChartData(feedback.categoryBreakdownList)
+                            binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
+                            categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
+                        } else {
+                            binding.progressBar.visibility = View.GONE
+                            binding.tvNoAnalysis.visibility = View.VISIBLE
+                            binding.groupAnalysis.visibility = View.GONE
+                        }
                     } else if(getFeedback is GetFeedbackState.Error) {
                         Log.d(TAG, "getFeedbackData: Error")
                         binding.progressBar.visibility = View.GONE
@@ -173,10 +153,6 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
         binding.pieChart.apply {
             isDrawHoleEnabled = true
             setUsePercentValues(true)
-//            setEntryLabelTextSize(12f)
-//            setEntryLabelColor(Color.BLACK)
-//            centerText = "지출 카테고리"
-//            setCenterTextSize(20f)
             isRotationEnabled = false
             description.isEnabled = false
             legend.isEnabled = false
@@ -238,16 +214,11 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
 
         val dataSet = PieDataSet(entries, "지출 카테고리")
         dataSet.colors = colors
-//        dataSet.valueTextSize = 14f
-//        dataSet.valueTextColor = Color.BLACK
         dataSet.sliceSpace = 3f
         dataSet.setDrawValues(false)
 
         // PieData 생성 및 설정
         val data = PieData(dataSet)
-//        data.setValueFormatter(PercentFormatter(binding.pieChart))
-//        data.setValueTextSize(14f)
-//        data.setValueTextColor(Color.BLACK)
 
         // 차트에 데이터 설정
         binding.pieChart.data = data
