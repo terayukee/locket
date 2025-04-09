@@ -24,10 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -174,39 +171,32 @@ public class ProductService {
 
     // 찜한 상품 리스트
     @Transactional(readOnly = true)
-    public ProductLikedListResponseDTO getLikedProducts(Long userId, Integer page, Integer size) {
+    public ProductLikedListResponseDTO getLikedProducts(Long userId) {
 
         userRepository.findByUserIdAndIsDeletedFalse(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 사용자를 찾을 수 없습니다."));
 
-        // 페이지 처리
-        int pageNumber = (page == null || page < 1) ? 0 : page - 1;
-        int pageSize = (size == null || size <= 0) ? PaginationConstants.DEFAULT_PAGE_SIZE : size;
+        // 정렬된 찜 목록 가져오기
+        List<ProductUserPreference> preferences = productUserPreferenceRepository
+                .findByUserIdAndIsLikedTrueOrderByCreatedAtAsc(userId);
 
-//        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Sort sort = Sort.by(Sort.Direction.ASC, "createdAt"); // 또는 preference.createdAt
-        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
-
-        Page<ProductUserPreference> preferencesPage = productUserPreferenceRepository
-                .findByUserIdAndIsLikedTrue(userId, pageable);
-
-        // 전체 찜한 상품 수 조회
-        long totalLikedProducts = productUserPreferenceRepository.countByUserIdAndIsLikedTrue(userId);
-
-        List<ProductSummaryDTO> likedProducts = preferencesPage.getContent().stream()
+        // DTO 변환
+        List<ProductSummaryDTO> likedProducts = preferences.stream()
                 .filter(preference -> preference.getProduct() != null)
                 .map(preference -> ProductSummaryDTO.fromEntity(preference.getProduct()))
                 .collect(Collectors.toList());
 
         return ProductLikedListResponseDTO.builder()
                 .userId(userId)
-                .page(pageNumber + 1)
-                .totalPages(preferencesPage.getTotalPages())
+                .page(1) // 의미 없음, 고정값으로 세팅
+                .totalPages(1) // 의미 없음, 고정값으로 세팅
                 .likedProductCount(likedProducts.size())
-                .totalLikedProducts(totalLikedProducts)
+                .totalLikedProducts(likedProducts.size())
                 .likedProducts(likedProducts)
                 .build();
     }
+
+
 
     // 상품 가격 알림
     @Transactional

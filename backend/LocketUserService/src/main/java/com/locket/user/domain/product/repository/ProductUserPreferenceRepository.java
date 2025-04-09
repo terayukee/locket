@@ -25,4 +25,6 @@ public interface ProductUserPreferenceRepository extends JpaRepository<ProductUs
     // 전체 찜한 상품 수 조회
     long countByUserIdAndIsLikedTrue(Long userId);
 
+    List<ProductUserPreference> findByUserIdAndIsLikedTrueOrderByCreatedAtAsc(Long userId);
+
 }

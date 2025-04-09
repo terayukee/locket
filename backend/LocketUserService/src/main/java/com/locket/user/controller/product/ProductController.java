@@ -385,12 +385,9 @@ public class ProductController {
     @GetMapping("/liked")
     public ResponseEntity<ProductLikedListResponseDTO> getLikedProducts(
             @Parameter(description = "사용자 ID", required = true)
-            @RequestParam Long userId,
-
-            @Parameter(description = "페이지 번호")
-            @RequestParam(required = false) Integer page
+            @RequestParam Long userId
     ) {
-        ProductLikedListResponseDTO response = productService.getLikedProducts(userId, page, PaginationConstants.DEFAULT_PAGE_SIZE);
+        ProductLikedListResponseDTO response = productService.getLikedProducts(userId);
         return ResponseEntity.ok(response);
     }
 
