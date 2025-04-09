@@ -33,7 +33,6 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
     private lateinit var productSearchList: MutableList<Product>
 
     private var isLoading = false  // 중복 요청 방지
-    private var page = 1           // 현재 페이지 번호
     private var searchQuery: String = "" // 검색어 저장
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -52,7 +51,6 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
     }
 
     fun initData(){
-        page = 1
         isLoading = false
         productSearchList = mutableListOf()
     }
@@ -81,11 +79,6 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
                         val products = productSearch.productSearchInfo.products ?: emptyList()
                         Log.d(TAG, "검색 결과: $products")
 
-                        if (page == 1) {
-                            productSearchList.clear()
-                        }
-
-                        // 새 데이터 추가
                         productSearchList.addAll(products)
                         productSearchAdapter.notifyDataSetChanged()
 
@@ -128,7 +121,7 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
     private fun loadMoreData() {
         isLoading = true
         lifecycleScope.launch {
-            productViewModel.productSearch(searchQuery, page)
+            productViewModel.productSearch(searchQuery, 1)
         }
     }
 }

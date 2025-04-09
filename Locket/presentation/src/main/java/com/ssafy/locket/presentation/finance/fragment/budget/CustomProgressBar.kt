@@ -97,25 +97,23 @@ class CustomProgressBar @JvmOverloads constructor(
         override fun onDraw(canvas: Canvas) {
             super.onDraw(canvas)
 
-            // 텍스트 너비 계산
             val textWidth = paint.measureText(percentText)
-
-            // 진행 영역 계산
             val progressWidth = width.toFloat()
-
             val paddingPx = (horizontalPadding * resources.displayMetrics.density)
 
-            var textX : Float
+            val textX = when {
+                progress > 100 -> (progressWidth * (100 / 100f)) - textWidth / 2 - paddingPx
+                progress < 10 -> (progressWidth * (progress / 100f)) + textWidth / 2 + paddingPx
+                else -> (progressWidth * (progress / 100f)) - textWidth / 2 - paddingPx
+            }
 
-            // 텍스트 x 좌표 계산
-            textX = if(progress > 100) (progressWidth * (100 / 100f)) - textWidth / 2 - paddingPx
-            else if(progress < 10) (progressWidth * (progress / 100f)) + textWidth / 2 + paddingPx
-            else (progressWidth * (progress / 100f)) - textWidth / 2 - paddingPx
+            // 🔥 글자가 정확히 수직 중앙에 오도록 계산
+            val fontMetrics = paint.fontMetrics
+            val textY = height / 2f - (fontMetrics.ascent + fontMetrics.descent) / 2
 
-            if (progress < 10) paint.color = resources.getColor(R.color.disabled)
-            else paint.color = Color.WHITE
-             // 텍스트 그리기
-            canvas.drawText(percentText, textX, height / 2f + paint.textSize / 2f, paint)
+            paint.color = if (progress < 10) resources.getColor(R.color.disabled) else Color.WHITE
+
+            canvas.drawText(percentText, textX, textY, paint)
         }
 
         /*

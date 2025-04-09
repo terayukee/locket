@@ -38,27 +38,19 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
     lateinit var userDataStoreSource: UserDataStoreSource
 
     private var isLoading = false  // 중복 요청 방지
-    private var currentPage = 1    // 현재 페이지 번호
     private var userId: Int = 0    // 유저 ID 저장
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initEvent()
         initAdapter()
-        initScrollListener()
         getLikeList()
-    }
-
-    override fun onResume() {
-        super.onResume()
         lifecycleScope.launch {
             userId = (userDataStoreSource.userId.first() ?: 0).toInt()
-            currentPage = 1 // 페이지 초기화
-            productLikeList.clear() // 리스트도 초기화
-            productLikeAdapter.notifyDataSetChanged()
             loadMoreData()  // 새로 로드
         }
     }
+
 
     private fun initAdapter() {
         productLikeList = mutableListOf()
@@ -83,10 +75,8 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
                 productViewModel.productLikeListInfo.collect { productLike ->
                     Log.d(TAG, productLike.toString())
                     if (productLike is ProductLikeListState.Success) {
+                        productLikeList.clear()
                         Log.d(TAG, productLike.productLikeList.products.toString())
-                        if (currentPage == 1) {
-                            productLikeList.clear() // 첫 페이지면 초기화
-                        }
                         productLikeList.addAll(productLike.productLikeList.products)
                         productLikeAdapter.notifyDataSetChanged()
                         isLoading = false // 로딩 완료
@@ -96,29 +86,10 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
         }
     }
 
-    private fun initScrollListener() {
-        binding.rvLikeList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-
-                val layoutManager = recyclerView.layoutManager as GridLayoutManager
-                val visibleItemCount = layoutManager.childCount
-                val totalItemCount = layoutManager.itemCount
-                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
-
-                // 스크롤이 리스트 끝에 도달하고, 로딩 중이 아닐 때 추가 데이터 요청
-                if (!isLoading && (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                    && firstVisibleItemPosition >= 0) {
-                    loadMoreData()
-                }
-            }
-        })
-    }
-
     private fun loadMoreData() {
         isLoading = true
         lifecycleScope.launch {
-            productViewModel.getLikeList(userId, currentPage)
+            productViewModel.getLikeList(userId, 1)
         }
     }
 }
