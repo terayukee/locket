@@ -94,25 +94,32 @@ class OCRService:
             item_id = 1
             for subresult in receipt_data.get('subResults', []):
                 for item in subresult.get('items', []):
-                    quantity = int(item['count']['formatted']['value'])
 
+                    # 수량 추출 - count가 없거나 비정상일 경우 기본값 1 사용
                     try:
-                        # 영수증 형식 시도 (unitPrice)
-                        item_amount = int(item['price']['unitPrice']['formatted']['value'])
+                        quantity = int(item.get('count', {}).get('formatted', {}).get('value', 1))
+                        if quantity <= 0:
+                            raise ValueError
+                    except Exception:
+                        logger.warning(f"count 필드 누락 또는 비정상 값: 기본값 1 사용 - item: {item.get('name', {}).get('text', '이름 없음')}")
+                        quantity = 1
+
+                    # 단가 추출 - unitPrice 없으면 price / quantity 계산 시도
+                    try:
+                        item_amount = int(item.get('price', {}).get('unitPrice', {}).get('formatted', {}).get('value'))
                         logger.info(f"영수증 형식 단가 추출: {item_amount}")
-                    except KeyError:
+                    except (KeyError, TypeError, ValueError):
                         try:
-                            # PDF 형식 시도 (price/quantity)
-                            total_price = int(item['price']['price']['formatted']['value'])
-                            item_amount = total_price // quantity  # 단가 = 총액/수량
+                            total_price = int(item.get('price', {}).get('price', {}).get('formatted', {}).get('value'))
+                            item_amount = total_price // quantity
                             logger.info(f"PDF 형식 단가 계산: {total_price} / {quantity} = {item_amount}")
-                        except KeyError as e:
+                        except Exception as e:
                             logger.error(f"가격 정보를 찾을 수 없습니다: {str(e)}")
                             raise ReceiptException(error_code=ReceiptErrorCode.PARSING_ERROR)
 
                     item_data = {
                         'itemId': item_id,
-                        'itemName': item['name']['text'],
+                        'itemName': item.get('name', {}).get('text', '이름 없음'),
                         'itemQuantity': quantity,
                         'itemAmount': item_amount
                     }
