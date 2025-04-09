@@ -19,6 +19,7 @@ import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryViewModel
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 
 private const val TAG = "PaymentListFragment"
@@ -55,14 +56,16 @@ class PaymentListFragment : BaseFragment<FragmentPaymentListBinding>(
     private fun initUI() {
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                paymentHistoryViewModel.monthlyPaymentHistory.collectLatest { uiState ->
+                paymentHistoryViewModel.monthlyPaymentHistory.debounce(100).collectLatest { uiState ->
                     when(uiState) {
                         is PaymentHistoryState.Success -> {
                             if(uiState.paymentMonthlyHistory.list.size == 0) {
+                                Log.d(TAG,uiState.paymentMonthlyHistory.list.toString())
                                 binding.tvNoPayment.visibility = View.VISIBLE
                                 binding.rvPayment.visibility = View.GONE
                             }
                             else {
+                                Log.d(TAG,uiState.paymentMonthlyHistory.list.toString())
                                 binding.rvPayment.visibility = View.VISIBLE
                                 paymentRVAdapter.submitList(uiState.paymentMonthlyHistory.list)
                                 binding.tvNoPayment.visibility = View.GONE
