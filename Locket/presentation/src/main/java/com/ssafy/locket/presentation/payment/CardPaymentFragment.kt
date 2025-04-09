@@ -64,41 +64,38 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
     private val selectedPaymentCardViewModel: SelectedPaymentCardViewModel by activityViewModels()
 
     //스크롤 가능
-    private var selectedPosition = -1
+    private var selectedPosition = 0
     private var lastScrollX = 0
     //뒤로 가기 이벤트
     private var backPressedTime: Long = 0
     //버튼 클릭으로 이벤트 지정
     private var btnClick = 0
+    private var restored = false
 
     var cards = listOf<PaymentCard>()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        restoreInstanceState(savedInstanceState)
         initState()
         initialView()
         initialAdapter()
         initEvent()
         backEvent()
-        getCardView(savedInstanceState)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        // 현재 선택된 페이지 저장
         outState.putInt("selectedPosition", selectedPosition)
-        // ScrollView의 스크롤 위치 저장
         outState.putInt("scrollPosition", binding.dotIndicatorScroll.scrollX)
     }
 
-    fun getCardView(savedInstanceState: Bundle?) {
+    fun restoreInstanceState(savedInstanceState: Bundle?) {
         savedInstanceState?.let {
             selectedPosition = it.getInt("selectedPosition", 0)
             lastScrollX = it.getInt("scrollPosition", 0)
-            binding.viewpager.setCurrentItem(selectedPosition, false) // 애니메이션 없이 복원
-            binding.dotIndicator.scrollTo(lastScrollX, 0) // ScrollView 복원
+            restored = true
         }
-        if(selectedPosition >= 0) scrollToDotAtPosition(selectedPosition)
     }
 
     fun initState() {
@@ -106,12 +103,32 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
             cardPaymentViewModel.paymentCardList.collect { uiState ->
                 if (uiState is PaymentCardState.Success) {
                     cards = uiState.paymentCardList.cards
-                    if(cards.size == 0) {
+                    if(cards.isEmpty()) {
                         binding.btnPassword.isEnabled = false
                         binding.ivFingerprint.isEnabled = false
                     }
                     cardAdapter.setCards(cards)
                     setupDotIndicator(cards.size)
+
+                    // 💡 카드가 세팅된 이후 복원!
+                    if (restored && selectedPosition in cards.indices) {
+                        binding.viewpager.setCurrentItem(selectedPosition, false)
+                        binding.dotIndicator.scrollTo(lastScrollX, 0)
+                        scrollToDotAtPosition(selectedPosition)
+                        Log.d(TAG,"카드+${selectedPosition}")
+                        updateDots(selectedPosition)
+                    }
+                    //가격 갱신 바로 확인
+                    updateDots(selectedPosition)
+                    val remaining = 300000 - cards[selectedPosition].monthlyUsage
+                    binding.tvBalanceDescription.text = if (remaining <= 0) {
+                        "전월 실적: 0원 남음"
+                    } else {
+                        "전월 실적: ${CommonUtils.makeComma(remaining)}원 남음"
+                    }
+                    binding.ivFingerprint.visibility = View.VISIBLE
+                    binding.btnPassword.visibility = View.VISIBLE
+                    binding.tvSsafyCardbenefitInfo.visibility = View.VISIBLE
                 } else {
                     binding.btnPassword.isEnabled = true
                     binding.ivFingerprint.isEnabled = true
@@ -136,7 +153,7 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 if (System.currentTimeMillis() - backPressedTime < 2000) {
-                    requireActivity().finish() // 액티비티 종료
+                    requireActivity().finish()
                 } else {
                     backPressedTime = System.currentTimeMillis()
                     showToast("한 번 더 누르면 종료됩니다.")
@@ -155,18 +172,19 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
         binding.viewpager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
             override fun onPageSelected(position: Int) {
                 updateDots(position)
+                selectedPosition = position
                 Log.d(TAG, "onPageSelected: card changed in initEvent ${cards[position].cardName}")
             }
         })
+
         binding.ivFingerprint.setOnClickListener {
             btnClick = 1
-            Log.d(TAG, "initEvent: clicked btn1")
             selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
+
         binding.btnPassword.setOnClickListener {
             btnClick = 2
-            Log.d(TAG, "initEvent: clicked btn2")
             selectedPaymentCardViewModel.selectPaymentCard(cards[selectedPosition])
             checkNFCEnabled()
         }
@@ -211,30 +229,25 @@ class CardPaymentFragment : BaseFragment<FragmentCardPaymentBinding>(
                     val scrollView = binding.dotIndicatorScroll
                     val selectedDot = dotContainer.getChildAt(position)
 
-                    // Calculate scroll position to center the selected dot
                     val dotCenterX = selectedDot.left + selectedDot.width / 2
                     val scrollViewCenterX = scrollView.width / 2
-
-                    // Smooth scroll the dot indicator
-                    scrollView.smoothScrollTo(
-                        dotCenterX - scrollViewCenterX,
-                        0
-                    )
+                    scrollView.smoothScrollTo(dotCenterX - scrollViewCenterX, 0)
                 }
 
                 binding.tvCardName.text = cards[position].cardName
-                if(cards[selectedPosition].monthlyUsage>=300000){
-                    binding.tvBalanceDescription.text = "전월 실적: 0원 남음"
+                val remaining = 300000 - cards[position].monthlyUsage
+                binding.tvBalanceDescription.text = if (remaining <= 0) {
+                    "전월 실적: 0원 남음"
+                } else {
+                    "전월 실적: ${CommonUtils.makeComma(remaining)}원 남음"
                 }
-                else{
-                    binding.tvBalanceDescription.text = "전월 실적: ${CommonUtils.makeComma(300000-cards[selectedPosition].monthlyUsage)}원 남음"
-                }
+
                 val benefitList = cards[position].benefits
-                val adapter = BenefitAdapter(benefitList)
-                binding.rvCardBenefit.adapter = adapter
+                binding.rvCardBenefit.adapter = BenefitAdapter(benefitList)
                 binding.rvCardBenefit.layoutManager = LinearLayoutManager(requireContext())
             }
         })
+
         updateDots(0)
     }
 
