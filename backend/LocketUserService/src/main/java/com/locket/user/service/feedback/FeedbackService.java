@@ -1,6 +1,8 @@
 package com.locket.user.service.feedback;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.locket.common.exception.InvalidRequestException;
+import com.locket.common.exception.ResourceNotFoundException;
 import com.locket.user.client.PerplexityClient;
 import com.locket.user.domain.feedback.dto.FinalFeedbackResult;
 import com.locket.user.domain.feedback.dto.PerplexitySummaryResponse;
@@ -65,12 +67,10 @@ public class FeedbackService {
         try {
             // 사용자 및 목표 조회
             User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 사용자입니다."));
-            Goal goal = goalRepository.findByUserIdAndGoalYearAndGoalMonth(userId, year, month).orElse(null);
-            if (goal == null) {
-                log.warn("사용자 {}의 {}년 {}월 목표(goal)가 존재하지 않아 피드백을 저장하지 않습니다.", userId, year, month);
-                return ResponseEntity.badRequest().body("해당 월의 목표(goal)가 존재하지 않습니다.");
-            }
+                    .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다."));
+
+            Goal goal = goalRepository.findByUserIdAndGoalYearAndGoalMonth(userId, year, month)
+                    .orElseThrow(() -> new InvalidRequestException("해당 월의 목표(goal)가 존재하지 않습니다."));
 
             // 분석 데이터 수집
             List<PaymentHistoryDto> paymentHistories = paymentHistoryFeignClient.getPaymentHistories(userId, year, month);
@@ -130,7 +130,13 @@ public class FeedbackService {
                     .recommendations(summary.getRecommendations())
                     .build();
 
-            String jsonResult = objectMapper.writeValueAsString(summarized);
+            String jsonResult;
+            try {
+                jsonResult = objectMapper.writeValueAsString(summarized);
+            } catch (Exception e) {
+                log.error("❌ JSON 변환 실패: {}", e.getMessage(), e);
+                throw new RuntimeException("분석 결과를 JSON으로 변환하는 데 실패했습니다.");
+            }
 
             // 기존 DB에 데이터가 있다면 Update, 없다면 DB에 저장
             Optional<Feedback> existingFeedbackOpt = feedbackRepository
@@ -160,7 +166,7 @@ public class FeedbackService {
 
         } catch (Exception e) {
             log.error("❌ 피드백 분석 중 오류 발생: {}", e.getMessage(), e);
-            return ResponseEntity.status(500).body("INTERNAL_SERVER_ERROR");
+            throw new InvalidRequestException("피드백 분석 도중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 

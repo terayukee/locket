@@ -1,5 +1,7 @@
 package com.locket.apigateway.filter;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.locket.common.exception.ErrorResponse;
 import com.locket.common.jwt.JwtUtil;
 import com.locket.common.jwt.JwtUtil.TokenStatus;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -207,8 +211,31 @@ public class JwtGatewayFilter extends AbstractGatewayFilterFactory<JwtGatewayFil
     private Mono<Void> onError(ServerWebExchange exchange, String message, HttpStatus status) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(status);
+        response.getHeaders().add("Content-Type", "application/json");
+
+        ErrorResponse errorResponse = ErrorResponse.of(
+                status.value(),
+                status.getReasonPhrase(),
+                message
+        );
+
+        String body;
+        try {
+            body = new ObjectMapper().writeValueAsString(errorResponse);
+        } catch (Exception e) {
+            body = String.format("""
+        {
+          "status": %d,
+          "error": "%s",
+          "message": "%s",
+          "timestamp": "%s"
+        }
+        """, status.value(), status.getReasonPhrase(), message, LocalDateTime.now());
+        }
+
         return response.writeWith(Mono.just(
-                response.bufferFactory().wrap(message.getBytes())
+                response.bufferFactory().wrap(body.getBytes(StandardCharsets.UTF_8))
         ));
     }
+
 }
