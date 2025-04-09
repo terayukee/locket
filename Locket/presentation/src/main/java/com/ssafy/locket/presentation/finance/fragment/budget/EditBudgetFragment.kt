@@ -94,58 +94,163 @@ class EditBudgetFragment : BaseFragment<FragmentEditBudgetBinding>(
         val decimalFormat = DecimalFormat("#,###")
 
         editText.addTextChangedListener(object : TextWatcher {
-            private var beforeText = ""
-            private var cursorPosition = 0
+            private var current = ""
             private var isFormatting = false
+            private var selection = 0
             private var isDeleting = false
-            private var deletedChar = ""
-            private var deleteIndex = 0
+            private var beforeLength = 0
 
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                beforeText = s.toString()
-                cursorPosition = editText.selectionStart
+                beforeLength = s?.length ?: 0
+                selection = editText.selectionStart
                 isDeleting = count > after
-                if (isDeleting && s != null && count == 1) {
-                    deletedChar = s.substring(start, start + count)
-                    deleteIndex = start
-                }
             }
 
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                // 필요 없음
+            }
 
             override fun afterTextChanged(s: Editable?) {
                 if (isFormatting) return
-                val original = s.toString()
-                var cleanString = original.replace(",", "")
-                if (cleanString.isEmpty()) return
-                // 쉼표 바로 뒤에서 삭제한 경우 처리
-                if (isDeleting && deletedChar == "," && deleteIndex > 0) {
-                    val indexToRemove = deleteIndex - beforeText.take(deleteIndex).count { it == ',' }
-                    if (indexToRemove > 0 && indexToRemove <= cleanString.length) {
-                        cleanString = cleanString.removeRange(indexToRemove - 1, indexToRemove)
-                    }
+                isFormatting = true
+
+                val str = s.toString()
+
+                // 빈 문자열이면 처리하지 않음
+                if (str.isEmpty()) {
+                    current = ""
+                    isFormatting = false
+                    return
                 }
+
                 try {
-                    val parsed = cleanString.toDouble()
-                    val formatted = decimalFormat.format(parsed)
-                    if (formatted != original) {
-                        isFormatting = true
-                        editText.setText(formatted)
-                        // 커서 위치 보정
-                        val commaCountBefore = beforeText.take(cursorPosition).count { it == ',' }
-                        val commaCountNow = formatted.take(cursorPosition).count { it == ',' }
-                        val adjustment = commaCountNow - commaCountBefore
-                        val newCursor = (cursorPosition + adjustment).coerceIn(0, formatted.length)
-                        try {
-                            editText.setSelection(newCursor)
-                        } catch (e: Exception) {
-                            editText.setSelection(formatted.length)
+                    // 현재 커서 위치와 삭제 여부 확인
+                    val cursorPosition = editText.selectionStart
+
+                    // 현재 입력된 문자열에서 쉼표 제거
+                    var cleanString = str.replace(",", "")
+
+                    // 쉼표 주변에서 삭제하는 특별한 경우 처리
+                    var specialDelete = false
+                    var targetDigitPosition = -1
+
+                    // 삭제 중이고 특별한 경우 처리
+                    if (isDeleting && selection > 0 && beforeLength > str.length) {
+                        // 커서 위치 바로 앞이 쉼표였는지 확인 (쉼표 뒤에서 지우는 상황)
+                        val wasCommaBeforeCursor = selection <= current.length && selection > 0 && current[selection - 1] == ','
+
+                        // 커서 위치 바로 뒤가 쉼표인지 확인 (쉼표 앞에서 지우는 상황)
+                        val wasCommaAfterCursor = selection < current.length && current[selection] == ','
+
+                        // 쉼표 주변에서 지우는 경우
+                        if (wasCommaBeforeCursor || wasCommaAfterCursor) {
+                            specialDelete = true
+
+                            // 삭제할 위치 결정
+                            val deletePosition = if (wasCommaBeforeCursor) {
+                                // 쉼표 앞의 숫자 위치 (쉼표 바로 앞 숫자)
+                                getCleanPosition(current, selection - 1) - 1
+                            } else {
+                                // 쉼표 앞의 숫자 위치 (현재 커서 위치의 숫자)
+                                getCleanPosition(current, selection) - 1
+                            }
+
+                            // 삭제 후 커서가 위치해야 할 숫자 위치 저장
+                            targetDigitPosition = deletePosition
+
+                            if (deletePosition >= 0) {
+                                val cleanCurrent = current.replace(",", "")
+                                cleanString = StringBuilder(cleanCurrent)
+                                    .deleteCharAt(deletePosition)
+                                    .toString()
+                            }
                         }
-                        isFormatting = false
                     }
-                } catch (e: NumberFormatException) {
-                    // 예외 무시
+
+                    if (cleanString.isEmpty()) {
+                        editText.setText("")
+                        current = ""
+                        isFormatting = false
+                        return
+                    }
+
+                    // 포맷팅된 문자열 생성
+                    val formattedString = decimalFormat.format(cleanString.toLong())
+
+                    // 새 커서 위치 계산
+                    var newCursorPosition = cursorPosition
+
+                    // 특별한 삭제 상황인 경우 (쉼표 주변에서 삭제)
+                    if (specialDelete && targetDigitPosition >= 0) {
+                        // 새 포맷팅된 문자열에서 쉼표 바로 뒤로 커서 위치 설정
+                        var commaCount = 0
+                        var digitCount = 0
+                        var i = 0
+
+                        while (i < formattedString.length) {
+                            if (formattedString[i] == ',') {
+                                if (digitCount == targetDigitPosition) {
+                                    // 삭제한 위치 바로 다음 쉼표를 찾았으면 그 뒤에 커서 위치
+                                    newCursorPosition = i + 1
+                                    break
+                                }
+                                commaCount++
+                                i++
+                            } else if (formattedString[i].isDigit()) {
+                                digitCount++
+                                i++
+                            } else {
+                                i++
+                            }
+                        }
+
+                        // 적절한 쉼표를 찾지 못했거나 끝에 도달한 경우
+                        if (i >= formattedString.length) {
+                            newCursorPosition = formattedString.length
+                        }
+                    } else {
+                        // 일반적인 경우 - 커서 위치까지의 숫자 개수 파악
+                        val digitPosition = getCleanPosition(str, cursorPosition)
+
+                        // 새 포맷팅된 문자열에서 해당 위치 찾기
+                        newCursorPosition = findPositionOfDigit(formattedString, digitPosition)
+                    }
+
+                    // EditText 업데이트 및 커서 위치 설정
+                    current = formattedString
+                    editText.setText(formattedString)
+                    editText.setSelection(minOf(newCursorPosition, formattedString.length))
+
+                } catch (e: Exception) {
+                    e.printStackTrace()
                 }
+
+                isFormatting = false
+            }
+
+            // 포맷팅된 문자열에서 특정 위치까지의 숫자 개수 반환
+            private fun getCleanPosition(formattedString: String, position: Int): Int {
+                var count = 0
+                for (i in 0 until minOf(position, formattedString.length)) {
+                    if (formattedString[i].isDigit()) {
+                        count++
+                    }
+                }
+                return count
+            }
+
+            // 포맷팅된 문자열에서 n번째 숫자의 위치 찾기
+            private fun findPositionOfDigit(formattedString: String, digitPosition: Int): Int {
+                var count = 0
+                for (i in formattedString.indices) {
+                    if (formattedString[i].isDigit()) {
+                        if (count == digitPosition) {
+                            return i
+                        }
+                        count++
+                    }
+                }
+                return formattedString.length
             }
         })
     }
