@@ -2,11 +2,10 @@ package com.ssafy.locket.presentation.finance.fragment.analysis
 
 import android.graphics.Color
 import android.os.Bundle
-import android.provider.CalendarContract.Colors
 import android.util.Log
 import android.view.View
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -16,11 +15,6 @@ import com.bumptech.glide.Glide
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
-import com.github.mikephil.charting.formatter.PercentFormatter
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
-import com.ssafy.locket.model.finance.CategoryPayment
-import com.ssafy.locket.model.finance.budget.feedback.CategoryBreakdown
 import com.ssafy.locket.model.finance.budget.feedback.CategoryBreakdownList
 import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
@@ -34,17 +28,20 @@ import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import org.json.JSONObject
 import java.time.YearMonth
+import com.lottiefiles.dotlottie.core.model.Config
+import com.lottiefiles.dotlottie.core.util.DotLottieSource
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val TAG = "ExpenseAnalysisFragment"
+@AndroidEntryPoint
 class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
     FragmentExpenseAnalysisBinding::bind,
     R.layout.fragment_expense_analysis
 ) {
     private lateinit var categoryPaymentRVAdapter: CategoryPaymentRVAdapter
 
-    private val analysisViewModel : AnalysisViewModel by activityViewModels()
+    private val analysisViewModel : AnalysisViewModel by viewModels()
     private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
 
     private val startMonth = YearMonth.of(2020, 1)
@@ -55,7 +52,16 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
 
         financeSharedViewModel.setSelectedMode(0)
         financeSharedViewModel.initYearMonth()
+        binding.progressBar.visibility = View.VISIBLE
 
+        binding.progressBar.load(
+            Config.Builder()
+                .source(DotLottieSource.Asset("analysis_loading.lottie"))
+                .autoplay(true)
+                .loop(true)
+                .speed(0.7f)
+                .build()
+        )
         initAdapter()
         initEvent()
         getFeedbackData()
@@ -88,6 +94,12 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                         binding.btnPrevMonthIcon.isEnabled = true
                         binding.btnNextMonthIcon.isEnabled = true
                     }
+//                    binding.progressBar.visibility = View.VISIBLE
+//                    binding.groupAnalysis.visibility = View.GONE
+                    Log.d(TAG, "initEvent: visible change progressBar visible")
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.tvNoAnalysis.visibility = View.GONE
+                    binding.groupAnalysis.visibility = View.GONE
                     analysisViewModel.getFeedback(it.year,it.monthValue)
                     binding.tvYearMonth.text = resources.getString(R.string.finance_year_month, it.year, it.monthValue)
                 }
@@ -134,16 +146,24 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                 analysisViewModel.getFeedback.collect { getFeedback ->
                     if(getFeedback is GetFeedbackState.Success) {
                         Log.d(TAG,getFeedback.feedback.toString())
-
                         val feedback = getFeedback.feedback
                         setupPieChart()
                         binding.progressBar.visibility = View.GONE
                         binding.groupAnalysis.visibility = View.VISIBLE
+                        binding.tvNoAnalysis.visibility = View.GONE
+                        Log.d(TAG, "initEvent: visible change progressBar gone")
                         loadPieChartData(feedback.categoryBreakdownList)
                         binding.tvFeedbackContent.text = "${feedback.summary}\n\n${feedback.insights}\n\n${feedback.recommendations}"
                         categoryPaymentRVAdapter.submitList(getFeedback.feedback.categoryBreakdownList.items)
-                    } else {
+                    } else if(getFeedback is GetFeedbackState.Error) {
                         Log.d(TAG, "getFeedbackData: Error")
+                        binding.progressBar.visibility = View.GONE
+                        binding.tvNoAnalysis.visibility = View.VISIBLE
+                        binding.groupAnalysis.visibility = View.GONE
+                    } else {
+                        binding.progressBar.visibility = View.VISIBLE
+                        binding.tvNoAnalysis.visibility = View.GONE
+                        binding.groupAnalysis.visibility = View.GONE
                     }
                 }
             }
@@ -177,13 +197,11 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
             "기타" to Color.parseColor("#9E9E9E")
         )
 
-        // JSON 데이터로부터 파이차트 항목 생성
         for (i in 0 until categoryBreakdownList.items.size) {
             val item = categoryBreakdownList.items.get(i)
 
             entries.add(PieEntry(item.percentage.toFloat(), item.category))
 
-            // 카테고리별 색상 추가
             categoryColors[item.category]?.let { colors.add(it) }
         }
 

@@ -31,6 +31,7 @@ class AnalysisViewModel @Inject constructor(
                 .onStart {  }
                 .catch { e ->
                     Log.d("ExpenseAnalysisFragment",e.message.toString())
+                    _getFeedback.value = GetFeedbackState.Error(e.message ?: "알 수 없는 오류가 발생했습니다")
                 }
                 .collect{ status ->
                     when(status) {

@@ -21,7 +21,7 @@ class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRV
     ReceiptDetailRVAdapter
 ) {
     lateinit var itemClickListener: ItemClickListener
-    private val categoryType = arrayOf("식비", "카페/디저트", "생활", "쇼핑", "교통", "기타")
+    private val categoryType = arrayOf("식비", "카페", "생활", "쇼핑", "교통", "기타")
     private lateinit var context: Context
 
     interface ItemClickListener {
@@ -50,8 +50,6 @@ class ReceiptDetailEditRVAdapter: ListAdapter<ReceiptDetail, ReceiptDetailEditRV
                     ) {
                         val selectedItem= parent?.getItemAtPosition(position) as String
                         Log.d(TAG, "onItemSelected: $selectedItem")
-
-//                        itemClickListener.onClick(view!!, selectedItem, position)
                     }
 
                     override fun onNothingSelected(parent: AdapterView<*>?) {
