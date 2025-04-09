@@ -34,11 +34,12 @@
 
     <TextView
         android:id="@+id/tv_title"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:letterSpacing="-0.02"
+        android:gravity="center"
         android:fontFamily="@font/pretendard_bold"
         android:text="생체 정보를 등록해주세요."
         app:layout_constraintVertical_bias="0.196"

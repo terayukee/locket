@@ -92,13 +92,11 @@ class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBind
                     if (productCategory is ProductCategoryListState.Success) {
                         binding.tvTitle.text = productCategory.productCategoryList.categoryName
                         Log.d(TAG, productCategory.productCategoryList.products.toString())
-
                         if (currentPage == 1) {
                             productList.clear()
                         }
                         productList.addAll(productCategory.productCategoryList.products)
                         productAdapter.notifyDataSetChanged()
-
                         isLoading = false  // 데이터 로딩 완료
                     }
                 }
@@ -108,7 +106,6 @@ class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBind
 
     private fun loadMoreData() {
         isLoading = true
-        currentPage++
         productViewModel.getCategoryList(productId, currentPage)
     }
 }

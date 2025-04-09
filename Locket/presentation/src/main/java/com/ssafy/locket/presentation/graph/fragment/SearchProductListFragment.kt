@@ -129,7 +129,6 @@ class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>
         isLoading = true
         lifecycleScope.launch {
             productViewModel.productSearch(searchQuery, page)
-            page++ // 다음 페이지 증가
         }
     }
 }
