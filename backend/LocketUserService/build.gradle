@@ -77,6 +77,22 @@ dependencies {
 
     // Bean Validation (javax validation)
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    // ✅ Firebase Admin SDK
+    implementation 'com.google.firebase:firebase-admin:9.2.0'
+
+    // ✅ Kafka JSON 처리
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
+
+    // ✅ Redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    implementation("io.lettuce:lettuce-core:6.3.2.RELEASE")
+
+    // WebClient 사용
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+
+    // ✅ 커스텀 공용 모듈 의존성 추가
+    implementation project(':LocketCommon')
 }
 
 tasks.named('test') {

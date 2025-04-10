@@ -51,4 +51,9 @@ public class Wallet {
     public enum Currency {
         KRW
     }
+
+    public void deposit(BigDecimal amount) {
+        this.balance = this.balance.add(amount);
+    }
+
 }

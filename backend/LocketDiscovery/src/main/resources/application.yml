@@ -1,7 +1,28 @@
+spring:
+  profiles:
+    active: dev  # 기본은 dev, 배포 시 prod로 오버라이드
+
 server:
   port: 8761  # Eureka 서버 포트
 
 eureka:
+  instance:
+    hostname: localhost  # 기본값 (dev용), prod에서는 오버라이드됨
   client:
-    registerWithEureka: false  # 자기 자신은 등록하지 않음
-    fetchRegistry: false       # 서비스 목록을 가져올 필요 없음
+    registerWithEureka: false  # 자기 자신은 Eureka에 등록하지 않음
+    fetchRegistry: false       # 서비스 목록 조회 안 함 (Eureka 서버니까)
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true

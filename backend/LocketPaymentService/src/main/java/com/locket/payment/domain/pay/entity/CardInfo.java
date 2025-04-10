@@ -32,10 +32,17 @@ public class CardInfo {
     @Column(nullable = false, length = 4)
     private String cardCvc;
 
+    @Column(nullable = true, length = 50)
+    private String cardName;
+
     @Column(nullable = false)
     private LocalDateTime createdAt;
 
     @Column(nullable = false)
     private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "card_catalog_id", nullable = true, insertable = true, updatable = true)
+    private CardCatalog cardCatalog;
 }
 

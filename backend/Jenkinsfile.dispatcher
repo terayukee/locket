@@ -1,0 +1,112 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git credentialsId: 'GitLab-PAT',
+                        branch: 'backend',
+                        url: 'https://lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git'
+            }
+        }
+
+        stage('Detect Changed Services') {
+            steps {
+                withCredentials([usernamePassword(
+                        credentialsId: 'GitLab-USER-TOKEN',
+                        usernameVariable: 'GIT_USERNAME',
+                        passwordVariable: 'GIT_PASSWORD'
+                )]) {
+                    script {
+                        // 1. 클로저 정의: 변경 감지 후 순차 빌드
+                        def triggerBuilds = { changes ->
+                            if (changes.any { it.startsWith("backend/LocketDiscovery/") }) {
+                                echo "🔍 변경 감지됨: backend-discovery"
+                                try {
+                                    build job: 'backend-discovery'
+                                    echo "✅ 빌드 성공: backend-discovery"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-discovery - ${err}"
+                                }
+                            }
+                            if (changes.any { it.startsWith("backend/LocketUserService/") }) {
+                                echo "🔍 변경 감지됨: backend-user"
+                                try {
+                                    build job: 'backend-user'
+                                    echo "✅ 빌드 성공: backend-user"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-user - ${err}"
+                                }
+                            }
+                            if (changes.any { it.startsWith("backend/LocketPaymentService/") }) {
+                                echo "🔍 변경 감지됨: backend-payment"
+                                try {
+                                    build job: 'backend-payment'
+                                    echo "✅ 빌드 성공: backend-payment"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-payment - ${err}"
+                                }
+                            }
+                            if (changes.any { it.startsWith("backend/LocketApiGateway/") }) {
+                                echo "🔍 변경 감지됨: backend-api-gateway"
+                                try {
+                                    build job: 'backend-api-gateway'
+                                    echo "✅ 빌드 성공: backend-api-gateway"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-api-gateway - ${err}"
+                                }
+                            }
+                            if (changes.any { it.startsWith("backend/LocketElasticSearch/") }) {
+                                echo "🔍 변경 감지됨: backend-elasticsearch"
+                                try {
+                                    build job: 'backend-elasticsearch'
+                                    echo "✅ 빌드 성공: backend-elasticsearch"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-elasticsearch - ${err}"
+                                }
+                            }
+                            if (changes.any { it.startsWith("backend/LocketAIService/") }) {
+                                echo "🔍 변경 감지됨: backend-ai"
+                                try {
+                                    build job: 'backend-ai'
+                                    echo "✅ 빌드 성공: backend-ai"
+                                } catch (err) {
+                                    echo "❌ 빌드 실패: backend-ai - ${err}"
+                                }
+                            }
+                        }
+
+                        // 2. 변경 감지 준비
+                        sh 'git clean -fdx'
+                        sh "git fetch https://${GIT_USERNAME}:${GIT_PASSWORD}@lab.ssafy.com/s12-fintech-finance-sub1/S12P21D204.git backend"
+
+                        def parentCount = sh(script: "git rev-list --count --parents -n 1 HEAD | awk '{print NF-1}'", returnStdout: true).trim().toInteger()
+                        def currentCommit = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                        def changes = []
+
+                        // 3. 변경 파일 감지
+                        if (parentCount > 1) {
+                            def parent1 = sh(script: "git rev-parse HEAD^1", returnStdout: true).trim()
+                            def parent2 = sh(script: "git rev-parse HEAD^2", returnStdout: true).trim()
+                            def changes1 = sh(script: "git diff --name-only ${parent1} ${currentCommit}", returnStdout: true).trim().split('\n')
+                            def changes2 = sh(script: "git diff --name-only ${parent2} ${currentCommit}", returnStdout: true).trim().split('\n')
+                            changes = (changes1 + changes2).toSet().toList()
+                            echo "📂 변경된 파일 목록 (merge): ${changes.join(', ')}"
+                        } else {
+                            def parentCommit = sh(script: "git rev-parse HEAD^1", returnStdout: true).trim()
+                            changes = sh(script: "git diff --name-only ${parentCommit} ${currentCommit}", returnStdout: true).trim().split('\n')
+                            echo "📂 변경된 파일 목록: ${changes.join(', ')}"
+                        }
+
+                        // ✅ 각 파일 경로 trim 처리 (공백 제거)
+                        changes = changes.collect { it.trim() }
+                        echo "🧪 Cleaned 파일 목록: ${changes.join(', ')}"
+
+                        // 4. 빌드 트리거
+                        triggerBuilds(changes)
+                    }
+                }
+            }
+        }
+    }
+}

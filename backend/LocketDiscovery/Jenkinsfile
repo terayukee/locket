@@ -2,10 +2,8 @@ pipeline {
     agent any
 
     environment {
-        DOCKER_IMAGE = 'spring-locket-discovery'
-        DOCKER_CONTAINER = 'spring-locket-discovery'
+        DOCKER_IMAGE = 'spring-locket_discovery'
         DOCKER_PORT = 8761
-        DOCKER_PATH = '/home/ubuntu/docker'  // EC2 서버의 Docker 저장 경로
 
         EC2_USER = credentials('EC2_USER')
         EC2_IP = credentials('EC2_IP')
@@ -30,15 +28,17 @@ pipeline {
                     credentialsId: 'GitLab-PAT'
             }
         }
+
         stage('Build Application') {
             steps {
-                echo '🔨 Building the Eureka Discovery Service...'
+                echo '🔨 Building the Discovery Service...'
                 dir('backend/LocketDiscovery') {
                     sh 'gradle clean build -x test'
                     sh 'ls -al $(pwd)/build/libs'
                 }
             }
         }
+
         stage('Build Docker Image') {
             steps {
                 echo '🐳 Building the Discovery Service Docker image...'
@@ -48,48 +48,54 @@ pipeline {
                 }
             }
         }
-        stage('Save and Transfer Docker Image') {
+
+        stage('Push to Docker Hub') {
             steps {
-                echo '📦 Saving and transferring Docker image to EC2...'
-                sh """
-                docker save ${DOCKER_IMAGE}:latest | gzip > LocketDiscovery-0.0.1-SNAPSHOT.tar.gz
-                """
-                sshPublisher(publishers: [
-                    sshPublisherDesc(
-                        configName: 'EC2-Server',
-                        transfers: [
-                            sshTransfer(
-                                sourceFiles: 'LocketDiscovery-0.0.1-SNAPSHOT.tar.gz'
-                            )
-                        ]
-                    )
-                ])
+                echo '📤 Pushing Docker image to Docker Hub...'
+                withCredentials([usernamePassword(
+                    credentialsId: 'DockerHub_PAT',
+                    usernameVariable: 'DOCKERHUB_USERNAME',
+                    passwordVariable: 'DOCKERHUB_TOKEN'
+                )]) {
+                    sh '''
+                        docker login -u ${DOCKERHUB_USERNAME} -p ${DOCKERHUB_TOKEN}
+                        docker tag ${DOCKER_IMAGE}:latest ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                        docker push ${DOCKERHUB_USERNAME}/${DOCKER_IMAGE}:latest
+                    '''
+                }
             }
         }
-        stage('Deploy to EC2') {
+
+        stage('Deploy to Docker Swarm') {
             steps {
-                echo '🚀 Deploying Eureka Discovery on EC2...'
-                sshPublisher(publishers: [
-                    sshPublisherDesc(
-                        configName: 'EC2-Server',
-                        transfers: [
-                            sshTransfer(
-                                execCommand: """
-                                    mkdir -p ${DOCKER_PATH}
-                                    docker stop ${DOCKER_CONTAINER} || true
-                                    docker rm ${DOCKER_CONTAINER} || true
-                                    docker rmi ${DOCKER_IMAGE}:latest || true
-                                    docker load < ${DOCKER_PATH}/LocketDiscovery-0.0.1-SNAPSHOT.tar.gz
-                                    docker run -d --name ${DOCKER_CONTAINER} \
-                                      -p ${DOCKER_PORT}:${DOCKER_PORT} \
-                                      ${DOCKER_IMAGE}:latest
-                                """.stripIndent()
-                            )
-                        ]
+                echo '🚀 Deploying to Docker Swarm on EC2...'
+                withCredentials([
+                    sshUserPrivateKey(
+                        credentialsId: 'SSH_KEY',
+                        keyFileVariable: 'EC2_SSH_KEY_FILE',
+                        usernameVariable: 'EC2_USER'
+                    ),
+                    string(credentialsId: 'EC2_IP', variable: 'EC2_IP'),
+                    usernamePassword(
+                        credentialsId: 'DockerHub_PAT',
+                        usernameVariable: 'DOCKERHUB_USERNAME',
+                        passwordVariable: 'DOCKERHUB_TOKEN'
                     )
-                ])
+                ]) {
+                    sh '''
+                        echo "🚀 Updating Docker Swarm service..."
+                        ssh -o StrictHostKeyChecking=no -i $EC2_SSH_KEY_FILE $EC2_USER@$EC2_IP \
+                            "docker service update \
+                                --env-rm SPRING_PROFILES_ACTIVE \
+                                --env-add SPRING_PROFILES_ACTIVE=prod \
+                                --env-add DOCKER_PORT=$DOCKER_PORT \
+                                --image $DOCKERHUB_USERNAME/${DOCKER_IMAGE}:latest \
+                                ${DOCKER_IMAGE}"
+                    '''
+                }
             }
         }
+
     }
 
     post {

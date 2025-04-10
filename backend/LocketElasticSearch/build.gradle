@@ -76,8 +76,14 @@ dependencies {
 	// ✅ PostgreSQL (운영 DB)
 	runtimeOnly 'org.postgresql:postgresql'
 
+	// ✅ 커스텀 공용 모듈 의존성 추가
+	implementation project(':LocketCommon')
+
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// WebClient 사용
+	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {

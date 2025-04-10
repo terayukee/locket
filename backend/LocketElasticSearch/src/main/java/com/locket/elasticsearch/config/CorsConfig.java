@@ -15,10 +15,15 @@ public class CorsConfig {
         return new WebMvcConfigurer() {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")  // 모든 엔드포인트에 대해 CORS 허용
-                        .allowedOrigins("*") // 모든 도메인에서 접근 허용
-                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS") // 허용할 HTTP 메서드
-                        .allowedHeaders("*"); // 모든 헤더 허용
+                registry.addMapping("/**") // Swagger 포함한 전체 경로 허용
+                        .allowedOrigins(
+                                "https://j12d204.p.ssafy.io",
+                                "https://j12d204.p.ssafy.io:8083",
+                                "http://localhost:8080"
+                        )
+                        .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                        .allowedHeaders("*")
+                        .allowCredentials(true);
             }
         };
     }

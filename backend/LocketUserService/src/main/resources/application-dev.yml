@@ -1,7 +1,9 @@
 spring:
-  config:
-    activate:
-      on-profile: dev
+  datasource:
+    url: ${DB.URL_USER}  # user-service용 DB URL
+    username: ${DB.USERNAME}
+    password: ${DB.PASSWORD}
+    driver-class-name: org.postgresql.Driver
 
   jpa:
     hibernate:
@@ -14,3 +16,15 @@ eureka:
     fetch-registry: true
     service-url:
       defaultZone: http://localhost:8761/eureka  # 로컬 Eureka 서버 사용
+
+swagger:
+  server-url: http://localhost:8080/api/users
+
+feign:
+  client:
+    elasticsearch-service:
+      url: http://localhost:8083
+
+logging:
+  level:
+    com.locket: INFO

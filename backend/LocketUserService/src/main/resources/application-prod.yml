@@ -1,16 +1,96 @@
+server:
+  port: 8082
+  tomcat:
+    relaxed-host-chars: "_"
+
+DB:
+  URL_USER: ${DB_URL_USER}
+  USERNAME: ${DB_USERNAME}
+  PASSWORD: ${DB_PASSWORD}
+
 spring:
   config:
     activate:
       on-profile: prod
+
+  kafka:
+    consumer:
+      group-id: user-service-group-prod
+
+  datasource:
+    url: ${DB_URL_USER}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
 
   jpa:
     hibernate:
       ddl-auto: validate  # 배포 환경에서는 스키마 자동 변경 방지
     show-sql: false  # SQL 로그 비활성화 (성능 최적화)
 
+  data:
+    redis:
+      host: j12d204.p.ssafy.io
+      port: 6379
+      password: ${REDIS_PASSWORD}
+
+  # ✅ ReceiptService 호출용 WebClient base URL 설정 추가
+  locket:
+    receipt:
+      service:
+        url: https://j12d204.p.ssafy.io:8500
+
 eureka:
+  instance:
+    instance-id: user-service:${server.port}
+    prefer-ip-address: false
+    hostname: user-service
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://j12d204.p.ssafy.io/eureka  # EC2의 Eureka 서버 사용
+      defaultZone: http://j12d204.p.ssafy.io:8761/eureka
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health, info, prometheus, gateway, readiness, liveness
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+
+springdoc:
+  api-docs:
+    enabled: true
+    path: /users-docs
+  swagger-ui:
+    path: /users-docs/swagger-ui.html
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+swagger:
+  server-url: https://j12d204.p.ssafy.io/api/users
+
+PERPLEXITY:
+  API_KEY: ${PERPLEXITY_API_KEY}
+
+feign:
+  client:
+    elasticsearch-service:
+      url: http://172.26.5.222:8083
+
+logging:
+  level:
+    root: WARN
+    com.locket: WARN  # 우리 서비스 패키지

@@ -1,0 +1,13 @@
+package com.locket.elastic.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+public class TopStoreStatDto {
+    private String storeName;
+    private Double totalAmount;
+}

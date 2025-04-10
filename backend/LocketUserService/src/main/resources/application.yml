@@ -1,18 +1,14 @@
 server:
-  port: 0  # 랜덤 포트 사용
+  tomcat:
+    relaxed-host-chars: "_"
+  port: 8082  # 랜덤 포트 사용
 
 spring:
   application:
-    name: user-service
-
+    name: USER-SERVICE
   profiles:
-    include: key  # application-key.yml 포함 (DB, Kafka 정보)
-
-  datasource:
-    url: ${DB.URL_USER}  # user-service용 DB URL
-    username: ${DB.USERNAME}
-    password: ${DB.PASSWORD}
-    driver-class-name: org.postgresql.Driver
+    active: dev
+    include: key  # application-key.yml 포함 (DB, Kafka 정보) 
 
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
@@ -22,7 +18,7 @@ spring:
   kafka:
     bootstrap-servers: ${KAFKA.BOOTSTRAP-SERVERS}
     consumer:
-      group-id: user-service-group
+      group-id: ${KAFKA.CONSUMER.USER-GROUP-ID}
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
       auto-offset-reset: earliest
@@ -39,22 +35,60 @@ spring:
             connect-timeout: 5000
             read-timeout: 5000
 
-eureka:
-  client:
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    prefer-ip-address: true
+  data:
+    redis:
+      host: j12d204.p.ssafy.io
+      port: 6379
+      password: ${REDIS.PASSWORD}
 
 management:
   endpoints:
     web:
       exposure:
-        include: health, prometheus
+        include: prometheus, health, gateway
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+  prometheus:
+    metrics:
+      export:
+        enabled: true
 
 springdoc:
   api-docs:
     enabled: true
-    path: /api/user/v3/api-docs
+    path: /v3/api-docs
+  swagger-ui:
+    path: /users-docs/swagger-ui.html
+    display-request-duration: true
+    filter: true
+    use-root-path: true
+  model-converters:
+    pageable-converter:
+      enabled: true
+  models:
+    schema-format: JSON_SCHEMA
+    show-actuator: false
+    override-with-generic-response: false
+    use-fqn: true
   default-consumes-media-type: application/json
   default-produces-media-type: application/json
+
+
+jwt:
+  secret: ${JWT_SECRET:ThisIsAVeryLongSecretKeyThatHasMoreThan256BitsToMeetTheSecurityRequirementsOfHMACSHA256AlgorithmUsedByJWTLibrary12345678901234567890}
+  access-exp: ${JWT_ACCESS_EXP:86400000}   # 24시간
+  refresh-exp: ${JWT_REFRESH_EXP:604800000} # 7일
+
+
+receipt:
+  service:
+    url: https://j12d204.p.ssafy.io
+
+#    http://localhost:8000 # Receipt 서비스 URL
+
+app:
+  test-auth:
+    enabled: true  # 개발/테스트 환경에서는 true로, 운영 환경에서는 false로 설정

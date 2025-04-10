@@ -24,10 +24,10 @@ public class PaymentTransaction {
     private Integer cardId;
 
     @Column(name = "buyer_id", nullable = false)
-    private Integer buyerId;
+    private Long buyerId;
 
     @Column(name = "seller_id", nullable = false)
-    private Integer sellerId;
+    private Long sellerId;
 
     @Column(name = "payment_transaction_status", nullable = false)
     private String paymentTransactionStatus; // 예: 'SUCCESS', 'EXECUTING', 'FAIL'

@@ -2,24 +2,165 @@ spring:
   config:
     activate:
       on-profile: prod
+  web:
+    resources:
+      add-mappings: true
+
+  application:
+    name: locket-api-gateway
+
+  cloud:
+    gateway:
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Origin
+      globalcors:
+        corsConfigurations:
+          '[/**]':
+            allowedOriginPatterns: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+            exposedHeaders: "Authorization, Content-Disposition"
+      routes:
+        # 서비스 라우팅
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/**
+          filters:
+            - RewritePath=/api/payment/(?<segment>/?.*), /${segment}
+            - name: JwtGatewayFilter
+              args:
+                enabled: true
+          order: 10
+
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - RewritePath=/api/users/(?<segment>.*), /${segment}
+            - PreserveHostHeader
+            - name: JwtGatewayFilter
+              args:
+                enabled: true
+          order: 10
+
+        - id: elasticsearch-service
+#          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://172.26.5.222:8083
+          predicates:
+            - Path=/api/elasticsearch/**
+          filters:
+            - RewritePath=/api/elasticsearch/(?<segment>/?.*), /${segment}
+            - RemoveRequestHeader=Host
+          order: 10
+
+        - id: locket-ai-service
+          uri: lb://LOCKET-AI-SERVICE
+          predicates:
+            - Path=/api/ai/**
+          filters:
+            - RewritePath=/api/ai/(?<segment>/?.*), /api/ai/${segment}
+          order: 10
+
+        # 서비스별 Swagger 문서 라우팅
+        - id: payment-service-docs
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payment/v3/api-docs/**
+          filters:
+            - RewritePath=/api/payment/v3/api-docs(?<remaining>/?.*), /payment-docs${remaining}
+          order: 1
+
+        - id: user-service-docs
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/v3/api-docs/**
+          filters:
+            - RewritePath=/api/users/v3/api-docs(?<remaining>/?.*), /users-docs${remaining}
+          order: 1
+
+        - id: elasticsearch-service-docs
+#          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://172.26.5.222:8083
+          predicates:
+            - Path=/api/elasticsearch/v3/api-docs/**
+          filters:
+            - RewritePath=/api/elasticsearch/v3/api-docs(?<remaining>/?.*), /v3/api-docs${remaining}
+            - RemoveRequestHeader=Host
+          order: 1
+
+        - id: elasticsearch-service-docs-config
+#          uri: lb://ELASTICSEARCH-SERVICE
+          uri: http://172.26.5.222:8083
+          predicates:
+            - Path=/api/elasticsearch/v3/api-docs/swagger-config
+          filters:
+            - RewritePath=/api/elasticsearch/v3/api-docs/swagger-config, /v3/api-docs/swagger-config
+            - RemoveRequestHeader=Host
+          order: 1
+
+        - id: locket-ai-service-docs
+          uri: lb://LOCKET-AI-SERVICE
+          predicates:
+            - Path=/api/ai/openapi.json
+          filters:
+            - RewritePath=/api/ai/openapi.json(?<remaining>/?.*), /openapi.json${remaining}
+            - RemoveRequestHeader=Host
+          order: 1
 
 eureka:
+  instance:
+    instance-id: api-gateway:${server.port}
+    prefer-ip-address: false
+    hostname: api-gateway
   client:
     register-with-eureka: true
     fetch-registry: true
     service-url:
-      defaultZone: http://j12d204.p.ssafy.io/eureka  # ✅ EC2 도메인 적용
+      defaultZone: http://j12d204.p.ssafy.io:8761/eureka
 
 server:
   port: 8080
 
-# ✅ 원격 서버에서 실행할 API 문서 경로
 springdoc:
   swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+    disable-swagger-default-url: true
     urls:
-      - name: "Locket Payment Service"
-        url: http://j12d204.p.ssafy.io/api/payment/v3/api-docs
-      - name: "Locket User Service"
-        url: http://j12d204.p.ssafy.io/api/user/v3/api-docs
-      - name: "Locket ElasticSearch Service"  # ✅ Elasticsearch 추가
-        url: http://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
+      - name: "1. Locket User Service"
+        url: https://j12d204.p.ssafy.io/api/users/v3/api-docs
+      - name: "2. Locket Payment Service"
+        url: https://j12d204.p.ssafy.io/api/payment/v3/api-docs
+      - name: "3. Locket ElasticSearch Service"
+        url: https://j12d204.p.ssafy.io/api/elasticsearch/v3/api-docs
+#        url: https://j12d204.p.ssafy.io:8083/elasticsearch-doc
+      - name: "4. Locket AI Service"
+        url: https://j12d204.p.ssafy.io/api/ai/openapi.json
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: prometheus, health, gateway, readiness, liveness, info
+  endpoint:
+    prometheus:
+      enabled: true
+    gateway:
+      enabled: true
+    health:
+      show-details: always
+      probes:
+        enabled: true
+  health:
+    readinessstate:
+      enabled: true
+    livenessstate:
+      enabled: true
+
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    reactor.netty.http.client: DEBUG

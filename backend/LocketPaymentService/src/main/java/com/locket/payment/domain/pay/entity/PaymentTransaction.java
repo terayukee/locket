@@ -26,10 +26,10 @@ public class PaymentTransaction {
     private BankAccount account;
 
     @Column(nullable = false)
-    private Integer buyerId;
+    private Long buyerId;
 
     @Column(nullable = false)
-    private Integer sellerId;
+    private Long sellerId;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
