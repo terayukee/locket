@@ -212,32 +212,13 @@
                 <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=flat&logo=spring-security&logoColor=white"/>
                 <img src="https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white"/>
                 <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=json-web-tokens&logoColor=white"/>
+                ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)
             </td>
         </tr>
         <tr>
             <td>데이터베이스</td>
             <td>
-                <img src="https://img.shields.io/badge/MySQL-4479A1?style=flat&logo=mysql&logoColor=white"/>
-                <img src="https://img.shields.io/badge/MongoDB-47A248?style=flat&logo=mongodb&logoColor=white"/>
-                <img src="https://img.shields.io/badge/ChromaDB-FF0000?style=flat&logo=Adobe&logoColor=white">
-            </td>
-        </tr>
-        <tr>
-            <td>AI</td>
-            <td>
-                <img src="https://img.shields.io/badge/SBert-3084bb?style=flat&logo=Adobe&logoColor=white">
-                <img src="https://img.shields.io/badge/KoBert-251a1d?style=flat&logo=Adobe&logoColor=white">
-                <img src="https://img.shields.io/badge/Bert-db4308?style=flat&logo=Adobe&logoColor=white">
-            </td>
-        </tr>
-        <tr>
-            <td>데이터</td>
-            <td>
-                <img src="https://img.shields.io/badge/OpenAI-412991?style=flat&logo=openai&logoColor=white"/>
-                <img src="https://img.shields.io/badge/Numpy-013243?style=flat&logo=numpy&logoColor=white"/>
-                <img src="https://img.shields.io/badge/Pandas-150458?style=flat&logo=pandas&logoColor=white"/>
-                <img src="https://img.shields.io/badge/Scikit--learn-F7931E?style=flat&logo=scikit-learn&logoColor=white"/>
-                <img src="https://img.shields.io/badge/Konlpy-00599C?style=flat"/>
+                ![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)
             </td>
         </tr>
         <tr>
@@ -247,6 +228,8 @@
                 <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white"/>
                 <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=jenkins&logoColor=white"/>
                 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white"/>
+                ![Redis](https://img.shields.io/badge/Redis-%23DD0031.svg?logo=redis&logoColor=white)
+                ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?logo=nginx&logoColor=white)
             </td>
         </tr>
         <tr>
@@ -254,6 +237,12 @@
             <td>
                 <img src="https://img.shields.io/badge/NaverSearch-08c942?style=flat&logo=Adobe&logoColor=white">
                 <img src="https://img.shields.io/badge/Bareun-174b77?style=flat&logo=Adobe&logoColor=white">
+            </td>
+        </tr>
+        <tr>
+            <td>디자인</td>
+            <td>
+                ![Figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)
             </td>
         </tr>
         <tr>
