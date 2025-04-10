@@ -71,7 +71,7 @@ public class CharacterService {
 
     @Transactional
     public ExpActionResponse addExperience(Long userId, ExpActionRequest request) {
-        Character character = characterRepository.findByUserId(userId)
+        Character character = characterRepository.findByUserIdForUpdate(userId)
                 .orElseThrow(() -> new EntityNotFoundException("캐릭터를 찾을 수 없습니다."));
 
         int previousExp = character.getExp();
@@ -80,11 +80,22 @@ public class CharacterService {
 
         // 액션 타입에 따라 분기
         if (PetConstants.ACTION_TYPE_FEED.equals(request.getActionType())) {
+            if (character.getExp() >= PetConstants.MAX_EXP) {
+                throw new IllegalStateException("캐릭터가 만렙입니다. 더 이상 경험치를 받을 수 없습니다.");
+            }
+
             // 사료 주기 로직
             if (character.getFoodCount() <= 0) {
                 throw new IllegalArgumentException("사료가 부족합니다.");
             }
+
             expGained = PetConstants.FEED_EXP_GAIN;
+
+            // 만렙 초과 방지를 위해 현재 경험치에 따라 제한
+            if (character.getExp() + expGained > PetConstants.MAX_EXP) {
+                expGained = PetConstants.MAX_EXP - character.getExp();  // 남은 만큼만 부여
+            }
+
             character.feedCharacter(expGained);
 
         } else if (PetConstants.ACTION_TYPE_PLAY.equals(request.getActionType())) {

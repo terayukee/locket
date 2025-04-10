@@ -14,6 +14,9 @@ public final class PetConstants {
     public static final int[] LEVEL_THRESHOLDS = {0, 150, 400, 700};
     public static final int MAX_LEVEL = 4;
 
+    // 최대 경험치 (700)
+    public static final int MAX_EXP = LEVEL_THRESHOLDS[LEVEL_THRESHOLDS.length - 1];
+
     // 경험치 증가량
     public static final int FEED_EXP_GAIN = 10;
     public static final int PLAY_EXP_GAIN = 8;
