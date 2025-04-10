@@ -211,7 +211,7 @@
                 <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat&logo=spring-boot&logoColor=white"/>
                 <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=flat&logo=spring-security&logoColor=white"/>
                 <img src="https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white"/>
-                <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=json-web-tokens&logoColor=white"/>
+                <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=json-web-tokens&logoColor=white"/><br/>
                 ![Java](https://img.shields.io/badge/Java-007396?logo=java&logoColor=fff)
                 ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)
                 ![Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=fff)
@@ -234,7 +234,7 @@
                 ![Docker Swarm](https://img.shields.io/badge/Docker_Swarm-2496e0?logo=docker&logoColor=fff)
                 <img src="https://img.shields.io/badge/Docker_Compose-2496ED?style=flat&logo=docker&logoColor=white"/>
                 <img src="https://img.shields.io/badge/cAdvisor-282C34?style=flat&logo=docker&logoColor=61DAFB"/>
-                <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=jenkins&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=jenkins&logoColor=white"/><br/>
                 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white"/>
                 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?logo=nginx&logoColor=white)
                 ![Prometheus](https://img.shields.io/badge/Prometheus-E65251?logo=prometheus&logoColor=fff)
