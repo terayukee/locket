@@ -118,6 +118,6 @@ class BudgetFragment : BaseFragment<FragmentBudgetBinding>(
     override fun onStop() {
         super.onStop()
         mainViewModel.setSelectedFinanceTab(FinanceNavigationState.Default)
-        Log.d(TAG, "onStop: setDefault")
+//        Log.d(TAG, "onStop: setDefault")
     }
 }

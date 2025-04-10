@@ -102,6 +102,7 @@ class ExpenseAnalysisFragment : BaseFragment<FragmentExpenseAnalysisBinding>(
                 when(uiState) {
                     is TotalPaymentState.Success -> {
                         binding.tvPaymentData.text = resources.getString(R.string.finance_won, CommonUtils.makeCommaDecimal(uiState.totalPayment))
+
                     }
                     is TotalPaymentState.Error -> {
                         Log.d(TAG, "initUI: Error payment ${uiState.message}")

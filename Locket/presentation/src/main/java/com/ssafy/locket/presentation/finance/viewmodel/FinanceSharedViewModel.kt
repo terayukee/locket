@@ -61,6 +61,8 @@ class FinanceSharedViewModel @Inject constructor(
                 .onStart { }
                 .catch { e ->
                     Log.d(TAG, "getTotalPayment: ${e.message}")
+                    _selectedYearMonthTotalPayment.value =
+                        TotalPaymentState.Error(e.message ?: "오류가 발생했습니다. 잠시후 시도해주세요")
                 }
                 .collect { status ->
                     when (status) {

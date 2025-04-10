@@ -41,11 +41,11 @@ class CardPaymentViewModel @Inject constructor(
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            Log.d(TAG, "getAllPaymentCards: Success ${status.data}")
+//                            Log.d(TAG, "getAllPaymentCards: Success ${status.data}")
                             _paymentCardList.value = PaymentCardState.Success(status.data)
                         }
                         is ResponseStatus.Error -> {
-                            Log.d(TAG, "getAllPaymentCards: Error ${status.error.message}")
+//                            Log.d(TAG, "getAllPaymentCards: Error ${status.error.message}")
                             _paymentCardList.value = PaymentCardState.Error(status.error.message)
                         }
                     }
@@ -63,12 +63,12 @@ class CardPaymentViewModel @Inject constructor(
                 .collect { status ->
                     when (status) {
                         is ResponseStatus.Success -> {
-                            Log.d(TAG, "checkFingerprintRegistered: Success ${status.data}")
+//                            Log.d(TAG, "checkFingerprintRegistered: Success ${status.data}")
                             _isFingerprintRegistered.emit(status.data.fingerprintRegistered)
                         }
 
                         is ResponseStatus.Error -> {
-                            Log.d(TAG, "checkFingerprintRegistered: Error ${status.error.message}")
+//                            Log.d(TAG, "checkFingerprintRegistered: Error ${status.error.message}")
                             _isFingerprintRegistered.emit(false)
                         }
                     }

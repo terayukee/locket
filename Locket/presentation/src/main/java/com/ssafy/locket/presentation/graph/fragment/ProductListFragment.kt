@@ -134,8 +134,6 @@ class ProductListFragment : BaseFragment<FragmentProductListBinding>(
                 productViewModel.productHappyListInfo.collect { productHappyList ->
                     Log.d(TAG,productHappyList.toString())
                     if(productHappyList is ProductHappyListState.Success) {
-                        Log.d(TAG,"만원의 행복")
-                        Log.d(TAG,productHappyList.productHappyListInfo.toString())
                         moneyHappyList.clear()
                         moneyHappyList.addAll(productHappyList.productHappyListInfo.products)
                         moneyHappyListAdapter.notifyDataSetChanged()

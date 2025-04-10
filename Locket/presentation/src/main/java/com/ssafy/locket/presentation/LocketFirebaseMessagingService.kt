@@ -20,7 +20,7 @@ private const val TAG = "LocketFirebaseMessaging"
 class LocketFirebaseMessagingService: FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
-        Log.d(TAG, "onNewToken: $token")
+//        Log.d(TAG, "onNewToken: $token")
     }
 
     override fun onMessageReceived(message: RemoteMessage) {
@@ -33,8 +33,6 @@ class LocketFirebaseMessagingService: FirebaseMessagingService() {
         if(message.notification != null) {
             messageTitle = message.notification?.title.toString()
             messageContent = message.notification?.body.toString()
-            Log.d(TAG, "onMessageReceived notification body: ${message.notification?.body.toString()}")
-            Log.d(TAG, "onMessageReceived notification title: ${message.notification?.title.toString()}")
         } else {
             val data = message.data
             messageTitle = data["title"].orEmpty()
@@ -44,8 +42,6 @@ class LocketFirebaseMessagingService: FirebaseMessagingService() {
             if(messageType == "price") {
                 productId = data["productId"].orEmpty().toInt()
             }
-
-            Log.d(TAG, "onMessageReceived: else ${message.data}")
         }
 
         createNotification(messageTitle, messageContent, messageType, productId)

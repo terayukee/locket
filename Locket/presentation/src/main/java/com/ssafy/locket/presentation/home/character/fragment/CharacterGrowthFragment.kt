@@ -19,6 +19,7 @@ import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.FragmentCharacterGrowthBinding
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterInfoState
 import com.ssafy.locket.presentation.home.character.viewmodel.CharacterViewModel
+import com.ssafy.locket.presentation.home.character.viewmodel.CompleteGifticonState
 import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import kotlinx.coroutines.launch
@@ -31,16 +32,16 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
     R.layout.fragment_character_growth
 ) {
     private var mContext: Context? = null
-    private var isTimerRunning = false
-    private lateinit var timerRunnable: Runnable
-    private val timerHandler = Handler(Looper.getMainLooper())
+//    private var isTimerRunning = false
+//    private lateinit var timerRunnable: Runnable
+//    private val timerHandler = Handler(Looper.getMainLooper())
     private var minRemain = testCharacterCoolTime
     private val characterViewModel: CharacterViewModel by activityViewModels()
     private var gifResId: Int = -1
     private var imageResId: Int = -1
-    private lateinit var pendingGifRunnable: Runnable
-    private val gifHandler = Handler(Looper.getMainLooper())
-    private var isGifLoading = false
+//    private lateinit var pendingGifRunnable: Runnable
+//    private val gifHandler = Handler(Looper.getMainLooper())
+//    private var isGifLoading = false
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -70,7 +71,7 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
         binding.ivMissionToyBg.setOnClickListener {
             binding.ivMissionToyBg.isEnabled = false
             characterViewModel.growCharacter(CharacterAction.Play)
-            startTimer()
+//            startTimer()
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -147,11 +148,11 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
                             R.string.home_character_toy_remain_time,
                             minRemain + 1
                         )
-                        startTimer()
+//                        startTimer()
                     } else {
                         binding.ivMissionToyBg.isEnabled = true
                         binding.tvMissionToyQuantity.text = "사용 가능"
-                        isTimerRunning = false
+//                        isTimerRunning = false
                     }
                 } else if (uiState is CharacterInfoState.Empty) {
                     findNavController().navigate(R.id.action_characterGrowthFragment_to_characterDoneFragment)
@@ -164,76 +165,84 @@ class CharacterGrowthFragment : BaseFragment<FragmentCharacterGrowthBinding>(
                     CommonUtils.showSingleLineCustomToast(
                         requireContext(),
                         ToastType.ERROR,
-                        "네트워크 오류가 발생하였습니다. 잠시후 다시 시도해주세요."
+                        (uiState as CharacterInfoState.Error).message
                     )
                 }
             }
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            characterViewModel.completeGift.collect {
-                if (it) findNavController().navigate(R.id.action_characterGrowthFragment_to_characterDoneFragment)
-            }
-        }
-    }
-
-    private fun startTimer() {
-        if (isTimerRunning == true) return
-        isTimerRunning = true
-
-        timerRunnable = object : Runnable {
-            override fun run() {
-                if (minRemain >= 0) {
-                    Log.d(TAG, "run: isTimerRunning and minRemain $minRemain")
-                    binding.tvMissionToyQuantity.text =
-                        getString(R.string.home_character_toy_remain_time, minRemain + 1)
-                    minRemain--
-
-                    timerHandler.postDelayed(this, 60000)
-                } else {
-                    Log.d(TAG, "run: isTimerRunning and minRemain == 0")
-                    stopTimer()
-                    binding.ivMissionToyBg.isEnabled = true
-                    binding.tvMissionToyQuantity.text = "사용 가능"
-                }
-            }
-        }
-        timerHandler.post(timerRunnable)
-    }
-
-    private fun loadCharacterAnimation() {
-        isGifLoading = true
-        pendingGifRunnable = object : Runnable {
-            override fun run() {
-                if (isGifLoading) {
-                    mContext?.let {
-                        Glide.with(it)
-                            .load(imageResId)
-                            .into(binding.ivCharacter)
+            characterViewModel.completeGift.collect { uiState ->
+                when(uiState) {
+                    is CompleteGifticonState.Success -> {
+                        findNavController().navigate(R.id.action_characterGrowthFragment_to_characterDoneFragment)
                     }
+                    is CompleteGifticonState.Error -> {
+                        CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, uiState.message)
+                    }
+                    else -> {}
                 }
             }
         }
-        gifHandler.postDelayed(pendingGifRunnable, 3000)
     }
 
-    private fun stopLoadCharacterAnimation() {
-        if (isGifLoading) {
-            isGifLoading = false
-            gifHandler.removeCallbacks(pendingGifRunnable)
-        }
-    }
+//    private fun startTimer() {
+//        if (isTimerRunning == true) return
+//        isTimerRunning = true
+//
+//        timerRunnable = object : Runnable {
+//            override fun run() {
+//                if (minRemain >= 0) {
+//                    Log.d(TAG, "run: isTimerRunning and minRemain $minRemain")
+//                    binding.tvMissionToyQuantity.text =
+//                        getString(R.string.home_character_toy_remain_time, minRemain + 1)
+//                    minRemain--
+//
+//                    timerHandler.postDelayed(this, 60000)
+//                } else {
+//                    Log.d(TAG, "run: isTimerRunning and minRemain == 0")
+//                    stopTimer()
+//                    binding.ivMissionToyBg.isEnabled = true
+//                    binding.tvMissionToyQuantity.text = "사용 가능"
+//                }
+//            }
+//        }
+//        timerHandler.post(timerRunnable)
+//    }
+//
+//    private fun loadCharacterAnimation() {
+//        isGifLoading = true
+//        pendingGifRunnable = object : Runnable {
+//            override fun run() {
+//                if (isGifLoading) {
+//                    mContext?.let {
+//                        Glide.with(it)
+//                            .load(imageResId)
+//                            .into(binding.ivCharacter)
+//                    }
+//                }
+//            }
+//        }
+//        gifHandler.postDelayed(pendingGifRunnable, 3000)
+//    }
 
-    private fun stopTimer() {
-        if (isTimerRunning) {
-            isTimerRunning = false
-            timerHandler.removeCallbacks(timerRunnable)
-        }
-    }
+//    private fun stopLoadCharacterAnimation() {
+//        if (isGifLoading) {
+//            isGifLoading = false
+//            gifHandler.removeCallbacks(pendingGifRunnable)
+//        }
+//    }
+//
+//    private fun stopTimer() {
+//        if (isTimerRunning) {
+//            isTimerRunning = false
+//            timerHandler.removeCallbacks(timerRunnable)
+//        }
+//    }
 
     override fun onStop() {
         super.onStop()
-        stopTimer()
-        stopLoadCharacterAnimation()
+//        stopTimer()
+//        stopLoadCharacterAnimation()
     }
 }

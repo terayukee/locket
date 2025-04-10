@@ -20,6 +20,7 @@ import com.ssafy.locket.presentation.common.viewmodel.FinanceNavigationState
 import com.ssafy.locket.presentation.common.viewmodel.MainViewModel
 import com.ssafy.locket.presentation.databinding.FragmentHomeBinding
 import com.ssafy.locket.presentation.finance.viewmodel.BudgetViewModel
+import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.GetBudgetStatusState
 import com.ssafy.locket.presentation.finance.viewmodel.GetShortFeedbackState
 import com.ssafy.locket.presentation.finance.viewmodel.TotalPaymentState
@@ -50,6 +51,8 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
 
     private val homeFinanceViewModel: HomeFinanceViewModel by viewModels()
 
+    private val financeSharedViewModel: FinanceSharedViewModel by activityViewModels()
+
     private var backPressedTime: Long = 0
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -67,7 +70,7 @@ class HomeFragment : BaseFragment<FragmentHomeBinding>(
         homeFinanceViewModel.getShortFeedback()
 //        budgetViewModel.getBudgetStatus(today.year, today.monthValue)
 //        budgetViewModel.getShortFeedback()
-
+        financeSharedViewModel.initYearMonth()
         binding.layoutCharacter.setOnClickListener {
             characterViewModel.checkCharacter()
         }

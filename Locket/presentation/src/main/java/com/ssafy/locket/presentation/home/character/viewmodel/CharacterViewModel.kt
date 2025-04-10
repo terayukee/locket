@@ -44,8 +44,8 @@ class CharacterViewModel @Inject constructor(
     private val _characterInfo = MutableStateFlow<CharacterInfoState>(CharacterInfoState.Initial)
     val characterInfo: StateFlow<CharacterInfoState> = _characterInfo.asStateFlow()
 
-    private val _completeGift = MutableSharedFlow<Boolean>()
-    val completeGift = _completeGift.asSharedFlow()
+    private val _completeGift = MutableStateFlow<CompleteGifticonState>(CompleteGifticonState.Initial)
+    val completeGift = _completeGift.asStateFlow()
 
     fun setLoading() {
         _characterInfo.value = CharacterInfoState.Loading
@@ -76,6 +76,7 @@ class CharacterViewModel @Inject constructor(
                 .onStart { setLoading() }
                 .catch { e ->
                     Log.d(TAG, "checkCharacter: ${e.message}")
+                    _characterInfo.value = CharacterInfoState.Error(e.message ?: "알 수 없는 에러가 발생했습니다.")
                 }
                 .collect { status ->
                     when(status) {
@@ -171,18 +172,25 @@ class CharacterViewModel @Inject constructor(
                 .onStart { }
                 .catch { e ->
                     Log.d(TAG, "completeCharacter: ${e.message}")
+                    _completeGift.emit(CompleteGifticonState.Error(e.message ?: "오류가 발생했습니다. 잠시후 시도해주세요"))
+
                 }
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            _completeGift.emit(true)
+                            _completeGift.emit(CompleteGifticonState.Success(status.data))
                         }
                         is ResponseStatus.Error -> {
                             Log.d(TAG, "completeCharacter Error: ${status.error.message}")
+                            _completeGift.emit(CompleteGifticonState.Error(status.error.message))
                         }
                     }
                 }
         }
+    }
+
+    fun clearCharacter() {
+        _completeGift.value = CompleteGifticonState.Initial
     }
 }
 
@@ -206,4 +214,10 @@ fun mapCharacterResultToState(result: CharacterResult): CharacterInfoState {
         is CharacterResult.NotExist -> CharacterInfoState.Empty
         is CharacterResult.Error -> CharacterInfoState.Error(result.message)
     }
+}
+
+sealed class CompleteGifticonState {
+    object Initial: CompleteGifticonState()
+    data class Success(val gifticon: Gifticon): CompleteGifticonState()
+    data class Error(val message: String): CompleteGifticonState()
 }

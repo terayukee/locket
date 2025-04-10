@@ -42,7 +42,7 @@ class PermissionChecker(activityOrFragment: Any) {
 
     val requestPermissionLauncher: ActivityResultLauncher<Array<String>> = when (activityOrFragment) {
         is AppCompatActivity -> {
-            Log.d(TAG, "checkPermission is activity: ")
+//            Log.d(TAG, "checkPermission is activity: ")
             activityOrFragment.registerForActivityResult(
                 ActivityResultContracts.RequestMultiplePermissions()){
                 resultChecking(it)

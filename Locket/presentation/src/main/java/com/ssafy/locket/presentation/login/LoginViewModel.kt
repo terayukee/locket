@@ -79,12 +79,12 @@ class LoginViewModel @Inject constructor(
                 ).collect { response ->
                     when (response) {
                         is ResponseStatus.Success -> {
-                            Log.d("LoginViewModel", "jwt토큰 " + response.data.accessToken)
+//                            Log.d("LoginViewModel", "jwt토큰 " + response.data.accessToken)
                             dataStore.saveJwtToken("Bearer " + response.data.accessToken)
                             _signUpSuccess.value = true
                         }
                         is ResponseStatus.Error -> {
-                            Log.d("LoginViewModel", "회원가입 실패: ${response.error.message}")
+//                            Log.d("LoginViewModel", "회원가입 실패: ${response.error.message}")
                             _signUpSuccess.value = false
                         }
                     }

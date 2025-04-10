@@ -33,7 +33,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <TextView
+        android:id="@+id/tv_no_notification"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:text="알림 내역이 비어있습니다 🥲"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/nestedScrollView"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginTop="24dp"
@@ -45,6 +61,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
             <TextView
                 android:id="@+id/tv_recent_notification_title"
                 android:layout_width="0dp"
@@ -54,9 +71,9 @@
                 android:text="최근 7일"
                 android:textColor="@color/text"
                 android:textSize="16sp"
-                app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_recent_notification"
@@ -74,23 +91,23 @@
                 android:layout_height="4dp"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentTop="true"
-                android:background="#EFEFEF"
                 android:layout_marginTop="14dp"
-                app:layout_constraintTop_toBottomOf="@+id/rv_recent_notification"
+                android:background="#EFEFEF"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintTop_toBottomOf="@+id/rv_recent_notification" />
 
             <TextView
                 android:id="@+id/tv_prev_notification_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginHorizontal="24dp"
+                android:layout_marginTop="24dp"
                 android:fontFamily="@font/pretendard_regular"
                 android:letterSpacing="-0.02"
                 android:text="이전 알림"
                 android:textColor="@color/text"
                 android:textSize="16sp"
-                android:layout_marginTop="24dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/rectangle_5" />
@@ -107,16 +124,16 @@
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_recent_notification"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:constraint_referenced_ids="tv_recent_notification_title, rv_recent_notification" />
 
             <androidx.constraintlayout.widget.Group
                 android:id="@+id/group_prev_notification"
-                android:visibility="gone"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="gone"
                 app:constraint_referenced_ids="rv_prev_notification, tv_prev_notification_title, rectangle_5" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

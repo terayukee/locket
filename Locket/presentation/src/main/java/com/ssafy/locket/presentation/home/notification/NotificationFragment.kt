@@ -1,5 +1,7 @@
 package com.ssafy.locket.presentation.home.notification
 
+
+
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -76,14 +78,16 @@ class NotificationFragment : BaseFragment<FragmentNotificationBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 notificationViewModel.notificationList.collect { notificationList ->
-                    Log.d(TAG,"확인"+notificationList)
                     if(notificationList is NotificationState.Success) {
-                        val pastNotifications = notificationList.notificationList.past
                         val recentNotifications = notificationList.notificationList.recent
 
-                        if(recentNotifications.size > 0) binding.groupRecentNotification.visibility = View.VISIBLE
-                        if(pastNotifications.size > 0) binding.groupPrevNotification.visibility = View.VISIBLE
-
+                        if(recentNotifications.size == 0) {
+                            binding.tvNoNotification.visibility = View.VISIBLE
+                            binding.groupRecentNotification.visibility = View.GONE
+                        } else {
+                            binding.tvNoNotification.visibility = View.GONE
+                            binding.groupRecentNotification.visibility = View.VISIBLE
+                        }
                         recentNotificationListRVAdapter.submitList(recentNotifications)
                     }
                 }
