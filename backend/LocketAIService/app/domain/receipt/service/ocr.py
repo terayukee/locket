@@ -137,10 +137,11 @@ class OCRService:
                         try:
                             price_info = item.get('price', {}).get('price', {})
                             formatted_value = price_info.get('formatted', {}).get('value')
-                            if formatted_value is not None:
+                            if formatted_value:
                                 total_price = int(formatted_value)
                             else:
                                 text_price = price_info.get('text')
+                                logger.debug(f"text_price 추출 시도: {text_price}")
                                 if text_price:
                                     total_price = int(text_price.replace(",", "").replace(" ", ""))
                                 else:
