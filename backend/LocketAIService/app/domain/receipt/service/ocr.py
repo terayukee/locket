@@ -135,12 +135,22 @@ class OCRService:
                         logger.info(f"영수증 형식 단가 추출: {item_amount}")
                     except (KeyError, TypeError, ValueError):
                         try:
-                            total_price = int(item.get('price', {}).get('price', {}).get('formatted', {}).get('value'))
+                            price_info = item.get('price', {}).get('price', {})
+                            formatted_value = price_info.get('formatted', {}).get('value')
+                            if formatted_value is not None:
+                                total_price = int(formatted_value)
+                            else:
+                                text_price = price_info.get('text')
+                                if text_price:
+                                    total_price = int(text_price.replace(",", "").replace(" ", ""))
+                                else:
+                                    raise ValueError("가격 정보 없음")
                             item_amount = total_price // quantity
                             logger.info(f"PDF 형식 단가 계산: {total_price} / {quantity} = {item_amount}")
                         except Exception as e:
                             logger.error(f"가격 정보를 찾을 수 없습니다: {str(e)}")
                             raise ReceiptException(error_code=ReceiptErrorCode.PARSING_ERROR)
+
 
                     # 상품명 정리 적용
                     raw_item_name = item.get('name', {}).get('text', '이름 없음')
