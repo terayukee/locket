@@ -86,7 +86,7 @@
 
 |                     **Splash Page**                      |                        **Home Page**                        |                       **Search Page**                        |
 | :-----------------------------------------------------: | :---------------------------------------------------------: | :--------------------------------------------------------: |
-| <img src="./assets/gif/splash.gif" height="400"> | <img src="./assets/gif/home.gif" height="400"> | <img src="./assets/gif/search.gif" height="400"> |
+| <img src=""> | <img src=""> | <img src=""> |
 
 <br>
 
@@ -96,7 +96,7 @@
 
 |                      **OO Page**                      |                      **OO Page**                      |                 
 | :--------------------------------------------------------: | :---------------------------------------------------------: |
-| <img src="./assets/gif/login.gif" height="400"> | <img src="./assets/gif/logout.gif" height="400"> |
+| <img src=""> | <img src=""> |
 
 <br>
 
@@ -106,17 +106,17 @@
 
 |                      **OO Check**                      |                      **OO Check**                      |                       **OO Check**                      |
 | :--------------------------------------------------------: | :---------------------------------------------------------: | :---------------------------------------------------------: |
-| <img src="./assets/gif/image_analy.gif" height="400"> | <img src="./assets/gif/url_analy.gif" height="400"> | <img src="./assets/gif/live_camera.gif" height="400"> |
+| <img src=""> | <img src=""> | <img src=""> |
 
 <br>
 
 ### 4️⃣ <b>OO 페이지</b>
 
-> 게임 페이지
+> OO 페이지
 
 |                      **Game Page**                      |
 | :--------------------------------------------------------: | 
-| <img src="./assets/gif/game.gif" height="400"> |
+| <img src=""> |
 
 <br>
 
@@ -126,10 +126,10 @@
 
 |                      **OO Page**                      |                      **OO Page**                      |                 
 | :--------------------------------------------------------: | :---------------------------------------------------------: |
-| <img src="./assets/gif/my_analy.gif" height="400"> | <img src="./assets/gif/profile_edit.gif" height="400"> | 
+| <img src=""> | <img src=""> | 
 <br>
 
-
+<!-- <img src="./assets/gif/profile_edit.gif" height="400"> -->
 ---
 
 ## 🧑‍💻 팀원 소개
