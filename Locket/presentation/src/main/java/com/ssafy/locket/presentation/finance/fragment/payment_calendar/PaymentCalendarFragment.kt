@@ -11,7 +11,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.recyclerview.widget.RecyclerView
 import com.kizitonwose.calendar.core.CalendarDay
 import com.kizitonwose.calendar.core.DayPosition
 import com.kizitonwose.calendar.core.daysOfWeek
@@ -21,11 +20,9 @@ import com.ssafy.locket.presentation.R
 import com.ssafy.locket.presentation.base.BaseFragment
 import com.ssafy.locket.presentation.databinding.CalendarDayBinding
 import com.ssafy.locket.presentation.databinding.FragmentPaymentCalendarBinding
-import com.ssafy.locket.presentation.finance.viewmodel.DailyPaymentState
 import com.ssafy.locket.presentation.finance.viewmodel.FinanceSharedViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.OpenDialogState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentCalendarState
-import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryState
 import com.ssafy.locket.presentation.finance.viewmodel.PaymentHistoryViewModel
 import com.ssafy.locket.presentation.finance.viewmodel.SelectedDayState
 import com.ssafy.locket.presentation.finance.viewmodel.SelectedDayViewModel
@@ -33,17 +30,14 @@ import com.ssafy.locket.presentation.utils.CommonUtils
 import com.ssafy.locket.presentation.utils.ToastType
 import com.ssafy.locket.utils.CalendarUtils.displayText
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.yield
-import java.math.BigDecimal
 import java.time.DayOfWeek
 import java.time.LocalDate
-import java.time.Year
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
-import kotlin.math.truncate
 
 private const val TAG = "PaymentCalendarFragment"
 
@@ -66,7 +60,7 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        financeSharedViewModel.initYearMonthPayment()
+//        financeSharedViewModel.initYearMonthPayment()
         var downX = 0f
         var downY = 0f
 
@@ -229,10 +223,13 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
                 selectedDayViewModel.selectedDay.collectLatest { uiState ->
-                    if(uiState is SelectedDayState.Exist && !dialog.isAdded) {
-                        dialog.show(childFragmentManager, "payment")
-                        yield()
+                    if(selectedDayViewModel.openDialog.first() is OpenDialogState.Opened) {
+                        if(uiState is SelectedDayState.Exist && !dialog.isAdded) {
+                            dialog.show(childFragmentManager, "payment")
+                            yield()
+                        }
                     }
+
                 }
             }
         }
@@ -261,5 +258,16 @@ class PaymentCalendarFragment : BaseFragment<FragmentPaymentCalendarBinding>(
                 }
             }
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        Log.d(TAG, "onStop: dialog dismiss")
+        dialog?.dismiss()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        dialog?.dismiss()
     }
 }

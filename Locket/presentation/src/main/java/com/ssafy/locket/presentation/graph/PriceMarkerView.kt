@@ -29,7 +29,7 @@ class PriceMarkerView(context: Context) : MarkerView(context, R.layout.custom_ma
         if (entry != null && highlight != null) {
             val index = entry.x.toInt()
             tvHigh.text = "최고가 ${CommonUtils.makeComma(highPrices[index])}원"
-            tvLow.text = "최저가 ${CommonUtils.makeComma(lowPrices[index]-300)}원"
+            tvLow.text = "최저가 ${CommonUtils.makeComma(lowPrices[index])}원"
             tvDate.text = dates[index]
         }
         super.refreshContent(entry, highlight)

@@ -73,10 +73,15 @@ class LikeProductListFragment : BaseFragment<FragmentLikeProductListBinding>(
         viewLifecycleOwner.lifecycleScope.launch {
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 productViewModel.productLikeListInfo.collect { productLike ->
-                    Log.d(TAG, productLike.toString())
                     if (productLike is ProductLikeListState.Success) {
+                        if(productLike.productLikeList.products.size == 0) {
+                            binding.tvNoProduct.visibility = View.VISIBLE
+                            binding.rvLikeList.visibility = View.GONE
+                        }else {
+                            binding.tvNoProduct.visibility = View.GONE
+                            binding.rvLikeList.visibility = View.VISIBLE
+                        }
                         productLikeList.clear()
-                        Log.d(TAG, productLike.productLikeList.products.toString())
                         productLikeList.addAll(productLike.productLikeList.products)
                         productLikeAdapter.notifyDataSetChanged()
                         isLoading = false // 로딩 완료

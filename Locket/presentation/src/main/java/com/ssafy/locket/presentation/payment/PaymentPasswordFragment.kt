@@ -44,7 +44,6 @@ class PaymentPasswordFragment : BaseFragment<FragmentPaymentPasswordBinding>(
 
         viewLifecycleOwner.lifecycleScope.launch {
             paymentPasswordViewModel.isPasswordVerify.collect {
-                Log.d(TAG,it.toString())
                 if(it) certifymove()
                 else {
                     CommonUtils.showSingleLineCustomToast(requireContext(), ToastType.ERROR, "비밀번호가 틀렸습니다. 다시 입력해주세요.")

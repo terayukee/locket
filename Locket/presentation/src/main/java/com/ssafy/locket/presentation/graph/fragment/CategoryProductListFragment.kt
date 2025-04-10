@@ -80,8 +80,6 @@ class CategoryProductListFragment : BaseFragment<FragmentCategoryProductListBind
     }
 
     private fun initView() {
-        Log.d(TAG, "클릭")
-        Log.d(TAG, productId.toString())
         productViewModel.getCategoryList(productId, currentPage)
     }
 

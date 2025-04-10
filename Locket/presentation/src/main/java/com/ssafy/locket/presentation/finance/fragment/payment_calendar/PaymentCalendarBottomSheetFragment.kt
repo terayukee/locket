@@ -71,7 +71,8 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
         binding.btnClose.setOnClickListener {
             selectedDayViewModel.clearSelectedDay()
             selectedDayViewModel.clearSelectedDayPayments()
-            dialog?.dismiss()
+//            dialog?.dismiss()
+            dismissSmoothly()
         }
 
 
@@ -84,13 +85,15 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
                             if(selectedDayViewModel.selectedDay.value as SelectedDayState.Exist == uiState) {
                                 binding.tvDate.text = String.format(getString(R.string.finance_calendar_bottom_sheet_date),uiState.day.dayOfMonth.toString(),uiState.day.dayOfWeek.displayText())
                             } else {
-                                dialog?.dismiss()
+//                                dialog?.dismiss()
+                                dismissSmoothly()
                             }
 
                         }
                         else -> {
                             Log.d(TAG, "onViewCreated: initial or none")
-                            dialog?.dismiss()
+//                            dialog?.dismiss()
+                            dismissSmoothly()
                         }
                     }
                 }
@@ -142,7 +145,7 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
     }
 
     private fun getBottomSheetDialogDefaultHeight(): Int {
-        return (getWindowHeight() * 0.6019).toInt()
+        return (getWindowHeight() ).toInt()
     }
 
     private fun getWindowHeight(): Int {
@@ -155,7 +158,8 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
         super.onStop()
         selectedDayViewModel.clearSelectedDay()
         selectedDayViewModel.clearSelectedDayPayments()
-        dialog?.dismiss()
+//        dialog?.dismiss()
+        dismissSmoothly()
     }
 
     fun getActivityContext(context: Context): Context {
@@ -164,5 +168,25 @@ class PaymentCalendarBottomSheetFragment : BottomSheetDialogFragment() {
         } else {
             context
         }
+    }
+
+    fun dismissSmoothly() {
+        val bottomSheet = dialog?.findViewById<View>(com.google.android.material.R.id.design_bottom_sheet)
+        val behavior = BottomSheetBehavior.from(bottomSheet!!)
+
+        behavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN) {
+                    dismiss()
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                // 필요한 경우 추가 효과
+            }
+        })
+
+        // 상태를 HIDDEN으로 설정하여 자연스럽게 사라지도록 함
+        behavior.state = BottomSheetBehavior.STATE_HIDDEN
     }
 }

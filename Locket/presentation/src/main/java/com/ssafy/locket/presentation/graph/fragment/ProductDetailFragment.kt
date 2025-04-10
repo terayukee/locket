@@ -120,7 +120,6 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
                 binding.ivCoupangMove.visibility = View.INVISIBLE
                 binding.ivLikeBtn.setImageResource(R.drawable.ic_all_empty_heart)  // 빈 하트
             }
-            Log.d(TAG,"하트여부"+isHeartFilled)
             productViewModel.productLikeClick(productId,isHeartFilled)
         }
         binding.ivCoupangMove.setOnClickListener {
@@ -163,6 +162,8 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             lowPriceEntries.add(Entry(i.toFloat(), history.lowestPrice.toFloat()))
         }
 
+        Log.d(TAG, "setupLineChart: highPriceEntries ${highPriceEntries.map { println("${it.x}  ${it.y} ${it.data}")}}")
+        Log.d(TAG, "setupLineChart: lowPriceEntries ${lowPriceEntries.map { println("${it.x}  ${it.y} ${it.data}")}}")
         val adjustedHighPriceEntries = ArrayList<Entry>()
         val adjustedLowPriceEntries = ArrayList<Entry>()
 
@@ -199,6 +200,7 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
 
         val maxPrice = highPriceEntries.maxOfOrNull { it.y } ?: 0f
         val minPrice = lowPriceEntries.minOfOrNull { it.y } ?: 0f
+
         val avgPrice = (maxPrice + minPrice) / 2
 
         leftAxis.apply {
@@ -268,7 +270,6 @@ class ProductDetailFragment : BaseFragment<FragmentProductDetailBinding>(
             viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 productViewModel.productDetailInfo.collectLatest { productDetail ->
                     if(productDetail is ProductDetailState.Success) {
-                        Log.d(TAG,"like"+productDetail.productDetailInfo.liked.toString())
                         binding.tvProductTitle.text = productDetail.productDetailInfo.productName
                         binding.tvPrice.text = productDetail.productDetailInfo.currentPrice
                         Glide.with(requireContext())

@@ -108,7 +108,6 @@ class ProductViewModel @Inject constructor(
                         }
                         is ResponseStatus.Error -> {
                             _productCategoryInfo.value = ProductCategoryListState.Error(uiState.error.message)
-                            Log.d("ProductFragment", "error: ${_productCategoryInfo.value}")
                         }
                     }
                 }

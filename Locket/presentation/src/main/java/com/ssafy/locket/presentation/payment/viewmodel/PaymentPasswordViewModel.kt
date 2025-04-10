@@ -30,16 +30,16 @@ class PaymentPasswordViewModel @Inject constructor(
             checkPasswordUseCase(password)
                 .onStart {  }
                 .catch { e ->
-                    Log.d(TAG, "checkPassword: ${e.message}")
+                    _isPasswordVerify.emit(false)
                 }
                 .collect { status ->
                     when(status) {
                         is ResponseStatus.Success -> {
-                            Log.d(TAG, "checkPassword: Success ${status.data}")
+//                            Log.d(TAG, "checkPassword: Success ${status.data}")
                             _isPasswordVerify.emit(status.data.valid)
                         }
                         is ResponseStatus.Error -> {
-                            Log.d(TAG, "checkPassword: Error ${status.error.message}")
+//                            Log.d(TAG, "checkPassword: Error ${status.error.message}")
                             _isPasswordVerify.emit(false)
                         }
                     }

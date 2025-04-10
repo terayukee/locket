@@ -48,8 +48,6 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.tabLayout.getTabAt(binding.tabLayout.selectedTabPosition)?.select()
-
         initTabLayout()
         financeSharedViewModel.initYearMonthPayment()
 
@@ -84,7 +82,7 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                         }
 
                         is TotalPaymentState.Error -> {
-                            Log.d(TAG, "initUI: Error payment ${uiState.message}")
+//                            Log.d(TAG, "initUI: Error payment ${uiState.message}")
                             CommonUtils.showSingleLineCustomToast(
                                 requireContext(),
                                 ToastType.ERROR,
@@ -129,22 +127,16 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
     }
 
     private fun initTabLayout() {
-//        binding.tabLayout.apply {
-//            addTab(binding.tabLayout.newTab().setText("내역"))
-//            addTab(binding.tabLayout.newTab().setText("달력"))
-//            addTab(binding.tabLayout.newTab().setText("예산"))
-//        }
+        binding.tabLayout.apply {
+            addTab(binding.tabLayout.newTab().setText("내역"))
+            addTab(binding.tabLayout.newTab().setText("달력"))
+            addTab(binding.tabLayout.newTab().setText("예산"))
+        }
 
         binding.tabVp.apply {
             adapter = FinanceVPAdapter(requireActivity() as MainActivity)
             isUserInputEnabled = false
         }
-
-//        binding.tabLayout.post {
-//            // 0번째 탭이 선택된 상태에서 텍스트 스타일 적용
-//            val tabTextView = getTextViewFromTab(binding.tabLayout.getTabAt(0)!!)
-//            tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[1])
-//        }
 
         TabLayoutMediator(binding.tabLayout, binding.tabVp) { tab, position ->
             tab.text = if (position == 0) "내역" else if (position == 1) "달력" else "예산"
@@ -169,17 +161,17 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
         binding.tabLayout.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 val tabTextView = getTextViewFromTab(tab)
-                tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[1])
+                tabTextView?.setTypeface(null, Typeface.NORMAL)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab) {
                 val tabTextView = getTextViewFromTab(tab)
-                tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[0])
+                tabTextView?.setTypeface(null, Typeface.NORMAL)
             }
 
             override fun onTabReselected(tab: TabLayout.Tab) {
                 val tabTextView = getTextViewFromTab(tab)
-                tabTextView?.typeface = ResourcesCompat.getFont(requireContext(), fonts[1])
+                tabTextView?.setTypeface(null, Typeface.NORMAL)
             }
         })
     }
@@ -215,10 +207,5 @@ class FinanceFragment : BaseFragment<FragmentFinanceBinding>(
                     }
                 }
             })
-    }
-
-    override fun onPause() {
-        super.onPause()
-        financeSharedViewModel.initYearMonth()
     }
 }

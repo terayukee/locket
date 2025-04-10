@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+//        window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
 
         initNavigationBar()
         checkPermission()
@@ -157,12 +157,12 @@ class MainActivity : AppCompatActivity() {
 
         val flag = intent.getStringExtra("notification") ?: ""
         if("notification".equals(flag)) {
-            Log.d(TAG, "onNewIntent: notification in mainActivity")
+//            Log.d(TAG, "onNewIntent: notification in mainActivity")
             findNavController(R.id.main_container).navigate(R.id.notificationFragment)
         }
         intent?.let {
             if (it.action == NfcAdapter.ACTION_NDEF_DISCOVERED || it.action == NfcAdapter.ACTION_TAG_DISCOVERED) {
-                Log.d(TAG, "onNewIntent: nfc 인식")
+//                Log.d(TAG, "onNewIntent: nfc 인식")
                 val navHostFragment = supportFragmentManager.findFragmentById(R.id.main_container) as NavHostFragment
                 val currentFragment = navHostFragment.childFragmentManager.primaryNavigationFragment
                 if (currentFragment is NfcPaymentFragment) {

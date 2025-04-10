@@ -55,11 +55,11 @@ class PaymentViewModel @Inject constructor(
                     when(status) {
                         is ResponseStatus.Success -> {
                             _payment.value = PaymentState.Success(status.data)
-                            Log.d(TAG, "pay: Success ${status.data}")
+//                            Log.d(TAG, "pay: Success ${status.data}")
                         }
                         is ResponseStatus.Error -> {
                             _payment.value = PaymentState.Error(status.error.message)
-                            Log.d(TAG, "pay: Error ${status.error.message}")
+//                            Log.d(TAG, "pay: Error ${status.error.message}")
                         }
                     }
                 }
