@@ -241,9 +241,9 @@
         <tr>
             <td>API</td>
             <td>
-                ![ChatGPT](https://img.shields.io/badge/ChatGPT_API-8B5CF6?logo=chatgpt&logoColor=fff)
-                ![Clova OCR](https://img.shields.io/badge/Clova_OCR_API-00C73C?logo=naver&logoColor=fff)
-                ![Purplecity](https://img.shields.io/badge/Purplecity-6A0DAD?logo=purple&logoColor=fff)
+                ![OpenAI](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=fff)
+                ![Clova OCR](https://img.shields.io/badge/Clova_OCR-00C73C?logo=naver&logoColor=fff)
+                ![Perplexity](https://img.shields.io/badge/Perplexity-6C47FF?logo=perplexity&logoColor=fff)
             </td>
         </tr>
         <tr>
