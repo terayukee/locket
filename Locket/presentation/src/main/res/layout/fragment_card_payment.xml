@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+
+    <ImageView
+        android:id="@+id/iv_logo"
+        android:layout_width="108dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="24dp"
+        android:src="@drawable/logo_home_locket"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewpager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="50dp"
+        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintDimensionRatio="1.6:1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_logo"/>
+
+    <TextView
+        android:id="@+id/tv_card_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:letterSpacing="-0.02"
+        android:textColor="@color/text"
+        android:fontFamily="@font/pretendard_regular"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/viewpager" />
+
+    <HorizontalScrollView
+        android:id="@+id/dot_indicator_scroll"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="@+id/viewpager"
+        app:layout_constraintStart_toStartOf="@+id/viewpager"
+        app:layout_constraintTop_toBottomOf="@id/tv_card_name">
+
+        <LinearLayout
+            android:id="@+id/dot_indicator"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+    </HorizontalScrollView>
+
+    <TextView
+        android:id="@+id/tv_balance_description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:letterSpacing="-0.02"
+        android:text=""
+        android:fontFamily="@font/pretendard_medium"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/text"
+        android:gravity="center"
+        app:layout_constraintWidth_percent="0.7"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/dot_indicator_scroll" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_card_benefit"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:gravity="start"
+        android:letterSpacing="-0.02"
+        android:text=""
+        android:textColor="#666666"
+        android:textSize="14sp"
+        android:fontFamily="monospace"
+        app:layout_constraintDimensionRatio="2.5:1"
+        app:layout_constraintWidth_percent="0.6"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_balance_description" />
+
+    <TextView
+        android:id="@+id/tv_ssafy_cardbenefit_info"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:letterSpacing="-0.02"
+        android:visibility="invisible"
+        android:text="삼성카드로 결제 시 캐릭터 사료 확득"
+        android:fontFamily="@font/pretendard_regular"
+        android:textColor="#464646"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_password" />
+
+    <ImageView
+        android:id="@+id/iv_fingerprint"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="48dp"
+        android:contentDescription="지문 인증"
+        android:letterSpacing="-0.02"
+        android:src="@drawable/ic_payment_fingerprint"
+        android:visibility="invisible"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.481"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rv_card_benefit"
+        app:layout_constraintWidth_percent="0.15" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_password"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="32dp"
+        android:backgroundTint="#F6F7F9"
+        android:letterSpacing="-0.02"
+        android:visibility="invisible"
+        android:text="비밀번호"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="#030303"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_fingerprint"
+        app:layout_constraintVertical_bias="0.0"
+        app:layout_constraintWidth_percent="0.35" />
+</androidx.constraintlayout.widget.ConstraintLayout>

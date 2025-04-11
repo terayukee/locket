@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/home"
+        android:icon="@drawable/ic_navbar_home"
+        android:title="홈"
+        android:background="@android:color/transparent" />
+    <item
+        android:id="@+id/household_account_book"
+        android:icon="@drawable/ic_navbar_finance"
+        android:title="가계부"
+        android:background="@android:color/transparent" />
+    <item
+        android:id="@+id/lowest_price_graph"
+        android:icon="@drawable/ic_navbar_product"
+        android:title="최저가 그래프"
+        android:background="@android:color/transparent" />
+
+    <item
+        android:id="@+id/payment"
+        android:icon="@drawable/ic_navbar_payment"
+        android:title="결제"
+        android:background="@android:color/transparent" />
+</menu>

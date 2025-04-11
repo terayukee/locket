@@ -1,0 +1,15 @@
+package com.ssafy.locket.usecase.finance.payment_history
+
+import com.ssafy.locket.model.base.ResponseStatus
+import com.ssafy.locket.model.finance.payment_history.PaymentCalendar
+import com.ssafy.locket.repository.finance.payment_history.PaymentHistoryRepository
+import kotlinx.coroutines.flow.Flow
+import javax.inject.Inject
+
+class GetMonthlyCalendarPaymentUseCase @Inject constructor(
+    private val paymentHistoryRepository: PaymentHistoryRepository
+) {
+    suspend operator fun invoke(year: Int, month: Int): Flow<ResponseStatus<PaymentCalendar>> {
+        return paymentHistoryRepository.getPaymentMonthlyCalendar(year, month)
+    }
+}

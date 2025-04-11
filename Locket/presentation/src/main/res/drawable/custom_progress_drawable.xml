@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+<!-- 배경 (회색 부분) -->
+<item android:id="@android:id/background">
+    <shape android:shape="rectangle">
+        <corners android:radius="10dp" />
+        <solid android:color="#E0E0E0" />
+        <size android:height="10dp" /> <!-- 여기서 높이를 조절합니다 -->
+    </shape>
+</item>
+
+<!-- 진행 부분 (녹색 부분) -->
+<item android:id="@android:id/progress">
+    <scale android:scaleWidth="100%">
+        <shape android:shape="rectangle">
+            <corners android:radius="10dp" />
+            <solid android:color="#00BFA5" /> <!-- 진행 색상 -->
+            <size android:height="10dp" /> <!-- 배경과 동일한 높이로 설정 -->
+        </shape>
+    </scale>
+</item>
+</layer-list>

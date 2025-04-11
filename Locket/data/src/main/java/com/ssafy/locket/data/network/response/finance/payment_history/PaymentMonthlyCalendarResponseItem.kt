@@ -1,0 +1,22 @@
+package com.ssafy.locket.data.network.response.finance.payment_history
+
+import com.ssafy.locket.data.network.common.BaseResponse
+import com.ssafy.locket.data.network.mapper.DataMapper
+import com.ssafy.locket.model.finance.payment_history.PaymentCalendarItem
+import kotlinx.parcelize.Parcelize
+import java.math.BigDecimal
+
+@Parcelize
+data class PaymentMonthlyCalendarResponseItem(
+    val amount: BigDecimal,
+    val date: String
+): BaseResponse {
+    companion object: DataMapper<PaymentMonthlyCalendarResponseItem, PaymentCalendarItem> {
+        override fun PaymentMonthlyCalendarResponseItem.toDomainModel(): PaymentCalendarItem {
+            return PaymentCalendarItem(
+                amount = this.amount,
+                date = this.date
+            )
+        }
+    }
+}

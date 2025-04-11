@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@android:id/background">
+        <vector
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:aapt="http://schemas.android.com/aapt"
+            android:width="213dp"
+            android:height="16dp"
+            android:viewportWidth="213"
+            android:viewportHeight="16"
+            >
+            <group>
+                <clip-path
+                    android:pathData="M4 0H209C211.209 0 213 1.79086 213 4V12C213 14.2091 211.209 16 209 16H4C1.79086 16 0 14.2091 0 12V4C0 1.79086 1.79086 0 4 0Z"
+                    />
+                <path
+                    android:pathData="M0 0V16H213V0"
+                    android:fillColor="#E6E6E6"
+                    />
+            </group>
+        </vector>
+    </item>
+
+    <item android:id="@android:id/progress">
+        <scale android:scaleWidth="100%">
+            <vector
+                xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:aapt="http://schemas.android.com/aapt"
+                android:width="141.57dp"
+                android:height="16dp"
+                android:viewportWidth="141.57"
+                android:viewportHeight="16"
+                >
+                <group>
+                    <clip-path
+                        android:pathData="M4 0H137.575C139.784 0 141.575 1.79086 141.575 4V12C141.575 14.2091 139.784 16 137.575 16H4C1.79086 16 0 14.2091 0 12V4C0 1.79086 1.79086 0 4 0Z"
+                        />
+                    <path
+                        android:pathData="M0 0V16H141.575V0"
+                        android:fillColor="#00CBBF"
+                        />
+                </group>
+            </vector>
+        </scale>
+    </item>
+</layer-list>

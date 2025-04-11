@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#D4E6EC"
+    tools:context=".home.character.fragment.CharacterGrowthFragment">
+
+    <ImageView
+        android:id="@+id/btn_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:padding="16dp"
+        android:scaleX="-1"
+        android:src="@drawable/ic_all_arrow"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/btn_gifticon_box"
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        android:letterSpacing="-0.02"
+        android:text="보관함"
+        android:textColor="@color/text"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:paddingHorizontal="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/btn_back"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/btn_back" />
+
+    <ImageView
+        android:id="@+id/iv_character"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/iv_character_growth_bg"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="@+id/iv_character_growth_bg"
+        app:layout_constraintHeight_percent="0.323"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/iv_character_growth_bg"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/tv_character_name"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_bold"
+        android:gravity="center"
+        android:textAlignment="center"
+        android:textColor="@color/text"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="@+id/iv_character_growth_bg"
+        app:layout_constraintStart_toStartOf="@+id/iv_character_growth_bg"
+        app:layout_constraintTop_toBottomOf="@+id/iv_character"
+        tools:text="개농이" />
+
+    <ImageView
+        android:id="@+id/iv_character_growth_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:background="@drawable/bg_character_growth"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintDimensionRatio="1.2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintVertical_bias="0.3333"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_character_name" />
+
+    <ImageView
+        android:id="@+id/iv_character_bg_small"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="24dp"
+        android:background="@drawable/bg_home_icon"
+        app:layout_constraintBottom_toTopOf="@+id/iv_mission_food_bg"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintHeight_percent="0.057"
+        app:layout_constraintStart_toStartOf="@+id/iv_character_growth_bg"
+        app:layout_constraintTop_toTopOf="@+id/iv_character_growth_bg"
+        app:layout_constraintVertical_chainStyle="spread" />
+
+    <ImageView
+        android:id="@+id/iv_character_small"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/image_character_level_icon"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_character_bg_small"
+        app:layout_constraintEnd_toEndOf="@+id/iv_character_bg_small"
+        app:layout_constraintStart_toStartOf="@+id/iv_character_bg_small"
+        app:layout_constraintTop_toTopOf="@+id/iv_character_bg_small" />
+
+    <TextView
+        android:id="@+id/tv_character_level"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="12dp"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/primary"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/progress_bar"
+        app:layout_constraintEnd_toStartOf="@+id/tv_character_percent"
+        app:layout_constraintStart_toEndOf="@+id/iv_character_bg_small"
+        app:layout_constraintTop_toTopOf="@+id/iv_character_bg_small"
+        tools:text="레벨 1" />
+
+    <TextView
+        android:id="@+id/tv_character_percent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/text"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/progress_bar"
+        app:layout_constraintEnd_toEndOf="@+id/iv_mission_toy_bg"
+        app:layout_constraintStart_toEndOf="@+id/progress_bar"
+        app:layout_constraintTop_toTopOf="@+id/progress_bar"
+        tools:text="38.8%" />
+
+    <ProgressBar
+        android:id="@+id/progress_bar"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="13.3125"
+        android:max="100"
+        android:progress="20"
+        android:progressDrawable="@drawable/bg_character_progress"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_character_bg_small"
+        app:layout_constraintEnd_toEndOf="@+id/tv_character_level"
+        app:layout_constraintStart_toStartOf="@+id/tv_character_level"
+        app:layout_constraintTop_toBottomOf="@+id/tv_character_level" />
+
+    <ImageView
+        android:id="@+id/iv_mission_food_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_character_mission"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintWidth_percent="0.3325"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_character_growth_bg"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toStartOf="@+id/iv_mission_toy_bg"
+        app:layout_constraintStart_toStartOf="@+id/iv_character_growth_bg"
+        app:layout_constraintTop_toBottomOf="@+id/iv_character_bg_small" />
+
+    <ImageView
+        android:id="@+id/image_mission_food"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.1699"
+        app:layout_constraintDimensionRatio="1"
+        android:background="@drawable/image_character_feed"
+        app:layout_constraintBottom_toTopOf="@+id/tv_mission_food_title"
+        app:layout_constraintEnd_toEndOf="@+id/iv_mission_food_bg"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/iv_mission_food_bg"
+        app:layout_constraintTop_toTopOf="@+id/iv_mission_food_bg"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/tv_mission_food_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:text="밥주기"
+        android:textColor="@color/text"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_mission_food_quantity"
+        app:layout_constraintEnd_toEndOf="@+id/image_mission_food"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/image_mission_food"
+        app:layout_constraintTop_toBottomOf="@+id/image_mission_food" />
+
+    <TextView
+        android:id="@+id/tv_mission_food_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/text"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_mission_food_bg"
+        app:layout_constraintEnd_toEndOf="@+id/image_mission_food"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/image_mission_food"
+        app:layout_constraintTop_toBottomOf="@+id/tv_mission_food_title"
+        tools:text="0개 보유" />
+
+    <ImageView
+        android:id="@+id/iv_mission_toy_bg"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@drawable/bg_character_mission"
+        android:layout_marginEnd="20dp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_mission_food_bg"
+        app:layout_constraintDimensionRatio="1"
+        app:layout_constraintEnd_toEndOf="@+id/iv_character_growth_bg"
+        app:layout_constraintStart_toEndOf="@+id/iv_mission_food_bg"
+        app:layout_constraintTop_toTopOf="@+id/iv_mission_food_bg" />
+
+    <ImageView
+        android:id="@+id/image_mission_toy"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintWidth_percent="0.1699"
+        app:layout_constraintDimensionRatio="1"
+        android:background="@drawable/ic_character_toy"
+        app:layout_constraintBottom_toTopOf="@+id/tv_mission_toy_title"
+        app:layout_constraintEnd_toEndOf="@+id/iv_mission_toy_bg"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/iv_mission_toy_bg"
+        app:layout_constraintTop_toTopOf="@+id/iv_mission_toy_bg"
+        app:layout_constraintVertical_chainStyle="packed" />
+
+    <TextView
+        android:id="@+id/tv_mission_toy_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:text="놀아주기"
+        android:textColor="@color/text"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toTopOf="@+id/tv_mission_toy_quantity"
+        app:layout_constraintEnd_toEndOf="@+id/image_mission_toy"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/image_mission_toy"
+        app:layout_constraintTop_toBottomOf="@+id/image_mission_toy" />
+
+    <TextView
+        android:id="@+id/tv_mission_toy_quantity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/pretendard_medium"
+        android:textColor="@color/text"
+        android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="@+id/iv_mission_toy_bg"
+        app:layout_constraintEnd_toEndOf="@+id/image_mission_toy"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="@+id/image_mission_toy"
+        app:layout_constraintTop_toBottomOf="@+id/tv_mission_toy_title"
+        tools:text="156분 남음" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

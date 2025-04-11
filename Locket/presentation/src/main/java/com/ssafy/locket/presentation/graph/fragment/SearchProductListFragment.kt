@@ -1,0 +1,120 @@
+package com.ssafy.locket.presentation.graph.fragment
+
+import android.os.Bundle
+import android.util.Log
+import android.view.View
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.ssafy.locket.model.graph.Product
+import com.ssafy.locket.presentation.R
+import com.ssafy.locket.presentation.base.BaseFragment
+import com.ssafy.locket.presentation.databinding.FragmentSearchProductListBinding
+import com.ssafy.locket.presentation.graph.adapter.ProductAdapter
+import com.ssafy.locket.presentation.graph.viewmodel.ProductDetailState
+import com.ssafy.locket.presentation.graph.viewmodel.ProductSearchState
+import com.ssafy.locket.presentation.graph.viewmodel.ProductViewModel
+import com.ssafy.locket.presentation.utils.CommonUtils
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+
+private const val TAG = "SearchProductListFragme"
+class SearchProductListFragment : BaseFragment<FragmentSearchProductListBinding>(
+    FragmentSearchProductListBinding::bind,
+    R.layout.fragment_search_product_list
+) {
+    private val productViewModel: ProductViewModel by activityViewModels()
+    private lateinit var productSearchAdapter: ProductAdapter
+    private lateinit var productSearchList: MutableList<Product>
+
+    private var isLoading = false  // 중복 요청 방지
+    private var searchQuery: String = "" // 검색어 저장
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initData()
+        initEvent()
+        initAdapter()
+        getSearchInfo()
+//        initScrollListener()
+
+        lifecycleScope.launch {
+            searchQuery = productViewModel.productName.first()
+            binding.tvProductTitle.text = searchQuery
+            loadMoreData()  // 첫 페이지 데이터 로드
+        }
+    }
+
+    fun initData(){
+        isLoading = false
+        productSearchList = mutableListOf()
+    }
+    private fun initEvent() {
+        binding.ivBack.setOnClickListener {
+            findNavController().navigateUp()
+        }
+    }
+
+    private fun initAdapter() {
+        productSearchList = mutableListOf()
+        productSearchAdapter = ProductAdapter(
+            productSearchList,
+            findNavController(),
+            R.id.action_searchProductListFragment_to_productDetailFragment
+        )
+        binding.rvSearchList.layoutManager = GridLayoutManager(requireContext(), 3)
+        binding.rvSearchList.adapter = productSearchAdapter
+    }
+
+    private fun getSearchInfo() {
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                productViewModel.productSearchInfo.collect { productSearch ->
+                    if (productSearch is ProductSearchState.Success) {
+                        val products = productSearch.productSearchInfo.products ?: emptyList()
+                        Log.d(TAG, "검색 결과: $products")
+
+                        productSearchList.addAll(products)
+                        productSearchAdapter.notifyDataSetChanged()
+
+                        // 리스트가 비어있을 경우 empty 텍스트 보이기
+                        if (productSearchList.isEmpty()) {
+                            binding.rvSearchList.visibility = View.GONE
+                            binding.tvEmptyProduct.visibility = View.VISIBLE
+                        } else {
+                            binding.rvSearchList.visibility = View.VISIBLE
+                            binding.tvEmptyProduct.visibility = View.GONE
+                        }
+
+                        isLoading = false
+                    }
+                }
+            }
+        }
+    }
+
+//    private fun initScrollListener() {
+//        binding.rvSearchList.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+//            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+//
+//                val layoutManager = recyclerView.layoutManager as GridLayoutManager
+//                val visibleItemCount = layoutManager.childCount
+//                val totalItemCount = layoutManager.itemCount
+//                val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
+//            }
+//        })
+//    }
+
+    private fun loadMoreData() {
+        isLoading = true
+        lifecycleScope.launch {
+            productViewModel.productSearch(searchQuery, 1)
+        }
+    }
+}
