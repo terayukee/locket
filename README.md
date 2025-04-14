@@ -1,7 +1,7 @@
 
 <div align="center">
   <h1>Locket - Lock + Pocket</h1>
-  <p>📚 결제 마이데이터 기반 소비 관리 앱  📚</p>
+  <p>📚 결제 마이데이터 및 상품 최저가 정보를 결합한 스마트 소비 관리 앱  📚</p>
 </div>
 
 <br/>
