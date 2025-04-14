@@ -128,7 +128,7 @@
 
 |                      **결제 페이지**                      |
 | :--------------------------------------------------------: | 
-| <img src="./assets/image/결제화면.png"> |
+| <img src="./assets/image/결제화면.png" height="500"> |
 <br>
 
 ### 5️⃣ <b>상품 페이지</b>
@@ -146,7 +146,7 @@
 
 |                      **알림 페이지**                      |
 | :--------------------------------------------------------: | 
-| <img src="./assets/image/알림 화면.png"> |
+| <img src="./assets/image/알림 화면.png" height="500"> |
 <br>
 
 <!-- <img src="./assets/gif/profile_edit.gif" height="400"> -->
