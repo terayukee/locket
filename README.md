@@ -16,11 +16,11 @@
 
 <br/>
 <div align="center">
-  <a href="">API 문서</a>
+  <a href="https://www.notion.so/API-1a4988e958dc81849b5dd85bb9bf960e">API 문서</a>
   &nbsp; | &nbsp;
-  <a href="">기능 명세서</a>
+  <a href="https://www.notion.so/1a4988e958dc8155a8a3cdacf3b1062b">요구사항 명세서</a>
   &nbsp; | &nbsp;
-  <a href="">Notion</a>
+  <a href="https://www.notion.so/2-PJT-1a4988e958dc80ec934ae12bcae54c1f">Notion</a>
 </div>
 </br>
 
@@ -221,62 +221,60 @@
         <tr>
             <td>안드로이드</td>
             <td>
-                <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=Kotlin&logoColor=white"/>
-                <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=flat&logo=android-studio&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat&logo=kotlin&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Android%20Studio-3DDC84?style=flat&logo=androidstudio&logoColor=white"/>
             </td>
         </tr>
         <tr>
             <td>백엔드</td>
             <td>
-                <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat&logo=spring-boot&logoColor=white"/>
-                <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=flat&logo=spring-security&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat&logo=springboot&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Spring_Security-6DB33F?style=flat&logo=springsecurity&logoColor=white"/>
                 <img src="https://img.shields.io/badge/FastAPI-009688?style=flat&logo=fastapi&logoColor=white"/>
-                <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=json-web-tokens&logoColor=white"/><br/>
-                ![Java](https://img.shields.io/badge/Java-007396?logo=java&logoColor=fff)
-                ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=fff)
-                ![Kafka](https://img.shields.io/badge/Kafka-231F20?logo=apachekafka&logoColor=fff)
-                ![Netflix Eureka](https://img.shields.io/badge/Netflix_Eureka-F6C751?logo=netflix&logoColor=fff)
+                <img src="https://img.shields.io/badge/JWT-000000?style=flat&logo=jsonwebtokens&logoColor=white"/><br/>
+                <img src="https://img.shields.io/badge/Java-007396?style=flat&logo=java&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Kafka-231F20?style=flat&logo=apachekafka&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Netflix_Eureka-F6C751?style=flat&logo=netflix&logoColor=white"/>
             </td>
         </tr>
         <tr>
             <td>데이터베이스</td>
             <td>
-                ![Postgres](https://img.shields.io/badge/Postgres-%23316192.svg?logo=postgresql&logoColor=white)
-                ![Elasticsearch](https://img.shields.io/badge/Elasticsearch-005571?logo=elasticsearch&logoColor=fff)
-                ![Redis](https://img.shields.io/badge/Redis-%23DD0031.svg?logo=redis&logoColor=white)
+                <img src="https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Elasticsearch-005571?style=flat&logo=elasticsearch&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Redis-DD0031?style=flat&logo=redis&logoColor=white"/>
             </td>
         </tr>
         <tr>
             <td>인프라</td>
             <td>
-                <img src="https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazon-ec2&logoColor=white"/>
+                <img src="https://img.shields.io/badge/AWS_EC2-FF9900?style=flat&logo=amazonec2&logoColor=white"/>
                 <img src="https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white"/>
-                ![Docker Swarm](https://img.shields.io/badge/Docker_Swarm-2496e0?logo=docker&logoColor=fff)
+                <img src="https://img.shields.io/badge/Docker_Swarm-2496ED?style=flat&logo=docker&logoColor=white"/>
                 <img src="https://img.shields.io/badge/Docker_Compose-2496ED?style=flat&logo=docker&logoColor=white"/>
                 <img src="https://img.shields.io/badge/cAdvisor-282C34?style=flat&logo=docker&logoColor=61DAFB"/>
                 <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat&logo=jenkins&logoColor=white"/><br/>
                 <img src="https://img.shields.io/badge/Ubuntu-E95420?style=flat&logo=ubuntu&logoColor=white"/>
-                ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?logo=nginx&logoColor=white)
-                ![Prometheus](https://img.shields.io/badge/Prometheus-E65251?logo=prometheus&logoColor=fff)
-                ![Grafana](https://img.shields.io/badge/Grafana-F46800?logo=grafana&logoColor=fff)
-                
-<img src="https://img.shields.io/badge/Node_Exporter-00BFFF?style=flat&logo=prometheus&logoColor=white"/>
-
-<img src="https://img.shields.io/badge/Spring_Boot_Actuator-6DB33F?style=flat&logo=spring&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Nginx-009639?style=flat&logo=nginx&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Prometheus-E65251?style=flat&logo=prometheus&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Grafana-F46800?style=flat&logo=grafana&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Node_Exporter-00BFFF?style=flat&logo=prometheus&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Spring_Boot_Actuator-6DB33F?style=flat&logo=spring&logoColor=white"/>
             </td>
         </tr>
         <tr>
             <td>API</td>
             <td>
-                ![OpenAI](https://img.shields.io/badge/OpenAI-412991?logo=openai&logoColor=fff)
-                ![Clova OCR](https://img.shields.io/badge/Clova_OCR-00C73C?logo=naver&logoColor=fff)
-                ![Perplexity](https://img.shields.io/badge/Perplexity-6C47FF?logo=perplexity&logoColor=fff)
+                <img src="https://img.shields.io/badge/OpenAI-412991?style=flat&logo=openai&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Clova_OCR-00C73C?style=flat&logo=naver&logoColor=white"/>
+                <img src="https://img.shields.io/badge/Perplexity-6C47FF?style=flat&logo=perplexity&logoColor=white"/>
             </td>
         </tr>
         <tr>
             <td>디자인</td>
             <td>
-                ![Figma](https://img.shields.io/badge/Figma-F24E1E?logo=figma&logoColor=white)
+                <img src="https://img.shields.io/badge/Figma-F24E1E?style=flat&logo=figma&logoColor=white"/>
             </td>
         </tr>
         <tr>
@@ -291,6 +289,7 @@
         </tr>
     </tbody>
 </table>
+
 
 
 ---
